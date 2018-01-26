@@ -1,20 +1,20 @@
 {
   "colors": {
-    "diamondbacks": {
+    "ari": {
       "home": {
         "r": 167,
         "g": 25,
         "b": 48
       }
     },
-    "braves": {
+    "atl": {
       "home": {
         "r": 206,
         "g": 17,
         "b": 65
       }
     },
-    "orioles": {
+    "bal": {
       "home": {
         "r": 223,
         "g": 70,
@@ -26,21 +26,21 @@
         "b": 0
       }
     },
-    "red sox": {
+    "bos": {
       "home": {
         "r": 189,
         "g": 48,
         "b": 57
       }
     },
-    "cubs": {
+    "chc": {
       "home": {
         "r": 14,
         "g": 51,
         "b": 134
       }
     },
-    "white sox": {
+    "chw": {
       "home": {
         "r": 196,
         "g": 206,
@@ -52,63 +52,63 @@
         "b": 0
       }
     },
-    "reds": {
+    "cin": {
       "home": {
         "r": 198,
         "g": 1,
         "b": 31
       }
     },
-    "indians": {
+    "cle": {
       "home": {
         "r": 15,
         "g": 34,
         "b": 62
       }
     },
-    "rockies": {
+    "col": {
       "home": {
         "r": 51,
         "g": 51,
         "b": 102
       }
     },
-    "tigers": {
+    "det": {
       "home": {
         "r": 12,
         "g": 44,
         "b": 86
       }
     },
-    "astros": {
+    "hou": {
       "home": {
         "r": 0,
         "g": 45,
         "b": 98
       }
     },
-    "royals": {
+    "kc": {
       "home": {
         "r": 0,
         "g": 70,
         "b": 135
       }
     },
-    "angels": {
+    "laa": {
       "home": {
         "r": 0,
         "g": 50,
         "b": 99
       }
     },
-    "dodgers": {
+    "lad": {
       "home": {
         "r": 34,
         "g": 59,
         "b": 117
       }
     },
-    "marlins": {
+    "mia": {
       "home": {
         "r": 255,
         "g": 102,
@@ -120,21 +120,21 @@
         "b": 0
       }
     },
-    "brewers": {
+    "mil": {
       "home": {
         "r": 0,
         "g": 24,
         "b": 81
       }
     },
-    "twins": {
+    "min": {
       "home": {
         "r": 186,
         "g": 12,
         "b": 46
       }
     },
-    "mets": {
+    "nym": {
       "home": {
         "r": 14,
         "g": 47,
@@ -146,28 +146,28 @@
         "b": 16
       }
     },
-    "yankees": {
+    "nyy": {
       "home": {
         "r": 22,
         "g": 37,
         "b": 70
       }
     },
-    "athletics": {
+    "oak": {
       "home": {
         "r": 0,
         "g": 56,
         "b": 49
       }
     },
-    "phillies": {
+    "phi": {
       "home": {
         "r": 232,
         "g": 24,
         "b": 40
       }
     },
-    "pirates": {
+    "pit": {
       "home": {
         "r": 253,
         "g": 184,
@@ -179,14 +179,14 @@
         "b": 0
       }
     },
-    "padres": {
+    "sd": {
       "home": {
         "r": 6,
         "g": 21,
         "b": 64
       }
     },
-    "giants": {
+    "sf": {
       "home": {
         "r": 253,
         "g": 90,
@@ -198,42 +198,42 @@
         "b": 0
       }
     },
-    "mariners": {
+    "sea": {
       "home": {
         "r": 12,
         "g": 44,
         "b": 86
       }
     },
-    "cardinals": {
+    "stl": {
       "home": {
         "r": 196,
         "g": 30,
         "b": 58
       }
     },
-    "rays": {
+    "tb": {
       "home": {
         "r": 143,
         "g": 188,
         "b": 230
       }
     },
-    "rangers": {
+    "tex": {
       "home": {
         "r": 192,
         "g": 17,
         "b": 31
       }
     },
-    "blue jays": {
+    "tor": {
       "home": {
         "r": 19,
         "g": 74,
         "b": 142
       }
     },
-    "nationals": {
+    "wsh": {
       "home": {
         "r": 186,
         "g": 18,
