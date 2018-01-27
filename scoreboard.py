@@ -59,8 +59,8 @@ class Scoreboard:
     return current_inning.bottom if len(current_inning.bottom) else current_inning.top
 
   def __runners_on_base(self, at_bat):
-    runners = {}
-    runners['first'] = bool(at_bat.b1)
-    runners['second'] = bool(at_bat.b2)
-    runners['third'] = bool(at_bat.b3)
+    runners = []
+    runners.append(bool(at_bat.b1))
+    runners.append(bool(at_bat.b2))
+    runners.append(bool(at_bat.b3))
     return runners

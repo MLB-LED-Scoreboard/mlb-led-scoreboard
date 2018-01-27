@@ -56,12 +56,16 @@ class ScoreboardRenderer:
   def render_bases(self):
     bases = self.scoreboard.game_data['at_bat']['bases']
     base_px = []
-    base_px.append({'x': 16, 'y': 27} )
-    base_px.append({'x': 21, 'y': 22} )
     base_px.append({'x': 26, 'y': 27} )
+    base_px.append({'x': 21, 'y': 22} )
+    base_px.append({'x': 16, 'y': 27} )
 
-    for base in base_px:
-      self.__render_base_outline(base)
+    for base in range(len(bases)):
+      self.__render_base_outline(base_px[base])
+
+      # Fill in the base if there's currently a baserunner
+      if bases[base]:
+        self.__render_baserunner(base_px[base])
 
   def __render_out_circle(self, out):
     self.matrix.SetPixel(out['x'] - 1, out['y'] - 1, 255, 235, 59)
@@ -86,3 +90,18 @@ class ScoreboardRenderer:
     self.matrix.SetPixel(base['x'], base['y'] + 3, 255, 235, 59)
     self.matrix.SetPixel(base['x'] - 1, base['y'] + 2, 255, 235, 59)
     self.matrix.SetPixel(base['x'] - 2, base['y'] + 1, 255, 235, 59)
+
+  def __render_baserunner(self, base):
+    self.matrix.SetPixel(base['x'], base['y'], 255, 235, 59)
+    self.matrix.SetPixel(base['x'] - 1, base['y'], 255, 235, 59)
+    self.matrix.SetPixel(base['x'] - 2, base['y'], 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 1, base['y'], 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 2, base['y'], 255, 235, 59)
+    self.matrix.SetPixel(base['x'], base['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'], base['y'] - 2, 255, 235, 59)
+    self.matrix.SetPixel(base['x'], base['y'] + 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'], base['y'] + 2, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] - 1, base['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] - 1, base['y'] + 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 1, base['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 1, base['y'] + 1, 255, 235, 59)
