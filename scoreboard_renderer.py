@@ -67,6 +67,10 @@ class ScoreboardRenderer:
       if bases[base]:
         self.__render_baserunner(base_px[base])
 
+  def render_inning(self):
+    inning = self.scoreboard.game_data['inning']
+    self.__render_inning_half(inning)
+
   def __render_out_circle(self, out):
     self.matrix.SetPixel(out['x'] - 1, out['y'] - 1, 255, 235, 59)
     self.matrix.SetPixel(out['x'] - 1, out['y'], 255, 235, 59)
@@ -105,3 +109,17 @@ class ScoreboardRenderer:
     self.matrix.SetPixel(base['x'] - 1, base['y'] + 1, 255, 235, 59)
     self.matrix.SetPixel(base['x'] + 1, base['y'] - 1, 255, 235, 59)
     self.matrix.SetPixel(base['x'] + 1, base['y'] + 1, 255, 235, 59)
+
+  def __render_inning_half(self, inning):
+    tri_px = {'x': 24, 'y': 17}
+    self.matrix.SetPixel(tri_px['x'], tri_px['y'], 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'] - 1, tri_px['y'], 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'] - 2, tri_px['y'], 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'] + 1, tri_px['y'], 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'] + 2, tri_px['y'], 255, 235, 59)
+
+    offset = 1 if inning['bottom'] else -1
+    self.matrix.SetPixel(tri_px['x'], tri_px['y'] + offset, 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'] - 1, tri_px['y'] + offset, 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'] + 1, tri_px['y'] + offset, 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'], tri_px['y'] + offset + offset, 255, 235, 59)

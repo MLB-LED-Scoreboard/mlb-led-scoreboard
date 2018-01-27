@@ -14,7 +14,7 @@ def refresh_scoreboard(matrix, team):
   renderer.render_pitches()
   renderer.render_outs()
   renderer.render_bases()
-  # renderer.render_inning()
+  renderer.render_inning()
   pprint(scoreboard)
 
 """Refresh the scoreboard every 15 seconds. Default to Cubs if a team isn't given."""

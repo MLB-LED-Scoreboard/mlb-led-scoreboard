@@ -8,7 +8,7 @@ class Scoreboard:
   """
   def __init__(self, team):
     """ Constructs a new Scoreboard and fetches data from MLB.
-    
+
     team - The team to get today's game for.
     """
     self.team = team;
@@ -22,7 +22,7 @@ class Scoreboard:
 
     # TODO: Uncomment once the season starts
     # For now, let's re-live one of the Cubs' world series wins
-    # 
+    #
     # games = mlbgame.games(year, month, day, home=team, away=team)
     games = mlbgame.games(2016, 11, 1, home=team, away=team)
     return self.__current_game_data(games[0][0]) if len(games) else False
