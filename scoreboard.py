@@ -35,9 +35,6 @@ class Scoreboard:
     game_data['away_team'] = overview.away_name_abbrev
     game_data['home_team'] = overview.home_name_abbrev
     game_data['inning'] = self.__current_inning(game_id)
-
-    from pprint import pprint
-    pprint(game_data)
     return game_data
 
   def __current_inning(self, game_id):

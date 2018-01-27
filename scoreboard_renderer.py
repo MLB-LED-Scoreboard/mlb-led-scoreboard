@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 from rgbmatrix import graphics
 
 class ScoreboardRenderer:
@@ -11,7 +10,15 @@ class ScoreboardRenderer:
     self.font = graphics.Font()
     self.font.LoadFont('Assets/tom-thumb.bdf')
 
-  def render_team_colors(self):
+  def render(self):
+    self.__render_team_colors()
+    self.__render_team_text()
+    self.__render_pitches()
+    self.__render_outs()
+    self.__render_bases()
+    self.__render_inning()
+
+  def __render_team_colors(self):
     away_team_color_data = self.colors[self.scoreboard.game_data['away_team'].lower()]
     away_team_color = away_team_color_data['home']
 
@@ -24,7 +31,7 @@ class ScoreboardRenderer:
         color = home_team_color if y >= scores_height / 2 else away_team_color
         self.matrix.SetPixel(x, y, color['r'], color['g'], color['b'])
 
-  def render_team_text(self):
+  def __render_team_text(self):
     away_team = self.scoreboard.game_data['away_team']
     away_text_color = self.colors[away_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
     away_text_color_graphic = graphics.Color(away_text_color['r'], away_text_color['g'], away_text_color['b'])
@@ -38,12 +45,12 @@ class ScoreboardRenderer:
     graphics.DrawText(self.matrix, self.font, 1, 6, away_text_color_graphic, away_text)
     graphics.DrawText(self.matrix, self.font, 1, 13, home_text_color_graphic, home_text)
 
-  def render_pitches(self):
+  def __render_pitches(self):
     at_bat = self.scoreboard.game_data['inning']['at_bat']
     pitches_color = graphics.Color(255, 235, 59)
     graphics.DrawText(self.matrix, self.font, 1, 23, pitches_color, str(at_bat['balls']) + '-' + str(at_bat['strikes']))
 
-  def render_outs(self):
+  def __render_outs(self):
     outs = self.scoreboard.game_data['inning']['at_bat']['outs']
     out_px = []
     out_px.append({'x': 2, 'y': 27})
@@ -55,7 +62,7 @@ class ScoreboardRenderer:
       if (outs >= out):
         self.matrix.SetPixel(out_px[out]['x'], out_px[out]['y'], 255, 235, 59)
 
-  def render_bases(self):
+  def __render_bases(self):
     bases = self.scoreboard.game_data['inning']['at_bat']['bases']
     base_px = []
     base_px.append({'x': 26, 'y': 27} )
@@ -69,7 +76,7 @@ class ScoreboardRenderer:
       if bases[base]:
         self.__render_baserunner(base_px[base])
 
-  def render_inning(self):
+  def __render_inning(self):
     inning = self.scoreboard.game_data['inning']
     self.__render_inning_half(inning)
     number = inning['number']
