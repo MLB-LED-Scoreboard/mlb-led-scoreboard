@@ -9,7 +9,7 @@ import time
 def refresh_scoreboard(matrix, team):
   scoreboard = Scoreboard(team)
   renderer = ScoreboardRenderer(matrix, scoreboard)
-  renderer.render_away_team()
+  renderer.render_team_colors()
   # TODO: Replace with LED matrix drawing
   pprint(scoreboard)
 
