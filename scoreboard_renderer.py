@@ -80,18 +80,19 @@ class ScoreboardRenderer:
         self.matrix.SetPixel(out['x'] + x, out['y'] + y, 255, 235, 59)
 
   def __render_base_outline(self, base):
+    # Hollow diamonds are a popular homework problem but IDGAF
     self.matrix.SetPixel(base['x'] - 3, base['y'], 255, 235, 59)
     self.matrix.SetPixel(base['x'] - 2, base['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] - 1, base['y'] - 2, 255, 235, 59)
-    self.matrix.SetPixel(base['x'], base['y'] - 3, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 1, base['y'] - 2, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 2, base['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 3, base['y'], 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 2, base['y'] + 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 1, base['y'] + 2, 255, 235, 59)
-    self.matrix.SetPixel(base['x'], base['y'] + 3, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] - 1, base['y'] + 2, 255, 235, 59)
     self.matrix.SetPixel(base['x'] - 2, base['y'] + 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] - 1, base['y'] - 2, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] - 1, base['y'] + 2, 255, 235, 59)
+    self.matrix.SetPixel(base['x'], base['y'] - 3, 255, 235, 59)
+    self.matrix.SetPixel(base['x'], base['y'] + 3, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 1, base['y'] - 2, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 1, base['y'] + 2, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 2, base['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 2, base['y'] + 1, 255, 235, 59)
+    self.matrix.SetPixel(base['x'] + 3, base['y'], 255, 235, 59)
 
   def __render_baserunner(self, base):
     offset = 2
