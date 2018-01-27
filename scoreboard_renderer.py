@@ -33,5 +33,5 @@ class ScoreboardRenderer:
 
     font = graphics.Font()
     font.LoadFont('Assets/tom-thumb.bdf')
-    graphics.DrawText(self.matrix, font, 1, 6, away_text_color, away_team.upper())
-    graphics.DrawText(self.matrix, font, 1, 13, home_text_color, home_team.upper())
+    graphics.DrawText(self.matrix, font, 1, 6, away_text_color, away_team.upper() + ' ' + str(self.scoreboard.game_data['at_bat']['away_team_runs']))
+    graphics.DrawText(self.matrix, font, 1, 13, home_text_color, home_team.upper() + ' ' + str(self.scoreboard.game_data['at_bat']['home_team_runs']))
