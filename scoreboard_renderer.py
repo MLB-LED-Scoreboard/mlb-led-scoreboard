@@ -72,14 +72,12 @@ class ScoreboardRenderer:
     self.__render_inning_half(inning)
 
   def __render_out_circle(self, out):
-    self.matrix.SetPixel(out['x'] - 1, out['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(out['x'] - 1, out['y'], 255, 235, 59)
-    self.matrix.SetPixel(out['x'] - 1, out['y'] + 1, 255, 235, 59)
-    self.matrix.SetPixel(out['x'], out['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(out['x'], out['y'] + 1, 255, 235, 59)
-    self.matrix.SetPixel(out['x'] + 1, out['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(out['x'] + 1, out['y'], 255, 235, 59)
-    self.matrix.SetPixel(out['x'] + 1, out['y'] + 1, 255, 235, 59)
+    offset = 1
+    for x in range(-offset, offset + 1):
+      for y in range(-offset, offset + 1):
+        if x == 0 and y == 0:
+          continue
+        self.matrix.SetPixel(out['x'] + x, out['y'] + y, 255, 235, 59)
 
   def __render_base_outline(self, base):
     self.matrix.SetPixel(base['x'] - 3, base['y'], 255, 235, 59)
@@ -105,14 +103,12 @@ class ScoreboardRenderer:
 
   def __render_inning_half(self, inning):
     tri_px = {'x': 24, 'y': 17}
-    self.matrix.SetPixel(tri_px['x'], tri_px['y'], 255, 235, 59)
-    self.matrix.SetPixel(tri_px['x'] - 1, tri_px['y'], 255, 235, 59)
-    self.matrix.SetPixel(tri_px['x'] - 2, tri_px['y'], 255, 235, 59)
-    self.matrix.SetPixel(tri_px['x'] + 1, tri_px['y'], 255, 235, 59)
-    self.matrix.SetPixel(tri_px['x'] + 2, tri_px['y'], 255, 235, 59)
+    offset = 2
+    for x in range(-offset, offset + 1):
+      self.matrix.SetPixel(tri_px['x'] + x, tri_px['y'], 255, 235, 59)
 
     offset = 1 if inning['bottom'] else -1
-    self.matrix.SetPixel(tri_px['x'], tri_px['y'] + offset, 255, 235, 59)
     self.matrix.SetPixel(tri_px['x'] - 1, tri_px['y'] + offset, 255, 235, 59)
+    self.matrix.SetPixel(tri_px['x'], tri_px['y'] + offset, 255, 235, 59)
     self.matrix.SetPixel(tri_px['x'] + 1, tri_px['y'] + offset, 255, 235, 59)
     self.matrix.SetPixel(tri_px['x'], tri_px['y'] + offset + offset, 255, 235, 59)
