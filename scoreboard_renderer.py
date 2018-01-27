@@ -96,19 +96,12 @@ class ScoreboardRenderer:
     self.matrix.SetPixel(base['x'] - 2, base['y'] + 1, 255, 235, 59)
 
   def __render_baserunner(self, base):
-    self.matrix.SetPixel(base['x'], base['y'], 255, 235, 59)
-    self.matrix.SetPixel(base['x'] - 1, base['y'], 255, 235, 59)
-    self.matrix.SetPixel(base['x'] - 2, base['y'], 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 1, base['y'], 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 2, base['y'], 255, 235, 59)
-    self.matrix.SetPixel(base['x'], base['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'], base['y'] - 2, 255, 235, 59)
-    self.matrix.SetPixel(base['x'], base['y'] + 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'], base['y'] + 2, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] - 1, base['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] - 1, base['y'] + 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 1, base['y'] - 1, 255, 235, 59)
-    self.matrix.SetPixel(base['x'] + 1, base['y'] + 1, 255, 235, 59)
+    offset = 2
+    for x in range(-offset, offset + 1):
+      for y in range(-offset, offset + 1):
+        if (x == offset or x == -offset) and (y == offset or y == -offset):
+          continue
+        self.matrix.SetPixel(base['x'] + x, base['y'] + y, 255, 235, 59)
 
   def __render_inning_half(self, inning):
     tri_px = {'x': 24, 'y': 17}
