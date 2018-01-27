@@ -18,6 +18,8 @@ def refresh_scoreboard(matrix, team):
 team = sys.argv[1] if len(sys.argv) > 1 else 'Cubs'
 starttime = time.time()
 matrix = RGBMatrix()
+matrix.Fill(7, 14, 25)
+
 while True:
   refresh_scoreboard(matrix, team)
   # matrix.SetPixel(3, 3, random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
