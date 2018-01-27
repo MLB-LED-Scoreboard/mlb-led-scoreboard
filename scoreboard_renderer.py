@@ -18,9 +18,10 @@ class ScoreboardRenderer:
     home_team_color_data = self.colors[self.scoreboard.game_data['home_team'].lower()]
     home_team_color = home_team_color_data['home']
 
+    scores_height = 14
     for x in range(self.matrix.width):
-      for y in range(14):
-        color = home_team_color if y >= 7 else away_team_color
+      for y in range(scores_height):
+        color = home_team_color if y >= scores_height / 2 else away_team_color
         self.matrix.SetPixel(x, y, color['r'], color['g'], color['b'])
 
   def render_team_text(self):
@@ -50,6 +51,7 @@ class ScoreboardRenderer:
     out_px.append({'x': 10, 'y': 27})
     for out in range(len(out_px)):
       self.__render_out_circle(out_px[out])
+      # Fill in the circle if that out has occurred
       if (outs >= out):
         self.matrix.SetPixel(out_px[out]['x'], out_px[out]['y'], 255, 235, 59)
 
@@ -78,6 +80,7 @@ class ScoreboardRenderer:
     offset = 1
     for x in range(-offset, offset + 1):
       for y in range(-offset, offset + 1):
+        # The dead center is filled in only if that many outs has occurred, and happens elsewhere
         if x == 0 and y == 0:
           continue
         self.matrix.SetPixel(out['x'] + x, out['y'] + y, 255, 235, 59)
@@ -101,7 +104,7 @@ class ScoreboardRenderer:
     offset = 2
     for x in range(-offset, offset + 1):
       for y in range(-offset, offset + 1):
-        if (x == offset or x == -offset) and (y == offset or y == -offset):
+        if abs(x) == offset and abs(y) == offset:
           continue
         self.matrix.SetPixel(base['x'] + x, base['y'] + y, 255, 235, 59)
 
