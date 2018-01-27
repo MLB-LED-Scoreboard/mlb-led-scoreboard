@@ -36,3 +36,8 @@ class ScoreboardRenderer:
 
     graphics.DrawText(self.matrix, self.font, 1, 6, away_text_color_graphic, away_text)
     graphics.DrawText(self.matrix, self.font, 1, 13, home_text_color_graphic, home_text)
+
+  def render_pitches(self):
+    at_bat = self.scoreboard.game_data['at_bat']
+    pitches_color = graphics.Color(255, 235, 59)
+    graphics.DrawText(self.matrix, self.font, 1, 20, pitches_color, str(at_bat['balls']) + '-' + str(at_bat['strikes']))
