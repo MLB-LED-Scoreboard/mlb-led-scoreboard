@@ -10,6 +10,7 @@ def refresh_scoreboard(matrix, team):
   scoreboard = Scoreboard(team)
   renderer = ScoreboardRenderer(matrix, scoreboard)
   renderer.render_team_colors()
+  renderer.render_team_text()
   # TODO: Replace with LED matrix drawing
   pprint(scoreboard)
 
