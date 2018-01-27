@@ -70,6 +70,9 @@ class ScoreboardRenderer:
   def render_inning(self):
     inning = self.scoreboard.game_data['inning']
     self.__render_inning_half(inning)
+    number = inning['number']
+    number_color = graphics.Color(255, 235, 59)
+    graphics.DrawText(self.matrix, self.font, 28, 20, number_color, str(number))
 
   def __render_out_circle(self, out):
     offset = 1
