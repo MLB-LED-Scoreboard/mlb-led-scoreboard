@@ -27,23 +27,23 @@ class ScoreboardRenderer:
     away_team = self.scoreboard.game_data['away_team']
     away_text_color = self.colors[away_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
     away_text_color_graphic = graphics.Color(away_text_color['r'], away_text_color['g'], away_text_color['b'])
-    away_text = away_team.upper() + ' ' + str(self.scoreboard.game_data['at_bat']['away_team_runs'])
+    away_text = away_team.upper() + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['away_team_runs'])
 
     home_team = self.scoreboard.game_data['home_team']
     home_text_color = self.colors[home_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
     home_text_color_graphic = graphics.Color(home_text_color['r'], home_text_color['g'], home_text_color['b'])
-    home_text = home_team.upper() + ' ' + str(self.scoreboard.game_data['at_bat']['home_team_runs'])
+    home_text = home_team.upper() + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['home_team_runs'])
 
     graphics.DrawText(self.matrix, self.font, 1, 6, away_text_color_graphic, away_text)
     graphics.DrawText(self.matrix, self.font, 1, 13, home_text_color_graphic, home_text)
 
   def render_pitches(self):
-    at_bat = self.scoreboard.game_data['at_bat']
+    at_bat = self.scoreboard.game_data['inning']['at_bat']
     pitches_color = graphics.Color(255, 235, 59)
     graphics.DrawText(self.matrix, self.font, 1, 23, pitches_color, str(at_bat['balls']) + '-' + str(at_bat['strikes']))
 
   def render_outs(self):
-    outs = self.scoreboard.game_data['at_bat']['outs']
+    outs = self.scoreboard.game_data['inning']['at_bat']['outs']
     out_px = []
     out_px.append({'x': 2, 'y': 27})
     out_px.append({'x': 6, 'y': 27})
@@ -54,7 +54,7 @@ class ScoreboardRenderer:
         self.matrix.SetPixel(out_px[out]['x'], out_px[out]['y'], 255, 235, 59)
 
   def render_bases(self):
-    bases = self.scoreboard.game_data['at_bat']['bases']
+    bases = self.scoreboard.game_data['inning']['at_bat']['bases']
     base_px = []
     base_px.append({'x': 26, 'y': 27} )
     base_px.append({'x': 21, 'y': 22} )

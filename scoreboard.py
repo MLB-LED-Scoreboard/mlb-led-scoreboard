@@ -34,29 +34,35 @@ class Scoreboard:
     game_data = {}
     game_data['away_team'] = overview.away_name_abbrev
     game_data['home_team'] = overview.home_name_abbrev
-
-    game_data['at_bat'] = self.__current_at_bat(game_id)
+    game_data['inning'] = self.__current_inning(game_id)
 
     from pprint import pprint
     pprint(game_data)
     return game_data
 
-  def __current_at_bat(self, game_id):
-    at_bats = self.__current_inning_half(game_id)
-    current = at_bats[-1]
-    at_bat = {}
-    at_bat['away_team_runs'] = current.away_team_runs
-    at_bat['home_team_runs'] = current.home_team_runs
-    at_bat['outs'] = current.o
-    at_bat['balls'] = current.b
-    at_bat['strikes'] = current.s
-    at_bat['bases'] = self.__runners_on_base(current)
-    return at_bat
-
-  def __current_inning_half(self, game_id):
+  def __current_inning(self, game_id):
     innings = mlbgame.game_events(game_id)
+
+    inning_status = {}
+    inning_status['number'] = len(innings)
+
     current_inning = innings[-1]
-    return current_inning.bottom if len(current_inning.bottom) else current_inning.top
+    is_bottom = bool(len(current_inning.bottom))
+    at_bats = current_inning.bottom if is_bottom else current_inning.top
+
+    inning_status['bottom'] = is_bottom
+    inning_status['at_bat'] = self.__current_at_bat(at_bats[-1])
+    return inning_status
+
+  def __current_at_bat(self, current_at_bat):
+    at_bat = {}
+    at_bat['away_team_runs'] = current_at_bat.away_team_runs
+    at_bat['home_team_runs'] = current_at_bat.home_team_runs
+    at_bat['outs'] = current_at_bat.o
+    at_bat['balls'] = current_at_bat.b
+    at_bat['strikes'] = current_at_bat.s
+    at_bat['bases'] = self.__runners_on_base(current_at_bat)
+    return at_bat
 
   def __runners_on_base(self, at_bat):
     runners = []
