@@ -40,4 +40,25 @@ class ScoreboardRenderer:
   def render_pitches(self):
     at_bat = self.scoreboard.game_data['at_bat']
     pitches_color = graphics.Color(255, 235, 59)
-    graphics.DrawText(self.matrix, self.font, 1, 20, pitches_color, str(at_bat['balls']) + '-' + str(at_bat['strikes']))
+    graphics.DrawText(self.matrix, self.font, 1, 23, pitches_color, str(at_bat['balls']) + '-' + str(at_bat['strikes']))
+
+  def render_outs(self):
+    outs = self.scoreboard.game_data['at_bat']['outs']
+    out_px = []
+    out_px.append({'x': 2, 'y': 27})
+    out_px.append({'x': 6, 'y': 27})
+    out_px.append({'x': 10, 'y': 27})
+    for out in range(len(out_px)):
+      self.__render_out_circle(out_px[out])
+      if (outs >= out):
+        self.matrix.SetPixel(out_px[out]['x'], out_px[out]['y'], 255, 235, 59)
+
+  def __render_out_circle(self, out):
+    self.matrix.SetPixel(out['x'] - 1, out['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(out['x'] - 1, out['y'], 255, 235, 59)
+    self.matrix.SetPixel(out['x'] - 1, out['y'] + 1, 255, 235, 59)
+    self.matrix.SetPixel(out['x'], out['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(out['x'], out['y'] + 1, 255, 235, 59)
+    self.matrix.SetPixel(out['x'] + 1, out['y'] - 1, 255, 235, 59)
+    self.matrix.SetPixel(out['x'] + 1, out['y'], 255, 235, 59)
+    self.matrix.SetPixel(out['x'] + 1, out['y'] + 1, 255, 235, 59)
