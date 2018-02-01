@@ -6,26 +6,13 @@ class Scoreboard:
   The data contains runs scored for both teams, and details about the current at-bat,
   including runners on base, balls, strikes, and outs.
   """
-  def __init__(self, team):
+  def __init__(self, game):
     """ Constructs a new Scoreboard and fetches data from MLB.
 
-    team - The team to get today's game for.
+    game - The game to display.
     """
-    self.team = team;
-    self.game_data = self.__game_data(team)
-
-  def __game_data(self, team):
-    now = datetime.datetime.now()
-    day = now.day
-    month = now.month
-    year = now.year
-
-    # TODO: Uncomment once the season starts
-    # For now, let's re-live one of the Cubs' world series wins
-    #
-    # games = mlbgame.games(year, month, day, home=team, away=team)
-    games = mlbgame.games(2016, 11, 1, home=team, away=team)
-    return self.__current_game_data(games[0][0]) if len(games) else False
+    self.game = game;
+    self.game_data = self.__current_game_data(game)
 
   def __current_game_data(self, game):
     game_id = game.game_id
@@ -34,7 +21,11 @@ class Scoreboard:
     game_data = {}
     game_data['away_team'] = overview.away_name_abbrev
     game_data['home_team'] = overview.home_name_abbrev
-    game_data['inning'] = self.__current_inning(game_id)
+    try:
+      game_data['inning'] = self.__current_inning(game_id)
+    except ValueError:
+      print('No game data could be found for %s @ %s' % (game_data['away_team'], game_data['home_team']))
+      return False
     return game_data
 
   def __current_inning(self, game_id):
