@@ -16,8 +16,16 @@ Go into the matrix submodule and edit the `HARDWARE_DESC?` setting in `lib/Makef
 Go back up to the root directory (`mlb-led-scoreboard/`) and run `make` to get the RGBMatrix binaries.
 
 ## Usage
-`python main.py <team name>`
-If team name isn't provided, the Cubs are used.
+`python main.py` You might have to sudo for the matrix to work.
+
+### Flags
+```
+-h, --help            show this help message and exit
+-t TEAM, --team TEAM  Pick a team to display a game for. Example: "Cubs"
+-r, --rotate          Rotate through each game of the day every 15 seconds
+
+```
+If `--team` isn't provided, the first game in the list of games MLB returns is used.
 
 If you want to rotate through the games of the day, supply a `--rotate` or `-r` flag as a second argument. Currently you must also provide a starting team as the first argument, this will change in the future.
 
@@ -34,7 +42,7 @@ This project relies on two libraries:
 [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) is the library used for making everything work with the LED board and is included as a submodule, so when cloning, make sure you add `--recursive`.
 
 ## 2017-2018 Offseason
-Since it's currently the offseason I have the game hardcoded as one of the 2016 Cubs-Indians World Series games. I'll update to be "today's game" when the season starts otherwise this thing is useless. I can't guarantee accurate data until it starts either.
+Since it's currently the offseason I'm hardcoding everything to random games for testing purposes. I'll update to be "today's game" when the season starts otherwise this thing is useless. I can't guarantee accurate data until it starts either.
 
 ## Demo
 Here are some images of it in action!
