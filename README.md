@@ -19,6 +19,12 @@ Go back up to the root directory (`mlb-led-scoreboard/`) and run `make` to get t
 `python main.py <team name>`
 If team name isn't provided, the Cubs are used.
 
+If you want to rotate through the games of the day, supply a `--rotate` or `-r` flag as a second argument. Currently you must also provide a starting team as the first argument, this will change in the future.
+
+The display will go to the next game every 15 seconds.
+
+`python main.py Cardinals --rotate`
+
 ## Example
 `python main.py Cubs`
 
