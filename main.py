@@ -45,13 +45,15 @@ if args.team:
 game = games[game_idx]
 
 # Initialize the matrix and fill it in with a dark blue color
-matrix = RGBMatrix()
+rgb = RGBMatrix()
+matrix = rgb.CreateFrameCanvas()
 matrix.Fill(7, 14, 25)
 
 # Refresh the board every 15 seconds and rotate the games if the command flag is passed
 starttime = time.time()
 while True:
   success = refresh_scoreboard(matrix, game)
+  matrix = rgb.SwapOnVSync(matrix)
   time.sleep(15.0 - ((time.time() - starttime) % 15.0))
   if args.rotate:
     game_idx = bump_counter(game_idx, games, bool(args.rotate))
