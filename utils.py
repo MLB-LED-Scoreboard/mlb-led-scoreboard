@@ -2,11 +2,11 @@ from scoreboard import Scoreboard
 from scoreboard_renderer import ScoreboardRenderer
 import argparse
 
-def refresh_scoreboard(matrix, game):
+def refresh_scoreboard(canvas, game):
   scoreboard = Scoreboard(game)
   if not scoreboard.game_data:
     return False
-  renderer = ScoreboardRenderer(matrix, scoreboard)
+  renderer = ScoreboardRenderer(canvas, scoreboard)
   renderer.render()
   return True
 
@@ -21,5 +21,7 @@ def args():
   parser.add_argument(
       '-t', '--team', help='Pick a team to display a game for. Example: "Cubs"')
   parser.add_argument(
-      '-r', '--rotate', help="Rotate through each game of the day every 15 seconds", action='store_true')
+      '-r', '--rotate', help='Rotate through each game of the day every 15 seconds', action='store_true')
+  parser.add_argument(
+      '-s', '--standings', help='Display standings for the provided division. Example: "NL Central"', metavar="division")
   return parser.parse_args()
