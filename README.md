@@ -25,6 +25,8 @@ cd matrix/bindings/python
 ```
 Then follow the instructions [in that directory](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). The README there will guide you through building the necessary binaries to run the Python samples (stuff like pulsing colors, running text on the screen, etc.)
 
+**You cannot run this program until you have built the RGBMatrix binaries per the instructions in that README.**
+
 A very important note not to forget is setting up the hardware you use. Make sure to edit the Makefile in the `lib/` directory to the right hardware description. I'm using `adafruit-hat` since I built this with an Adafruit HAT.
 
 Then do the following:
@@ -40,18 +42,18 @@ Basically, you're going to go back above the python binding directory, then run 
 Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
 
 ## Usage
-`python main.py` You might have to sudo for the matrix to work.
+`sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
 
 ## Example
 If you want to just display the game for your team that day, just supply that team. If it's a team like Red Sox, encase it in quotes "Red Sox" so the team is picked up as one command line argument.
 
-`python main.py -t Cubs` or `python main.py -t "Red Sox"`
+`sudo python main.py -t Cubs` or `sudo python main.py -t "Red Sox"`
 
 Passing in a `-r` or `--rotate` flag will rotate through each game of the day every 15 seconds. If you passed a team in, it will start with that game, otherwise it will start with the first game in the list that MLB returned.
 
 To display the standings for a division, supply your division's name.
 
-`python main.py -s "NL Central"` Make sure you follow the format of `NL/AL West/Central/East`
+`sudo python main.py -s "NL Central"` Make sure you follow the format of `NL/AL West/Central/East`
 
 See below for more usage options.
 
