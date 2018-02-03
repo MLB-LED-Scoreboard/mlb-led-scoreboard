@@ -36,12 +36,12 @@ class ScoreboardRenderer:
     away_team = self.scoreboard.game_data['away_team']
     away_text_color = self.colors[away_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
     away_text_color_graphic = graphics.Color(away_text_color['r'], away_text_color['g'], away_text_color['b'])
-    away_text = away_team.upper() + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['away_team_runs'])
+    away_text = '{:3s}'.format(away_team.upper()) + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['away_team_runs'])
 
     home_team = self.scoreboard.game_data['home_team']
     home_text_color = self.colors[home_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
     home_text_color_graphic = graphics.Color(home_text_color['r'], home_text_color['g'], home_text_color['b'])
-    home_text = home_team.upper() + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['home_team_runs'])
+    home_text = '{:3s}'.format(home_team.upper()) + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['home_team_runs'])
 
     graphics.DrawText(self.canvas, self.font, 1, 6, away_text_color_graphic, away_text)
     graphics.DrawText(self.canvas, self.font, 1, 13, home_text_color_graphic, home_text)
