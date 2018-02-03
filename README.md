@@ -32,7 +32,7 @@ Then do the following:
 cd .. # you should be in matrix/bindings now
 sudo pip install -e python/
 cd ../../ # you should be in mlb-led-scoreboard/ now
-pip install mlbgame
+sudo pip install mlbgame
 make
 ```
 Basically, you're going to go back above the python binding directory, then run a pip install on that directory to create your own `rgbmatrix` module. Then go back up to the project directory and install `mlbgame`, the API this software uses to get baseball stats.
