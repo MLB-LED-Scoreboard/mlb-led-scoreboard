@@ -20,12 +20,17 @@ I've got a shitty camera for this board so squint if it's not too clear. It look
 ## Installation
 ```
 git clone --recursive https://github.com/ajbowler/mlb-led-scoreboard
+cd matrix/bindings
+sudo pip install -e python/
+cd ../../
 pip install mlbgame
 ```
+Basically, you're going to go into the matrix submodule above the python bindings, then run a pip install on that directory to create your own `rgbmatrix` module. Then go back up to the project directory and install `mlbgame`, the API this software uses to get baseball stats.
+
 Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
 
 ### Build the RGBMatrix binaries
-Go into the matrix submodule and edit the `HARDWARE_DESC?` setting in `lib/Makefile` based on the docs. I used `adafruit-hat` since I'm using an Adafruit HAT.
+Go into the matrix submodule and edit the `HARDWARE_DESC?` setting in `lib/Makefile` based on the docs inside the file. I used `adafruit-hat` since I'm using an Adafruit HAT. This sets the hardware description so the compiled RGBMatrix binaries will be compatible with your hardware.
 
 Go back up to the root directory (`mlb-led-scoreboard/`) and run `make` to get the RGBMatrix binaries.
 
