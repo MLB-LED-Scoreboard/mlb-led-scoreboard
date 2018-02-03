@@ -56,5 +56,5 @@ def render_standings(matrix, canvas, division):
     matrix.SwapOnVSync(canvas)
     time.sleep(5.0 - ((time.time() - starttime) % 5.0))
 
-    canvas.Fill(*ledcolors.standings_fill)
+    canvas.Fill(*ledcolors.standings.fill)
     stat = 'w' if stat == 'l' else 'l'

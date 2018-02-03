@@ -13,8 +13,6 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
 
-I've got a shitty camera for this board so squint if it's not too clear. It looks much better in person ¯\\___(ツ)___/¯
-
 ![standings-wins](img/standings-wins.jpg) ![standings-losses](img/standings-losses.jpg)
 
 ## Installation
