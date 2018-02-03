@@ -1,4 +1,5 @@
 import json
+import ledcolors.scoreboard
 from rgbmatrix import graphics
 
 class ScoreboardRenderer:
@@ -47,7 +48,7 @@ class ScoreboardRenderer:
 
   def __render_pitches(self):
     at_bat = self.scoreboard.game_data['inning']['at_bat']
-    pitches_color = graphics.Color(255, 235, 59)
+    pitches_color = graphics.Color(*ledcolors.scoreboard.text)
     graphics.DrawText(self.canvas, self.font, 1, 23, pitches_color, str(at_bat['balls']) + '-' + str(at_bat['strikes']))
 
   def __render_outs(self):
@@ -60,7 +61,7 @@ class ScoreboardRenderer:
       self.__render_out_circle(out_px[out])
       # Fill in the circle if that out has occurred
       if (outs >= out):
-        self.canvas.SetPixel(out_px[out]['x'], out_px[out]['y'], 255, 235, 59)
+        self.canvas.SetPixel(out_px[out]['x'], out_px[out]['y'], *ledcolors.scoreboard.text)
 
   def __render_bases(self):
     bases = self.scoreboard.game_data['inning']['at_bat']['bases']
@@ -80,7 +81,7 @@ class ScoreboardRenderer:
     inning = self.scoreboard.game_data['inning']
     self.__render_inning_half(inning)
     number = inning['number']
-    number_color = graphics.Color(255, 235, 59)
+    number_color = graphics.Color(*ledcolors.scoreboard.text)
     graphics.DrawText(self.canvas, self.font, 28, 20, number_color, str(number))
 
   def __render_out_circle(self, out):
@@ -90,22 +91,22 @@ class ScoreboardRenderer:
         # The dead center is filled in only if that many outs has occurred, and happens elsewhere
         if x == 0 and y == 0:
           continue
-        self.canvas.SetPixel(out['x'] + x, out['y'] + y, 255, 235, 59)
+        self.canvas.SetPixel(out['x'] + x, out['y'] + y, *ledcolors.scoreboard.text)
 
   def __render_base_outline(self, base):
     # Hollow diamonds are a popular homework problem but IDGAF
-    self.canvas.SetPixel(base['x'] - 3, base['y'], 255, 235, 59)
-    self.canvas.SetPixel(base['x'] - 2, base['y'] - 1, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] - 2, base['y'] + 1, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] - 1, base['y'] - 2, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] - 1, base['y'] + 2, 255, 235, 59)
-    self.canvas.SetPixel(base['x'], base['y'] - 3, 255, 235, 59)
-    self.canvas.SetPixel(base['x'], base['y'] + 3, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] + 1, base['y'] - 2, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] + 1, base['y'] + 2, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] + 2, base['y'] - 1, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] + 2, base['y'] + 1, 255, 235, 59)
-    self.canvas.SetPixel(base['x'] + 3, base['y'], 255, 235, 59)
+    self.canvas.SetPixel(base['x'] - 3, base['y'], *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] - 2, base['y'] - 1, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] - 2, base['y'] + 1, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] - 1, base['y'] - 2, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] - 1, base['y'] + 2, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'], base['y'] - 3, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'], base['y'] + 3, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] + 1, base['y'] - 2, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] + 1, base['y'] + 2, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] + 2, base['y'] - 1, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] + 2, base['y'] + 1, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(base['x'] + 3, base['y'], *ledcolors.scoreboard.text)
 
   def __render_baserunner(self, base):
     offset = 2
@@ -113,16 +114,16 @@ class ScoreboardRenderer:
       for y in range(-offset, offset + 1):
         if abs(x) == offset and abs(y) == offset:
           continue
-        self.canvas.SetPixel(base['x'] + x, base['y'] + y, 255, 235, 59)
+        self.canvas.SetPixel(base['x'] + x, base['y'] + y, *ledcolors.scoreboard.text)
 
   def __render_inning_half(self, inning):
     tri_px = {'x': 24, 'y': 17}
     offset = 2
     for x in range(-offset, offset + 1):
-      self.canvas.SetPixel(tri_px['x'] + x, tri_px['y'], 255, 235, 59)
+      self.canvas.SetPixel(tri_px['x'] + x, tri_px['y'], *ledcolors.scoreboard.text)
 
     offset = 1 if inning['bottom'] else -1
-    self.canvas.SetPixel(tri_px['x'] - 1, tri_px['y'] + offset, 255, 235, 59)
-    self.canvas.SetPixel(tri_px['x'], tri_px['y'] + offset, 255, 235, 59)
-    self.canvas.SetPixel(tri_px['x'] + 1, tri_px['y'] + offset, 255, 235, 59)
-    self.canvas.SetPixel(tri_px['x'], tri_px['y'] + offset + offset, 255, 235, 59)
+    self.canvas.SetPixel(tri_px['x'] - 1, tri_px['y'] + offset, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(tri_px['x'], tri_px['y'] + offset, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(tri_px['x'] + 1, tri_px['y'] + offset, *ledcolors.scoreboard.text)
+    self.canvas.SetPixel(tri_px['x'], tri_px['y'] + offset + offset, *ledcolors.scoreboard.text)

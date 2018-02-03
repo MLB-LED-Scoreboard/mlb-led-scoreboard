@@ -1,5 +1,7 @@
 from utils import refresh_scoreboard, bump_counter
 from rgbmatrix import graphics
+import ledcolors.scoreboard
+import ledcolors.standings
 import time
 
 def render_games(matrix, canvas, games, args):
@@ -15,7 +17,7 @@ def render_games(matrix, canvas, games, args):
 
   # Refresh the board every 15 seconds and rotate the games if the command flag is passed
   starttime = time.time()
-  canvas.Fill(7, 14, 25)
+  canvas.Fill(*ledcolors.scoreboard.fill)
   while True:
     success = refresh_scoreboard(canvas, game)
     canvas = matrix.SwapOnVSync(canvas)
@@ -23,7 +25,7 @@ def render_games(matrix, canvas, games, args):
     if args.rotate:
         game_idx = bump_counter(game_idx, games, bool(args.rotate))
         game = games[game_idx]
-        canvas.Fill(7, 14, 25)
+        canvas.Fill(*ledcolors.scoreboard.fill)
 
     if not success:
         # TODO https://github.com/ajbowler/mlb-led-scoreboard/issues/13
@@ -32,9 +34,9 @@ def render_games(matrix, canvas, games, args):
 def render_standings(matrix, canvas, division):
   font = graphics.Font()
   font.LoadFont('Assets/tom-thumb.bdf')
-  text_color = graphics.Color(171, 181, 170)
+  text_color = graphics.Color(*ledcolors.standings.text)
 
-  canvas.Fill(37, 102, 30)
+  canvas.Fill(*ledcolors.standings.fill)
 
   stat = 'w'
   starttime = time.time()
@@ -46,13 +48,13 @@ def render_standings(matrix, canvas, division):
       graphics.DrawText(canvas, font, 1, offset, text_color, text)
 
       for x in range(0, canvas.width):
-        canvas.SetPixel(x, offset, 13, 25, 11)
+        canvas.SetPixel(x, offset, *ledcolors.standings.divider)
       for y in range(0, canvas.height):
-        canvas.SetPixel(14, y, 13, 35, 11)
+        canvas.SetPixel(14, y, *ledcolors.standings.divider)
       offset += 6
 
     matrix.SwapOnVSync(canvas)
     time.sleep(5.0 - ((time.time() - starttime) % 5.0))
 
-    canvas.Fill(37, 102, 30)
+    canvas.Fill(*ledcolors.standings_fill)
     stat = 'w' if stat == 'l' else 'l'
