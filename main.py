@@ -1,6 +1,6 @@
 from rgbmatrix import RGBMatrix
 from utils import args
-from renderer import render_games, render_standings
+from renderer import render_games, render_standings, render_offday
 import datetime
 import mlbgame
 
@@ -14,7 +14,15 @@ if args.standings:
   division = next(division for division in standings.divisions if division.name == args.standings)
   render_standings(matrix, canvas, division)
 else:
+  now = datetime.datetime.now()
+  year = now.year
+  month = now.month
+  day = now.day
   # TODO: Uncomment once the season starts, testing with random games for now
-  # games = mlbgame.games(year, month, day)[0]
-  games = mlbgame.games(2017, 9, 30)[0]
-  render_games(matrix, canvas, games, args)
+  # Uncomment now if you want to see the offday/offseason message
+  # games = mlbgame.games(year, month, day)
+  games = mlbgame.games(2017, 9, 30)
+  if not len(games):
+    render_offday(matrix, canvas)
+  else:
+    render_games(matrix, canvas, games[0], args)

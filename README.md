@@ -70,3 +70,7 @@ This project relies on two libraries:
 
 ## 2017-2018 Offseason
 Since it's currently the offseason I'm hardcoding everything to random games for testing purposes. I'll update to be "today's game" when the season starts otherwise this thing is useless. I can't guarantee accurate data until it starts either.
+
+See you during the season!
+
+![I hate the offseason](img/offday.jpg)
