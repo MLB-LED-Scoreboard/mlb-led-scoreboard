@@ -1,13 +1,17 @@
-from rgbmatrix import RGBMatrix
-from utils import args
+from rgbmatrix import RGBMatrix, RGBMatrixOptions
+from utils import args, led_matrix_options
 from renderer import render_games, render_standings, render_offday
 import datetime
 import mlbgame
 
-# Initialize the matrix and fill it in with a dark blue color
-matrix = RGBMatrix()
-canvas = matrix.CreateFrameCanvas()
 args = args()
+
+# Check for led configuration arguments
+matrixOptions = led_matrix_options(args)
+
+# Initialize the matrix and fill it in with a dark blue color
+matrix = RGBMatrix(options = matrixOptions)
+canvas = matrix.CreateFrameCanvas()
 
 if args.standings:
   standings = mlbgame.standings(datetime.datetime(2017, 9, 30))
