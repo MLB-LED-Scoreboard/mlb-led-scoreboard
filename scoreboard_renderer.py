@@ -120,7 +120,7 @@ class ScoreboardRenderer:
         self.canvas.SetPixel(base['x'] + x, base['y'] + y, *ledcolors.scoreboard.text)
 
   def __render_inning_half(self, inning):
-    tri_px = {'x': 24, 'y': 15}
+    tri_px = {'x': 24, 'y': 16}
     if inning['number'] > 9:
       tri_px['x'] = 20
     offset = 2
