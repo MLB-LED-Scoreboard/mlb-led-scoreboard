@@ -82,7 +82,10 @@ class ScoreboardRenderer:
     self.__render_inning_half(inning)
     number = inning['number']
     number_color = graphics.Color(*ledcolors.scoreboard.text)
-    graphics.DrawText(self.canvas, self.font, 28, 20, number_color, str(number))
+    pos_x = 28
+    if number > 9:
+      pos_x = 24
+    graphics.DrawText(self.canvas, self.font, pos_x, 20, number_color, str(number))
 
   def __render_out_circle(self, out):
     offset = 1
@@ -117,7 +120,9 @@ class ScoreboardRenderer:
         self.canvas.SetPixel(base['x'] + x, base['y'] + y, *ledcolors.scoreboard.text)
 
   def __render_inning_half(self, inning):
-    tri_px = {'x': 24, 'y': 17}
+    tri_px = {'x': 24, 'y': 15}
+    if inning['number'] > 9:
+      tri_px['x'] = 20
     offset = 2
     for x in range(-offset, offset + 1):
       self.canvas.SetPixel(tri_px['x'] + x, tri_px['y'], *ledcolors.scoreboard.text)
