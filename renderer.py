@@ -1,5 +1,7 @@
-from utils import refresh_scoreboard, bump_counter
 from rgbmatrix import graphics
+from scoreboard import Scoreboard
+from scoreboard_renderer import ScoreboardRenderer
+from utils import bump_counter
 import ledcolors.scoreboard
 import ledcolors.standings
 import time
@@ -19,17 +21,13 @@ def render_games(matrix, canvas, games, args):
   starttime = time.time()
   canvas.Fill(*ledcolors.scoreboard.fill)
   while True:
-    success = refresh_scoreboard(canvas, game)
+    success = __refresh_scoreboard(canvas, game)
     canvas = matrix.SwapOnVSync(canvas)
     time.sleep(15.0 - ((time.time() - starttime) % 15.0))
     if args.rotate:
-        game_idx = bump_counter(game_idx, games, bool(args.rotate))
-        game = games[game_idx]
-        canvas.Fill(*ledcolors.scoreboard.fill)
-
-    if not success:
-        # TODO https://github.com/ajbowler/mlb-led-scoreboard/issues/13
-        continue
+      game_idx = bump_counter(game_idx, games, bool(args.rotate))
+      game = games[game_idx]
+      canvas.Fill(*ledcolors.scoreboard.fill)
 
 def render_standings(matrix, canvas, division):
   font = graphics.Font()
@@ -73,3 +71,11 @@ def render_offday(matrix, canvas):
 
   while True:
     pass # I hate the offseason and off days.
+
+def __refresh_scoreboard(canvas, game):
+  scoreboard = Scoreboard(game)
+  if not scoreboard.game_data:
+    return False
+  renderer = ScoreboardRenderer(canvas, scoreboard)
+  renderer.render()
+  return True

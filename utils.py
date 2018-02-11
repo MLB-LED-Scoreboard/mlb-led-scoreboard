@@ -1,15 +1,5 @@
-from scoreboard import Scoreboard
-from scoreboard_renderer import ScoreboardRenderer
 from rgbmatrix import RGBMatrixOptions
 import argparse
-
-def refresh_scoreboard(canvas, game):
-  scoreboard = Scoreboard(game)
-  if not scoreboard.game_data:
-    return False
-  renderer = ScoreboardRenderer(canvas, scoreboard)
-  renderer.render()
-  return True
 
 def bump_counter(counter, arr, rotate):
   counter += 1
