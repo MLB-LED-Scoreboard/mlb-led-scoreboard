@@ -3,10 +3,23 @@ An LED scoreboard for Major League Baseball. Displays a live scoreboard for your
 
 Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 
+## Table of Contents
+* [Features](#features)
+  * [Live Games](#live-games)
+  * [Division Standings](#division-standings)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Example](#example)
+  * [Flags](#flags)
+* [Sources](#sources)
+* [2017-2018 Offseason](#2017-2018-offseason)
+
 ## Features
 
 ### Live Games
 It can display live games in action, and optionally rotate every 15 seconds through each game of the day.
+
+The board refreshes the list of games every 15 minutes.
 
 ![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg)
 
