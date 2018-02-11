@@ -6,6 +6,8 @@ import ledcolors.scoreboard
 import ledcolors.standings
 import time
 
+FIFTEEN_MINUTES = 900
+
 def render_games(matrix, canvas, games, args):
   # Get the game to start on. If the provided team does not have a game today,
   # or the team name isn't provided, then the first game in the list is used.
@@ -17,15 +19,23 @@ def render_games(matrix, canvas, games, args):
     )
   game = games[game_idx]
 
-  # Refresh the board every 15 seconds and rotate the games if the command flag is passed
-  starttime = time.time()
   canvas.Fill(*ledcolors.scoreboard.fill)
+  starttime = time.time()
   while True:
+    endtime = time.time()
+    delta = endtime - starttime
+    if delta >= FIFTEEN_MINUTES:
+      return
+
     success = __refresh_scoreboard(canvas, game)
     canvas = matrix.SwapOnVSync(canvas)
-    time.sleep(15.0 - ((time.time() - starttime) % 15.0))
+    
+    # Refresh the board every 15 seconds and rotate the games
+    # if the command flag is passed
+    time.sleep(15.0 - ((delta) % 15.0))
+
     if args.rotate:
-      game_idx = bump_counter(game_idx, games, bool(args.rotate))
+      game_idx = bump_counter(game_idx, games)
       game = games[game_idx]
       canvas.Fill(*ledcolors.scoreboard.fill)
 

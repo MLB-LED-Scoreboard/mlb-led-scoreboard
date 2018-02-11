@@ -1,9 +1,9 @@
 from rgbmatrix import RGBMatrixOptions
 import argparse
 
-def bump_counter(counter, arr, rotate):
+def bump_counter(counter, arr):
   counter += 1
-  if counter >= len(arr) and rotate:
+  if counter >= len(arr):
     counter = 0
   return counter
 
