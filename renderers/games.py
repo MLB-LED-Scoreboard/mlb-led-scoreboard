@@ -1,5 +1,7 @@
+from data.pregame import Pregame
 from data.scoreboard import Scoreboard
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
+from renderers.pregame import Pregame as PregameRenderer
 from utils import bump_counter
 import ledcolors.scoreboard
 import time
@@ -40,10 +42,8 @@ def render(matrix, canvas, games, args):
 def __refresh_scoreboard(canvas, game):
   renderer = {}
   if game.game_status == 'PRE_GAME':
-    # pregame = Pregame(game)
-    # renderer = PregameRenderer(canvas, pregame)
-    # TODO
-    pass
+    pregame = Pregame(game)
+    renderer = PregameRenderer(canvas, pregame)
   else:
     scoreboard = Scoreboard(game)
     if not scoreboard.game_data:

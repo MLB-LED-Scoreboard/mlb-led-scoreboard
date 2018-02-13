@@ -11,7 +11,7 @@ class Scoreboard:
 
     game - The game to display.
     """
-    self.game = game;
+    self.game = game
     self.game_data = self.__current_game_data(game)
 
   def __current_game_data(self, game):

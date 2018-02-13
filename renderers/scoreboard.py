@@ -1,6 +1,6 @@
+from rgbmatrix import graphics
 import json
 import ledcolors.scoreboard
-from rgbmatrix import graphics
 
 class Scoreboard:
   def __init__(self, canvas, scoreboard):

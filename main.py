@@ -31,7 +31,7 @@ else:
     # TODO: Uncomment once the season starts, testing with random games for now
     # Uncomment now if you want to see the offday/offseason message
     # games = mlbgame.games(year, month, day)
-    games = mlbgame.games(2017, 9, 30)
+    games = mlbgame.games(2018, 2, 23)
     if not len(games):
       renderers.offday.render(matrix, canvas)
     else:
