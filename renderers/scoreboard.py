@@ -2,7 +2,7 @@ import json
 import ledcolors.scoreboard
 from rgbmatrix import graphics
 
-class ScoreboardRenderer:
+class Scoreboard:
   def __init__(self, canvas, scoreboard):
     self.canvas = canvas
     self.scoreboard = scoreboard
