@@ -6,6 +6,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 ## Table of Contents
 * [Features](#features)
   * [Live Games](#live-games)
+  * [Pregame](#pregame)
   * [Division Standings](#division-standings)
 * [Installation](#installation)
 * [Usage](#usage)
@@ -22,6 +23,11 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 The board refreshes the list of games every 15 minutes.
 
 ![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg)
+
+### Pregame
+If a game hasn't started yet, a pregame screen will be displayed. Soon it will display the probable starting pitchers as well (see https://github.com/ajbowler/mlb-led-scoreboard/issues/26)
+
+![Pregame](img/pregame.jpg)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
