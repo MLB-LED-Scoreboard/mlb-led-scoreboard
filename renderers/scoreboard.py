@@ -1,15 +1,13 @@
 from rgbmatrix import graphics
-import json
+from utils import get_font, get_team_colors
 import ledcolors.scoreboard
 
 class Scoreboard:
   def __init__(self, canvas, scoreboard):
     self.canvas = canvas
     self.scoreboard = scoreboard
-    self.colors = json.load(open('Assets/colors.json'))
-
-    self.font = graphics.Font()
-    self.font.LoadFont('Assets/tom-thumb.bdf')
+    self.colors = get_team_colors()
+    self.font = get_font()
 
   def render(self):
     self.__render_team_colors()

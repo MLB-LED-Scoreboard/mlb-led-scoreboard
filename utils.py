@@ -1,5 +1,19 @@
-from rgbmatrix import RGBMatrixOptions
+from rgbmatrix import RGBMatrixOptions, graphics
 import argparse
+import json
+import os
+
+def get_file(path):
+  dir = os.path.dirname(__file__)
+  return os.path.join(dir, path)
+
+def get_font():
+  font = graphics.Font()
+  font.LoadFont(get_file('Assets/tom-thumb.bdf'))
+  return font
+
+def get_team_colors():
+  return json.load(open(get_file('Assets/colors.json')))
 
 def bump_counter(counter, arr):
   counter += 1

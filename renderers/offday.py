@@ -1,9 +1,9 @@
 from rgbmatrix import graphics
+from utils import get_font
 import ledcolors.scoreboard
 
 def render(matrix, canvas):
-  font = graphics.Font()
-  font.LoadFont('Assets/tom-thumb.bdf')
+  font = get_font()
   text_color = graphics.Color(*ledcolors.scoreboard.text)
 
   canvas.Fill(*ledcolors.scoreboard.fill)

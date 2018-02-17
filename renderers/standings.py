@@ -1,10 +1,10 @@
 from rgbmatrix import graphics
+from utils import get_font
 import ledcolors.standings
 import time
 
 def render(matrix, canvas, division):
-  font = graphics.Font()
-  font.LoadFont('Assets/tom-thumb.bdf')
+  font = get_font()
   text_color = graphics.Color(*ledcolors.standings.text)
 
   canvas.Fill(*ledcolors.standings.fill)
