@@ -31,9 +31,9 @@ Sometimes you don't get baseball though :(
 ![I hate offdays](img/offday.jpg)
 
 ### Pregame
-If a game hasn't started yet, a pregame screen will be displayed. Soon it will display the probable starting pitchers as well (see https://github.com/ajbowler/mlb-led-scoreboard/issues/26)
+If a game hasn't started yet, a pregame screen will be displayed with the probable starting pitchers.
 
-![Pregame](img/pregame.jpg)
+![Pregame](img/pregame.gif)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.

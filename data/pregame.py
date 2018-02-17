@@ -14,4 +14,6 @@ class Pregame:
     game_data['away_team'] = overview.away_name_abbrev
     game_data['home_team'] = overview.home_name_abbrev
     game_data['time'] = self.game.game_start_time
+    game_data['away_pitcher'] = self.game.p_pitcher_away or 'TBD'
+    game_data['home_pitcher'] = self.game.p_pitcher_home or 'TBD'
     return game_data
