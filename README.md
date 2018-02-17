@@ -16,7 +16,6 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
   * [Flags](#flags)
 * [Sources](#sources)
 * [Help and Contributing](#help-and-contributing)
-* [2017-2018 Offseason](#2017-2018-offseason)
 
 ## Features
 
