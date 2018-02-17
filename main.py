@@ -15,23 +15,18 @@ matrixOptions = led_matrix_options(args)
 matrix = RGBMatrix(options = matrixOptions)
 canvas = matrix.CreateFrameCanvas()
 
+now = datetime.datetime.now()
+year = now.year
+month = now.month
+day = now.day
+
 if args.standings:
-  # TODO: Uncomment once the season starts, testing with random days for now
-  # standings = mlbgame.standings(datetime.datetime(year, month, day))
-  standings = mlbgame.standings(datetime.datetime(2017, 9, 30))
+  standings = mlbgame.standings(datetime.datetime(year, month, day))
   division = next(division for division in standings.divisions if division.name == args.standings)
   renderers.standings.render(matrix, canvas, division)
 else:
-  now = datetime.datetime.now()
-  year = now.year
-  month = now.month
-  day = now.day
-
   while True:
-    # TODO: Uncomment once the season starts, testing with random games for now
-    # Uncomment now if you want to see the offday/offseason message
-    # games = mlbgame.games(year, month, day)
-    games = mlbgame.games(2018, 2, 23)
+    games = mlbgame.games(year, month, day)
     if not len(games):
       renderers.offday.render(matrix, canvas)
     else:

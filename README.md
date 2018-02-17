@@ -27,6 +27,10 @@ The board refreshes the list of games every 15 minutes.
 
 ![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg)
 
+Sometimes you don't get baseball though :(
+
+![I hate offdays](img/offday.jpg)
+
 ### Pregame
 If a game hasn't started yet, a pregame screen will be displayed. Soon it will display the probable starting pitchers as well (see https://github.com/ajbowler/mlb-led-scoreboard/issues/26)
 
@@ -113,10 +117,3 @@ This project relies on two libraries:
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
 If you just want to talk, join the Slack channel, see the badge at the top of the README
-
-## 2017-2018 Offseason
-Since it's currently the offseason I'm hardcoding everything to random games for testing purposes. I'll update to be "today's game" when the season starts otherwise this thing is useless. I can't guarantee accurate data until it starts either.
-
-See you during the season!
-
-![I hate the offseason](img/offday.jpg)
