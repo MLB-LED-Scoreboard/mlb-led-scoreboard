@@ -3,12 +3,37 @@ An LED scoreboard for Major League Baseball. Displays a live scoreboard for your
 
 Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 
+[![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
+
+## Table of Contents
+* [Features](#features)
+  * [Live Games](#live-games)
+  * [Pregame](#pregame)
+  * [Division Standings](#division-standings)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Example](#example)
+  * [Flags](#flags)
+* [Sources](#sources)
+* [Help and Contributing](#help-and-contributing)
+
 ## Features
 
 ### Live Games
 It can display live games in action, and optionally rotate every 15 seconds through each game of the day.
 
+The board refreshes the list of games every 15 minutes.
+
 ![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg)
+
+Sometimes you don't get baseball though :(
+
+![I hate offdays](img/offday.jpg)
+
+### Pregame
+If a game hasn't started yet, a pregame screen will be displayed. Soon it will display the probable starting pitchers as well (see https://github.com/ajbowler/mlb-led-scoreboard/issues/26)
+
+![Pregame](img/pregame.jpg)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
@@ -87,9 +112,7 @@ This project relies on two libraries:
 [MLBGame](https://github.com/panzarino/mlbgame) is the Python library used for retrieving live game data.
 [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) is the library used for making everything work with the LED board and is included as a submodule, so when cloning, make sure you add `--recursive`.
 
-## 2017-2018 Offseason
-Since it's currently the offseason I'm hardcoding everything to random games for testing purposes. I'll update to be "today's game" when the season starts otherwise this thing is useless. I can't guarantee accurate data until it starts either.
+## Help and Contributing
+If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
-See you during the season!
-
-![I hate the offseason](img/offday.jpg)
+If you just want to talk, join the Slack channel, see the badge at the top of the README

@@ -1,19 +1,23 @@
-from scoreboard import Scoreboard
-from scoreboard_renderer import ScoreboardRenderer
-from rgbmatrix import RGBMatrixOptions
+from rgbmatrix import RGBMatrixOptions, graphics
 import argparse
+import json
+import os
 
-def refresh_scoreboard(canvas, game):
-  scoreboard = Scoreboard(game)
-  if not scoreboard.game_data:
-    return False
-  renderer = ScoreboardRenderer(canvas, scoreboard)
-  renderer.render()
-  return True
+def get_file(path):
+  dir = os.path.dirname(__file__)
+  return os.path.join(dir, path)
 
-def bump_counter(counter, arr, rotate):
+def get_font():
+  font = graphics.Font()
+  font.LoadFont(get_file('Assets/tom-thumb.bdf'))
+  return font
+
+def get_team_colors():
+  return json.load(open(get_file('Assets/colors.json')))
+
+def bump_counter(counter, arr):
   counter += 1
-  if counter >= len(arr) and rotate:
+  if counter >= len(arr):
     counter = 0
   return counter
 
