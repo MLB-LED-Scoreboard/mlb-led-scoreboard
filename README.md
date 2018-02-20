@@ -12,7 +12,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
   * [Division Standings](#division-standings)
 * [Installation](#installation)
 * [Usage](#usage)
-* [Example](#example)
+  * [Configuration](#configuration)
   * [Flags](#flags)
 * [Sources](#sources)
 * [Help and Contributing](#help-and-contributing)
@@ -67,26 +67,18 @@ Install anything else your Pi yells at you for. I needed `python-dev` and a few 
 ## Usage
 `sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
 
-## Example
-If you want to just display the game for your team that day, just supply that team. If it's a team like Red Sox, encase it in quotes "Red Sox" so the team is picked up as one command line argument.
+### Configuration
 
-`sudo python main.py -t Cubs` or `sudo python main.py -t "Red Sox"`
+A default `config.json.example` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
-Passing in a `-r` or `--rotate` flag will rotate through each game of the day every 15 seconds. If you passed a team in, it will start with that game, otherwise it will start with the first game in the list that MLB returned.
-
-To display the standings for a division, supply your division's name.
-
-`sudo python main.py -s "NL Central"` Make sure you follow the format of `NL/AL West/Central/East`
-
-See below for more usage options.
+```
+"preferred_team"          String  Pick a team to display a game for. Example: "Cubs"
+"preferred_division"      String  Pick a division to display standings for when display_standings is true. Example: "NL Central"
+"display_standings"       Bool    Display standings for the provided preferred_division.
+"rotate_games"            Bool    Rotate through each game of the day every 15 seconds.
+```
 
 ### Flags
-```
--h, --help                Show this help message and exit
--t TEAM, --team TEAM      Pick a team to display a game for. Example: "Cubs"
--r, --rotate              Rotate through each game of the day every 15 seconds
--s, --standings DIVISION  Display standings for the provided division. Example: "NL Central"
-```
 
 You can configure your LED matrix with the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. More information on these arguments can be found in the library documentation.
 ```
