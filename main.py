@@ -1,6 +1,7 @@
 from renderers.games import GameRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
+from data.scoreboard_config import ScoreboardConfig
 import renderers.standings
 import renderers.offday
 import datetime
@@ -16,6 +17,9 @@ matrixOptions = led_matrix_options(args)
 matrix = RGBMatrix(options = matrixOptions)
 canvas = matrix.CreateFrameCanvas()
 
+# Read scoreboard options from config.json if it exists
+config = ScoreboardConfig("config.json")
+
 # Render the current standings or today's games depending on
 # the provided arguments
 now = datetime.datetime.now()
@@ -23,9 +27,9 @@ year = now.year
 month = now.month
 day = now.day
 
-if args.standings:
+if config.display_standings:
   standings = mlbgame.standings(datetime.datetime(year, month, day))
-  division = next(division for division in standings.divisions if division.name == args.standings)
+  division = next(division for division in standings.divisions if division.name == config.preferred_division)
   renderers.standings.render(matrix, canvas, division)
 else:
   while True:
@@ -35,4 +39,4 @@ else:
     else:
       # The mlbgame API returns a 2D array with the list of games as the first index,
       # hence the 'games[0]'
-      GameRenderer(matrix, canvas, games[0], args).render()
+      GameRenderer(matrix, canvas, games[0], config).render()

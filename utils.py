@@ -23,13 +23,7 @@ def bump_counter(counter, arr):
 
 def args():
   parser = argparse.ArgumentParser()
-  parser.add_argument(
-      '-t', '--team', help='Pick a team to display a game for. Example: "Cubs"')
-  parser.add_argument(
-      '-r', '--rotate', help='Rotate through each game of the day every 15 seconds', action='store_true')
-  parser.add_argument(
-      '-s', '--standings', help='Display standings for the provided division. Example: "NL Central"', metavar="division")
-  
+    
   # Options for the rpi-rgb-led-matrix library
   parser.add_argument("--led-rows", action="store", help="Display rows. 16 for 16x32, 32 for 32x32. (Default: 32)", default=32, type=int)
   parser.add_argument("--led-cols", action="store", help="Panel columns. Typically 32 or 64. (Default: 32)", default=32, type=int)
