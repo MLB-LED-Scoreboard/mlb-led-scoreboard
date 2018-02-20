@@ -1,20 +1,23 @@
+from renderers.games import GameRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
-import renderers.games
 import renderers.standings
 import renderers.offday
 import datetime
 import mlbgame
 
+# Get supplied command line arguments
 args = args()
 
 # Check for led configuration arguments
 matrixOptions = led_matrix_options(args)
 
-# Initialize the matrix and fill it in with a dark blue color
+# Initialize the matrix
 matrix = RGBMatrix(options = matrixOptions)
 canvas = matrix.CreateFrameCanvas()
 
+# Render the current standings or today's games depending on
+# the provided arguments
 now = datetime.datetime.now()
 year = now.year
 month = now.month
@@ -30,4 +33,6 @@ else:
     if not len(games):
       renderers.offday.render(matrix, canvas)
     else:
-      renderers.games.render(matrix, canvas, games[0], args)
+      # The mlbgame API returns a 2D array with the list of games as the first index,
+      # hence the 'games[0]'
+      GameRenderer(matrix, canvas, games[0], args).render()
