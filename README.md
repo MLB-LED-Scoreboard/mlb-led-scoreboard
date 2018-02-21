@@ -13,6 +13,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 * [Installation](#installation)
 * [Usage](#usage)
 * [Example](#example)
+  * [Configuration](#configuration)
   * [Flags](#flags)
 * [Sources](#sources)
 * [Help and Contributing](#help-and-contributing)
@@ -80,13 +81,18 @@ To display the standings for a division, supply your division's name.
 
 See below for more usage options.
 
+### Configuration
+
+A default `config.json.example` file is included for reference. Copy this file to `config.json` and modify the values as needed.
+
+```
+"preferred_team"          String  Pick a team to display a game for. Example: "Cubs"
+"preferred_division"      String  Pick a division to display standings for when display_standings is true. Example: "NL Central"
+"display_standings"       Bool    Display standings for the provided preferred_division.
+"rotate_games"            Bool    Rotate through each game of the day every 15 seconds.
+```
+
 ### Flags
-```
--h, --help                Show this help message and exit
--t TEAM, --team TEAM      Pick a team to display a game for. Example: "Cubs"
--r, --rotate              Rotate through each game of the day every 15 seconds
--s, --standings DIVISION  Display standings for the provided division. Example: "NL Central"
-```
 
 You can configure your LED matrix with the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. More information on these arguments can be found in the library documentation.
 ```
