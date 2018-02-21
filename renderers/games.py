@@ -31,13 +31,13 @@ class GameRenderer:
     creation_time              - The time at which this GameRender was created.
   """
 
-  def __init__(self, matrix, canvas, games, args):
+  def __init__(self, matrix, canvas, games, config):
     """Initializes a GameRender
     """
     self.matrix = matrix
     self.canvas = canvas
     self.games = games
-    self.args = args
+    self.config = config
     self.current_scrolling_text_pos = self.canvas.width
     self.creation_time = time.time()
 
@@ -64,7 +64,7 @@ class GameRenderer:
 
       # TODO: https://github.com/ajbowler/mlb-led-scoreboard/issues/30
       # The time_delta comparison will need to change depending on scrolling text size
-      if self.args.rotate and time_delta >= FIFTEEN_SECONDS:
+      if self.config.rotate_games and time_delta >= FIFTEEN_SECONDS:
         starttime = time.time()
         self.current_scrolling_text_pos = self.canvas.width
         current_game_index = bump_counter(current_game_index, self.games)
@@ -76,10 +76,10 @@ class GameRenderer:
     picked if it exists, otherwise the first game in the list is used.
     """
     game_idx = 0
-    if self.args.team:
+    if self.config.preferred_team:
       game_idx = next(
           (i for i, game in enumerate(self.games) if game.away_team ==
-           self.args.team or game.home_team == self.args.team), 0
+           self.config.preferred_team or game.home_team == self.config.preferred_team), 0
       )
     return game_idx
 
