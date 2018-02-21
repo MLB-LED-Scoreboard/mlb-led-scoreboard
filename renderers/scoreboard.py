@@ -17,13 +17,16 @@ class Scoreboard:
     self.__render_bases()
     self.__render_inning()
 
+  def __team_color_data(self, team_name):
+    return self.colors.get(team_name.lower(), self.colors['default'])
+
   def __render_team_colors(self):
-    away_team_color_data = self.colors[self.scoreboard.game_data['away_team'].lower()]
+    away_team_color_data = self.__team_color_data(self.scoreboard.game_data['away_team'])
     away_team_color = away_team_color_data['home']
 
-    home_team_color_data = self.colors[self.scoreboard.game_data['home_team'].lower()]
+    home_team_color_data = self.__team_color_data(self.scoreboard.game_data['home_team'])
     home_team_color = home_team_color_data['home']
-
+    
     scores_height = 14
     for x in range(self.canvas.width):
       for y in range(scores_height):
@@ -32,12 +35,14 @@ class Scoreboard:
 
   def __render_team_text(self):
     away_team = self.scoreboard.game_data['away_team']
-    away_text_color = self.colors[away_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
+    away_team_color_data = self.__team_color_data(away_team)
+    away_text_color = away_team_color_data.get('text', self.colors['default']['text'])
     away_text_color_graphic = graphics.Color(away_text_color['r'], away_text_color['g'], away_text_color['b'])
     away_text = '{:3s}'.format(away_team.upper()) + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['away_team_runs'])
 
     home_team = self.scoreboard.game_data['home_team']
-    home_text_color = self.colors[home_team.lower()].get('text', {'r': 255, 'g': 255, 'b': 255})
+    home_team_color_data = self.__team_color_data(home_team)
+    home_text_color = home_team_color_data.get('text', self.colors['default']['text'])
     home_text_color_graphic = graphics.Color(home_text_color['r'], home_text_color['g'], home_text_color['b'])
     home_text = '{:3s}'.format(home_team.upper()) + ' ' + str(self.scoreboard.game_data['inning']['at_bat']['home_team_runs'])
 
