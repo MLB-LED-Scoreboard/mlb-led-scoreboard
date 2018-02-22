@@ -29,4 +29,6 @@ class Pregame:
 
   def __render_probable_starters(self):
     pitchers_text = self.game.game_data['away_pitcher'] + ' vs ' + self.game.game_data['home_pitcher']
+    if 'error' in self.game.game_data:
+      pitchers_text += '  ' + self.game.game_data['error']
     return graphics.DrawText(self.canvas, self.font, self.probable_starter_pos, 25, self.text_color, pitchers_text)
