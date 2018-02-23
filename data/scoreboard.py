@@ -22,39 +22,46 @@ class Scoreboard:
     game_data['away_team'] = overview.away_name_abbrev
     game_data['home_team'] = overview.home_name_abbrev
     try:
-      game_data['inning'] = self.__current_inning(game_id)
+      game_data['inning'] = self.__current_inning(game_overview)
     except ValueError:
       print('No game data could be found for %s @ %s' % (game_data['away_team'], game_data['home_team']))
       return False
     return game_data
 
-  def __current_inning(self, game_id):
+  def __current_inning(self, game_overview):
     innings = mlbgame.game_events(game_id)
 
     inning_status = {}
-    inning_status['number'] = len(innings)
+    inning_status['number'] = game_overview.inning
 
-    current_inning = innings[-1]
-    is_bottom = bool(len(current_inning.bottom))
-    at_bats = current_inning.bottom if is_bottom else current_inning.top
-
-    inning_status['bottom'] = is_bottom
-    inning_status['at_bat'] = self.__current_at_bat(at_bats[-1])
+    # TODO: Check inning_state during a live game
+    inning_status['bottom'] = game_overview.top_inning == 'N'
+    inning_status['at_bat'] = self.__current_at_bat(game_overview)
     return inning_status
 
-  def __current_at_bat(self, current_at_bat):
+  def __current_at_bat(self, game_overview):
     at_bat = {}
-    at_bat['away_team_runs'] = current_at_bat.away_team_runs
-    at_bat['home_team_runs'] = current_at_bat.home_team_runs
-    at_bat['outs'] = current_at_bat.o
-    at_bat['balls'] = current_at_bat.b
-    at_bat['strikes'] = current_at_bat.s
-    at_bat['bases'] = self.__runners_on_base(current_at_bat)
+    at_bat['away_team_runs'] = game_overview.away_team_runs
+    at_bat['home_team_runs'] = game_overview.home_team_runs
+    at_bat['outs'] = game_overview.outs
+    at_bat['balls'] = game_overview.balls
+    at_bat['strikes'] = game_overview.strikes
+    at_bat['bases'] = self.__runners_on_base(game_overview)
     return at_bat
 
   def __runners_on_base(self, at_bat):
+    if game_overview.runners_on_base_status == 0:
+      return [False,False,False]
+
     runners = []
-    runners.append(bool(at_bat.b1))
-    runners.append(bool(at_bat.b2))
-    runners.append(bool(at_bat.b3))
+    runners.append(self.__runner_on_base(game_overview, '1b'))
+    runners.append(self.__runner_on_base(game_overview, '2b'))
+    runners.append(self.__runner_on_base(game_overview, '3b'))
     return runners
+
+  def __runner_on_base(self, game_overview, base):
+    try:
+      getattr(game_overview, 'runner_on_' + base)
+      return True
+    except AttributeError:
+      return False
