@@ -60,8 +60,9 @@ class GameRenderer:
         return
       time_delta = endtime - starttime
 
-      self.__refresh_game(game)
-      refresh_rate = PREGAME_RATE if game.game_status == PRE_GAME else SCOREBOARD_RATE
+      overview = mlbgame.overview(game.game_id)
+      self.__refresh_game(game, overview.status)
+      refresh_rate = PREGAME_RATE if overview.status == PRE_GAME else SCOREBOARD_RATE
       time.sleep(refresh_rate - ((time_delta) % refresh_rate))
       self.canvas.Fill(*ledcolors.scoreboard.fill)
 
@@ -86,10 +87,9 @@ class GameRenderer:
       )
     return game_idx
 
-  def __refresh_game(self, game):
+  def __refresh_game(self, game, game_status):
     """Draws the provided game on the canvas."""
-    game_overview = mlbgame.overview(game.game_id)
-    if game_overview.status == PRE_GAME:
+    if game_status == PRE_GAME:
       pregame = Pregame(game)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
