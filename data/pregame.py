@@ -1,9 +1,11 @@
 import mlbgame
+import debug
 
 class Pregame:
   def __init__(self, game):
     self.game = game
     self.game_data = self.__pregame_data()
+    debug.log(self)
   
   def __pregame_data(self):
     # The overview API is used to get the teams' abbreviations
@@ -25,3 +27,14 @@ class Pregame:
     game_data['home_pitcher'] = self.game.p_pitcher_home or 'TBD'
 
     return game_data
+
+  def __str__(self):
+    s =  "<%s %s> " % (self.__class__.__name__, hex(id(self)))
+    s += "%s @ %s, (%s), %s vs %s" % (
+      self.game_data['away_team'], self.game_data['home_team'], self.game_data['time'], 
+      self.game_data['away_pitcher'], self.game_data['home_pitcher'])
+
+    if 'error' in self.game_data:
+      s += ", Error: %s" % (self.game_data['error'])
+
+    return s
