@@ -42,6 +42,7 @@ class GameRenderer:
     self.games = games
     self.config = config
     self.current_scrolling_text_pos = self.canvas.width
+    self.current_scrolling_finished_once = False
     self.creation_time = time.time()
 
   def render(self):
@@ -67,9 +68,10 @@ class GameRenderer:
 
       # TODO: https://github.com/ajbowler/mlb-led-scoreboard/issues/30
       # The time_delta comparison will need to change depending on scrolling text size
-      if self.config.rotate_games and time_delta >= FIFTEEN_SECONDS:
+      if self.config.rotate_games and time_delta >= FIFTEEN_SECONDS and self.current_scrolling_finished_once:
         starttime = time.time()
         self.current_scrolling_text_pos = self.canvas.width
+        self.current_scrolling_finished_once = False
         current_game_index = bump_counter(current_game_index, self.games)
         game = self.games[current_game_index]
 
@@ -106,6 +108,7 @@ class GameRenderer:
     """Updates the position of the probable starting pitcher text."""
     pos_after_scroll = self.current_scrolling_text_pos - 1
     if pos_after_scroll + new_pos < 0:
+      self.current_scrolling_finished_once = True
       self.current_scrolling_text_pos = self.canvas.width
     else:
       self.current_scrolling_text_pos = pos_after_scroll
