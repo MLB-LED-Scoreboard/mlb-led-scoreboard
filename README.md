@@ -15,6 +15,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
   * [Configuration](#configuration)
   * [Flags](#flags)
 * [Sources](#sources)
+  * [Accuracy Disclaimer](#accuracy-disclaimer)
 * [Help and Contributing](#help-and-contributing)
 
 ## Features
@@ -104,6 +105,9 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 This project relies on two libraries:
 [MLBGame](https://github.com/panzarino/mlbgame) is the Python library used for retrieving live game data.
 [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) is the library used for making everything work with the LED board and is included as a submodule, so when cloning, make sure you add `--recursive`.
+
+### Accuracy Disclaimer
+The scoreboard is dependent on MLB having their data correct and up to date. If you see any weird data such as wrong pitches or scores or whatever else, MLB is drunk.
 
 ## Help and Contributing
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
