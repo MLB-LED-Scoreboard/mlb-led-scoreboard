@@ -63,7 +63,7 @@ class Scoreboard:
     for out in range(len(out_px)):
       self.__render_out_circle(out_px[out])
       # Fill in the circle if that out has occurred
-      if (outs >= out):
+      if (outs > out):
         self.canvas.SetPixel(out_px[out]['x'], out_px[out]['y'], *ledcolors.scoreboard.text)
 
   def __render_bases(self):
