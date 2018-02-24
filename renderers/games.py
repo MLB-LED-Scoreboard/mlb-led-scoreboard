@@ -1,7 +1,7 @@
 from data.pregame import Pregame
 from data.scoreboard import Scoreboard
-from renderers.scoreboard import Scoreboard as ScoreboardRenderer
-from renderers.pregame import Pregame as PregameRenderer
+from renderers.scoreboard import ScoreboardRenderer
+from renderers.pregame import PregameRenderer
 from utils import bump_counter
 import mlbgame
 import ledcolors.scoreboard

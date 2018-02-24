@@ -2,7 +2,7 @@ from rgbmatrix import graphics
 from utils import get_font
 import ledcolors.scoreboard
 
-class Pregame:
+class PregameRenderer:
   def __init__(self, canvas, game, probable_starter_pos):
     self.canvas = canvas
     self.game = game
