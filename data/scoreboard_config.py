@@ -9,6 +9,7 @@ class ScoreboardConfig:
     self.preferred_division = json.get("preferred_division", "NL Central")
     self.rotate_games = json.get("rotate_games", False)
     self.display_standings = json.get("display_standings", False)
+    self.debug_enabled = json.get("debug_enabled", False)
 
   def read_json(self, filename):
     j = {}
