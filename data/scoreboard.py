@@ -22,20 +22,19 @@ class Scoreboard:
     game_data['away_team'] = overview.away_name_abbrev
     game_data['home_team'] = overview.home_name_abbrev
     try:
-      game_data['inning'] = self.__current_inning(game_overview)
+      game_data['inning'] = self.__current_inning(overview)
     except ValueError:
       print('No game data could be found for %s @ %s' % (game_data['away_team'], game_data['home_team']))
       return False
     return game_data
 
   def __current_inning(self, game_overview):
-    innings = mlbgame.game_events(game_id)
-
     inning_status = {}
     inning_status['number'] = game_overview.inning
 
-    # TODO: Check inning_state during a live game
-    inning_status['bottom'] = game_overview.top_inning == 'N'
+    # TODO: inning_state returns 'Bottom', 'Top', 'End', 'Middle'
+    inning_status['bottom'] = game_overview.inning_state == 'Bottom'
+    inning_status['status'] = game_overview.inning_state
     inning_status['at_bat'] = self.__current_at_bat(game_overview)
     return inning_status
 
@@ -49,8 +48,8 @@ class Scoreboard:
     at_bat['bases'] = self.__runners_on_base(game_overview)
     return at_bat
 
-  def __runners_on_base(self, at_bat):
-    if game_overview.runners_on_base_status == 0:
+  def __runners_on_base(self, game_overview):
+    if game_overview.runner_on_base_status == 0:
       return [False,False,False]
 
     runners = []
