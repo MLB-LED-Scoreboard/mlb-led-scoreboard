@@ -58,3 +58,17 @@ class Scoreboard:
     runners.append(bool(at_bat.b2))
     runners.append(bool(at_bat.b3))
     return runners
+
+  def __str__(self):
+    s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))
+    s += "%s (%s) @ %s (%s), Inning: %s %s (Bot: %s), B:%s S:%s O:%s, Bases: %s" % (
+      self.game_data['away_team'], str(self.game_data['inning']['at_bat']['away_team_runs']),
+      self.game_data['home_team'], str(self.game_data['inning']['at_bat']['home_team_runs']),
+      self.game_data['inning']['status'] or "Unknown", 
+      str(self.game_data['inning']['number']), 
+      str(self.game_data['inning']['bottom']),
+      str(self.game_data['inning']['at_bat']['balls']),
+      str(self.game_data['inning']['at_bat']['strikes']),
+      str(self.game_data['inning']['at_bat']['outs']),
+      str(self.game_data['inning']['at_bat']['bases']))
+    return s

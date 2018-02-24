@@ -2,5 +2,6 @@
 	"preferred_team": "Cubs",
 	"preferred_division": "NL Central",
 	"display_standings": false,
-	"rotate_games": false
+	"rotate_games": false,
+	"debug_enabled": false
 }

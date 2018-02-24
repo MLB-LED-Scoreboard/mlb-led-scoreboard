@@ -6,6 +6,7 @@ import renderers.standings
 import renderers.offday
 import datetime
 import mlbgame
+import debug
 
 # Get supplied command line arguments
 args = args()
@@ -19,6 +20,7 @@ canvas = matrix.CreateFrameCanvas()
 
 # Read scoreboard options from config.json if it exists
 config = ScoreboardConfig("config.json")
+debug.set_debug_status(config)
 
 # Render the current standings or today's games depending on
 # the provided arguments
