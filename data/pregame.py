@@ -1,9 +1,11 @@
 import mlbgame
+import debug
 
 class Pregame:
   def __init__(self, game):
     self.game = game
     self.game_data = self.__pregame_data()
+    debug.log(self)
   
   def __pregame_data(self):
     # The overview API is used to get the teams' abbreviations
