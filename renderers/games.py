@@ -3,6 +3,7 @@ from data.scoreboard import Scoreboard
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from utils import bump_counter
+import mlbgame
 import ledcolors.scoreboard
 import math
 import time
@@ -16,7 +17,9 @@ PREGAME_RATE = 0.2
 SCOREBOARD_RATE = FIFTEEN_SECONDS
 
 # Game statuses
-PRE_GAME = 'PRE_GAME'
+PRE_GAME = 'Scheduled'
+IN_PROGRESS = 'In Progress'
+FINAL = 'Final'
 
 class GameRenderer:
   """An object that loops through and renders a list of games.
@@ -85,7 +88,8 @@ class GameRenderer:
 
   def __refresh_game(self, game):
     """Draws the provided game on the canvas."""
-    if game.game_status == PRE_GAME:
+    game_overview = mlbgame.overview(game.game_id)
+    if game_overview.status == PRE_GAME:
       pregame = Pregame(game)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
