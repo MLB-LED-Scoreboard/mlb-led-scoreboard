@@ -2,39 +2,25 @@ import mlbgame
 import debug
 
 class Pregame:
-  def __init__(self, game):
-    self.game = game
-    self.game_data = self.__pregame_data()
-    debug.log(self)
-  
-  def __pregame_data(self):
-    # The overview API is used to get the teams' abbreviations
-    # as opposed to the full names
-    game_data = {}
+  def __init__(self, overview):
+    self.home_team = overview.home_name_abbrev
+    self.away_team = overview.away_name_abbrev
+    self.start_time = overview.time + overview.ampm
 
     try:
-      overview = mlbgame.overview(self.game.game_id)
-      game_data['away_team'] = overview.away_name_abbrev
-      game_data['home_team'] = overview.home_name_abbrev
-    except ValueError:
-      # We can't find the overview page. Let's just abbreviate the teams manually
-      game_data['away_team'] = self.game.away_team[:3]
-      game_data['home_team'] = self.game.home_team[:3]
-      game_data['error'] = "Game Data Not Found"
+      self.away_starter = overview.away_probable_pitcher_last_name or 'TBD'
+    except:
+      self.away_starter = 'TBD'
 
-    game_data['time'] = self.game.game_start_time
-    game_data['away_pitcher'] = self.game.p_pitcher_away or 'TBD'
-    game_data['home_pitcher'] = self.game.p_pitcher_home or 'TBD'
-
-    return game_data
+    try:
+      self.home_starter = overview.home_probable_pitcher_last_name or 'TBD'
+    except:
+      self.home_starter = 'TBD'
+    debug.log(self)
 
   def __str__(self):
     s =  "<%s %s> " % (self.__class__.__name__, hex(id(self)))
     s += "%s @ %s, (%s), %s vs %s" % (
-      self.game_data['away_team'], self.game_data['home_team'], self.game_data['time'], 
-      self.game_data['away_pitcher'], self.game_data['home_pitcher'])
-
-    if 'error' in self.game_data:
-      s += ", Error: %s" % (self.game_data['error'])
-
+      self.away_team, self.home_team, self.start_time,
+      self.away_starter, self.home_starter)
     return s
