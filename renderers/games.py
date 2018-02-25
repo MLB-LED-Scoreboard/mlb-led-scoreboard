@@ -3,6 +3,7 @@ from data.scoreboard import Scoreboard
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from utils import bump_counter
+import debug
 import mlbgame
 import ledcolors.scoreboard
 import math
@@ -45,6 +46,7 @@ class GameRenderer:
     self.config = config
     self.current_scrolling_text_pos = self.canvas.width
     self.creation_time = time.time()
+    debug.log(self)
 
   def render(self):
     """Renders a game or games depending on the configuration.
@@ -61,7 +63,6 @@ class GameRenderer:
       self.__refresh_game(overview)
 
       refresh_rate = PREGAME_RATE if (overview.status == PRE_GAME or overview.status == SCHEDULED) else SCOREBOARD_RATE
-      self.canvas.Fill(*ledcolors.scoreboard.fill)
 
       time.sleep(refresh_rate)
 
@@ -69,6 +70,8 @@ class GameRenderer:
       if endtime - self.creation_time >= FIFTEEN_MINUTES:
         return
       time_delta = endtime - starttime
+
+      self.canvas.Fill(*ledcolors.scoreboard.fill)
 
       # TODO: https://github.com/ajbowler/mlb-led-scoreboard/issues/30
       # The time_delta comparison will need to change depending on scrolling text size
@@ -93,7 +96,7 @@ class GameRenderer:
 
   def __refresh_game(self, overview):
     """Draws the provided game on the canvas."""
-    if overview.status == PRE_GAME:
+    if overview.status == PRE_GAME or overview.status == SCHEDULED:
       pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
@@ -109,3 +112,8 @@ class GameRenderer:
       self.current_scrolling_text_pos = self.canvas.width
     else:
       self.current_scrolling_text_pos = pos_after_scroll
+
+  def __str__(self):
+    s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))
+    s += "%s %s" % (self.current_scrolling_text_pos, time.strftime("%H:%M", time.localtime(self.creation_time)))
+    return s
