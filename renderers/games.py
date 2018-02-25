@@ -17,9 +17,11 @@ PREGAME_RATE = 0.2
 SCOREBOARD_RATE = FIFTEEN_SECONDS
 
 # Game statuses
-PRE_GAME = 'Scheduled'
+SCHEDULED = 'Scheduled'
+PRE_GAME = 'Pre-Game'
 IN_PROGRESS = 'In Progress'
 FINAL = 'Final'
+GAME_OVER = 'Game Over' # Not sure what the difference is between this and final but it exists
 
 class GameRenderer:
   """An object that loops through and renders a list of games.
@@ -55,16 +57,18 @@ class GameRenderer:
     starttime = time.time()
 
     while True:
+      overview = mlbgame.overview(game.game_id)
+      self.__refresh_game(overview)
+
+      refresh_rate = PREGAME_RATE if (overview.status == PRE_GAME or overview.status == SCHEDULED) else SCOREBOARD_RATE
+      self.canvas.Fill(*ledcolors.scoreboard.fill)
+
+      time.sleep(refresh_rate)
+
       endtime = time.time()
       if endtime - self.creation_time >= FIFTEEN_MINUTES:
         return
       time_delta = endtime - starttime
-
-      overview = mlbgame.overview(game.game_id)
-      self.__refresh_game(game, overview.status)
-      refresh_rate = PREGAME_RATE if overview.status == PRE_GAME else SCOREBOARD_RATE
-      time.sleep(refresh_rate - ((time_delta) % refresh_rate))
-      self.canvas.Fill(*ledcolors.scoreboard.fill)
 
       # TODO: https://github.com/ajbowler/mlb-led-scoreboard/issues/30
       # The time_delta comparison will need to change depending on scrolling text size
@@ -87,18 +91,14 @@ class GameRenderer:
       )
     return game_idx
 
-  def __refresh_game(self, game, game_status):
+  def __refresh_game(self, overview):
     """Draws the provided game on the canvas."""
-    if game_status == PRE_GAME:
-      pregame = Pregame(game)
+    if overview.status == PRE_GAME:
+      pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     else:
-      scoreboard = Scoreboard(game)
-      # TODO: https://github.com/ajbowler/mlb-led-scoreboard/issues/13
-      # Render something else if a game's data is incomplete
-      if not scoreboard.game_data:
-        return
+      scoreboard = Scoreboard(overview)
       ScoreboardRenderer(self.canvas, scoreboard).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
