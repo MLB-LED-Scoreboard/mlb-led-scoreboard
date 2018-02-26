@@ -32,13 +32,13 @@ day = now.day
 if config.display_standings:
   standings = mlbgame.standings(datetime.datetime(year, month, day))
   division = next(division for division in standings.divisions if division.name == config.preferred_division)
-  renderers.standings.render(matrix, canvas, division)
+  renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division)
 else:
   while True:
     games = mlbgame.games(year, month, day)
     if not len(games):
-      renderers.offday.render(matrix, canvas)
+      renderers.offday.render(matrix, matrix.CreateFrameCanvas())
     else:
       # The mlbgame API returns a 2D array with the list of games as the first index,
       # hence the 'games[0]'
-      GameRenderer(matrix, canvas, games[0], config).render()
+      GameRenderer(matrix, matrix.CreateFrameCanvas(), games[0], config).render()
