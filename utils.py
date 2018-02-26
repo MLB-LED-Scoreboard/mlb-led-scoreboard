@@ -12,9 +12,6 @@ def get_font():
   font.LoadFont(get_file('Assets/tom-thumb.bdf'))
   return font
 
-def get_team_colors():
-  return json.load(open(get_file('Assets/colors.json')))
-
 def bump_counter(counter, arr):
   counter += 1
   if counter >= len(arr):
@@ -23,7 +20,7 @@ def bump_counter(counter, arr):
 
 def args():
   parser = argparse.ArgumentParser()
-    
+
   # Options for the rpi-rgb-led-matrix library
   parser.add_argument("--led-rows", action="store", help="Display rows. 16 for 16x32, 32 for 32x32. (Default: 32)", default=32, type=int)
   parser.add_argument("--led-cols", action="store", help="Panel columns. Typically 32 or 64. (Default: 32)", default=32, type=int)
@@ -48,7 +45,7 @@ def led_matrix_options(args):
 
   if args.led_gpio_mapping != None:
     options.hardware_mapping = args.led_gpio_mapping
-  
+
   options.rows = args.led_rows
   options.cols = args.led_cols
   options.chain_length = args.led_chain
@@ -62,7 +59,7 @@ def led_matrix_options(args):
 
   if args.led_show_refresh:
     options.show_refresh_rate = 1
-  
+
   if args.led_slowdown_gpio != None:
     options.gpio_slowdown = args.led_slowdown_gpio
 
