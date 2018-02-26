@@ -1,6 +1,5 @@
 from rgbmatrix import RGBMatrixOptions, graphics
 import argparse
-import json
 import os
 
 def get_file(path):
