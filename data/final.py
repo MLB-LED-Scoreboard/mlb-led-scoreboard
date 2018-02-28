@@ -31,7 +31,7 @@ class Final:
       self.losing_team = UNKNOWN
 
     try:
-      self.losing_pitcher = overview.home_probable_pitcher_last_name or UNKNOWN
+      self.losing_pitcher = game.l_pitcher or UNKNOWN
     except:
       self.losing_pitcher = UNKNOWN
 
