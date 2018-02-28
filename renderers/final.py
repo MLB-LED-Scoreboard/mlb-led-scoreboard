@@ -26,5 +26,5 @@ class Final:
   def __render_final_inning(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = "FINAL " + str(self.scoreboard.inning.number)
-    text_x = center_text_pos(text, self.canvas.width)
+    text_x = center_text_position(text, self.canvas.width)
     graphics.DrawText(self.canvas, self.font, text_x, 20, color, text)
