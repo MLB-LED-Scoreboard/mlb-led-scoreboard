@@ -1,7 +1,9 @@
 from data.pregame import Pregame
 from data.scoreboard import Scoreboard
+from data.final import Final
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.pregame import Pregame as PregameRenderer
+from renderers.final import Final as FinalRenderer
 from utils import bump_counter
 import debug
 import mlbgame
@@ -60,9 +62,11 @@ class GameRenderer:
 
     while True:
       overview = mlbgame.overview(game.game_id)
-      self.__refresh_game(overview)
+      self.__refresh_game(game, overview)
 
-      refresh_rate = PREGAME_RATE if (overview.status == PRE_GAME or overview.status == SCHEDULED) else SCOREBOARD_RATE
+      refresh_rate = PREGAME_RATE
+      if overview.status == IN_PROGRESS:
+        refresh_rate = SCOREBOARD_RATE
 
       time.sleep(refresh_rate)
 
@@ -94,11 +98,16 @@ class GameRenderer:
       )
     return game_idx
 
-  def __refresh_game(self, overview):
+  def __refresh_game(self, game, overview):
     """Draws the provided game on the canvas."""
     if overview.status == PRE_GAME or overview.status == SCHEDULED:
       pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
+      self.__update_scrolling_text_pos(renderer.render())
+    elif overview.status == GAME_OVER or overview.status == FINAL:
+      final = Final(game)
+      scoreboard = Scoreboard(overview)
+      renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     else:
       scoreboard = Scoreboard(overview)
