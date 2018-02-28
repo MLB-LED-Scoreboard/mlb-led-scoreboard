@@ -58,12 +58,15 @@ Then do the following:
 cd .. # you should be in matrix/bindings now
 sudo pip install -e python/
 cd ../../ # you should be in mlb-led-scoreboard/ now
-sudo pip install mlbgame
+sudo pip install mlbgame pytz tzlocal
 make
 ```
-Basically, you're going to go back above the python binding directory, then run a pip install on that directory to create your own `rgbmatrix` module. Then go back up to the project directory and install `mlbgame`, the API this software uses to get baseball stats.
+Basically, you're going to go back above the python binding directory, then run a pip install on that directory to create your own `rgbmatrix` module. Then go back up to the project directory and install `mlbgame`, the API this software uses to get baseball stats. You'll also install `pytz` and `tzlocal` for time zone conversions, so your pregame displays show the game start times in your local time zone. East Coast bias and all that...
 
 Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
+
+#### Time Zones
+Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default.
 
 ## Usage
 `sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
