@@ -1,5 +1,5 @@
 from rgbmatrix import graphics
-from utils import get_font
+from utils import get_font, center_text_position
 import ledcolors.scoreboard
 
 class Pregame:
@@ -19,14 +19,16 @@ class Pregame:
   def __render_matchup(self):
     away_text = '{:>3s}'.format(self.game.away_team)
     home_text = '{:3s}'.format(self.game.home_team)
-
-    graphics.DrawText(self.canvas, self.font, 1, 6, self.text_color, away_text)
-    graphics.DrawText(self.canvas, self.font, 15, 6, self.text_color, '@')
-    graphics.DrawText(self.canvas, self.font, 20, 6, self.text_color, home_text)
+    teams_text = "%s  %s" % (away_text, home_text)
+    teams_text_x = center_text_position(teams_text, self.canvas.width)
+    at_x = center_text_position("@", self.canvas.width)
+    graphics.DrawText(self.canvas, self.font, teams_text_x, 6, self.text_color, teams_text)
+    graphics.DrawText(self.canvas, self.font, at_x, 6, self.text_color, "@")
 
   def __render_start_time(self):
-    time_text = '{:7s}'.format(self.game.start_time)
-    graphics.DrawText(self.canvas, self.font, 5, 13, self.text_color, time_text)
+    time_text = self.game.start_time
+    time_x = center_text_position(time_text, self.canvas.width)
+    graphics.DrawText(self.canvas, self.font, time_x, 13, self.text_color, time_text)
 
   def __render_probable_starters(self):
     pitchers_text = self.game.away_starter + ' vs ' + self.game.home_starter

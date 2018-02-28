@@ -10,10 +10,17 @@ class BasesRenderer:
 
   def render(self):
     base_runners = self.bases.runners
+
+    # Offset the bases if we have a wider screen
+    # Adding 2 extra pixels to give it a little more space from the outs/count
+    offset = 0
+    if self.canvas.width > 32:
+      offset = ((self.canvas.width - 32)/2) + 2
+
     base_px = []
-    base_px.append({'x': 26, 'y': 27} )
-    base_px.append({'x': 21, 'y': 22} )
-    base_px.append({'x': 16, 'y': 27} )
+    base_px.append({'x': 26 + offset, 'y': 27} )
+    base_px.append({'x': 21 + offset, 'y': 22} )
+    base_px.append({'x': 16 + offset, 'y': 27} )
 
     for base in range(len(base_runners)):
       self.__render_base_outline(base_px[base])
