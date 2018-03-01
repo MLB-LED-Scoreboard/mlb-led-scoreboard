@@ -3,6 +3,7 @@
 	"preferred_division": "NL Central",
 	"display_standings": false,
 	"rotate_games": false,
+	"scroll_until_finished": true,
 	"slower_scrolling": false,
 	"debug_enabled": false
 }
