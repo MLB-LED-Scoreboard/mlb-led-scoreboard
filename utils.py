@@ -11,6 +11,9 @@ def get_font():
   font.LoadFont(get_file('Assets/tom-thumb.bdf'))
   return font
 
+def center_text_position(text, canvas_width):
+  return ((canvas_width - (len(text) * 4)) / 2)
+
 def bump_counter(counter, arr):
   counter += 1
   if counter >= len(arr):

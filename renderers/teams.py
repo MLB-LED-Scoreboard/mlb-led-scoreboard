@@ -14,14 +14,14 @@ class TeamsRenderer:
     self.colors = json.load(open(get_file('Assets/colors.json')))
     self.font = get_font()
 
-  def __team_colors(self, team_name):
-    return self.colors.get(team_name.lower(), self.colors['default'])
+  def __team_colors(self, team_abbrev):
+    return self.colors.get(team_abbrev.lower(), self.colors['default'])
 
   def render(self):
-    away_colors = self.__team_colors(self.away_team.team_name)
+    away_colors = self.__team_colors(self.away_team.abbrev)
     away_team_color = away_colors['home']
 
-    home_colors = self.__team_colors(self.home_team.team_name)
+    home_colors = self.__team_colors(self.home_team.abbrev)
     home_team_color = home_colors['home']
 
     scores_height = 14
@@ -36,5 +36,10 @@ class TeamsRenderer:
   def __render_team_text(self, team, colors, x, y):
     text_color = colors.get('text', self.colors['default']['text'])
     text_color_graphic = graphics.Color(text_color['r'], text_color['g'], text_color['b'])
-    team_text = '{:3s}'.format(team.team_name.upper()) + ' ' + str(team.runs)
+    team_text = '{:3s}'.format(team.abbrev.upper())
+    if self.canvas.width > 32:
+      team_text = '{:13s}'.format(team.name)
+    team_runs = str(team.runs)
+    team_runs_x = self.canvas.width - (len(team_runs) * 4) - 2
     graphics.DrawText(self.canvas, self.font, x, y, text_color_graphic, team_text)
+    graphics.DrawText(self.canvas, self.font, team_runs_x, y, text_color_graphic, team_runs)

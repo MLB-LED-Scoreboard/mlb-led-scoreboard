@@ -8,10 +8,16 @@ class OutsRenderer:
     self.outs = outs
 
   def render(self):
+    # Add an offset for wider screens.
+    # Pulling it back a couple of pixels for more separation from the bases
+    offset = 0
+    if self.canvas.width > 32:
+      offset = ((self.canvas.width - 32) / 2) - 2
+
     out_px = []
-    out_px.append({'x': 2, 'y': 27})
-    out_px.append({'x': 6, 'y': 27})
-    out_px.append({'x': 10, 'y': 27})
+    out_px.append({'x': 2 + offset, 'y': 27})
+    out_px.append({'x': 6 + offset, 'y': 27})
+    out_px.append({'x': 10 + offset, 'y': 27})
     for out in range(len(out_px)):
       self.__render_out_circle(out_px[out])
       # Fill in the circle if that out has occurred

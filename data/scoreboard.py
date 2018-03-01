@@ -13,8 +13,8 @@ class Scoreboard:
   """
 
   def __init__(self, overview):
-    self.away_team = Team(overview.away_name_abbrev, overview.away_team_runs)
-    self.home_team = Team(overview.home_name_abbrev, overview.home_team_runs)
+    self.away_team = Team(overview.away_name_abbrev, overview.away_team_runs, overview.away_team_name)
+    self.home_team = Team(overview.home_name_abbrev, overview.home_team_runs, overview.home_team_name)
     self.inning = Inning(overview)
     self.bases = Bases(overview)
     self.pitches = Pitches(overview)
@@ -25,8 +25,8 @@ class Scoreboard:
   def __str__(self):
     s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))
     s += "%s (%s) @ %s (%s), Status: %s, Inning: (Number, %s, State: %s), B:%s S:%s O:%s, Bases: %s" % (
-      self.away_team.team_name, str(self.away_team.runs),
-      self.home_team.team_name, str(self.home_team.runs),
+      self.away_team.abbrev, str(self.away_team.runs),
+      self.home_team.abbrev, str(self.home_team.runs),
       self.game_status,
       str(self.inning.number),
       str(self.inning.state),
