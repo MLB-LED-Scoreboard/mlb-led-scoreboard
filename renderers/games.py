@@ -16,7 +16,8 @@ FIFTEEN_SECONDS = 15.0
 FIFTEEN_MINUTES = 900.0
 
 # Refresh rates measured in seconds
-PREGAME_RATE = 0.2
+SCROLL_TEXT_SLOW_RATE = 0.2
+SCROLL_TEXT_FAST_RATE = 0.1
 SCOREBOARD_RATE = FIFTEEN_SECONDS
 
 # Game statuses
@@ -64,7 +65,9 @@ class GameRenderer:
       overview = mlbgame.overview(game.game_id)
       self.__refresh_game(game, overview)
 
-      refresh_rate = PREGAME_RATE
+      refresh_rate = SCROLL_TEXT_FAST_RATE
+      if self.config.slowdown_scrolling == True:
+        refresh_rate = SCROLL_TEXT_SLOW_RATE
       if overview.status == IN_PROGRESS:
         refresh_rate = SCOREBOARD_RATE
 
