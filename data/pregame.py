@@ -22,10 +22,12 @@ class Pregame:
     debug.log(self)
 
   def __convert_time(self, time):
-    eastern_tz = pytz.timezone('America/New_York')
+    """Converts MLB's pregame times (Eastern) into the local time zone"""
     game_time_eastern = datetime.strptime(time, '%I:%M%p')
     now = datetime.now()
-    game_time_eastern = game_time_eastern.replace(year=now.year, month=now.month, day=now.day, tzinfo=eastern_tz)
+    game_time_eastern = game_time_eastern.replace(year=now.year, month=now.month, day=now.day)
+    eastern_tz = pytz.timezone('America/New_York')
+    game_time_eastern = eastern_tz.localize(game_time_eastern)
     return game_time_eastern.astimezone(tzlocal.get_localzone()).strftime('%I:%M%p').lstrip('0')
 
   def __str__(self):
