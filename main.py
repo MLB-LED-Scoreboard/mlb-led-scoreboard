@@ -35,10 +35,8 @@ if config.display_standings:
   renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division)
 else:
   while True:
-    games = mlbgame.games(year, month, day)
+    games = mlbgame.day(year, month, day)
     if not len(games):
       renderers.offday.render(matrix, matrix.CreateFrameCanvas())
     else:
-      # The mlbgame API returns a 2D array with the list of games as the first index,
-      # hence the 'games[0]'
-      GameRenderer(matrix, matrix.CreateFrameCanvas(), games[0], config).render()
+      GameRenderer(matrix, matrix.CreateFrameCanvas(), games, config).render()
