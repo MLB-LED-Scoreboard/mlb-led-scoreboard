@@ -3,7 +3,7 @@
 	"preferred_division": "NL Central",
 	"display_standings": false,
 	"rotate_games": false,
-	"rotate_rate": 15.0,
+	"rotate_rates": { "live": 15.0, "final": 15.0, "pregame": 15.0 },
 	"scroll_until_finished": true,
 	"slower_scrolling": false,
 	"debug_enabled": false
