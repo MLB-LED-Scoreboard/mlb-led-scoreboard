@@ -18,7 +18,7 @@ FIFTEEN_MINUTES = 900.0
 # Refresh rates measured in seconds
 SCROLL_TEXT_SLOW_RATE = 0.2
 SCROLL_TEXT_FAST_RATE = 0.1
-SCOREBOARD_RATE = FIFTEEN_SECONDS
+PREGAME_RATE = FIFTEEN_SECONDS
 
 # Game statuses
 SCHEDULED = 'Scheduled'
@@ -73,7 +73,7 @@ class GameRenderer:
       if self.config.slowdown_scrolling == True:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
       if overview.status == IN_PROGRESS:
-        refresh_rate = SCOREBOARD_RATE
+        refresh_rate = self.config.rotate_rate
         self.scroll_finished = True
 
       time.sleep(refresh_rate)
@@ -85,7 +85,13 @@ class GameRenderer:
 
       self.canvas.Fill(*ledcolors.scoreboard.fill)
 
-      if self.config.rotate_games and time_delta >= FIFTEEN_SECONDS and self.scroll_finished:
+      rotate_rate = self.config.rotate_rate
+
+      # Always use the default 15 seconds for our pregame rotations
+      if overview.status == PRE_GAME or overview.status == SCHEDULED:
+        rotate_rate = PREGAME_RATE
+
+      if self.config.rotate_games and time_delta >= rotate_rate and self.scroll_finished:
         starttime = time.time()
         self.scroll_finished = False
         self.current_scrolling_text_pos = self.canvas.width
