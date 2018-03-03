@@ -23,8 +23,12 @@ class ScoreboardConfig:
 
   def check_rotate_rates(self):
     if isinstance(self.rotate_rates, dict) == False:
-      print "Warning: rotate_rates should be a dictionary. Using default value. {}".format(DEFAULT_ROTATE_RATES)
-      self.rotate_rates = DEFAULT_ROTATE_RATES
+      try:
+        rate = float(self.rotate_rates)
+        self.rotate_rates = {"live": rate, "final": rate, "pregame": rate}
+      except:
+        print "Warning: rotate_rates should be a Dict or Float. Using default value. {}".format(DEFAULT_ROTATE_RATES)
+        self.rotate_rates = DEFAULT_ROTATE_RATES
 
     for key, value in list(self.rotate_rates.items()):
       try:

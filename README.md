@@ -81,6 +81,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "display_standings"       Bool    Display standings for the provided preferred_division.
 "rotate_games"            Bool    Rotate through each game of the day every 15 seconds.
 "rotate_rates"            Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
+                          Float   A Float can be used to set all screen types to the same rotate rate.
 "scroll_until_finished"   Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
 "slowdown_scrolling"      Bool    If your Pi is unable to handle the normal refresh rate while scrolling, this will slow it down.
 "debug_enabled"           Bool    Game and other debug data is written to your console.
