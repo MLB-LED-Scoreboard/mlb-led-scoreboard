@@ -127,7 +127,7 @@ class GameRenderer:
       scoreboard = Scoreboard(overview)
       renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
-    elif overview.status == POSTPONED:
+    elif overview.status == POSTPONED or overview.status == DELAYED:
       scoreboard = Scoreboard(overview)
       StatusRenderer(self.canvas, scoreboard).render()
     else:
