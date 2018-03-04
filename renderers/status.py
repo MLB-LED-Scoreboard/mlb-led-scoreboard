@@ -1,0 +1,28 @@
+from renderers.teams import TeamsRenderer
+from rgbmatrix import graphics
+from utils import get_font, center_text_position
+import ledcolors.scoreboard
+
+# "Postponed" is too long a word for 32-wide displays,
+# so we use a shorthand for that case.
+POSTPONED = 'Postponed'
+POSTPONED_SHORTHAND = 'Postpd'
+
+class Status:
+  def __init__(self, canvas, scoreboard):
+    self.canvas = canvas
+    self.scoreboard = scoreboard
+    self.font = get_font()
+    self.text_color = graphics.Color(*ledcolors.scoreboard.text)
+
+  def render(self):
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team).render()
+    self.__render_game_status()
+
+  def __render_game_status(self):
+    color = graphics.Color(*ledcolors.scoreboard.text)
+    text = self.scoreboard.game_status
+    if self.canvas.width == 32 and text == POSTPONED:
+      text = POSTPONED_SHORTHAND
+    text_x = center_text_position(text, self.canvas.width)
+    graphics.DrawText(self.canvas, self.font, text_x, 20, color, text)

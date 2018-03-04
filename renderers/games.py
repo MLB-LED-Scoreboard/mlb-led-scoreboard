@@ -1,9 +1,10 @@
 from data.pregame import Pregame
 from data.scoreboard import Scoreboard
 from data.final import Final
-from renderers.scoreboard import Scoreboard as ScoreboardRenderer
-from renderers.pregame import Pregame as PregameRenderer
 from renderers.final import Final as FinalRenderer
+from renderers.pregame import Pregame as PregameRenderer
+from renderers.scoreboard import Scoreboard as ScoreboardRenderer
+from renderers.status import Status as StatusRenderer
 from utils import bump_counter
 import debug
 import mlbgame
@@ -25,6 +26,8 @@ PRE_GAME = 'Pre-Game'
 IN_PROGRESS = 'In Progress'
 FINAL = 'Final'
 GAME_OVER = 'Game Over' # Not sure what the difference is between this and final but it exists
+POSTPONED = 'Postponed'
+DELAYED = 'Delayed'
 
 class GameRenderer:
   """An object that loops through and renders a list of games.
@@ -124,6 +127,9 @@ class GameRenderer:
       scoreboard = Scoreboard(overview)
       renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
+    elif overview.status == POSTPONED:
+      scoreboard = Scoreboard(overview)
+      StatusRenderer(self.canvas, scoreboard).render()
     else:
       scoreboard = Scoreboard(overview)
       ScoreboardRenderer(self.canvas, scoreboard).render()
