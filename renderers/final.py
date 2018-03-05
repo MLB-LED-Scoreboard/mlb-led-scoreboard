@@ -3,6 +3,8 @@ from utils import get_font, center_text_position
 from renderers.teams import TeamsRenderer
 import ledcolors.scoreboard
 
+NORMAL_GAME_LENGTH = 9
+
 class Final:
   def __init__(self, canvas, game, scoreboard, scroll_pos):
     self.canvas = canvas
@@ -25,6 +27,8 @@ class Final:
 
   def __render_final_inning(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
-    text = "FINAL " + str(self.scoreboard.inning.number)
+    text = "FINAL"
+    if self.scoreboard.inning.number > NORMAL_GAME_LENGTH:
+      text += " " + str(self.scoreboard.inning.number)
     text_x = center_text_position(text, self.canvas.width)
     graphics.DrawText(self.canvas, self.font, text_x, 20, color, text)
