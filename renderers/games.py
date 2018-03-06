@@ -5,12 +5,14 @@ from renderers.final import Final as FinalRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.status import Status as StatusRenderer
-from utils import bump_counter
+from utils import bump_counter, split_string
+import renderers.error
 import debug
 import mlbgame
 import ledcolors.scoreboard
 import math
 import time
+import sys
 
 # Times measured in seconds
 FIFTEEN_SECONDS = 15.0
@@ -28,6 +30,9 @@ FINAL = 'Final'
 GAME_OVER = 'Game Over' # Not sure what the difference is between this and final but it exists
 POSTPONED = 'Postponed'
 DELAYED = 'Delayed'
+
+# If we run into a breaking error, pause for this amount of time before trying to continue
+ERROR_WAIT = 10.0
 
 class GameRenderer:
   """An object that loops through and renders a list of games.
@@ -65,7 +70,30 @@ class GameRenderer:
     starttime = time.time()
 
     while True:
-      overview = mlbgame.overview(game.game_id)
+
+      try:
+        overview = mlbgame.overview(game.game_id)
+
+      # If a game_id can't be found, we fail gracefully and try the next game
+      except ValueError as e:
+        if str(e) == "Could not find a game with that id.":
+          error_strings = ["Game ID","Not","Found"] + [game.game_id]
+          self.__handle_error(e, error_strings)
+          current_game_index = bump_counter(current_game_index, self.games)
+          game = self.games[current_game_index]
+        else:
+          error_strings = split_string(str(e), self.canvas.width/4)
+          self.__handle_error(e, error_strings)
+
+        continue
+
+      # Catch everything else. 
+      except:
+        err_type, error, traceback = sys.exc_info()
+        error_strings = split_string(str(error), self.canvas.width/4)
+        self.__handle_error(error, error_strings)
+        continue
+
       self.__refresh_game(game, overview)
 
       if self.config.scroll_until_finished == False:
@@ -134,6 +162,11 @@ class GameRenderer:
       scoreboard = Scoreboard(overview)
       ScoreboardRenderer(self.canvas, scoreboard).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+  def __handle_error(self, error, error_strings):
+    debug.error( "{} {}".format(str(error), error_strings) )
+    renderers.error.render(self.matrix, self.canvas, error_strings)
+    time.sleep(ERROR_WAIT)
 
   def __update_scrolling_text_pos(self, new_pos):
     """Updates the position of the probable starting pitcher text."""
