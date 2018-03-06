@@ -8,6 +8,11 @@ def set_debug_status(config):
 	debug_enabled = config.debug_enabled
 
 def log(text):
-	timestr = time.strftime("%H:%M:%S", time.localtime())
 	if debug_enabled:
-		print("DEBUG (" + timestr + "): " + str(text))
+		print("DEBUG ({}): {}".format(__timestamp(), text))
+
+def error(text):
+	print("ERROR ({}): {}".format(__timestamp(), text))
+
+def __timestamp():
+	return time.strftime("%H:%M:%S", time.localtime())
