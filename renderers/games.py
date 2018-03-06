@@ -72,7 +72,7 @@ class GameRenderer:
     while True:
 
       try:
-        overview = mlbgame.overview(game.game_id + "1")
+        overview = mlbgame.overview(game.game_id)
 
       # If a game_id can't be found, we fail gracefully and try the next game
       except ValueError as e:
