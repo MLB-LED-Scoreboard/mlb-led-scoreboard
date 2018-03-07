@@ -11,12 +11,24 @@ class Pregame:
     self.start_time = self.__convert_time(overview.time + overview.ampm)
 
     try:
-      self.away_starter = overview.away_probable_pitcher_last_name or 'TBD'
+      self.away_starter = ("{}. {} ({}-{} {:.2f} ERA)".format(
+        overview.away_probable_pitcher_first_name[0],
+        overview.away_probable_pitcher_last_name,
+        overview.away_probable_pitcher_wins,
+        overview.away_probable_pitcher_losses,
+        overview.away_probable_pitcher_era)
+      ) or 'TBD'
     except:
       self.away_starter = 'TBD'
 
     try:
-      self.home_starter = overview.home_probable_pitcher_last_name or 'TBD'
+      self.home_starter = ("{}. {} ({}-{} {:.2f} ERA)".format(
+        overview.home_probable_pitcher_first_name[0],
+        overview.home_probable_pitcher_last_name,
+        overview.home_probable_pitcher_wins,
+        overview.home_probable_pitcher_losses,
+        overview.home_probable_pitcher_era)
+      ) or 'TBD'
     except:
       self.home_starter = 'TBD'
     debug.log(self)
