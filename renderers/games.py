@@ -30,6 +30,7 @@ FINAL = 'Final'
 GAME_OVER = 'Game Over' # Not sure what the difference is between this and final but it exists
 POSTPONED = 'Postponed'
 DELAYED = 'Delayed'
+WARMUP = 'Warmup'
 
 # If we run into a breaking error, pause for this amount of time before trying to continue
 ERROR_WAIT = 10.0
@@ -151,7 +152,7 @@ class GameRenderer:
 
   def __refresh_game(self, game, overview):
     """Draws the provided game on the canvas."""
-    if overview.status == PRE_GAME or overview.status == SCHEDULED:
+    if overview.status == PRE_GAME or overview.status == SCHEDULED or overview.status == WARMUP:
       pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())

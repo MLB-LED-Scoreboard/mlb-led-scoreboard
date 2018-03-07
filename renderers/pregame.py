@@ -2,6 +2,8 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 import ledcolors.scoreboard
 
+WARMUP = 'Warmup'
+
 class Pregame:
   def __init__(self, canvas, game, probable_starter_pos):
     self.canvas = canvas
@@ -14,6 +16,8 @@ class Pregame:
   def render(self):
     self.__render_matchup()
     self.__render_start_time()
+    if self.game.status == WARMUP:
+      self.__render_warmup()
     return self.__render_probable_starters()
 
   def __render_matchup(self):
@@ -30,6 +34,12 @@ class Pregame:
     time_x = center_text_position(time_text, self.canvas.width)
     graphics.DrawText(self.canvas, self.font, time_x, 13, self.text_color, time_text)
 
+  def __render_warmup(self):
+    warmup_text = self.game.status
+    warmup_x = center_text_position(warmup_text, self.canvas.width)
+    graphics.DrawText(self.canvas, self.font, warmup_x, 20, self.text_color, warmup_text)
+
   def __render_probable_starters(self):
+    pitchers_y = 32 if self.game.status == WARMUP else 25
     pitchers_text = self.game.away_starter + ' vs ' + self.game.home_starter
-    return graphics.DrawText(self.canvas, self.font, self.probable_starter_pos, 25, self.text_color, pitchers_text)
+    return graphics.DrawText(self.canvas, self.font, self.probable_starter_pos, pitchers_y, self.text_color, pitchers_text)

@@ -9,6 +9,7 @@ class Pregame:
     self.home_team = overview.home_name_abbrev
     self.away_team = overview.away_name_abbrev
     self.start_time = self.__convert_time(overview.time + overview.ampm)
+    self.status = overview.status
 
     try:
       self.away_starter = overview.away_probable_pitcher_last_name or 'TBD'
