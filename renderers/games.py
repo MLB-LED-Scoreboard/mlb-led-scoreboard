@@ -129,13 +129,14 @@ class GameRenderer:
       if overview.status == FINAL or overview.status == GAME_OVER:
         rotate_rate = self.config.final_rotate_rate
 
-      if self.config.rotate_games and time_delta >= rotate_rate and self.scroll_finished:
+      if time_delta >= rotate_rate and self.scroll_finished:
         starttime = time.time()
         self.data_needs_refresh = True
         self.scroll_finished = False
-        self.current_scrolling_text_pos = self.canvas.width
-        current_game_index = bump_counter(current_game_index, self.games)
-        game = self.games[current_game_index]
+        if self.config.rotate_games:
+          self.current_scrolling_text_pos = self.canvas.width
+          current_game_index = bump_counter(current_game_index, self.games)
+          game = self.games[current_game_index]
 
   def __get_game_from_args(self):
     """Returns the index of the game to render.
