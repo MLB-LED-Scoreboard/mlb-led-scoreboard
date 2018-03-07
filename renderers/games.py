@@ -133,8 +133,8 @@ class GameRenderer:
         starttime = time.time()
         self.data_needs_refresh = True
         self.scroll_finished = False
+        self.current_scrolling_text_pos = self.canvas.width
         if self.config.rotate_games:
-          self.current_scrolling_text_pos = self.canvas.width
           current_game_index = bump_counter(current_game_index, self.games)
           game = self.games[current_game_index]
 
