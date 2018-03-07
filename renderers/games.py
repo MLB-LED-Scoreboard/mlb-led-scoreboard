@@ -57,6 +57,7 @@ class GameRenderer:
     self.current_scrolling_text_pos = self.canvas.width
     self.creation_time = time.time()
     self.scroll_finished = False
+    self.data_needs_refresh = True
     debug.log(self)
 
   def render(self):
@@ -72,7 +73,9 @@ class GameRenderer:
     while True:
 
       try:
-        overview = mlbgame.overview(game.game_id)
+        if self.data_needs_refresh:
+          overview = mlbgame.overview(game.game_id)
+          self.data_needs_refresh = False
 
       # If a game_id can't be found, we fail gracefully and try the next game
       except ValueError as e:
@@ -104,6 +107,7 @@ class GameRenderer:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
       if overview.status == IN_PROGRESS:
         refresh_rate = self.config.live_rotate_rate
+        self.data_needs_refresh = True
         self.scroll_finished = True
 
       time.sleep(refresh_rate)
@@ -126,6 +130,7 @@ class GameRenderer:
 
       if self.config.rotate_games and time_delta >= rotate_rate and self.scroll_finished:
         starttime = time.time()
+        self.data_needs_refresh = True
         self.scroll_finished = False
         self.current_scrolling_text_pos = self.canvas.width
         current_game_index = bump_counter(current_game_index, self.games)
