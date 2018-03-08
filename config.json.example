@@ -4,6 +4,7 @@
 	"display_standings": false,
 	"rotate_games": false,
 	"rotate_rates": { "live": 15.0, "final": 15.0, "pregame": 15.0 },
+	"stay_on_live_preferred_team": true,
 	"scroll_until_finished": true,
 	"slower_scrolling": false,
 	"debug_enabled": false
