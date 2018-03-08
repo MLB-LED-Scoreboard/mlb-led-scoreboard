@@ -14,6 +14,7 @@ class ScoreboardConfig:
     self.rotate_games = json.get("rotate_games", False)
     self.rotate_rates = json.get("rotate_rates", DEFAULT_ROTATE_RATES)
     self.display_standings = json.get("display_standings", False)
+    self.display_standings_on_offday = json.get("display_standings_on_offday", True)
     self.scroll_until_finished = json.get("scroll_until_finished", True)
     self.slowdown_scrolling = json.get("slowdown_scrolling", False)
     self.debug_enabled = json.get("debug_enabled", False)

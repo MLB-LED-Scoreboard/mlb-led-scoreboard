@@ -29,14 +29,24 @@ year = now.year
 month = now.month
 day = now.day
 
-if config.display_standings:
-  standings = mlbgame.standings(datetime.datetime(year, month, day))
+def display_standings(matrix, config, date):
+  standings = mlbgame.standings(date)
   division = next(division for division in standings.divisions if division.name == config.preferred_division)
   renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division)
+
+if config.display_standings:
+	display_standings(matrix, config, datetime.datetime(year, month, day))
 else:
   while True:
     games = mlbgame.day(year, month, day)
     if not len(games):
-      renderers.offday.render(matrix, matrix.CreateFrameCanvas())
+      if config.display_standings_on_offday:
+        try:
+          display_standings(matrix, config, datetime.datetime(year, month, day))
+        except:
+          # Out of season off days don't always return standings so fall back on the offday renderer
+          renderers.offday.render(matrix, matrix.CreateFrameCanvas())
+      else:
+        renderers.offday.render(matrix, matrix.CreateFrameCanvas())
     else:
       GameRenderer(matrix, matrix.CreateFrameCanvas(), games, config).render()

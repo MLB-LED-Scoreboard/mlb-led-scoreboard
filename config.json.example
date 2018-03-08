@@ -2,6 +2,7 @@
 	"preferred_team": "Cubs",
 	"preferred_division": "NL Central",
 	"display_standings": false,
+	"display_standings_on_offday": true,
 	"rotate_games": false,
 	"rotate_rates": { "live": 15.0, "final": 15.0, "pregame": 15.0 },
 	"scroll_until_finished": true,
