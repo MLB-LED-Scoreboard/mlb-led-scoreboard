@@ -40,6 +40,6 @@ class Pregame:
     graphics.DrawText(self.canvas, self.font, warmup_x, 20, self.text_color, warmup_text)
 
   def __render_probable_starters(self):
-    pitchers_y = 32 if self.game.status == WARMUP else 25
+    pitchers_y = 29 if self.game.status == WARMUP else 25
     pitchers_text = self.game.away_starter + ' vs ' + self.game.home_starter
     return graphics.DrawText(self.canvas, self.font, self.probable_starter_pos, pitchers_y, self.text_color, pitchers_text)
