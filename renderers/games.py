@@ -134,9 +134,24 @@ class GameRenderer:
         self.data_needs_refresh = True
         self.scroll_finished = False
         self.current_scrolling_text_pos = self.canvas.width
-        if self.config.rotate_games:
+        if self.__should_rotate_to_next_game(overview):
           current_game_index = bump_counter(current_game_index, self.games)
           game = self.games[current_game_index]
+
+  def __should_rotate_to_next_game(self, overview):
+    if self.config.rotate_games == False:
+      return False
+
+    stay_on_preferred_team = self.config.preferred_team and self.config.stay_on_live_preferred_team
+    if stay_on_preferred_team == False:
+      return True
+
+    showing_preferred_team = self.config.preferred_team in [overview.away_team_name, overview.home_team_name]
+    current_game_is_live = (overview.status == IN_PROGRESS or overview.status == WARMUP or overview.status == GAME_OVER)
+    if showing_preferred_team and current_game_is_live:
+      return False
+
+    return True
 
   def __get_game_from_args(self):
     """Returns the index of the game to render.

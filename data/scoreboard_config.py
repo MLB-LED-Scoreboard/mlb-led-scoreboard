@@ -13,6 +13,7 @@ class ScoreboardConfig:
     self.preferred_division = json.get("preferred_division", "NL Central")
     self.rotate_games = json.get("rotate_games", False)
     self.rotate_rates = json.get("rotate_rates", DEFAULT_ROTATE_RATES)
+    self.stay_on_live_preferred_team = json.get("stay_on_live_preferred_team", True)
     self.display_standings = json.get("display_standings", False)
     self.scroll_until_finished = json.get("scroll_until_finished", True)
     self.slowdown_scrolling = json.get("slowdown_scrolling", False)
