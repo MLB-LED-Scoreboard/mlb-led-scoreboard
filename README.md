@@ -17,6 +17,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
 * [Help and Contributing](#help-and-contributing)
+  * [Latest Features](#latest-features)
 
 ## Features
 
@@ -121,3 +122,6 @@ The scoreboard is dependent on MLB having their data correct and up to date. If 
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
 If you just want to talk, join the Slack channel, see the badge at the top of the README
+
+### Latest Features
+The scoreboard follows semantic versioning, for what makes sense for a project like this (it has no consumable API or anything like that). The `master` branch is always kept clean and never updated except for releases. If you want to contribute, make sure your pull request is pointed to `dev`.
