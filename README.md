@@ -45,7 +45,6 @@ It can display standings for the provided division. Since the 32x32 board is too
 ![standings-wins](img/standings-wins.jpg) ![standings-losses](img/standings-losses.jpg) ![standings-wide](img/wide-standings-demo.jpg)
 
 ## Installation
-### Note: The installation steps are very much a WIP as I'm having more people test this out. This will update as more people adopt this software.
 ```
 git clone --recursive https://github.com/ajbowler/mlb-led-scoreboard
 cd matrix/bindings/python
