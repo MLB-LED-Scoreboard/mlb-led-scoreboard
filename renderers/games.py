@@ -47,6 +47,9 @@ class GameRenderer:
     current_scrolling_text_pos - The current position of the probable starting
                                  pitcher text for pregames.
     creation_time              - The time at which this GameRender was created.
+    scroll_finished            - Flag indicating whether any scrolling text has
+                                 finished scrolling at least once.
+    data_needs_refresh         - Flag indicating whether the data should be refreshed.
   """
 
   def __init__(self, matrix, canvas, games, config):
@@ -73,7 +76,6 @@ class GameRenderer:
     starttime = time.time()
 
     while True:
-
       try:
         if self.data_needs_refresh:
           overview = mlbgame.overview(game.game_id)
@@ -92,7 +94,7 @@ class GameRenderer:
 
         continue
 
-      # Catch everything else. 
+      # Catch everything else.
       except:
         err_type, error, traceback = sys.exc_info()
         error_strings = split_string(str(error), self.canvas.width/4)
@@ -134,8 +136,10 @@ class GameRenderer:
         starttime = time.time()
         self.data_needs_refresh = True
         self.scroll_finished = False
-        self.current_scrolling_text_pos = self.canvas.width
+        if overview.status == IN_PROGRESS or overview.status == GAME_OVER:
+          self.current_scrolling_text_pos = self.canvas.width
         if self.__should_rotate_to_next_game(overview):
+          self.current_scrolling_text_pos = self.canvas.width
           current_game_index = bump_counter(current_game_index, self.games)
           game = self.games[current_game_index]
 
