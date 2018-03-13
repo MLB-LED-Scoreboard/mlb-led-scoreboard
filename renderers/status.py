@@ -8,6 +8,9 @@ import ledcolors.scoreboard
 POSTPONED = 'Postponed'
 POSTPONED_SHORTHAND = 'Postpd'
 
+CANCELLED = 'Cancelled'
+CANCELLED_SHORTHAND = "Cancl'd"
+
 class Status:
   def __init__(self, canvas, scoreboard):
     self.canvas = canvas
@@ -22,7 +25,10 @@ class Status:
   def __render_game_status(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = self.scoreboard.game_status
-    if self.canvas.width == 32 and text == POSTPONED:
-      text = POSTPONED_SHORTHAND
+    if self.canvas.width == 32:
+      if text == POSTPONED:
+        text = POSTPONED_SHORTHAND
+      if text == CANCELLED:
+        text = CANCELLED_SHORTHAND
     text_x = center_text_position(text, self.canvas.width)
     graphics.DrawText(self.canvas, self.font, text_x, 20, color, text)

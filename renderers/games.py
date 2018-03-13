@@ -30,6 +30,7 @@ FINAL = 'Final'
 GAME_OVER = 'Game Over' # Not sure what the difference is between this and final but it exists
 POSTPONED = 'Postponed'
 DELAYED = 'Delayed'
+CANCELLED = 'Cancelled'
 WARMUP = 'Warmup'
 
 # If we run into a breaking error, pause for this amount of time before trying to continue
@@ -177,7 +178,7 @@ class GameRenderer:
       scoreboard = Scoreboard(overview)
       renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
-    elif overview.status == POSTPONED or overview.status == DELAYED:
+    elif overview.status == POSTPONED or overview.status == DELAYED or overview.status == CANCELLED:
       scoreboard = Scoreboard(overview)
       StatusRenderer(self.canvas, scoreboard).render()
     else:
