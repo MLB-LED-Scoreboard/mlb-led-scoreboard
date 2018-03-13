@@ -5,6 +5,12 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 
 [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
+**Currently supported boards:**
+ * 32x32
+ * 64x32
+
+If you'd like to see support for another set of board dimensions, file an issue!
+
 ## Table of Contents
 * [Features](#features)
   * [Live Games](#live-games)
