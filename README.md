@@ -5,19 +5,29 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 
 [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
+**Currently supported boards:**
+ * 32x32
+ * 64x32
+
+If you'd like to see support for another set of board dimensions, file an issue!
+
 ## Table of Contents
 * [Features](#features)
   * [Live Games](#live-games)
   * [Pregame](#pregame)
   * [Division Standings](#division-standings)
 * [Installation](#installation)
+  * [Hardware Assembly](#hardware-assembly)
+  * [Software Installation](#software-installation)
 * [Usage](#usage)
   * [Configuration](#configuration)
   * [Flags](#flags)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
+* [Wiki](#wiki)
 * [Help and Contributing](#help-and-contributing)
   * [Latest Features](#latest-features)
+* [Licensing](#licensing)
 
 ## Features
 
@@ -43,7 +53,10 @@ It can display standings for the provided division. Since the 32x32 board is too
 ![standings-wins](img/standings-wins.jpg) ![standings-losses](img/standings-losses.jpg) ![standings-wide](img/wide-standings-demo.jpg)
 
 ## Installation
-### Note: The installation steps are very much a WIP as I'm having more people test this out. This will update as more people adopt this software.
+### Hardware Assembly
+[See our wiki page.](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki) This README is primarily focused on the MLB software, but for those coming here from Reddit or elsewhere never having built things with a Raspberry Pi, this should help get you going.
+
+### Software Installation
 ```
 git clone --recursive https://github.com/ajbowler/mlb-led-scoreboard
 cd matrix/bindings/python
@@ -62,7 +75,13 @@ cd ../../ # you should be in mlb-led-scoreboard/ now
 sudo pip install mlbgame pytz tzlocal
 make
 ```
-Basically, you're going to go back above the python binding directory, then run a pip install on that directory to create your own `rgbmatrix` module. Then go back up to the project directory and install `mlbgame`, the API this software uses to get baseball stats. You'll also install `pytz` and `tzlocal` for time zone conversions, so your pregame displays show the game start times in your local time zone. East Coast bias and all that...
+
+Recap of what you just did:
+ * Installed a local Python module of the rgbmatrix library
+ * Installed `mlbgame` to get your baseball data
+ * Installed `pytz` and `tzlocal` to display all of your games with your Pi's timezone.
+
+**Note on mlbgame**: If your installation fails with an error related to lxml, try running `pip install python-lxml`. Some users have reported issues with that particular module. If you continue to run into issues, join our Slack channel located at the top of the README.
 
 Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
 
@@ -118,6 +137,9 @@ This project relies on two libraries:
 ### Accuracy Disclaimer
 The scoreboard is dependent on MLB having their data correct and up to date. If you see any weird data such as wrong pitches or scores or whatever else, MLB is drunk.
 
+## Wiki
+The wiki for this project has some cool things you can do to your Raspberry Pi, including steps on making your Pi a dedicated scoreboard runner!
+
 ## Help and Contributing
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
@@ -125,3 +147,6 @@ If you just want to talk, join the Slack channel, see the badge at the top of th
 
 ### Latest Features
 The scoreboard follows semantic versioning, for what makes sense for a project like this (it has no consumable API or anything like that). The `master` branch is always kept clean and never updated except for releases. If you want to contribute, make sure your pull request is pointed to `dev`.
+
+## Licensing
+This project as of v1.1.0 uses the GNU Public License. If you intend to sell these, the code must remain open source.
