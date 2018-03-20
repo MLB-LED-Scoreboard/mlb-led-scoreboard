@@ -161,7 +161,7 @@ class GameRenderer:
 
   def is_static_status(self, overview):
     """Returns whether the game being currently displayed has no text to scroll"""
-    return overview.status == IN_PROGRESS or overview.status == CANCELLED or overview.status == DELAYED or overview.status == POSTPONED
+    return overview.status in [IN_PROGRESS, CANCELLED, DELAYED, POSTPONED]
 
   def __get_game_from_args(self):
     """Returns the index of the game to render.
