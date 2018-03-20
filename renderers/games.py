@@ -32,6 +32,7 @@ POSTPONED = 'Postponed'
 DELAYED = 'Delayed'
 CANCELLED = 'Cancelled'
 WARMUP = 'Warmup'
+COMPLETED_EARLY = 'Completed Early'
 
 # If we run into a breaking error, pause for this amount of time before trying to continue
 ERROR_WAIT = 10.0
@@ -177,7 +178,7 @@ class GameRenderer:
       pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
-    elif overview.status == GAME_OVER or overview.status == FINAL:
+    elif overview.status == GAME_OVER or overview.status == FINAL or overview.status == COMPLETED_EARLY:
       final = Final(game)
       scoreboard = Scoreboard(overview)
       renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
