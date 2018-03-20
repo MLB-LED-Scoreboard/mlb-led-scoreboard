@@ -110,7 +110,7 @@ class GameRenderer:
       refresh_rate = SCROLL_TEXT_FAST_RATE
       if self.config.slowdown_scrolling == True:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
-      if overview.status == IN_PROGRESS:
+      if self.is_static_status(overview):
         refresh_rate = self.config.live_rotate_rate
         self.data_needs_refresh = True
         self.scroll_finished = True
@@ -158,6 +158,10 @@ class GameRenderer:
       return False
 
     return True
+
+  def is_static_status(self, overview):
+    """Returns whether the game being currently displayed has no text to scroll"""
+    return overview.status in [IN_PROGRESS, CANCELLED, DELAYED, POSTPONED]
 
   def __get_game_from_args(self):
     """Returns the index of the game to render.
