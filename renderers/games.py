@@ -32,6 +32,7 @@ POSTPONED = 'Postponed'
 DELAYED = 'Delayed'
 CANCELLED = 'Cancelled'
 WARMUP = 'Warmup'
+COMPLETED_EARLY = 'Completed Early'
 
 # If we run into a breaking error, pause for this amount of time before trying to continue
 ERROR_WAIT = 10.0
@@ -109,7 +110,7 @@ class GameRenderer:
       refresh_rate = SCROLL_TEXT_FAST_RATE
       if self.config.slowdown_scrolling == True:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
-      if overview.status == IN_PROGRESS:
+      if self.is_static_status(overview):
         refresh_rate = self.config.live_rotate_rate
         self.data_needs_refresh = True
         self.scroll_finished = True
@@ -158,6 +159,10 @@ class GameRenderer:
 
     return True
 
+  def is_static_status(self, overview):
+    """Returns whether the game being currently displayed has no text to scroll"""
+    return overview.status in [IN_PROGRESS, CANCELLED, DELAYED, POSTPONED]
+
   def __get_game_from_args(self):
     """Returns the index of the game to render.
     If a preferred team was provided in the configuration that index is
@@ -177,7 +182,7 @@ class GameRenderer:
       pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
-    elif overview.status == GAME_OVER or overview.status == FINAL:
+    elif overview.status == GAME_OVER or overview.status == FINAL or overview.status == COMPLETED_EARLY:
       final = Final(game)
       scoreboard = Scoreboard(overview)
       renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
