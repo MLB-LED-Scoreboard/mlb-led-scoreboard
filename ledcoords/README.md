@@ -1,0 +1,1 @@
+These JSON files are named in correspondence to the dimensions of the LED board used when running the software. In cases where only one of the two coordinates (x or y) are provided, this means that the other is set programmatically, usually through centering text or a loop depending on the piece being rendered.

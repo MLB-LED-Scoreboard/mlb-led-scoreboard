@@ -180,19 +180,19 @@ class GameRenderer:
     """Draws the provided game on the canvas."""
     if overview.status == PRE_GAME or overview.status == SCHEDULED or overview.status == WARMUP:
       pregame = Pregame(overview)
-      renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
+      renderer = PregameRenderer(self.canvas, pregame, self.config.coords["pregame"], self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     elif overview.status == GAME_OVER or overview.status == FINAL or overview.status == COMPLETED_EARLY:
       final = Final(game)
       scoreboard = Scoreboard(overview)
-      renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
+      renderer = FinalRenderer(self.canvas, final, scoreboard, self.config.coords, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     elif overview.status == POSTPONED or overview.status == DELAYED or overview.status == CANCELLED:
       scoreboard = Scoreboard(overview)
-      StatusRenderer(self.canvas, scoreboard).render()
+      StatusRenderer(self.canvas, scoreboard, self.config.coords).render()
     else:
       scoreboard = Scoreboard(overview)
-      ScoreboardRenderer(self.canvas, scoreboard).render()
+      ScoreboardRenderer(self.canvas, scoreboard, self.config.coords).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
   def __handle_error(self, error, error_strings):

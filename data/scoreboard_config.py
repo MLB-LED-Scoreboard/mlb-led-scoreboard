@@ -1,13 +1,14 @@
 from utils import get_file
 import json
 import os
+import sys
 
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
 
 class ScoreboardConfig:
-  def __init__(self, filename):
+  def __init__(self, filename, width, height):
     json = self.read_json(filename)
     self.preferred_team = json.get("preferred_team")
     self.preferred_division = json.get("preferred_division", "NL Central")
@@ -19,6 +20,7 @@ class ScoreboardConfig:
     self.scroll_until_finished = json.get("scroll_until_finished", True)
     self.slowdown_scrolling = json.get("slowdown_scrolling", False)
     self.debug_enabled = json.get("debug_enabled", False)
+    self.coords = self.get_coords(width, height)
 
     #Check the rotate_rates to make sure it's valid and not silly
     self.check_rotate_rates()
@@ -57,3 +59,12 @@ class ScoreboardConfig:
     if os.path.isfile(path):
       j = json.load(open(path))
     return j
+
+  def get_coords(self, width, height):
+    filename = "ledcoords/w%sh%s.json" % (width, height)
+    coords = self.read_json(filename)
+    if not coords:
+      print("Invalid matrix dimensions provided. See top of README for supported dimensions.")
+      print("If you would like to see new dimensions supported, please file an issue on GitHub!")
+      sys.exit(1)
+    return coords

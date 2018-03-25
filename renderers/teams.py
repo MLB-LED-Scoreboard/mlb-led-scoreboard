@@ -6,10 +6,11 @@ class TeamsRenderer:
   """Renders the scoreboard team banners including background color, team abbreviation text,
   and their scored runs."""
 
-  def __init__(self, canvas, home_team, away_team):
+  def __init__(self, canvas, home_team, away_team, coords):
     self.canvas = canvas
     self.home_team = home_team
     self.away_team = away_team
+    self.coords = coords
 
     self.colors = json.load(open(get_file('Assets/colors.json')))
     self.font = get_font()
@@ -30,8 +31,8 @@ class TeamsRenderer:
         color = home_team_color if y >= scores_height / 2 else away_team_color
         self.canvas.SetPixel(x, y, color['r'], color['g'], color['b'])
 
-    self.__render_team_text(self.away_team, away_colors, 1, 6)
-    self.__render_team_text(self.home_team, home_colors, 1, 13)
+    self.__render_team_text(self.away_team, away_colors, self.coords["away"]["x"], self.coords["away"]["y"])
+    self.__render_team_text(self.home_team, home_colors, self.coords["home"]["x"], self.coords["home"]["y"])
 
   def __render_team_text(self, team, colors, x, y):
     text_color = colors.get('text', self.colors['default']['text'])

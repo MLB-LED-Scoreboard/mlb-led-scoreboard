@@ -12,14 +12,15 @@ CANCELLED = 'Cancelled'
 CANCELLED_SHORTHAND = "Cancl'd"
 
 class Status:
-  def __init__(self, canvas, scoreboard):
+  def __init__(self, canvas, scoreboard, coords):
     self.canvas = canvas
     self.scoreboard = scoreboard
+    self.coords = coords
     self.font = get_font()
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team).render()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.coords["teams"]).render()
     self.__render_game_status()
 
   def __render_game_status(self):
@@ -31,4 +32,4 @@ class Status:
       if text == CANCELLED:
         text = CANCELLED_SHORTHAND
     text_x = center_text_position(text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, text_x, 20, color, text)
+    graphics.DrawText(self.canvas, self.font, text_x, self.coords["status"]["y"], color, text)

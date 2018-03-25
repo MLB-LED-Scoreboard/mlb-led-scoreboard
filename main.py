@@ -19,7 +19,7 @@ matrix = RGBMatrix(options = matrixOptions)
 canvas = matrix.CreateFrameCanvas()
 
 # Read scoreboard options from config.json if it exists
-config = ScoreboardConfig("config.json")
+config = ScoreboardConfig("config.json", matrix.width, matrix.height)
 debug.set_debug_status(config)
 
 # Render the current standings or today's games depending on
@@ -32,7 +32,7 @@ day = now.day
 def display_standings(matrix, config, date):
   standings = mlbgame.standings(date)
   division = next(division for division in standings.divisions if division.name == config.preferred_division)
-  renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division)
+  renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division, config.coords["standings"])
 
 if config.display_standings:
 	display_standings(matrix, config, datetime.datetime(year, month, day))

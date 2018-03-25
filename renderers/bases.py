@@ -4,9 +4,10 @@ class BasesRenderer:
   """Renders the bases on the scoreboard and fills them in if they
   currently hold a runner."""
 
-  def __init__(self, canvas, bases):
+  def __init__(self, canvas, bases, coords):
     self.canvas = canvas
     self.bases = bases
+    self.coords = coords
 
   def render(self):
     base_runners = self.bases.runners
@@ -18,9 +19,9 @@ class BasesRenderer:
       offset = ((self.canvas.width - 32)/2) + 2
 
     base_px = []
-    base_px.append({'x': 26 + offset, 'y': 27} )
-    base_px.append({'x': 21 + offset, 'y': 22} )
-    base_px.append({'x': 16 + offset, 'y': 27} )
+    base_px.append({'x': self.coords["1B"]["x"] + offset, 'y': self.coords["1B"]["y"]})
+    base_px.append({'x': self.coords["2B"]["x"] + offset, 'y': self.coords["2B"]["y"]})
+    base_px.append({'x': self.coords["3B"]["x"] + offset, 'y': self.coords["3B"]["y"]})
 
     for base in range(len(base_runners)):
       self.__render_base_outline(base_px[base])
