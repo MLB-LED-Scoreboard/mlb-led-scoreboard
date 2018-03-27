@@ -25,9 +25,11 @@ debug.set_debug_status(config)
 # Render the current standings or today's games depending on
 # the provided arguments
 now = datetime.datetime.now()
+end_of_day = datetime.datetime.strptime(config.end_of_day, "%H:%M").replace(year=now.year, month=now.month, day=now.day)
+date_offset = -1 if end_of_day > now else 0
 year = now.year
 month = now.month
-day = now.day
+day = now.day + date_offset
 
 def display_standings(matrix, config, date):
   standings = mlbgame.standings(date)

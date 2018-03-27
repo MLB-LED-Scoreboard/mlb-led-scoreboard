@@ -104,6 +104,7 @@ A default `config.json.example` file is included for reference. Copy this file t
                               Float   A Float can be used to set all screen types to the same rotate rate.
 "stay_on_live_preferred_team" Bool    Stop rotating through games when your preferred team is currently live.
 "scroll_until_finished"       Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+"end_of_day"                  String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "slowdown_scrolling"          Bool    If your Pi is unable to handle the normal refresh rate while scrolling, this will slow it down.
 "debug_enabled"               Bool    Game and other debug data is written to your console.
 ```
