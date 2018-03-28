@@ -81,7 +81,11 @@ Recap of what you just did:
  * Installed `mlbgame` to get your baseball data
  * Installed `pytz` and `tzlocal` to display all of your games with your Pi's timezone.
 
-**Note on mlbgame**: If your installation fails with an error related to lxml, try running `pip install python-lxml`. Some users have reported issues with that particular module. If you continue to run into issues, join our Slack channel located at the top of the README.
+**Note on mlbgame**: If your installation fails with an error related to lxml, try running `pip install python-lxml`. Some users have reported issues with that particular module.
+
+Another workaround for Raspberry Pi that other users have gotten to work is running `sudo apt-get install libxml2-dev libxslt-dev python-dev`
+
+If you continue to run into issues, join our Slack channel located at the top of the README.
 
 Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
 
