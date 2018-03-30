@@ -12,7 +12,7 @@ class Pregame:
     self.status = overview.status
 
     try:
-      self.away_starter = ("{}. {} ({}-{} {:.2f} ERA)".format(
+      self.away_starter = ("{}. {} ({}-{} {} ERA)".format(
         overview.away_probable_pitcher_first_name[0],
         overview.away_probable_pitcher_last_name,
         overview.away_probable_pitcher_wins,
@@ -23,7 +23,7 @@ class Pregame:
       self.away_starter = 'TBD'
 
     try:
-      self.home_starter = ("{}. {} ({}-{} {:.2f} ERA)".format(
+      self.home_starter = ("{}. {} ({}-{} {} ERA)".format(
         overview.home_probable_pitcher_first_name[0],
         overview.home_probable_pitcher_last_name,
         overview.home_probable_pitcher_wins,
