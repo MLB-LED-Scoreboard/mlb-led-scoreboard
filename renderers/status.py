@@ -34,6 +34,8 @@ class StatusRenderer:
     text = self.scoreboard.game_status
     if text == Status.MANAGER_CHALLENGE:
       return CHALLENGE_SHORTHAND
+    if text == Status.DELAYED_START:
+      return Status.DELAYED
     if self.canvas.width == 32:
       if text == Status.POSTPONED:
         return POSTPONED_SHORTHAND

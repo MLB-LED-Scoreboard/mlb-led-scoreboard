@@ -2,6 +2,7 @@ class Status:
   CANCELLED = 'Cancelled'
   COMPLETED_EARLY = 'Completed Early'
   DELAYED = 'Delayed'
+  DELAYED_START = 'Delayed Start'
   FINAL = 'Final'
   GAME_OVER = 'Game Over'
   IN_PROGRESS = 'In Progress'
@@ -35,7 +36,7 @@ class Status:
   def is_irregular(status):
     """Returns whether game is in an irregular state, such as delayed, postponed, cancelled,
     or in a challenge."""
-    return status in [Status.POSTPONED, Status.DELAYED, Status.CANCELLED, Status.MANAGER_CHALLENGE]
+    return status in [Status.POSTPONED, Status.DELAYED, Status.DELAYED_START, Status.CANCELLED, Status.MANAGER_CHALLENGE]
 
   @staticmethod
   def is_fresh(status):
