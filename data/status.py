@@ -15,7 +15,7 @@ class Status:
   @staticmethod
   def is_static(status):
     """Returns whether the game being currently displayed has no text to scroll"""
-    return status in [Status.IN_PROGRESS, Status.CANCELLED, Status.DELAYED, Status.POSTPONED]
+    return status in [Status.IN_PROGRESS, Status.CANCELLED, Status.DELAYED, Status.POSTPONED, Status.MANAGER_CHALLENGE]
 
   @staticmethod
   def is_pregame(status):
