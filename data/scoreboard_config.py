@@ -65,7 +65,12 @@ class ScoreboardConfig:
     filename = "ledcoords/w%sh%s.json" % (width, height)
     coords = self.read_json(filename)
     if not coords:
-      print("Invalid matrix dimensions provided. See top of README for supported dimensions.")
-      print("If you would like to see new dimensions supported, please file an issue on GitHub!")
-      sys.exit(1)
+      # Fall back to default example file
+      filename = "%s.example" % (filename)
+      coords = self.read_json(filename)
+      if not coords:
+        # Unsupported coordinates
+        print("Invalid matrix dimensions provided. See top of README for supported dimensions.")
+        print("If you would like to see new dimensions supported, please file an issue on GitHub!")
+        sys.exit(1)
     return coords

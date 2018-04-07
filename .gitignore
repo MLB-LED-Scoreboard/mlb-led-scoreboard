@@ -105,3 +105,6 @@ venv.bak/
 
 # Ignore our customized config.json
 config.json
+
+# Ignore any customized coordinate configs
+ledcoords/*.json

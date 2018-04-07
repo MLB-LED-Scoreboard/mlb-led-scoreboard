@@ -22,6 +22,7 @@ If you'd like to see support for another set of board dimensions, file an issue!
 * [Usage](#usage)
   * [Configuration](#configuration)
   * [Flags](#flags)
+  * [Custom Board Layout](#custom-board-layout)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
 * [Wiki](#wiki)
@@ -133,6 +134,9 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral. (Default: 0)
 ```
+
+### Custom Board Layout
+You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `ledcoords/` directory for more information.
 
 ## Sources
 This project relies on two libraries:
