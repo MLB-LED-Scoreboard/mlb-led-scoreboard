@@ -30,7 +30,7 @@ class Status:
   @staticmethod
   def is_live(status):
     """Returns whether the game is currently live"""
-    return status in [Status.IN_PROGRESS, Status.WARMUP, Status.GAME_OVER]
+    return status in [Status.IN_PROGRESS, Status.WARMUP, Status.GAME_OVER, Status.MANAGER_CHALLENGE]
 
   @staticmethod
   def is_irregular(status):
