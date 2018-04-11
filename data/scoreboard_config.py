@@ -26,6 +26,7 @@ class ScoreboardConfig:
 
     #Check the rotate_rates to make sure it's valid and not silly
     self.check_rotate_rates()
+    self.check_display_standings_on_offday()
 
   def check_rotate_rates(self):
     if isinstance(self.rotate_rates, dict) == False:
@@ -54,6 +55,15 @@ class ScoreboardConfig:
     self.live_rotate_rate = self.rotate_rates.get("live", DEFAULT_ROTATE_RATES["live"])
     self.final_rotate_rate = self.rotate_rates.get("final", DEFAULT_ROTATE_RATES["final"])
     self.pregame_rotate_rate = self.rotate_rates.get("pregame", DEFAULT_ROTATE_RATES["pregame"])
+
+  def check_display_standings_on_offday(self):
+    if self.display_standings_on_offday == 2 and not self.preferred_team:
+      print("Warning: You have requested standings to be displayed on a preferred team's offday but have no preferred team. Update \"preferred_team\" ")
+      self.display_standings_on_offday = True
+    elif self.display_standings_on_offday == 1:
+      self.display_standings_on_offday = True
+    elif self.display_standings_on_offday == 0:
+      self.display_standings_on_offday = False
 
   def read_json(self, filename):
     j = {}

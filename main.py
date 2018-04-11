@@ -33,9 +33,13 @@ month = today.month
 day = today.day
 
 def display_standings(matrix, config, date):
-  standings = mlbgame.standings(date)
-  division = next(division for division in standings.divisions if division.name == config.preferred_division)
-  renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division, config.coords["standings"])
+  try:
+    standings = mlbgame.standings(date)
+    division = next(division for division in standings.divisions if division.name == config.preferred_division)
+    renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division, config.coords["standings"])
+  except:
+    # Out of season off days don't always return standings so fall back on the offday renderer
+    OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(year, month, day)).render()
 
 if config.display_standings:
 	display_standings(matrix, config, datetime(year, month, day))
@@ -44,12 +48,16 @@ else:
     games = mlbgame.day(year, month, day)
     if not len(games):
       if config.display_standings_on_offday:
-        try:
-          display_standings(matrix, config, datetime(year, month, day))
-        except:
-          # Out of season off days don't always return standings so fall back on the offday renderer
-          OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(year, month, day)).render()
+        display_standings(matrix, config, datetime(year, month, day))
       else:
         OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(year, month, day)).render()
     else:
-      GameRenderer(matrix, matrix.CreateFrameCanvas(), games, config).render()
+      if config.preferred_team:
+        game_idx = next(
+            (i for i, game in enumerate(games) if game.away_team ==
+            config.preferred_team or game.home_team == config.preferred_team), None
+        )
+        if config.display_standings_on_offday == 2 and not game_idx:
+          display_standings(matrix, config, datetime(year, month, day))
+        else:
+          GameRenderer(matrix, matrix.CreateFrameCanvas(), games, config).render()
