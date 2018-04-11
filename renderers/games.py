@@ -169,14 +169,14 @@ class GameRenderer:
     elif Status.is_complete(overview.status):
       final = Final(game)
       scoreboard = Scoreboard(overview)
-      renderer = FinalRenderer(self.canvas, final, scoreboard, self.config.coords, self.current_scrolling_text_pos)
+      renderer = FinalRenderer(self.canvas, final, scoreboard, self.config, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     elif Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
-      StatusRenderer(self.canvas, scoreboard, self.config.coords).render()
+      StatusRenderer(self.canvas, scoreboard, self.config).render()
     else:
       scoreboard = Scoreboard(overview)
-      ScoreboardRenderer(self.canvas, scoreboard, self.config.coords).render()
+      ScoreboardRenderer(self.canvas, scoreboard, self.config).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
   def __handle_error(self, error, error_strings):

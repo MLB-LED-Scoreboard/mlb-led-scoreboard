@@ -13,22 +13,22 @@ CANCELLED_SHORTHAND = "Cancl'd"
 CHALLENGE_SHORTHAND_32 = "Chalnge"
 
 class StatusRenderer:
-  def __init__(self, canvas, scoreboard, coords):
+  def __init__(self, canvas, scoreboard, config):
     self.canvas = canvas
     self.scoreboard = scoreboard
-    self.coords = coords
+    self.config = config
     self.font = get_font()
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.coords["teams"]).render()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config.coords["teams"]).render()
     self.__render_game_status()
 
   def __render_game_status(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = self.__get_text_for_status()
     text_x = center_text_position(text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, text_x, self.coords["status"]["y"], color, text)
+    graphics.DrawText(self.canvas, self.font, text_x, self.config.coords["status"]["y"], color, text)
 
   def __get_text_for_status(self):
     text = self.scoreboard.game_status

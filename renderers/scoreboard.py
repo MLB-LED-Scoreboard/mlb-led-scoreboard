@@ -6,16 +6,17 @@ from renderers.teams import TeamsRenderer
 from data.inning import Inning
 
 class Scoreboard:
-  def __init__(self, canvas, scoreboard, coords):
+  def __init__(self, canvas, scoreboard, config):
     self.canvas = canvas
     self.scoreboard = scoreboard
-    self.coords = coords
+    self.config = config
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.coords["teams"]).render()
-    InningRenderer(self.canvas, self.scoreboard.inning, self.coords["inning"]).render()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config).render()
+    InningRenderer(self.canvas, self.scoreboard.inning, self.config.coords["inning"]).render()
 
     if self.scoreboard.inning.state == Inning.TOP or self.scoreboard.inning.state == Inning.BOTTOM:
-      PitchesRenderer(self.canvas, self.scoreboard.pitches, self.coords["pitches"]).render()
-      OutsRenderer(self.canvas, self.scoreboard.outs, self.coords["outs"]).render()
-      BasesRenderer(self.canvas, self.scoreboard.bases, self.coords["bases"]).render()
+      coords = self.config.coords
+      PitchesRenderer(self.canvas, self.scoreboard.pitches, coords["pitches"]).render()
+      OutsRenderer(self.canvas, self.scoreboard.outs, coords["outs"]).render()
+      BasesRenderer(self.canvas, self.scoreboard.bases, coords["bases"]).render()

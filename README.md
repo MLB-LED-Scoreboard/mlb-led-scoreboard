@@ -110,6 +110,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "stay_on_live_preferred_team" Bool    Stop rotating through games when your preferred team is currently live.
 "scroll_until_finished"       Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
 "end_of_day"                  String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
+"display_full_team_names"     Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
 "slowdown_scrolling"          Bool    If your Pi is unable to handle the normal refresh rate while scrolling, this will slow it down.
 "debug_enabled"               Bool    Game and other debug data is written to your console.
 ```
