@@ -19,6 +19,7 @@ class ScoreboardConfig:
     self.display_standings_on_offday = json.get("display_standings_on_offday", True)
     self.scroll_until_finished = json.get("scroll_until_finished", True)
     self.end_of_day = json.get("end_of_day", "00:00")
+    self.display_full_team_names = json.get("display_full_team_names", True)
     self.slowdown_scrolling = json.get("slowdown_scrolling", False)
     self.debug_enabled = json.get("debug_enabled", False)
     self.coords = self.get_coords(width, height)

@@ -8,6 +8,7 @@
 	"stay_on_live_preferred_team": true,
 	"scroll_until_finished": true,
 	"end_of_day": "00:00",
+	"display_full_team_names": true,
 	"slower_scrolling": false,
 	"debug_enabled": false
 }
