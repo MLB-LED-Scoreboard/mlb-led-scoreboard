@@ -1,0 +1,95 @@
+{
+  "bases": {
+    "1B": {
+      "x": 26,
+      "y": 27
+    },
+    "2B": {
+      "x": 21,
+      "y": 22
+    },
+    "3B": {
+      "x": 16,
+      "y": 27
+    }
+  },
+  "final": {
+    "inning": {
+      "y": 20
+    },
+    "pitchers": {
+      "y": 31
+    }
+  },
+  "inning": {
+    "break": {
+      "number": {
+        "y": 29
+      },
+      "text": {
+        "y": 22
+      }
+    },
+    "number": {
+      "y": 20
+    }
+  },
+  "outs": [
+    {
+      "x": 2,
+      "y": 27
+    },
+    {
+      "x": 6,
+      "y": 27
+    },
+    {
+      "x": 10,
+      "y": 27
+    }
+  ],
+  "pitches": {
+    "x": 1,
+    "y": 23
+  },
+  "pregame": {
+    "matchup": {
+      "y": 6
+    },
+    "probable_starters": {
+      "not_warmup": {
+        "y": 25
+      },
+      "warmup": {
+        "y": 29
+      }
+    },
+    "start_time": {
+      "y": 13
+    },
+    "warmup": {
+      "y": 20
+    }
+  },
+  "standings": {
+    "divider": {
+      "x": 13
+    },
+    "team": {
+      "x": 1
+    }
+  },
+  "status": {
+    "y": 20
+  },
+  "teams": {
+    "away": {
+      "x": 1,
+      "y": 6
+    },
+    "home": {
+      "x": 1,
+      "y": 13
+    }
+  }
+}

@@ -22,6 +22,7 @@ If you'd like to see support for another set of board dimensions, file an issue!
 * [Usage](#usage)
   * [Configuration](#configuration)
   * [Flags](#flags)
+  * [Custom Board Layout](#custom-board-layout)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
 * [Wiki](#wiki)
@@ -81,7 +82,11 @@ Recap of what you just did:
  * Installed `mlbgame` to get your baseball data
  * Installed `pytz` and `tzlocal` to display all of your games with your Pi's timezone.
 
-**Note on mlbgame**: If your installation fails with an error related to lxml, try running `pip install python-lxml`. Some users have reported issues with that particular module. If you continue to run into issues, join our Slack channel located at the top of the README.
+**Note on mlbgame**: If your installation fails with an error related to lxml, try running `pip install python-lxml`. Some users have reported issues with that particular module.
+
+Another workaround for Raspberry Pi that other users have gotten to work is running `sudo apt-get install libxml2-dev libxslt-dev python-dev`
+
+If you continue to run into issues, join our Slack channel located at the top of the README.
 
 Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
 
@@ -99,11 +104,15 @@ A default `config.json.example` file is included for reference. Copy this file t
 "preferred_team"              String  Pick a team to display a game for. Example: "Cubs"
 "preferred_division"          String  Pick a division to display standings for when display_standings is true. Example: "NL Central"
 "display_standings"           Bool    Display standings for the provided preferred_division.
+"display_standings_on_offday" Bool    Display standings for the provided preferred division when there are no games on the current day.
+                              Integer If 0, same as false. If 1, Same as the above. If 2, the standings are displayed if your preferred team has no games, instead of all teams.
 "rotate_games"                Bool    Rotate through each game of the day every 15 seconds.
 "rotate_rates"                Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
                               Float   A Float can be used to set all screen types to the same rotate rate.
 "stay_on_live_preferred_team" Bool    Stop rotating through games when your preferred team is currently live.
 "scroll_until_finished"       Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+"end_of_day"                  String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
+"display_full_team_names"     Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
 "slowdown_scrolling"          Bool    If your Pi is unable to handle the normal refresh rate while scrolling, this will slow it down.
 "debug_enabled"               Bool    Game and other debug data is written to your console.
 ```
@@ -128,6 +137,9 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral. (Default: 0)
 ```
+
+### Custom Board Layout
+You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `ledcoords/` directory for more information.
 
 ## Sources
 This project relies on two libraries:

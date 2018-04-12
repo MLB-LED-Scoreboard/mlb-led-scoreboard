@@ -1,34 +1,46 @@
+from data.status import Status
 from renderers.teams import TeamsRenderer
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
 import ledcolors.scoreboard
 
-# "Postponed" is too long a word for 32-wide displays,
-# so we use a shorthand for that case.
-POSTPONED = 'Postponed'
+# "Manager Challenge is too long"
+CHALLENGE_SHORTHAND = "Challenge"
+
+# Handle statuses that are too long for 32-wide boards.
 POSTPONED_SHORTHAND = 'Postpd'
-
-CANCELLED = 'Cancelled'
 CANCELLED_SHORTHAND = "Cancl'd"
+CHALLENGE_SHORTHAND_32 = "Chalnge"
 
-class Status:
-  def __init__(self, canvas, scoreboard):
+class StatusRenderer:
+  def __init__(self, canvas, scoreboard, config):
     self.canvas = canvas
     self.scoreboard = scoreboard
+    self.config = config
     self.font = get_font()
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team).render()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config.coords["teams"]).render()
     self.__render_game_status()
 
   def __render_game_status(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
-    text = self.scoreboard.game_status
-    if self.canvas.width == 32:
-      if text == POSTPONED:
-        text = POSTPONED_SHORTHAND
-      if text == CANCELLED:
-        text = CANCELLED_SHORTHAND
+    text = self.__get_text_for_status()
     text_x = center_text_position(text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, text_x, 20, color, text)
+    graphics.DrawText(self.canvas, self.font, text_x, self.config.coords["status"]["y"], color, text)
+
+  def __get_text_for_status(self):
+    text = self.scoreboard.game_status
+    if text == Status.MANAGER_CHALLENGE:
+      return CHALLENGE_SHORTHAND
+    if text == Status.DELAYED_START:
+      return Status.DELAYED
+    if self.canvas.width == 32:
+      if text == Status.POSTPONED:
+        return POSTPONED_SHORTHAND
+      if text == Status.CANCELLED:
+        return CANCELLED_SHORTHAND
+      if text == Status.MANAGER_CHALLENGE:
+        return CHALLENGE_SHORTHAND_32
+    return text

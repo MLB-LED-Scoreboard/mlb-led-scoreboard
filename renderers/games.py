@@ -1,10 +1,11 @@
+from data.final import Final
 from data.pregame import Pregame
 from data.scoreboard import Scoreboard
-from data.final import Final
+from data.status import Status
 from renderers.final import Final as FinalRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
-from renderers.status import Status as StatusRenderer
+from renderers.status import StatusRenderer
 from utils import bump_counter, split_string
 import renderers.error
 import debug
@@ -21,18 +22,6 @@ FIFTEEN_MINUTES = 900.0
 # Refresh rates measured in seconds
 SCROLL_TEXT_SLOW_RATE = 0.2
 SCROLL_TEXT_FAST_RATE = 0.1
-
-# Game statuses
-SCHEDULED = 'Scheduled'
-PRE_GAME = 'Pre-Game'
-IN_PROGRESS = 'In Progress'
-FINAL = 'Final'
-GAME_OVER = 'Game Over' # Not sure what the difference is between this and final but it exists
-POSTPONED = 'Postponed'
-DELAYED = 'Delayed'
-CANCELLED = 'Cancelled'
-WARMUP = 'Warmup'
-COMPLETED_EARLY = 'Completed Early'
 
 # If we run into a breaking error, pause for this amount of time before trying to continue
 ERROR_WAIT = 10.0
@@ -110,7 +99,7 @@ class GameRenderer:
       refresh_rate = SCROLL_TEXT_FAST_RATE
       if self.config.slowdown_scrolling == True:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
-      if self.is_static_status(overview):
+      if Status.is_static(overview.status):
         refresh_rate = self.config.live_rotate_rate
         self.data_needs_refresh = True
         self.scroll_finished = True
@@ -127,17 +116,17 @@ class GameRenderer:
       rotate_rate = self.config.live_rotate_rate
 
       # Always use the default 15 seconds for our pregame rotations
-      if overview.status == PRE_GAME or overview.status == SCHEDULED:
+      if Status.is_pregame(overview.status):
         rotate_rate = self.config.pregame_rotate_rate
 
-      if overview.status == FINAL or overview.status == GAME_OVER:
+      if Status.is_complete(overview.status):
         rotate_rate = self.config.final_rotate_rate
 
       if time_delta >= rotate_rate and self.scroll_finished:
         starttime = time.time()
         self.data_needs_refresh = True
         self.scroll_finished = False
-        if overview.status == IN_PROGRESS or overview.status == GAME_OVER:
+        if Status.is_fresh(overview.status):
           self.current_scrolling_text_pos = self.canvas.width
         if self.__should_rotate_to_next_game(overview):
           self.current_scrolling_text_pos = self.canvas.width
@@ -153,15 +142,10 @@ class GameRenderer:
       return True
 
     showing_preferred_team = self.config.preferred_team in [overview.away_team_name, overview.home_team_name]
-    current_game_is_live = (overview.status == IN_PROGRESS or overview.status == WARMUP or overview.status == GAME_OVER)
-    if showing_preferred_team and current_game_is_live:
+    if showing_preferred_team and Status.is_live(overview.status):
       return False
 
     return True
-
-  def is_static_status(self, overview):
-    """Returns whether the game being currently displayed has no text to scroll"""
-    return overview.status in [IN_PROGRESS, CANCELLED, DELAYED, POSTPONED]
 
   def __get_game_from_args(self):
     """Returns the index of the game to render.
@@ -178,21 +162,21 @@ class GameRenderer:
 
   def __refresh_game(self, game, overview):
     """Draws the provided game on the canvas."""
-    if overview.status == PRE_GAME or overview.status == SCHEDULED or overview.status == WARMUP:
+    if Status.is_pregame(overview.status):
       pregame = Pregame(overview)
-      renderer = PregameRenderer(self.canvas, pregame, self.current_scrolling_text_pos)
+      renderer = PregameRenderer(self.canvas, pregame, self.config.coords["pregame"], self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
-    elif overview.status == GAME_OVER or overview.status == FINAL or overview.status == COMPLETED_EARLY:
+    elif Status.is_complete(overview.status):
       final = Final(game)
       scoreboard = Scoreboard(overview)
-      renderer = FinalRenderer(self.canvas, final, scoreboard, self.current_scrolling_text_pos)
+      renderer = FinalRenderer(self.canvas, final, scoreboard, self.config, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
-    elif overview.status == POSTPONED or overview.status == DELAYED or overview.status == CANCELLED:
+    elif Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
-      StatusRenderer(self.canvas, scoreboard).render()
+      StatusRenderer(self.canvas, scoreboard, self.config).render()
     else:
       scoreboard = Scoreboard(overview)
-      ScoreboardRenderer(self.canvas, scoreboard).render()
+      ScoreboardRenderer(self.canvas, scoreboard, self.config).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
   def __handle_error(self, error, error_strings):
