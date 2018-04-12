@@ -104,6 +104,8 @@ A default `config.json.example` file is included for reference. Copy this file t
 "preferred_team"              String  Pick a team to display a game for. Example: "Cubs"
 "preferred_division"          String  Pick a division to display standings for when display_standings is true. Example: "NL Central"
 "display_standings"           Bool    Display standings for the provided preferred_division.
+"display_standings_on_offday" Bool    Display standings for the provided preferred division when there are no games on the current day.
+                              Integer If 0, same as false. If 1, Same as the above. If 2, the standings are displayed if your preferred team has no games, instead of all teams.
 "rotate_games"                Bool    Rotate through each game of the day every 15 seconds.
 "rotate_rates"                Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
                               Float   A Float can be used to set all screen types to the same rotate rate.
