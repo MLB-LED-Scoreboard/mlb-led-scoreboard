@@ -21,7 +21,7 @@ class StatusRenderer:
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config.coords["teams"]).render()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config).render()
     self.__render_game_status()
 
   def __render_game_status(self):
