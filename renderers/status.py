@@ -32,15 +32,19 @@ class StatusRenderer:
 
   def __get_text_for_status(self):
     text = self.scoreboard.game_status
+    if self.canvas.width == 32:
+      return self.__get_32_text(text)
     if text == Status.MANAGER_CHALLENGE:
       return CHALLENGE_SHORTHAND
     if text == Status.DELAYED_START:
       return Status.DELAYED
-    if self.canvas.width == 32:
-      if text == Status.POSTPONED:
-        return POSTPONED_SHORTHAND
-      if text == Status.CANCELLED:
-        return CANCELLED_SHORTHAND
-      if text == Status.MANAGER_CHALLENGE:
-        return CHALLENGE_SHORTHAND_32
+    return text
+
+  def __get_32_text(self, text):
+    if text == Status.POSTPONED:
+      return POSTPONED_SHORTHAND
+    if text == Status.CANCELLED:
+      return CANCELLED_SHORTHAND
+    if text == Status.MANAGER_CHALLENGE:
+      return CHALLENGE_SHORTHAND_32
     return text
