@@ -8,7 +8,12 @@ class Pregame:
   def __init__(self, overview):
     self.home_team = overview.home_name_abbrev
     self.away_team = overview.away_name_abbrev
-    self.start_time = self.__convert_time(overview.time + overview.ampm)
+
+    try:
+      self.start_time = self.__convert_time(overview.time + overview.ampm)
+    except:
+      self.start_time = "TBD"
+
     self.status = overview.status
 
     try:
