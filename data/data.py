@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import mlbgame
 import debug
+import time
 
 class Data:
   def __init__(self, config):
@@ -9,16 +10,17 @@ class Data:
 
     # Parse today's date and see if we should use today or yesterday
     self.year, self.month, self.day = self.__parse_today()
+    # self.year, self.month, self.day = (2018, 4, 18)
 
     # Flag to determine when to refresh data
     self.needs_refresh = True
     
     # Fetch the games for today
-    self.refresh_games(self.year, self.month, self.day)
+    self.refresh_games()
 
     # Fetch all standings data for today
     # (Good to have in case we add a standings screen while rotating scores)
-    self.refresh_standings(self.date())
+    self.refresh_standings()
 
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
@@ -41,18 +43,19 @@ class Data:
   #
   # mlbgame refresh
 
-  def refresh_standings(self, date):
+  def refresh_standings(self):
     try:
-      self.standings = mlbgame.standings(date)
+      self.standings = mlbgame.standings()
     except:
-      debug.error("Failed to refresh standings for {}".format(date))
+      debug.error("Failed to refresh standings.")
 
-  def refresh_games(self, year, month, day):
-    self.games = mlbgame.day(year, month, day)
+  def refresh_games(self):
+    self.games = mlbgame.day(self.year, self.month, self.day)
+    self.games_refresh_time = time.time()
 
   def refresh_overview(self):
     self.overview = mlbgame.overview(self.current_game().game_id)
-
+    self.needs_refresh = False
 
   #
   # Standings

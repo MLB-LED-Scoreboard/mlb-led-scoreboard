@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
-from renderers.games import GameRenderer
+# from renderers.games import GameRenderer
+from renderers.main import MainRenderer
 from renderers.offday import OffdayRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
@@ -17,7 +18,6 @@ matrixOptions = led_matrix_options(args)
 
 # Initialize the matrix
 matrix = RGBMatrix(options = matrixOptions)
-canvas = matrix.CreateFrameCanvas()
 
 # Read scoreboard options from config.json if it exists
 config = ScoreboardConfig("config.json", matrix.width, matrix.height)
@@ -42,19 +42,18 @@ if config.display_standings:
 
 # Otherwise, we'll start displaying games depending on config settings
 else:
-  while True:
+  # No baseball today.
+  if data.is_offday():
+    if config.display_standings_on_offday:
+      display_standings(matrix, data)
+    else:
+      OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
 
-    # No baseball today.
-    if data.is_offday():
-      if config.display_standings_on_offday:
+  # Baseball!
+  else:
+    if config.preferred_team:
+      if data.is_offday_for_preferred_team() and config.display_standings_on_offday == 2:
         display_standings(matrix, data)
       else:
-        OffdayRenderer(matrix, canvas, datetime(data.year, data.month, data.day)).render()
-
-    # Baseball!
-    else:
-      if config.preferred_team:
-        if data.is_offday_for_preferred_team() and config.display_standings_on_offday == 2:
-          display_standings(matrix, data)
-        else:
-          GameRenderer(matrix, canvas, data).render()
+        debug.error("Creating GameRenderer.")
+        MainRenderer(matrix, data).render()

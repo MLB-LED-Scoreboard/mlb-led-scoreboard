@@ -18,7 +18,7 @@ import sys
 
 # Times measured in seconds
 FIFTEEN_SECONDS = 15.0
-FIFTEEN_MINUTES = 900.0
+FIFTEEN_MINUTES = 90.0
 
 # Refresh rates measured in seconds
 SCROLL_TEXT_SLOW_RATE = 0.2
