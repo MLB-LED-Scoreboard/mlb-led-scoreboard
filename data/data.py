@@ -6,6 +6,8 @@ import mlbgame
 import debug
 import time
 
+NETWORK_RETRY_SLEEP_TIME = 5.0
+
 class Data:
   def __init__(self, config):
     # Save the parsed config
@@ -53,13 +55,38 @@ class Data:
       debug.error("Failed to refresh standings.")
 
   def refresh_games(self):
-    self.games = mlbgame.day(self.year, self.month, self.day)
-    self.games_refresh_time = time.time()
+    attempts_remaining = 5
+    while attempts_remaining > 0:
+      try:
+        self.games = mlbgame.day(self.year, self.month, self.day)
+        self.games_refresh_time = time.time()
+        break
+      except URLError:
+        debug.error("URLError: Failed to refresh list of games")
+        attempts_remaining -= 1
+        time.sleep(NETWORK_RETRY_SLEEP_TIME)
+      except ValueError:
+        debug.error("ValueError: Failed to refresh list of games")
+        attempts_remaining -= 1
+        time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
   def refresh_overview(self):
-    self.overview = mlbgame.overview(self.current_game().game_id)
-    self.needs_refresh = False
-    self.print_overview_debug()
+    attempts_remaining = 5
+    while attempts_remaining > 0:
+      try:
+        self.overview = mlbgame.overview(self.current_game().game_id)
+        self.needs_refresh = False
+        self.print_overview_debug()
+        break
+      except URLError:
+        debug.error("URLError: Failed to refresh list of games")
+        attempts_remaining -= 1
+        time.sleep(NETWORK_RETRY_SLEEP_TIME)
+      except ValueError:
+        debug.error("ValueError: Failed to refresh list of games")
+        attempts_remaining -= 1
+        time.sleep(NETWORK_RETRY_SLEEP_TIME)
+
 
   #
   # Standings
