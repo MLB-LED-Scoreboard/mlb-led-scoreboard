@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta
+from final import Final
+from pregame import Pregame
+from scoreboard import Scoreboard
 import mlbgame
 import debug
 import time
@@ -10,7 +13,7 @@ class Data:
 
     # Parse today's date and see if we should use today or yesterday
     self.year, self.month, self.day = self.__parse_today()
-    # self.year, self.month, self.day = (2018, 4, 18)
+    # self.year, self.month, self.day = (2018, 4, 22)
 
     # Flag to determine when to refresh data
     self.needs_refresh = True
@@ -56,6 +59,7 @@ class Data:
   def refresh_overview(self):
     self.overview = mlbgame.overview(self.current_game().game_id)
     self.needs_refresh = False
+    self.print_overview_debug()
 
   #
   # Standings
@@ -107,4 +111,12 @@ class Data:
   def is_offday(self):
     return not len(self.games)
 
+  #
+  # Debug info
+
+  def print_overview_debug(self):
+    debug.log("Overview Refreshed: {}".format(self.overview.id))
+    debug.log("Pre: {}".format(Pregame(self.overview)))
+    debug.log("Live: {}".format(Scoreboard(self.overview)))
+    debug.log("Final: {}".format(Final(self.current_game())))
 

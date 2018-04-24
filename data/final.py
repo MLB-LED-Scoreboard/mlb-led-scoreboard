@@ -45,8 +45,6 @@ class Final:
     except:
       self.losing_pitcher_losses = 0
 
-    debug.log(self)
-
   def __str__(self):
     s =  "<%s %s> " % (self.__class__.__name__, hex(id(self)))
     s += "W: %s %s-%s (%s), L: %s %s-%s (%s)" % (

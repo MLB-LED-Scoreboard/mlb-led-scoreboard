@@ -37,7 +37,6 @@ class Pregame:
       ) or 'TBD'
     except:
       self.home_starter = 'TBD'
-    debug.log(self)
 
   def __convert_time(self, time):
     """Converts MLB's pregame times (Eastern) into the local time zone"""
