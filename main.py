@@ -55,5 +55,4 @@ else:
       if data.is_offday_for_preferred_team() and config.display_standings_on_offday == 2:
         display_standings(matrix, data)
       else:
-        debug.error("Creating GameRenderer.")
         MainRenderer(matrix, data).render()

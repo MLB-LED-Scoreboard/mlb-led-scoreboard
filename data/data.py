@@ -6,6 +6,11 @@ import mlbgame
 import debug
 import time
 
+try:
+    from urllib.error import URLError
+except ImportError:
+    from urllib2 import URLError
+
 NETWORK_RETRY_SLEEP_TIME = 5.0
 
 class Data:
@@ -61,8 +66,8 @@ class Data:
         self.games = mlbgame.day(self.year, self.month, self.day)
         self.games_refresh_time = time.time()
         break
-      except URLError:
-        debug.error("URLError: Failed to refresh list of games")
+      except URLError, e:
+        debug.error("URLError: {}".format(e.reason))
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
       except ValueError:
@@ -78,12 +83,12 @@ class Data:
         self.needs_refresh = False
         self.print_overview_debug()
         break
-      except URLError:
-        debug.error("URLError: Failed to refresh list of games")
+      except URLError, e:
+        debug.error("URLError: {}".format(e.reason))
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
       except ValueError:
-        debug.error("ValueError: Failed to refresh list of games")
+        debug.error("ValueError: Failed to refresh overview for {}".format(self.current_game().game_id))
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
