@@ -20,7 +20,6 @@ class Scoreboard:
     self.pitches = Pitches(overview)
     self.outs = Outs(overview)
     self.game_status = overview.status
-    debug.log(self)
 
   def __str__(self):
     s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))

@@ -1,13 +1,14 @@
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
+from data.data import Data
 import debug
 import ledcolors.scoreboard
 
 class OffdayRenderer:
-  def __init__(self, matrix, canvas, date):
+  def __init__(self, matrix, canvas, data):
     self.matrix = matrix
     self.canvas = canvas
-    self.date = date
+    self.data = data
     debug.log(self)
 
   def render(self):
@@ -38,5 +39,5 @@ class OffdayRenderer:
 
   def __str_(self):
     s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))
-    s += "Date: %s" % (self.date)
+    s += "Date: %s" % (self.data.date())
     return s
