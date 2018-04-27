@@ -17,12 +17,6 @@ def center_text_position(text, canvas_width):
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]
 
-# def bump_counter(counter, arr):
-#   counter += 1
-#   if counter >= len(arr):
-#     counter = 0
-#   return counter
-
 def args():
   parser = argparse.ArgumentParser()
 

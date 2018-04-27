@@ -58,8 +58,6 @@ class GameRenderer:
     is required.
     """
     self.canvas.Fill(*ledcolors.scoreboard.fill)
-    # current_game_index = self.data.game_index_for_preferred_team()
-    # game = self.data.games[current_game_index]
     starttime = time.time()
 
     while True:

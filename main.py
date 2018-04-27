@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
-# from renderers.games import GameRenderer
 from renderers.main import MainRenderer
 from renderers.offday import OffdayRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions

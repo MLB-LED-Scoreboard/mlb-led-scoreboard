@@ -20,7 +20,6 @@ class Data:
 
     # Parse today's date and see if we should use today or yesterday
     self.year, self.month, self.day = self.__parse_today()
-    # self.year, self.month, self.day = (2018, 4, 22)
 
     # Flag to determine when to refresh data
     self.needs_refresh = True

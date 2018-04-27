@@ -6,15 +6,10 @@ from renderers.final import Final as FinalRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.status import StatusRenderer
-from utils import split_string
 from data.data import Data
-import renderers.error
-import debug
-import mlbgame
 import ledcolors.scoreboard
-import math
+import debug
 import time
-import sys
 
 GAMES_REFRESH_RATE = 900.0
 SCROLL_TEXT_FAST_RATE = 0.1
@@ -58,13 +53,7 @@ class MainRenderer:
       time.sleep(refresh_rate)
       endtime = time.time()
       time_delta = endtime - starttime
-
-      # Determine the rate in which we're rotating to the next screen
-      rotate_rate = self.data.config.live_rotate_rate
-      if Status.is_pregame(self.data.overview.status):
-        rotate_rate = self.data.config.pregame_rotate_rate
-      if Status.is_complete(self.data.overview.status):
-        rotate_rate = self.data.config.final_rotate_rate
+      rotate_rate = self.__rotate_rate_for_status(self.data.overview.status)
 
       # If we're ready to rotate, let's do it
       if time_delta >= rotate_rate and self.scrolling_finished:
@@ -82,6 +71,14 @@ class MainRenderer:
         self.data.refresh_overview()
         if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
           self.data.refresh_games()
+
+  def __rotate_rate_for_status(self, status):
+    rotate_rate = self.data.config.live_rotate_rate
+    if Status.is_pregame(status):
+      rotate_rate = self.data.config.pregame_rotate_rate
+    if Status.is_complete(status):
+      rotate_rate = self.data.config.final_rotate_rate
+    return rotate_rate
 
   def __should_rotate_to_next_game(self, overview):
     if self.data.config.rotate_games == False:
