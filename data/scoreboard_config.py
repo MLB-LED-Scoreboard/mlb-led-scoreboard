@@ -73,11 +73,11 @@ class ScoreboardConfig:
     return j
 
   def get_coords(self, width, height):
-    filename = "ledcoords/w%sh%s.json" % (width, height)
+    filename = "ledcoords/w{}h{}.json".format(width, height)
     coords = self.read_json(filename)
     if not coords:
       # Fall back to default example file
-      filename = "%s.example" % (filename)
+      filename = "{}.example".format(filename)
       coords = self.read_json(filename)
       if not coords:
         # Unsupported coordinates

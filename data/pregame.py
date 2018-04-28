@@ -48,8 +48,8 @@ class Pregame:
     return game_time_eastern.astimezone(tzlocal.get_localzone()).strftime('%I:%M%p').lstrip('0')
 
   def __str__(self):
-    s =  "<%s %s> " % (self.__class__.__name__, hex(id(self)))
-    s += "%s @ %s, (%s), %s vs %s" % (
+    s = "<{} {}> {} @ {}; {}; {} vs {}".format(
+      self.__class__.__name__, hex(id(self)),
       self.away_team, self.home_team, self.start_time,
       self.away_starter, self.home_starter)
     return s
