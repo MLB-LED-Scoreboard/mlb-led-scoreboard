@@ -38,6 +38,5 @@ class OffdayRenderer:
       pass # I hate the offseason and off days.
 
   def __str_(self):
-    s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))
-    s += "Date: %s" % (self.data.date())
+    s = "<{} {}> Date: {}".format(self.__class__.__name__, hex(id(self)), self.data.date())
     return s

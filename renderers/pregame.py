@@ -23,7 +23,7 @@ class Pregame:
   def __render_matchup(self):
     away_text = '{:>3s}'.format(self.game.away_team)
     home_text = '{:3s}'.format(self.game.home_team)
-    teams_text = "%s  %s" % (away_text, home_text)
+    teams_text = "{}  {}".format(away_text, home_text)
     teams_text_x = center_text_position(teams_text, self.canvas.width)
     at_x = center_text_position("@", self.canvas.width)
     graphics.DrawText(self.canvas, self.font, teams_text_x, self.coords["matchup"]["y"], self.text_color, teams_text)
