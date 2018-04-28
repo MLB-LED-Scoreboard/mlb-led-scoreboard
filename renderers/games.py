@@ -6,7 +6,8 @@ from renderers.final import Final as FinalRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.status import StatusRenderer
-from utils import bump_counter, split_string
+from utils import split_string
+from data.data import Data
 import renderers.error
 import debug
 import mlbgame
@@ -17,7 +18,7 @@ import sys
 
 # Times measured in seconds
 FIFTEEN_SECONDS = 15.0
-FIFTEEN_MINUTES = 900.0
+FIFTEEN_MINUTES = 90.0
 
 # Refresh rates measured in seconds
 SCROLL_TEXT_SLOW_RATE = 0.2
@@ -32,27 +33,23 @@ class GameRenderer:
   Properties:
     matrix                     - An instance of RGBMatrix
     canvas                     - The canvas associated with the matrix
-    games                      - The list of games to render
-    args                       - Any supplied command line arguments
+    data                       - Data object
     current_scrolling_text_pos - The current position of the probable starting
                                  pitcher text for pregames.
     creation_time              - The time at which this GameRender was created.
     scroll_finished            - Flag indicating whether any scrolling text has
                                  finished scrolling at least once.
-    data_needs_refresh         - Flag indicating whether the data should be refreshed.
   """
 
-  def __init__(self, matrix, canvas, games, config):
+  def __init__(self, matrix, canvas, data):
     """Initializes a GameRender
     """
     self.matrix = matrix
     self.canvas = canvas
-    self.games = games
-    self.config = config
+    self.data = data
     self.current_scrolling_text_pos = self.canvas.width
     self.creation_time = time.time()
     self.scroll_finished = False
-    self.data_needs_refresh = True
     debug.log(self)
 
   def render(self):
@@ -61,23 +58,20 @@ class GameRenderer:
     is required.
     """
     self.canvas.Fill(*ledcolors.scoreboard.fill)
-    current_game_index = self.__get_game_from_args()
-    game = self.games[current_game_index]
     starttime = time.time()
 
     while True:
       try:
-        if self.data_needs_refresh:
-          overview = mlbgame.overview(game.game_id)
-          self.data_needs_refresh = False
+        if self.data.needs_refresh:
+          self.data.refresh_overview()
+          self.data.needs_refresh = False
 
       # If a game_id can't be found, we fail gracefully and try the next game
       except ValueError as e:
         if str(e) == "Could not find a game with that id.":
           error_strings = ["Game ID","Not","Found"] + [game.game_id]
           self.__handle_error(e, error_strings)
-          current_game_index = bump_counter(current_game_index, self.games)
-          game = self.games[current_game_index]
+          game = self.data.advance_to_next_game()
         else:
           error_strings = split_string(str(e), self.canvas.width/4)
           self.__handle_error(e, error_strings)
@@ -91,17 +85,17 @@ class GameRenderer:
         self.__handle_error(error, error_strings)
         continue
 
-      self.__refresh_game(game, overview)
+      self.__refresh_game(self.data.current_game(), self.data.overview)
 
-      if self.config.scroll_until_finished == False:
+      if self.data.config.scroll_until_finished == False:
         self.scroll_finished = True
 
       refresh_rate = SCROLL_TEXT_FAST_RATE
-      if self.config.slowdown_scrolling == True:
+      if self.data.config.slowdown_scrolling == True:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
-      if Status.is_static(overview.status):
-        refresh_rate = self.config.live_rotate_rate
-        self.data_needs_refresh = True
+      if Status.is_static(self.data.overview.status):
+        refresh_rate = self.data.config.live_rotate_rate
+        self.data.needs_refresh = True
         self.scroll_finished = True
 
       time.sleep(refresh_rate)
@@ -113,70 +107,55 @@ class GameRenderer:
 
       self.canvas.Fill(*ledcolors.scoreboard.fill)
 
-      rotate_rate = self.config.live_rotate_rate
+      rotate_rate = self.data.config.live_rotate_rate
 
-      # Always use the default 15 seconds for our pregame rotations
-      if Status.is_pregame(overview.status):
-        rotate_rate = self.config.pregame_rotate_rate
+      if Status.is_pregame(self.data.overview.status):
+        rotate_rate = self.data.config.pregame_rotate_rate
 
-      if Status.is_complete(overview.status):
-        rotate_rate = self.config.final_rotate_rate
+      if Status.is_complete(self.data.overview.status):
+        rotate_rate = self.data.config.final_rotate_rate
 
       if time_delta >= rotate_rate and self.scroll_finished:
         starttime = time.time()
-        self.data_needs_refresh = True
+        self.data.needs_refresh = True
         self.scroll_finished = False
-        if Status.is_fresh(overview.status):
+        if Status.is_fresh(self.data.overview.status):
           self.current_scrolling_text_pos = self.canvas.width
-        if self.__should_rotate_to_next_game(overview):
+        if self.__should_rotate_to_next_game(self.data.overview):
           self.current_scrolling_text_pos = self.canvas.width
-          current_game_index = bump_counter(current_game_index, self.games)
-          game = self.games[current_game_index]
+          game = self.data.advance_to_next_game()
 
   def __should_rotate_to_next_game(self, overview):
-    if self.config.rotate_games == False:
+    if self.data.config.rotate_games == False:
       return False
 
-    stay_on_preferred_team = self.config.preferred_team and self.config.stay_on_live_preferred_team
+    stay_on_preferred_team = self.data.config.preferred_team and self.data.config.stay_on_live_preferred_team
     if stay_on_preferred_team == False:
       return True
 
-    showing_preferred_team = self.config.preferred_team in [overview.away_team_name, overview.home_team_name]
+    showing_preferred_team = self.data.config.preferred_team in [overview.away_team_name, overview.home_team_name]
     if showing_preferred_team and Status.is_live(overview.status):
       return False
 
     return True
 
-  def __get_game_from_args(self):
-    """Returns the index of the game to render.
-    If a preferred team was provided in the configuration that index is
-    picked if it exists, otherwise the first game in the list is used.
-    """
-    game_idx = 0
-    if self.config.preferred_team:
-      game_idx = next(
-          (i for i, game in enumerate(self.games) if game.away_team ==
-           self.config.preferred_team or game.home_team == self.config.preferred_team), 0
-      )
-    return game_idx
-
   def __refresh_game(self, game, overview):
     """Draws the provided game on the canvas."""
     if Status.is_pregame(overview.status):
       pregame = Pregame(overview)
-      renderer = PregameRenderer(self.canvas, pregame, self.config.coords["pregame"], self.current_scrolling_text_pos)
+      renderer = PregameRenderer(self.canvas, pregame, self.data.config.coords["pregame"], self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     elif Status.is_complete(overview.status):
       final = Final(game)
       scoreboard = Scoreboard(overview)
-      renderer = FinalRenderer(self.canvas, final, scoreboard, self.config, self.current_scrolling_text_pos)
+      renderer = FinalRenderer(self.canvas, final, scoreboard, self.data.config, self.current_scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
     elif Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
-      StatusRenderer(self.canvas, scoreboard, self.config).render()
+      StatusRenderer(self.canvas, scoreboard, self.data.config).render()
     else:
       scoreboard = Scoreboard(overview)
-      ScoreboardRenderer(self.canvas, scoreboard, self.config).render()
+      ScoreboardRenderer(self.canvas, scoreboard, self.data.config).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
   def __handle_error(self, error, error_strings):

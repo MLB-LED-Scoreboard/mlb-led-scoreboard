@@ -21,4 +21,7 @@ class Bases:
     self.runners = [b1, b2, b3]
 
   def __str__(self):
-    return ', '.join(str(runner) for runner in self.runners)
+    rs = []
+    for r in self.runners:
+      rs.append("X" if r else " ")
+    return "[{}][{}][{}]".format(rs[0],rs[1],rs[2])

@@ -1,12 +1,16 @@
 from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
-from renderers.games import GameRenderer
+from renderers.main import MainRenderer
 from renderers.offday import OffdayRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
+from data.data import Data
 import renderers.standings
 import mlbgame
 import debug
+
+SCRIPT_NAME = "MLB LED Scoreboard"
+SCRIPT_VERSION = "1.3.0"
 
 # Get supplied command line arguments
 args = args()
@@ -16,48 +20,44 @@ matrixOptions = led_matrix_options(args)
 
 # Initialize the matrix
 matrix = RGBMatrix(options = matrixOptions)
-canvas = matrix.CreateFrameCanvas()
 
 # Read scoreboard options from config.json if it exists
 config = ScoreboardConfig("config.json", matrix.width, matrix.height)
 debug.set_debug_status(config)
 
-# Render the current standings or today's games depending on
-# the provided arguments
-today = datetime.today()
-end_of_day = datetime.strptime(config.end_of_day, "%H:%M").replace(year=today.year, month=today.month, day=today.day)
-if end_of_day > datetime.now():
-  today -= timedelta(days=1)
-year = today.year
-month = today.month
-day = today.day
+# Create a new data object to manage the MLB data
+# This will fetch initial data from MLB
+data = Data(config)
 
-def display_standings(matrix, config, date):
+# Print some basic info on startup
+debug.info("{} - v{}".format(SCRIPT_NAME, SCRIPT_VERSION))
+
+# Render the standings or an off day screen
+def display_standings(matrix, data):
   try:
-    standings = mlbgame.standings(date)
-    division = next(division for division in standings.divisions if division.name == config.preferred_division)
+    division = data.standings_for_preferred_division()
     renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division, config.coords["standings"])
   except:
     # Out of season off days don't always return standings so fall back on the offday renderer
-    OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(year, month, day)).render()
+    OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
 
+# Check if we should just display the standings
 if config.display_standings:
-	display_standings(matrix, config, datetime(year, month, day))
+	display_standings(matrix, data)
+
+# Otherwise, we'll start displaying games depending on config settings
 else:
-  while True:
-    games = mlbgame.day(year, month, day)
-    if not len(games):
-      if config.display_standings_on_offday:
-        display_standings(matrix, config, datetime(year, month, day))
-      else:
-        OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(year, month, day)).render()
+  # No baseball today.
+  if data.is_offday():
+    if config.display_standings_on_offday:
+      display_standings(matrix, data)
     else:
-      if config.preferred_team:
-        game_idx = next(
-            (i for i, game in enumerate(games) if game.away_team ==
-            config.preferred_team or game.home_team == config.preferred_team), None
-        )
-        if config.display_standings_on_offday == 2 and not game_idx:
-          display_standings(matrix, config, datetime(year, month, day))
-        else:
-          GameRenderer(matrix, matrix.CreateFrameCanvas(), games, config).render()
+      OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
+
+  # Baseball!
+  else:
+    if config.preferred_team:
+      if data.is_offday_for_preferred_team() and config.display_standings_on_offday == 2:
+        display_standings(matrix, data)
+      else:
+        MainRenderer(matrix, data).render()
