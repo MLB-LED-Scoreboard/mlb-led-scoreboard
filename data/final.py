@@ -45,9 +45,22 @@ class Final:
     except:
       self.losing_pitcher_losses = 0
 
+    try:
+      self.save_pitcher = game.sv_pitcher
+      # For some reason, a game without a saving pitcher returns '. '
+      if self.save_pitcher == ". ":
+        self.save_pitcher = None
+    except:
+      self.save_pitcher = None
+
+    try:
+      self.save_pitcher_saves = game.sv_pitcher_saves
+    except:
+      self.save_pitcher_saves = None
+
   def __str__(self):
-    s =  "<%s %s> " % (self.__class__.__name__, hex(id(self)))
-    s += "W: %s %s-%s (%s), L: %s %s-%s (%s)" % (
+    return "<{} {}> W: {} {}-{} ({}); L: {} {}-{} ({}); S: {} ({})".format(
+      self.__class__.__name__, hex(id(self)),
       self.winning_pitcher, self.winning_pitcher_wins, self.winning_pitcher_losses, self.winning_team,
-      self.losing_pitcher, self.losing_pitcher_wins, self.losing_pitcher_losses, self.losing_team)
-    return s
+      self.losing_pitcher, self.losing_pitcher_wins, self.losing_pitcher_losses, self.losing_team,
+      self.save_pitcher, self.save_pitcher_saves)
