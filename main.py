@@ -9,6 +9,9 @@ import renderers.standings
 import mlbgame
 import debug
 
+SCRIPT_NAME = "MLB LED Scoreboard"
+SCRIPT_VERSION = "1.3.0"
+
 # Get supplied command line arguments
 args = args()
 
@@ -25,6 +28,9 @@ debug.set_debug_status(config)
 # Create a new data object to manage the MLB data
 # This will fetch initial data from MLB
 data = Data(config)
+
+# Print some basic info on startup
+debug.info("{} - v{}".format(SCRIPT_NAME, SCRIPT_VERSION))
 
 # Render the standings or an off day screen
 def display_standings(matrix, data):
