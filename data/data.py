@@ -91,6 +91,9 @@ class Data:
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
+    # If we run out of retries, just move on to the next game
+    if attempts_remaining <= 0 and self.config.rotate_games:
+      self.advance_to_next_game()
 
   #
   # Standings
