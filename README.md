@@ -58,43 +58,31 @@ It can display standings for the provided division. Since the 32x32 board is too
 [See our wiki page.](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki) This README is primarily focused on the MLB software, but for those coming here from Reddit or elsewhere never having built things with a Raspberry Pi, this should help get you going.
 
 ### Software Installation
+This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
+
 ```
 git clone --recursive https://github.com/ajbowler/mlb-led-scoreboard
-cd matrix/bindings/python
-```
-Then follow the instructions [in that directory](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). The README there will guide you through building the necessary binaries to run the Python samples (stuff like pulsing colors, running text on the screen, etc.)
-
-**You cannot run this program until you have built the RGBMatrix binaries per the instructions in that README.**
-
-A very important note not to forget is setting up the hardware you use. Make sure to edit the Makefile in the `lib/` directory to the right hardware description. I'm using `adafruit-hat` since I built this with an Adafruit HAT.
-
-Then do the following:
-```
-cd .. # you should be in matrix/bindings now
-sudo pip install -e python/
-cd ../../ # you should be in mlb-led-scoreboard/ now
-sudo pip install mlbgame pytz tzlocal
-make
+cd mlb-led-scoreboard/
+sudo ./install.sh
 ```
 
-Recap of what you just did:
- * Installed a local Python module of the rgbmatrix library
- * Installed `mlbgame` to get your baseball data
- * Installed `pytz` and `tzlocal` to display all of your games with your Pi's timezone.
+This will install the rgbmatrix binaries, which we get from [another open source library](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). It controls the actual rendering of the scoreboard onto the LEDs. If you're curious, you can read through their documentation on how all of the lower level stuff works.
 
-**Note on mlbgame**: If your installation fails with an error related to lxml, try running `pip install python-lxml`. Some users have reported issues with that particular module.
-
-Another workaround for Raspberry Pi that other users have gotten to work is running `sudo apt-get install libxml2-dev libxslt-dev python-dev`
+It will also install some time zone libraries and [mlbgame](https://github.com/panzarino/mlbgame), a Python library that retrieves all of our baseball data.
 
 If you continue to run into issues, join our Slack channel located at the top of the README.
-
-Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
 
 #### Time Zones
 Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default.
 
 ## Usage
 `sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
+
+**Adafruit HAT/Bonnet users: You must supply a command line flag:**
+
+`sudo python main.py --led-gpio-mapping="adafruit-hat"`
+
+See the Flags section below for more flags you can optionally provide.
 
 ### Configuration
 
