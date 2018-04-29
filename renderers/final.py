@@ -21,9 +21,11 @@ class Final:
     return self.__render_scroll_text()
 
   def __render_scroll_text(self):
-    scroll_text = "W: %s %s-%s L: %s %s-%s" % (
+    scroll_text = "W: {} {}-{} L: {} {}-{}".format(
       self.game.winning_pitcher, self.game.winning_pitcher_wins, self.game.winning_pitcher_losses,
       self.game.losing_pitcher, self.game.losing_pitcher_wins, self.game.losing_pitcher_losses)
+    if self.game.save_pitcher:
+      scroll_text += " SV: {} ({})".format(self.game.save_pitcher, self.game.save_pitcher_saves)
     return graphics.DrawText(self.canvas, self.font, self.scroll_pos, self.config.coords["final"]["pitchers"]["y"], self.text_color, scroll_text)
 
   def __render_final_inning(self):

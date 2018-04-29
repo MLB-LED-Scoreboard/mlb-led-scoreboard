@@ -20,11 +20,10 @@ class Scoreboard:
     self.pitches = Pitches(overview)
     self.outs = Outs(overview)
     self.game_status = overview.status
-    debug.log(self)
 
   def __str__(self):
-    s = "<%s %s> " % (self.__class__.__name__, hex(id(self)))
-    s += "%s (%s) @ %s (%s), Status: %s, Inning: (Number, %s, State: %s), B:%s S:%s O:%s, Bases: %s" % (
+    s = "<{} {}> {} ({}) @ {} ({}); Status: {}; Inning: (Number: {}; State: {}); B:{} S:{} O:{}; Bases: {}".format(
+      self.__class__.__name__, hex(id(self)),
       self.away_team.abbrev, str(self.away_team.runs),
       self.home_team.abbrev, str(self.home_team.runs),
       self.game_status,
