@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
 from renderers.offday import OffdayRenderer
+from renderers.standings import StandingsRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
 from data.data import Data
@@ -35,8 +36,7 @@ debug.info("{} - v{}".format(SCRIPT_NAME, SCRIPT_VERSION))
 # Render the standings or an off day screen
 def display_standings(matrix, data):
   try:
-    division = data.standings_for_preferred_division()
-    renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division, config.coords["standings"])
+    StandingsRenderer(matrix, matrix.CreateFrameCanvas(), data).render()
   except:
     # Out of season off days don't always return standings so fall back on the offday renderer
     OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
