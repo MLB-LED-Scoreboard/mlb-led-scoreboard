@@ -23,7 +23,7 @@ class Data:
 
     # Flag to determine when to refresh data
     self.needs_refresh = True
-    
+
     # Fetch the games for today
     self.refresh_games()
 
