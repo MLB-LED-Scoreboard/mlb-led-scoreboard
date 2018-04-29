@@ -8,11 +8,11 @@ def get_file(path):
 
 def get_font():
   font = graphics.Font()
-  font.LoadFont(get_file('Assets/tom-thumb.bdf'))
+  font.LoadFont(get_file('Assets/6x12.bdf'))
   return font
 
 def center_text_position(text, canvas_width):
-  return ((canvas_width - (len(text) * 4)) / 2)
+  return (((canvas_width - (len(text) * 4)) / 2) + 30)
 
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]

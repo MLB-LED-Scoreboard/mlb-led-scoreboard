@@ -24,12 +24,12 @@ class InningRenderer:
 
   def __render_number(self):
     number_color = graphics.Color(*ledcolors.scoreboard.text)
-    pos_x = self.canvas.width - (len(str(self.inning.number)) * 4)
+    pos_x = self.canvas.width - (len(str(self.inning.number)) * 6)
     graphics.DrawText(self.canvas, self.font, pos_x, self.coords["number"]["y"], number_color, str(self.inning.number))
 
   def __render_inning_half(self):
-    inning_size = (len(str(self.inning.number)) * 4)
-    arrow_pos = self.canvas.width - inning_size - 6
+    inning_size = (len(str(self.inning.number)) * 6)
+    arrow_pos = self.canvas.width - inning_size - 8
     if self.inning.state == Inning.TOP:
       self.__render_up_arrow(arrow_pos, self.coords["number"]["y"])
     else:
@@ -47,7 +47,7 @@ class InningRenderer:
 
   # render_arrow methods now line up with the same text y position
   def __render_up_arrow(self, x, y):
-    y_offset = -5
+    y_offset = -4
     for offset in range(0,5):
       self.canvas.SetPixel(x + offset, y + y_offset + 2, *ledcolors.scoreboard.text)
     for offset in range(1,4):

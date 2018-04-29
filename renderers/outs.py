@@ -23,15 +23,20 @@ class OutsRenderer:
       self.__render_out_circle(out_px[out])
       # Fill in the circle if that out has occurred
       if (self.outs.number > out):
-        self.canvas.SetPixel(
-            out_px[out]['x'], out_px[out]['y'], *ledcolors.scoreboard.text)
+        for x in range (-2,2):
+          for y in range (-2,2):
+            self.canvas.SetPixel(out_px[out]['x'] + x, out_px[out]['y'] + y, *ledcolors.scoreboard.text)
 
   def __render_out_circle(self, out):
-    offset = 1
+    offset = 2
     for x in range(-offset, offset + 1):
       for y in range(-offset, offset + 1):
         # The dead center is filled in only if that many outs has occurred, and happens above
         # after this circle is rendered
         if x == 0 and y == 0:
           continue
+        if x in [-1, 0, 1] and y in [-1, 0, 1]:
+          continue
+	#if x == 0 and y in [-1,1]:
+        #  continue
         self.canvas.SetPixel(out['x'] + x, out['y'] + y, *ledcolors.scoreboard.text)
