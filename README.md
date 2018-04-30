@@ -123,7 +123,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-no-hardware-pulse   Don't use hardware pin-pulse generation.
 --led-rgb-sequence        Switch if your matrix has led colors swapped. (Default: RGB)
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
---led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4=Z-strip. (Default: 0)
+--led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 ```
 
 ### Custom Board Layout
