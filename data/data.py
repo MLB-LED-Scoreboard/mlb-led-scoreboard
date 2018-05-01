@@ -100,13 +100,13 @@ class Data:
 
   def __update_layout_state(self):
     if self.overview.status == Status.WARMUP:
-      self.config.layout.set_state(LAYOUT_STATE_WARMUP)
+      self.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)
 
     if self.overview.is_no_hitter == "Y":
-      self.config.layout.set_state(LAYOUT_STATE_NOHIT)
+      self.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
 
     if self.overview.is_perfect_game == "Y":
-      self.config.layout.set_state(LAYOUT_PERFECT_GAME)
+      self.config.layout.set_state(layout.LAYOUT_PERFECT_GAME)
 
   #
   # Standings
