@@ -13,34 +13,36 @@ CANCELLED_SHORTHAND = "Cancl'd"
 CHALLENGE_SHORTHAND_32 = "Chalnge"
 
 class StatusRenderer:
-  def __init__(self, canvas, scoreboard, config):
+  def __init__(self, canvas, scoreboard, data):
     self.canvas = canvas
     self.scoreboard = scoreboard
-    self.config = config
-    self.font = get_font()
+    self.data = data
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config).render()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_game_status()
 
   def __render_game_status(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = self.__get_text_for_status()
-    text_x = center_text_position(text, self.config.layout["status_text"]["x"])
-    graphics.DrawText(self.canvas, self.font, text_x, self.config.layout["status_text"]["y"], color, text)
+    coords = self.data.config.layout.coords("status_text")
+    font = self.data.config.layout.font("status_text")
+    text_x = center_text_position(text, coords["x"], font["size"]["width"])
+    graphics.DrawText(self.canvas, font["font"], text_x, coords["y"], color, text)
 
   def __get_text_for_status(self):
     text = self.scoreboard.game_status
-    if self.canvas.width == 32:
-      return self.__get_32_text(text)
+    short_text = self.data.config.layout.coords("status_text")["short_text"]
+    if short_text:
+      return self.__get_short_text(text)
     if text == Status.MANAGER_CHALLENGE:
       return CHALLENGE_SHORTHAND
     if text == Status.DELAYED_START:
       return Status.DELAYED
     return text
 
-  def __get_32_text(self, text):
+  def __get_short_text(self, text):
     if text == Status.POSTPONED:
       return POSTPONED_SHORTHAND
     if text == Status.CANCELLED:

@@ -1,4 +1,5 @@
 from utils import get_file, deep_update
+from layout import Layout
 import json
 import os
 import sys
@@ -23,7 +24,10 @@ class ScoreboardConfig:
     self.display_full_team_names = json.get("display_full_team_names", True)
     self.slower_scrolling = json.get("slower_scrolling", False)
     self.debug_enabled = json.get("debug_enabled", False)
-    self.layout = self.get_layout(width, height)
+
+    # Get the layout info
+    json = self.__get_layout(width, height)
+    self.layout = Layout(json, width, height)
 
     #Check the rotate_rates to make sure it's valid and not silly
     self.check_rotate_rates()
@@ -73,7 +77,7 @@ class ScoreboardConfig:
       j = json.load(open(path))
     return j
 
-  def get_layout(self, width, height):
+  def __get_layout(self, width, height):
     filename = "ledcoords/w{}h{}.json".format(width, height)
     reference_filename = "{}.example".format(filename)
     reference_layout = self.read_json(reference_filename)

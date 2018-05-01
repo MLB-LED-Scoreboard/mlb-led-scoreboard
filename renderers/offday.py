@@ -17,19 +17,19 @@ class OffdayRenderer:
 
     self.canvas.Fill(*ledcolors.scoreboard.fill)
     no_text = 'No'
-    no_x = center_text_position(no_text, self.canvas.width)
+    no_x = center_text_position(no_text, self.canvas.width/2, 4)
     graphics.DrawText(self.canvas, font, no_x, 8, text_color, no_text)
 
     games_text = 'games'
-    games_x = center_text_position(games_text, self.canvas.width)
+    games_x = center_text_position(games_text, self.canvas.width/2, 4)
     graphics.DrawText(self.canvas, font, games_x, 15, text_color, games_text)
 
     today_text = 'today'
-    today_x = center_text_position(today_text, self.canvas.width)
+    today_x = center_text_position(today_text, self.canvas.width/2, 4)
     graphics.DrawText(self.canvas, font, today_x, 22, text_color, today_text)
 
     frown_text = ':('
-    frown_x = center_text_position(frown_text, self.canvas.width)
+    frown_x = center_text_position(frown_text, self.canvas.width/2, 4)
     graphics.DrawText(self.canvas, font, frown_x, 29, text_color, frown_text)
 
     self.matrix.SwapOnVSync(self.canvas)

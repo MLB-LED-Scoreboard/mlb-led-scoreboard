@@ -4,16 +4,16 @@ import ledcolors.scoreboard
 class OutsRenderer:
   """Renders the out circles on the scoreboard."""
 
-  def __init__(self, canvas, outs, coords):
+  def __init__(self, canvas, outs, data):
     self.canvas = canvas
     self.outs = outs
-    self.coords = coords
+    self.layout = data.config.layout
 
   def render(self):
     out_px = []
-    out_px.append(self.coords[0])
-    out_px.append(self.coords[1])
-    out_px.append(self.coords[2])
+    out_px.append(self.layout.coords("outs.1"))
+    out_px.append(self.layout.coords("outs.2"))
+    out_px.append(self.layout.coords("outs.3"))
     color = graphics.Color(*ledcolors.scoreboard.text)
     
     for out in range(len(out_px)):

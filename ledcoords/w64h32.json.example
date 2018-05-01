@@ -54,8 +54,8 @@
       }
     }
   },
-  "outs": [
-    {
+  "outs": {
+    "1": {
       "x": 15,
       "y": 25,
       "size": 2,
@@ -63,9 +63,14 @@
         "x": 15,
         "y": 28,
         "size": 2
+      },
+      "perfect_game": {
+        "x": 15,
+        "y": 28,
+        "size": 2
       }
     },
-    {
+    "2": {
       "x": 19,
       "y": 25,
       "size": 2,
@@ -73,9 +78,14 @@
         "x": 19,
         "y": 28,
         "size": 2
+      },
+      "perfect_game": {
+        "x": 19,
+        "y": 28,
+        "size": 2
       }
     },
-    {
+    "3": {
       "x": 23,
       "y": 25,
       "size": 2,
@@ -83,18 +93,31 @@
         "x": 23,
         "y": 28,
         "size": 2
+      },
+      "perfect_game": {
+        "x": 23,
+        "y": 28,
+        "size": 2
       }
     }
-  ],
+  },
   "batter_count": {
     "x": 15,
     "y": 21,
     "nohit": {
       "x": 15,
       "y": 24
+    },
+    "perfect_game": {
+      "x": 15,
+      "y": 24
     }
   },
   "nohit_text": {
+    "x": "15",
+    "y": "26"
+  },
+  "perfect_game_text": {
     "x": "15",
     "y": "26"
   },
@@ -123,6 +146,9 @@
     }
   },
   "standings": {
+    "offset": 6,
+    "height": 32,
+    "width": 64,
     "divider": {
       "x": 13
     },
@@ -140,7 +166,8 @@
   },
   "status_text": {
     "x": 32,
-    "y": 20
+    "y": 20,
+    "short_text": false
   },
   "teams": {
     "background": {

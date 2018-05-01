@@ -9,11 +9,11 @@ def get_file(path):
 
 def get_font():
   font = graphics.Font()
-  font.LoadFont(get_file('Assets/tom-thumb.bdf'))
+  font.LoadFont(get_file('Assets/4x6.bdf'))
   return font
 
-def center_text_position(text, center_pos):
-  return abs(center_pos - ((len(text) * 4) / 2))
+def center_text_position(text, center_pos, font_width):
+  return abs(center_pos - ((len(text) * font_width) / 2))
 
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]

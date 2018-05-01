@@ -1,23 +1,25 @@
 from rgbmatrix import graphics
+from data.layout import Layout
 import ledcolors.scoreboard
+import data.layout
 
 class BasesRenderer:
   """Renders the bases on the scoreboard and fills them in if they
   currently hold a runner."""
 
-  def __init__(self, canvas, bases, coords):
+  def __init__(self, canvas, bases, data):
     self.canvas = canvas
     self.bases = bases
-    self.coords = coords
+    self.layout = data.config.layout
 
   def render(self):
     base_runners = self.bases.runners
     color = graphics.Color(*ledcolors.scoreboard.text)
 
     base_px = []
-    base_px.append(self.coords["1B"])
-    base_px.append(self.coords["2B"])
-    base_px.append(self.coords["3B"])
+    base_px.append(self.layout.coords("bases.1B"))
+    base_px.append(self.layout.coords("bases.2B"))
+    base_px.append(self.layout.coords("bases.3B"))
 
     for base in range(len(base_runners)):
       self.__render_base_outline(base_px[base], color)
@@ -41,4 +43,4 @@ class BasesRenderer:
     half = abs(size/2)
     for offset in range(1, half+1):
       graphics.DrawLine(self.canvas, x + half - offset, y + size - offset, x + half + offset, y + size - offset, color)
-      graphics.DrawLine(self.canvas, x + half - offset, y + offset       , x + half + offset, y + offset       , color)
+      graphics.DrawLine(self.canvas, x + half - offset, y + offset, x + half + offset, y + offset, color)

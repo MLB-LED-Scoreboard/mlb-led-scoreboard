@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
+from status import Status
+import layout
 import mlbgame
 import debug
 import time
@@ -79,6 +81,7 @@ class Data:
     while attempts_remaining > 0:
       try:
         self.overview = mlbgame.overview(self.current_game().game_id)
+        self.__update_layout_state()
         self.needs_refresh = False
         self.print_overview_debug()
         break
@@ -94,6 +97,16 @@ class Data:
     # If we run out of retries, just move on to the next game
     if attempts_remaining <= 0 and self.config.rotate_games:
       self.advance_to_next_game()
+
+  def __update_layout_state(self):
+    if self.overview.status == Status.WARMUP:
+      self.config.layout.set_state(LAYOUT_STATE_WARMUP)
+
+    if self.overview.is_no_hitter == "Y":
+      self.config.layout.set_state(LAYOUT_STATE_NOHIT)
+
+    if self.overview.is_perfect_game == "Y":
+      self.config.layout.set_state(LAYOUT_PERFECT_GAME)
 
   #
   # Standings
