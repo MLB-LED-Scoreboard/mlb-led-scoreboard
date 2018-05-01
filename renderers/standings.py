@@ -25,18 +25,18 @@ class StandingsRenderer:
     starttime = time.time()
     while True:
       offset = 6
-      graphics.DrawText(self.canvas, font, self.data.config.coords["standings"]["stat"]["x"], offset, text_color, stat.upper())
+      graphics.DrawText(self.canvas, font, self.data.config.layout["standings"]["stat"]["x"], offset, text_color, stat.upper())
       for team in self.data.standings_for_preferred_division().teams:
         abbrev = '{:3s}'.format(team.team_abbrev)
         team_text = '%s' % abbrev
         stat_text = '%s' % getattr(team, stat)
-        graphics.DrawText(self.canvas, font, self.data.config.coords["standings"]["team"]["name"]["x"], offset, text_color, team_text)
-        graphics.DrawText(self.canvas, font, self.data.config.coords["standings"]["team"]["stat"]["x"], offset, text_color, stat_text)
+        graphics.DrawText(self.canvas, font, self.data.config.layout["standings"]["team"]["name"]["x"], offset, text_color, team_text)
+        graphics.DrawText(self.canvas, font, self.data.config.layout["standings"]["team"]["stat"]["x"], offset, text_color, stat_text)
 
         for x in range(0, self.canvas.width):
           self.canvas.SetPixel(x, offset, *ledcolors.standings.divider)
         for y in range(0, self.canvas.height):
-          self.canvas.SetPixel(self.data.config.coords["standings"]["divider"]["x"], y, *ledcolors.standings.divider)
+          self.canvas.SetPixel(self.data.config.layout["standings"]["divider"]["x"], y, *ledcolors.standings.divider)
         offset += 6
 
       self.matrix.SwapOnVSync(self.canvas)
@@ -51,7 +51,7 @@ class StandingsRenderer:
 
       for team in self.data.standings_for_preferred_division().teams:
         team_text = team.team_abbrev
-        graphics.DrawText(self.canvas, font, self.data.config.coords["standings"]["team"]["x"], offset, text_color, team_text)
+        graphics.DrawText(self.canvas, font, self.data.config.layout["standings"]["team"]["x"], offset, text_color, team_text)
 
         team_record = str(team.w) + "-" + str(team.l)
         stat_text = '{:6s} {:4s}'.format(team_record, str(team.gb))
@@ -61,7 +61,7 @@ class StandingsRenderer:
         for x in range(0, self.canvas.width):
           self.canvas.SetPixel(x, offset, *ledcolors.standings.divider)
         for y in range(0, self.canvas.height):
-          self.canvas.SetPixel(self.data.config.coords["standings"]["divider"]["x"], y, *ledcolors.standings.divider)
+          self.canvas.SetPixel(self.data.config.layout["standings"]["divider"]["x"], y, *ledcolors.standings.divider)
         offset += 6
 
         self.matrix.SwapOnVSync(self.canvas)

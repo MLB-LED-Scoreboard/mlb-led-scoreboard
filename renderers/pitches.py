@@ -13,11 +13,5 @@ class PitchesRenderer:
 
   def render(self):
     pitches_color = graphics.Color(*ledcolors.scoreboard.text)
-
-    # Offset to the center for wider screens
-    # Add a little extra separation between the bases
-    offset = 0
-    if self.canvas.width > 32:
-    	offset = ((self.canvas.width - 32) / 2) - 2
-
-    graphics.DrawText(self.canvas, self.font, self.coords["x"] + offset, self.coords["y"], pitches_color, str(self.pitches.balls) + '-' + str(self.pitches.strikes))
+    batter_count_text = "{}-{}".format(self.pitches.balls, self.pitches.strikes)
+    graphics.DrawText(self.canvas, self.font, self.coords["x"], self.coords["y"], pitches_color, batter_count_text)

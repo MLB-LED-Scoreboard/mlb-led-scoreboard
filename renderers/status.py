@@ -27,8 +27,8 @@ class StatusRenderer:
   def __render_game_status(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = self.__get_text_for_status()
-    text_x = center_text_position(text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, text_x, self.config.coords["status"]["y"], color, text)
+    text_x = center_text_position(text, self.config.layout["status_text"]["x"])
+    graphics.DrawText(self.canvas, self.font, text_x, self.config.layout["status_text"]["y"], color, text)
 
   def __get_text_for_status(self):
     text = self.scoreboard.game_status

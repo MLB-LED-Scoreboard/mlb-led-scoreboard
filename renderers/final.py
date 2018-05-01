@@ -26,12 +26,12 @@ class Final:
       self.game.losing_pitcher, self.game.losing_pitcher_wins, self.game.losing_pitcher_losses)
     if self.game.save_pitcher:
       scroll_text += " SV: {} ({})".format(self.game.save_pitcher, self.game.save_pitcher_saves)
-    return graphics.DrawText(self.canvas, self.font, self.scroll_pos, self.config.coords["final"]["pitchers"]["y"], self.text_color, scroll_text)
+    return graphics.DrawText(self.canvas, self.font, self.scroll_pos, self.config.layout["final"]["scrolling_text"]["y"], self.text_color, scroll_text)
 
   def __render_final_inning(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = "FINAL"
     if self.scoreboard.inning.number != NORMAL_GAME_LENGTH:
       text += " " + str(self.scoreboard.inning.number)
-    text_x = center_text_position(text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, text_x, self.config.coords["final"]["inning"]["y"], color, text)
+    text_x = center_text_position(text, self.config.layout["final"]["inning"]["x"])
+    graphics.DrawText(self.canvas, self.font, text_x, self.config.layout["final"]["inning"]["y"], color, text)

@@ -101,7 +101,7 @@ class MainRenderer:
     # Draw the pregame renderer
     if Status.is_pregame(overview.status):
       pregame = Pregame(overview)
-      renderer = PregameRenderer(self.canvas, pregame, self.data.config.coords["pregame"], self.scrolling_text_pos)
+      renderer = PregameRenderer(self.canvas, pregame, self.data.config.layout["pregame"], self.scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
 
     # Draw the final game renderer

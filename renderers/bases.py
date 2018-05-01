@@ -1,3 +1,4 @@
+from rgbmatrix import graphics
 import ledcolors.scoreboard
 
 class BasesRenderer:
@@ -11,44 +12,33 @@ class BasesRenderer:
 
   def render(self):
     base_runners = self.bases.runners
-
-    # Offset the bases if we have a wider screen
-    # Adding 2 extra pixels to give it a little more space from the outs/count
-    offset = 0
-    if self.canvas.width > 32:
-      offset = ((self.canvas.width - 32)/2) + 2
+    color = graphics.Color(*ledcolors.scoreboard.text)
 
     base_px = []
-    base_px.append({'x': self.coords["1B"]["x"] + offset, 'y': self.coords["1B"]["y"]})
-    base_px.append({'x': self.coords["2B"]["x"] + offset, 'y': self.coords["2B"]["y"]})
-    base_px.append({'x': self.coords["3B"]["x"] + offset, 'y': self.coords["3B"]["y"]})
+    base_px.append(self.coords["1B"])
+    base_px.append(self.coords["2B"])
+    base_px.append(self.coords["3B"])
 
     for base in range(len(base_runners)):
-      self.__render_base_outline(base_px[base])
+      self.__render_base_outline(base_px[base], color)
 
       # Fill in the base if there's currently a baserunner
       if base_runners[base]:
-        self.__render_baserunner(base_px[base])
+        self.__render_baserunner(base_px[base], color)
 
-  def __render_base_outline(self, base):
-    # Hollow diamonds are a popular homework problem but IDGAF
-    self.canvas.SetPixel(base['x'] - 3, base['y'], *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] - 2, base['y'] - 1, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] - 2, base['y'] + 1, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] - 1, base['y'] - 2, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] - 1, base['y'] + 2, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'], base['y'] - 3, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'], base['y'] + 3, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] + 1, base['y'] - 2, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] + 1, base['y'] + 2, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] + 2, base['y'] - 1, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] + 2, base['y'] + 1, *ledcolors.scoreboard.text)
-    self.canvas.SetPixel(base['x'] + 3, base['y'], *ledcolors.scoreboard.text)
+  def __render_base_outline(self, base, color):
+    x, y = (base["x"], base["y"])
+    size = base["size"]
+    half = abs(size/2)
+    graphics.DrawLine(self.canvas, x + half, y, x, y + half, color)
+    graphics.DrawLine(self.canvas, x + half, y, x + size, y + half, color)
+    graphics.DrawLine(self.canvas, x + half, y + size, x, y + half, color)
+    graphics.DrawLine(self.canvas, x + half, y + size, x + size, y + half, color)
 
-  def __render_baserunner(self, base):
-    offset = 2
-    for x in range(-offset, offset + 1):
-      for y in range(-offset, offset + 1):
-        if abs(x) == offset and abs(y) == offset:
-          continue
-        self.canvas.SetPixel(base['x'] + x, base['y'] + y, *ledcolors.scoreboard.text)
+  def __render_baserunner(self, base, color):
+    x, y = (base["x"], base["y"])
+    size = base["size"]
+    half = abs(size/2)
+    for offset in range(1, half+1):
+      graphics.DrawLine(self.canvas, x + half - offset, y + size - offset, x + half + offset, y + size - offset, color)
+      graphics.DrawLine(self.canvas, x + half - offset, y + offset       , x + half + offset, y + offset       , color)

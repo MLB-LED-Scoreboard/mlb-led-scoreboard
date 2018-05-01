@@ -1,4 +1,5 @@
 from rgbmatrix import RGBMatrixOptions, graphics
+import collections
 import argparse
 import os
 
@@ -11,8 +12,8 @@ def get_font():
   font.LoadFont(get_file('Assets/tom-thumb.bdf'))
   return font
 
-def center_text_position(text, canvas_width):
-  return ((canvas_width - (len(text) * 4)) / 2)
+def center_text_position(text, center_pos):
+  return abs(center_pos - ((len(text) * 4) / 2))
 
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]
@@ -67,3 +68,17 @@ def led_matrix_options(args):
     options.disable_hardware_pulsing = True
 
   return options
+
+
+def deep_update(source, overrides):
+    """Update a nested dictionary or similar mapping.
+    Modify ``source`` in place.
+    """
+    for key, value in list(overrides.items()):
+        if isinstance(value, collections.Mapping) and value:
+            returned = deep_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
+

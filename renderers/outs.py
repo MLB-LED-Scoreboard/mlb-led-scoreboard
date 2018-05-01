@@ -1,3 +1,4 @@
+from rgbmatrix import graphics
 import ledcolors.scoreboard
 
 class OutsRenderer:
@@ -9,29 +10,27 @@ class OutsRenderer:
     self.coords = coords
 
   def render(self):
-    # Add an offset for wider screens.
-    # Pulling it back a couple of pixels for more separation from the bases
-    offset = 0
-    if self.canvas.width > 32:
-      offset = ((self.canvas.width - 32) / 2) - 2
-
     out_px = []
-    out_px.append({'x': self.coords[0]["x"] + offset, 'y': self.coords[0]["y"]})
-    out_px.append({'x': self.coords[1]["x"] + offset, 'y': self.coords[1]["y"]})
-    out_px.append({'x': self.coords[2]["x"] + offset, 'y': self.coords[2]["y"]})
+    out_px.append(self.coords[0])
+    out_px.append(self.coords[1])
+    out_px.append(self.coords[2])
+    color = graphics.Color(*ledcolors.scoreboard.text)
+    
     for out in range(len(out_px)):
-      self.__render_out_circle(out_px[out])
+      self.__render_out_circle(out_px[out], color)
       # Fill in the circle if that out has occurred
       if (self.outs.number > out):
-        self.canvas.SetPixel(
-            out_px[out]['x'], out_px[out]['y'], *ledcolors.scoreboard.text)
+        self.__fill_circle(out_px[out], color)
 
-  def __render_out_circle(self, out):
-    offset = 1
-    for x in range(-offset, offset + 1):
-      for y in range(-offset, offset + 1):
-        # The dead center is filled in only if that many outs has occurred, and happens above
-        # after this circle is rendered
-        if x == 0 and y == 0:
-          continue
-        self.canvas.SetPixel(out['x'] + x, out['y'] + y, *ledcolors.scoreboard.text)
+  def __render_out_circle(self, out, color):
+    x, y, size = (out["x"], out["y"], out["size"])
+    graphics.DrawLine(self.canvas, x, y, x + size, y, color)
+    graphics.DrawLine(self.canvas, x, y, x, y + size, color)
+    graphics.DrawLine(self.canvas, x + size, y + size, x, y + size, color)
+    graphics.DrawLine(self.canvas, x + size, y + size, x + size, y, color)
+
+  def __fill_circle(self, out, color):
+    size = out["size"]
+    x, y = (out["x"], out["y"])
+    for y_offset in range(size):
+      graphics.DrawLine(self.canvas, x, y + y_offset, x + size, y + y_offset, color)
