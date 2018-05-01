@@ -18,6 +18,10 @@ class Layout:
     self.height = height
     self.state = None
 
+    self.font_cache = {}
+    default_font = self.__load_font("4x6")
+    self.font_cache = {"4x6": default_font}
+
   # Returns a dictionary with "font" and "size"
   def font(self, keypath):
     d = self.coords(keypath)
@@ -52,6 +56,9 @@ class Layout:
     return rv
 
   def __load_font(self, font_name):
+    if font_name in self.font_cache:
+      return self.font_cache[font_name]
+
     font = graphics.Font()
     font.LoadFont(get_file("Assets/{}.bdf".format(font_name)))
     return font
