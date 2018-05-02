@@ -61,7 +61,7 @@ It can display standings for the provided division. Since the 32x32 board is too
 This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
 
 ```
-git clone --recursive https://github.com/ajbowler/mlb-led-scoreboard
+git clone --recursive https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard
 cd mlb-led-scoreboard/
 sudo ./install.sh
 ```
