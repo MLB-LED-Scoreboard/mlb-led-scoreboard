@@ -63,6 +63,7 @@ class Layout:
 
     font = graphics.Font()
     font.LoadFont(get_file("Assets/{}.bdf".format(font_name)))
+    self.font_cache[font_name] = font
     return font
 
   def __parse_font_size(self, font_name):
