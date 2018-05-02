@@ -18,13 +18,13 @@
   },
   "final": {
     "inning": {
-      "x": 32,
-      "y": 20
+      "x": 95,
+      "y": 15
     },
     "scrolling_text": {
       "x": 0,
       "y": 31,
-      "width": 64
+      "width": 128
     }
   },
   "inning": {
@@ -129,11 +129,11 @@
     "scrolling_text": {
       "x": 0,
       "y": 25,
-      "width": 64,
+      "width": 128,
       "warmup": {
         "x": 0,
         "y": 29,
-        "width": 64
+        "width": 128
       }
     },
     "start_time": {
@@ -148,7 +148,7 @@
   "standings": {
     "offset": 6,
     "height": 32,
-    "width": 64,
+    "width": 128,
     "divider": {
       "x": 13
     },
