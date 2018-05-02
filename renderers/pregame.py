@@ -26,13 +26,13 @@ class Pregame:
     teams_text = "{}  {}".format(away_text, home_text)
     teams_text_x = center_text_position(teams_text, self.canvas.width)
     at_x = center_text_position("@", self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, teams_text_x, self.coords["matchup"]["y"], self.text_color, teams_text)
-    graphics.DrawText(self.canvas, self.font, at_x, self.coords["matchup"]["y"], self.text_color, "@")
+    graphics.DrawText(self.canvas, self.font, teams_text_x - 40, self.coords["matchup"]["y"], self.text_color, teams_text)
+    graphics.DrawText(self.canvas, self.font, at_x - 35, self.coords["matchup"]["y"], self.text_color, "@")
 
   def __render_start_time(self):
     time_text = self.game.start_time
     time_x = center_text_position(time_text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, time_x, self.coords["start_time"]["y"], self.text_color, time_text)
+    graphics.DrawText(self.canvas, self.font, time_x - 40, self.coords["start_time"]["y"], self.text_color, time_text)
 
   def __render_warmup(self):
     warmup_text = self.game.status

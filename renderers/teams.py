@@ -26,9 +26,10 @@ class TeamsRenderer:
     home_colors = self.__team_colors(self.home_team.abbrev)
     home_team_color = home_colors['home']
 
-    for x in range(self.coords["scores_width"]):
-      for y in range(self.coords["scores_height"]):
-        color = home_team_color if y >= self.coords["scores_height"] / 2 else away_team_color
+    scores_height = 14
+    for x in range(self.canvas.width):
+      for y in range(scores_height):
+        color = home_team_color if y >= scores_height / 2 else away_team_color
         self.canvas.SetPixel(x, y, color['r'], color['g'], color['b'])
 
     self.__render_team_text(self.away_team, away_colors, self.coords["away"]["x"], self.coords["away"]["y"])
@@ -41,6 +42,6 @@ class TeamsRenderer:
     if self.display_full_team_names and self.canvas.width > 32:
       team_text = '{:13s}'.format(team.name)
     team_runs = str(team.runs)
-    team_runs_x = self.canvas.width - (len(team_runs) * 4) - 66
+    team_runs_x = self.canvas.width - (len(team_runs) * 4) - 2
     graphics.DrawText(self.canvas, self.font, x, y, text_color_graphic, team_text)
     graphics.DrawText(self.canvas, self.font, team_runs_x, y, text_color_graphic, team_runs)
