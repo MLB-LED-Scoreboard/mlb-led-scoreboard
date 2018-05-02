@@ -99,6 +99,7 @@ class Data:
       self.advance_to_next_game()
 
   def __update_layout_state(self):
+    self.config.layout.set_state()
     if self.overview.status == Status.WARMUP:
       self.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)
 
