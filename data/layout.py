@@ -2,6 +2,7 @@ from rgbmatrix import graphics
 from utils import get_file
 import json
 import debug
+import os.path
 
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
@@ -48,7 +49,6 @@ class Layout:
       self.state = new_state
     else:
       self.state = None
-      debug.log("Could not set state to requested {}".format(new_state))
 
   def __find_at_keypath(self, keypath):
     keys = keypath.split('.')
@@ -61,10 +61,14 @@ class Layout:
     if font_name in self.font_cache:
       return self.font_cache[font_name]
 
-    font = graphics.Font()
-    font.LoadFont(get_file("Assets/{}.bdf".format(font_name)))
-    self.font_cache[font_name] = font
-    return font
+    font_paths = ["Assets", "matrix/fonts"]
+    for font_path in font_paths:
+      path = get_file("{}/{}.bdf".format(font_path, font_name))
+      if os.path.isfile(path):
+        font = graphics.Font()
+        font.LoadFont(path)
+        self.font_cache[font_name] = font
+        return font
 
   def __parse_font_size(self, font_name):
     dimensions = font_name.split("x")
