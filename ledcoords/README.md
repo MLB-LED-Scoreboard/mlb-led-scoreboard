@@ -7,6 +7,9 @@ You can edit these coordinates to display parts of the scoreboard in any way you
 ## Example
 If you have a 64x32 board, copy `w64h32.json.example` to a new file called `w64h32.json`, then edit the coordinates in that file as you see fit. Your customized coordinates will always take precedence.
 
+## Fonts
+Any scoreboard element that prints text can accept a `"font_name"` attribute. Supported fonts need to be named with `<width>x<height>.bdf` and need to be placed in `Assets` to be found. You can find more fonts in the (matrix library fonts director)[https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/fonts]. Be careful with larger fonts as the have a pretty big impact on performance.
+
 ## Current Issues
 A couple of things are not completely implemented or have some implementation details you should understand.
 
