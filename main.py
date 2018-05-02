@@ -31,7 +31,7 @@ debug.set_debug_status(config)
 data = Data(config)
 
 # Print some basic info on startup
-debug.info("{} - v{}".format(SCRIPT_NAME, SCRIPT_VERSION))
+debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
 
 # Render the standings or an off day screen
 def display_standings(matrix, data):

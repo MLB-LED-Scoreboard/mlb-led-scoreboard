@@ -101,23 +101,23 @@ class MainRenderer:
     # Draw the pregame renderer
     if Status.is_pregame(overview.status):
       pregame = Pregame(overview)
-      renderer = PregameRenderer(self.canvas, pregame, self.data.config.coords["pregame"], self.scrolling_text_pos)
+      renderer = PregameRenderer(self.canvas, pregame, self.data, self.scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
 
     # Draw the final game renderer
     elif Status.is_complete(overview.status):
       final = Final(game)
       scoreboard = Scoreboard(overview)
-      renderer = FinalRenderer(self.canvas, final, scoreboard, self.data.config, self.scrolling_text_pos)
+      renderer = FinalRenderer(self.canvas, final, scoreboard, self.data, self.scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
 
     # Draw the scoreboar renderer
     elif Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
-      StatusRenderer(self.canvas, scoreboard, self.data.config).render()
+      StatusRenderer(self.canvas, scoreboard, self.data).render()
     else:
       scoreboard = Scoreboard(overview)
-      ScoreboardRenderer(self.canvas, scoreboard, self.data.config).render()
+      ScoreboardRenderer(self.canvas, scoreboard, self.data).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
   def __update_scrolling_text_pos(self, new_pos):
