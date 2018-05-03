@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
 from renderers.offday import OffdayRenderer
+from renderers.standings import StandingsRenderer
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
 from data.data import Data
@@ -10,7 +11,7 @@ import mlbgame
 import debug
 
 SCRIPT_NAME = "MLB LED Scoreboard"
-SCRIPT_VERSION = "1.3.0"
+SCRIPT_VERSION = "1.4.0"
 
 # Get supplied command line arguments
 args = args()
@@ -30,13 +31,12 @@ debug.set_debug_status(config)
 data = Data(config)
 
 # Print some basic info on startup
-debug.info("{} - v{}".format(SCRIPT_NAME, SCRIPT_VERSION))
+debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
 
 # Render the standings or an off day screen
 def display_standings(matrix, data):
   try:
-    division = data.standings_for_preferred_division()
-    renderers.standings.render(matrix, matrix.CreateFrameCanvas(), division, config.coords["standings"])
+    StandingsRenderer(matrix, matrix.CreateFrameCanvas(), data).render()
   except:
     # Out of season off days don't always return standings so fall back on the offday renderer
     OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()

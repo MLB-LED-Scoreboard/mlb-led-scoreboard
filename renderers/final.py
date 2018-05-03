@@ -1,37 +1,43 @@
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from renderers.teams import TeamsRenderer
+from renderers.scrollingtext import ScrollingText
 import ledcolors.scoreboard
 
 NORMAL_GAME_LENGTH = 9
 
 class Final:
-  def __init__(self, canvas, game, scoreboard, config, scroll_pos):
+  def __init__(self, canvas, game, scoreboard, data, scroll_pos):
     self.canvas = canvas
-    self.font = get_font()
     self.game = game
     self.scoreboard = scoreboard
-    self.config = config
+    self.data = data
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
+    self.bgcolor = graphics.Color(*ledcolors.scoreboard.fill)
     self.scroll_pos = scroll_pos
 
   def render(self):
-    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.config).render()
+    text_len = self.__render_scroll_text()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_final_inning()
-    return self.__render_scroll_text()
+    return text_len
 
   def __render_scroll_text(self):
+    coords = self.data.config.layout.coords("final.scrolling_text")
+    font = self.data.config.layout.font("final.scrolling_text")
     scroll_text = "W: {} {}-{} L: {} {}-{}".format(
       self.game.winning_pitcher, self.game.winning_pitcher_wins, self.game.winning_pitcher_losses,
       self.game.losing_pitcher, self.game.losing_pitcher_wins, self.game.losing_pitcher_losses)
     if self.game.save_pitcher:
       scroll_text += " SV: {} ({})".format(self.game.save_pitcher, self.game.save_pitcher_saves)
-    return graphics.DrawText(self.canvas, self.font, self.scroll_pos, self.config.coords["final"]["pitchers"]["y"], self.text_color, scroll_text)
+    return ScrollingText(self.canvas, coords["x"], coords["y"], coords["width"], font, self.text_color, self.bgcolor, scroll_text).render(self.scroll_pos)
 
   def __render_final_inning(self):
     color = graphics.Color(*ledcolors.scoreboard.text)
     text = "FINAL"
+    coords = self.data.config.layout.coords("final.inning")
+    font = self.data.config.layout.font("final.inning")
     if self.scoreboard.inning.number != NORMAL_GAME_LENGTH:
       text += " " + str(self.scoreboard.inning.number)
-    text_x = center_text_position(text, self.canvas.width)
-    graphics.DrawText(self.canvas, self.font, text_x, self.config.coords["final"]["inning"]["y"], color, text)
+    text_x = center_text_position(text, coords["x"], font["size"]["width"])
+    graphics.DrawText(self.canvas, font["font"], text_x, coords["y"], color, text)

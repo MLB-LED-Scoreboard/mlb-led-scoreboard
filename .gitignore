@@ -108,3 +108,7 @@ config.json
 
 # Ignore any customized coordinate configs
 ledcoords/*.json
+
+# Ignore any customized fonts
+Assets/*.bdf
+!Assets/4x6.bdf

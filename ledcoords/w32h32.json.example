@@ -1,77 +1,154 @@
 {
   "bases": {
     "1B": {
-      "x": 26,
-      "y": 27
+      "x": 24,
+      "y": 24,
+      "size": 6
     },
     "2B": {
-      "x": 21,
-      "y": 22
+      "x": 19,
+      "y": 19,
+      "size": 6
     },
     "3B": {
-      "x": 16,
-      "y": 27
+      "x": 14,
+      "y": 24,
+      "size": 6
     }
   },
   "final": {
     "inning": {
+      "x": 16,
       "y": 20
     },
-    "pitchers": {
-      "y": 31
+    "scrolling_text": {
+      "x": 0,
+      "y": 31,
+      "width": 32
     }
   },
   "inning": {
     "break": {
       "number": {
+        "x": 16,
         "y": 29
       },
       "text": {
+        "x": 16,
         "y": 22
       }
     },
     "number": {
+      "x": 32,
       "y": 20
+    },
+    "arrow": {
+      "size": 2,
+      "up": {
+        "x_offset": -4,
+        "y_offset": -4
+      },
+      "down": {
+        "x_offset": -4,
+        "y_offset": -3
+      }
     }
   },
-  "outs": [
-    {
-      "x": 2,
-      "y": 27
+  "outs": {
+    "1": {
+      "x": 1,
+      "y": 25,
+      "size": 2,
+      "nohit": {
+        "x": 2,
+        "y": 28,
+        "size": 2
+      },
+      "perfect_game": {
+        "x": 2,
+        "y": 28,
+        "size": 2
+      }
     },
-    {
-      "x": 6,
-      "y": 27
+    "2": {
+      "x": 5,
+      "y": 25,
+      "size": 2,
+      "nohit": {
+        "x": 6,
+        "y": 28,
+        "size": 2
+      },
+      "perfect_game": {
+        "x": 6,
+        "y": 28,
+        "size": 2
+      }
     },
-    {
-      "x": 10,
-      "y": 27
+    "3": {
+      "x": 9,
+      "y": 25,
+      "size": 2,
+      "nohit": {
+        "x": 10,
+        "y": 28,
+        "size": 2
+      },
+      "perfect_game": {
+        "x": 10,
+        "y": 28,
+        "size": 2
+      }
     }
-  ],
-  "pitches": {
+  },
+  "batter_count": {
     "x": 1,
-    "y": 23
+    "y": 22,
+    "nohit": {
+      "x": 1,
+      "y": 24
+    },
+    "perfect_game": {
+      "x": 1,
+      "y": 24
+    }
+  },
+  "nohit_text": {
+    "x": 1,
+    "y": 26
+  },
+  "perfect_game_text": {
+    "x": 1,
+    "y": 26
   },
   "pregame": {
     "matchup": {
+      "x": 16,
       "y": 6
     },
-    "probable_starters": {
-      "not_warmup": {
-        "y": 25
-      },
+    "scrolling_text": {
+      "x": 0,
+      "y": 25,
+      "width": 32,
       "warmup": {
-        "y": 29
+        "x": 0, 
+        "y": 29,
+        "width": 32
       }
     },
     "start_time": {
+      "x": 16,
       "y": 13
     },
-    "warmup": {
+    "warmup_text": {
+      "x": 16,
       "y": 20
     }
   },
   "standings": {
+    "offset": 6,
+    "height": 32,
+    "width": 32,
     "divider": {
       "x": 13
     },
@@ -87,17 +164,45 @@
       }
     }
   },
-  "status": {
-    "y": 20
+  "status_text": {
+    "x": 16,
+    "y": 20,
+    "short_text": true
   },
   "teams": {
-    "away": {
-      "x": 1,
-      "y": 6
+    "background": {
+      "away": {
+        "width": 32,
+        "height": 7,
+        "x": 0,
+        "y": 0
+      },
+      "home": {
+        "width": 32,
+        "height": 7,
+        "x": 0,
+        "y": 7
+      }
     },
-    "home": {
-      "x": 1,
-      "y": 13
+    "name": {
+      "away": {
+        "x": 1,
+        "y": 6
+      },
+      "home": {
+        "x": 1,
+        "y": 13
+      }
+    },
+    "runs": {
+      "away": {
+        "x": 31,
+        "y": 6
+      },
+      "home": {
+        "x": 31,
+        "y": 13
+      }
     }
   }
 }

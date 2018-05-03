@@ -1,4 +1,5 @@
 from rgbmatrix import RGBMatrixOptions, graphics
+import collections
 import argparse
 import os
 
@@ -8,11 +9,11 @@ def get_file(path):
 
 def get_font():
   font = graphics.Font()
-  font.LoadFont(get_file('Assets/tom-thumb.bdf'))
+  font.LoadFont(get_file('Assets/4x6.bdf'))
   return font
 
-def center_text_position(text, canvas_width):
-  return ((canvas_width - (len(text) * 4)) / 2)
+def center_text_position(text, center_pos, font_width):
+  return abs(center_pos - ((len(text) * font_width) / 2))
 
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]
@@ -35,7 +36,8 @@ def args():
   parser.add_argument("--led-no-hardware-pulse", action="store", help="Don't use hardware pin-pulse generation.")
   parser.add_argument("--led-rgb-sequence", action="store", help="Switch if your matrix has led colors swapped. (Default: RGB)", default="RGB", type=str)
   parser.add_argument("--led-row-addr-type", action="store", help="0 = default; 1 = AB-addressed panels. (Default: 0)", default=0, type=int, choices=[0,1])
-  parser.add_argument("--led-multiplexing", action="store", help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4=Z-strip. (Default: 0)", default=0, type=int, choices=[0,1,2,3,4])
+  parser.add_argument("--led-multiplexing", action="store",
+                      help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)
 
   return parser.parse_args()
 
@@ -66,3 +68,17 @@ def led_matrix_options(args):
     options.disable_hardware_pulsing = True
 
   return options
+
+
+def deep_update(source, overrides):
+    """Update a nested dictionary or similar mapping.
+    Modify ``source`` in place.
+    """
+    for key, value in list(overrides.items()):
+        if isinstance(value, collections.Mapping) and value:
+            returned = deep_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
+

@@ -20,13 +20,13 @@ def render(matrix, canvas, error_strings):
 
   canvas.Fill(*ledcolors.scoreboard.fill)
   error_text = 'ERROR'
-  error_x = center_text_position(error_text, canvas.width)
+  error_x = center_text_position(error_text, canvas.width/2, 4)
   graphics.DrawText(canvas, font, error_x, 7, text_color, error_text)
 
   for error_string in error_strings:
     current_y += offset
     text = error_string
-    text_x = center_text_position(text, canvas.width)
+    text_x = center_text_position(text, canvas.width/2, 4)
     graphics.DrawText(canvas, font, text_x, current_y, text_color, text)
 
   matrix.SwapOnVSync(canvas)
