@@ -1,6 +1,7 @@
 from data.status import Status
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
+from renderers.scrollingtext import ScrollingText
 import ledcolors.scoreboard
 import data.layout
 
@@ -10,14 +11,16 @@ class Pregame:
     self.game = game
     self.layout = data.config.layout
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
+    self.bgcolor = graphics.Color(*ledcolors.scoreboard.fill)
     self.probable_starter_pos = probable_starter_pos
 
   def render(self):
+    text_len = self.__render_probable_starters()
     self.__render_matchup()
     self.__render_start_time()
     if self.layout.state == data.layout.LAYOUT_STATE_WARMUP:
       self.__render_warmup()
-    return self.__render_probable_starters()
+    return text_len
 
   def __render_matchup(self):
     away_text = '{:>3s}'.format(self.game.away_team)
@@ -48,4 +51,4 @@ class Pregame:
     coords = self.layout.coords("pregame.scrolling_text")
     font = self.layout.font("pregame.scrolling_text")
     pitchers_text = self.game.away_starter + ' vs ' + self.game.home_starter
-    return graphics.DrawText(self.canvas, font["font"], self.probable_starter_pos, coords["y"], self.text_color, pitchers_text)
+    return ScrollingText(self.canvas, coords["x"], coords["y"], coords["width"], font, self.text_color, self.bgcolor, pitchers_text).render(self.probable_starter_pos)
