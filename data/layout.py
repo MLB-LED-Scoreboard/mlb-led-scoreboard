@@ -71,6 +71,8 @@ class Layout:
         return font
 
   def __parse_font_size(self, font_name):
+    if font_name[-1] == 'B':
+      font_name = font_name[:-1]
     dimensions = font_name.split("x")
     return {"width": int(dimensions[0]), "height": int(dimensions[1])}
 
