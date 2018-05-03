@@ -13,6 +13,5 @@ Any scoreboard element that prints text can accept a `"font_name"` attribute. Su
 ## Current Issues
 A couple of things are not completely implemented or have some implementation details you should understand.
 
-* Setting the `width` of the scrolling text is not currently available
 * `nohit` and `perfect_game` have been added to the json but aren't currently implemented
 * `bases` currently requires an even `size` value to be rendered correctly

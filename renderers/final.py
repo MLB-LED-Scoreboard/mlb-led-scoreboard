@@ -1,6 +1,7 @@
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from renderers.teams import TeamsRenderer
+from renderers.scrollingtext import ScrollingText
 import ledcolors.scoreboard
 
 NORMAL_GAME_LENGTH = 9
@@ -12,12 +13,14 @@ class Final:
     self.scoreboard = scoreboard
     self.data = data
     self.text_color = graphics.Color(*ledcolors.scoreboard.text)
+    self.bgcolor = graphics.Color(*ledcolors.scoreboard.fill)
     self.scroll_pos = scroll_pos
 
   def render(self):
+    text_len = self.__render_scroll_text()
     TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_final_inning()
-    return self.__render_scroll_text()
+    return text_len
 
   def __render_scroll_text(self):
     coords = self.data.config.layout.coords("final.scrolling_text")
@@ -27,7 +30,7 @@ class Final:
       self.game.losing_pitcher, self.game.losing_pitcher_wins, self.game.losing_pitcher_losses)
     if self.game.save_pitcher:
       scroll_text += " SV: {} ({})".format(self.game.save_pitcher, self.game.save_pitcher_saves)
-    return graphics.DrawText(self.canvas, font["font"], self.scroll_pos, coords["y"], self.text_color, scroll_text)
+    return ScrollingText(self.canvas, coords["x"], coords["y"], coords["width"], font, self.text_color, self.bgcolor, scroll_text).render(self.scroll_pos)
 
   def __render_final_inning(self):
     color = graphics.Color(*ledcolors.scoreboard.text)

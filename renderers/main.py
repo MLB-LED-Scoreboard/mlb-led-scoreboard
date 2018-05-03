@@ -100,12 +100,14 @@ class MainRenderer:
 
     # Draw the pregame renderer
     if Status.is_pregame(overview.status):
+      scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("pregame.scrolling_text"))
       pregame = Pregame(overview)
       renderer = PregameRenderer(self.canvas, pregame, self.data, self.scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
 
     # Draw the final game renderer
     elif Status.is_complete(overview.status):
+      scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("final.scrolling_text"))
       final = Final(game)
       scoreboard = Scoreboard(overview)
       renderer = FinalRenderer(self.canvas, final, scoreboard, self.data, self.scrolling_text_pos)
@@ -119,6 +121,13 @@ class MainRenderer:
       scoreboard = Scoreboard(overview)
       ScoreboardRenderer(self.canvas, scoreboard, self.data).render()
     self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+  def __max_scroll_x(self, scroll_coords):
+    scroll_coords = self.data.config.layout.coords("final.scrolling_text")
+    scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
+    if self.scrolling_text_pos > scroll_max_x:
+      self.scrolling_text_pos = scroll_max_x
+    return scroll_max_x
 
   def __update_scrolling_text_pos(self, new_pos):
     """Updates the position of the probable starting pitcher text."""
