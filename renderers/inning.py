@@ -13,6 +13,7 @@ class InningRenderer:
     self.canvas = canvas
     self.inning = inning
     self.layout = data.config.layout
+    self.colors = data.config.scoreboard_colors
 
   def render(self):
     if self.inning.state == Inning.TOP or self.inning.state == Inning.BOTTOM:
@@ -22,7 +23,7 @@ class InningRenderer:
       self.__render_inning_break()
 
   def __render_number(self):
-    number_color = graphics.Color(*ledcolors.scoreboard.text)
+    number_color = self.colors.graphics_color("inning.number")
     coords = self.layout.coords("inning.number")
     font = self.layout.font("inning.number")
     pos_x = coords["x"] - (len(str(self.inning.number)) * font["size"]["width"])
@@ -58,6 +59,7 @@ class InningRenderer:
 
   # direction can be -1 for down or 1 for up
   def __render_arrow(self, x, y, size, direction):
-    color = graphics.Color(*ledcolors.scoreboard.text)
+    keypath = "inning.arrow.up" if direction == 1 else "inning.arrow.down"
+    color = self.colors.graphics_color(keypath)
     for offset in range(size):
       graphics.DrawLine(self.canvas, x - offset, y + (offset * direction), x + offset, y + (offset * direction), color)

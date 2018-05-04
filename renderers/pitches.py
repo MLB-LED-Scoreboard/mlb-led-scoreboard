@@ -9,10 +9,11 @@ class PitchesRenderer:
     self.canvas = canvas
     self.pitches = pitches
     self.layout = data.config.layout
+    self.colors = data.config.scoreboard_colors
 
   def render(self):
     font = self.layout.font("batter_count")
     coords = self.layout.coords("batter_count")
-    pitches_color = graphics.Color(*ledcolors.scoreboard.text)
+    pitches_color = self.colors.graphics_color("batter_count")
     batter_count_text = "{}-{}".format(self.pitches.balls, self.pitches.strikes)
     graphics.DrawText(self.canvas, font["font"], coords["x"], coords["y"], pitches_color, batter_count_text)

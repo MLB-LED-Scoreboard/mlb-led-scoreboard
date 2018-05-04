@@ -1,6 +1,5 @@
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
-import ledcolors.scoreboard
 import time
 
 """ Render a simple error message on the matrix
@@ -14,11 +13,11 @@ Properties:
 """
 def render(matrix, canvas, error_strings):
   font = get_font()
-  text_color = graphics.Color(*ledcolors.scoreboard.text)
+  text_color = graphics.Color(255, 235, 59)
   current_y = 9
   offset = 7
 
-  canvas.Fill(*ledcolors.scoreboard.fill)
+  canvas.Fill(7, 14, 25)
   error_text = 'ERROR'
   error_x = center_text_position(error_text, canvas.width/2, 4)
   graphics.DrawText(canvas, font, error_x, 7, text_color, error_text)

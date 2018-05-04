@@ -17,14 +17,14 @@ class StatusRenderer:
     self.canvas = canvas
     self.scoreboard = scoreboard
     self.data = data
-    self.text_color = graphics.Color(*ledcolors.scoreboard.text)
+    self.colors = data.config.scoreboard_colors
 
   def render(self):
     TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_game_status()
 
   def __render_game_status(self):
-    color = graphics.Color(*ledcolors.scoreboard.text)
+    color = self.colors.graphics_color("status_text")
     text = self.__get_text_for_status()
     coords = self.data.config.layout.coords("status_text")
     font = self.data.config.layout.font("status_text")

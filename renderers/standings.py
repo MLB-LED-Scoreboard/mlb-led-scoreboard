@@ -8,44 +8,49 @@ class StandingsRenderer:
     self.matrix = matrix
     self.canvas = canvas
     self.data = data
+    self.colors = data.config.scoreboard_colors
+    self.bg_color = self.colors.color("standings.background")
+    self.divider_color = self.colors.color("standings.divider")
+    self.stat_color = self.colors.graphics_color("standings.stat")
+    self.team_stat_color = self.colors.graphics_color("standings.team.stat")
+    self.team_name_color = self.colors.graphics_color("standings.team.name")
 
   def render(self):
-    text_color = graphics.Color(*ledcolors.standings.text)
-    self.canvas.Fill(*ledcolors.standings.fill)
+    self.canvas.Fill(self.bg_color["r"], self.bg_color["g"], self.bg_color["b"])
 
     if self.canvas.width > 32:
-      self.__render_static_wide_standings(text_color)
+      self.__render_static_wide_standings()
     else:
-      self.__render_rotating_standings(text_color)
+      self.__render_rotating_standings()
 
-  def __render_rotating_standings(self, text_color):
+  def __render_rotating_standings(self):
     coords = self.data.config.layout.coords("standings")
     font = self.data.config.layout.font("standings")
     stat = 'w'
     starttime = time.time()
     while True:
       offset = coords["offset"]
-      graphics.DrawText(self.canvas, font["font"], coords["stat"]["x"], offset, text_color, stat.upper())
+      graphics.DrawText(self.canvas, font["font"], coords["stat"]["x"], offset, self.stat_color, stat.upper())
       for team in self.data.standings_for_preferred_division().teams:
         abbrev = '{:3s}'.format(team.team_abbrev)
         team_text = '%s' % abbrev
         stat_text = '%s' % getattr(team, stat)
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, text_color, team_text)
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["stat"]["x"], offset, text_color, stat_text)
+        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
+        graphics.DrawText(self.canvas, font["font"], coords["team"]["stat"]["x"], offset, self.team_stat_color, stat_text)
 
         for x in range(0, coords["width"]):
-          self.canvas.SetPixel(x, offset, *ledcolors.standings.divider)
+          self.canvas.SetPixel(x, offset, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
         for y in range(0, coords["height"]):
-          self.canvas.SetPixel(coords["divider"]["x"], y, *ledcolors.standings.divider)
+          self.canvas.SetPixel(coords["divider"]["x"], y, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
         offset += coords["offset"]
 
       self.matrix.SwapOnVSync(self.canvas)
       time.sleep(5.0)
 
-      self.canvas.Fill(*ledcolors.standings.fill)
+      self.canvas.Fill(self.bg_color["r"], self.bg_color["g"], self.bg_color["b"])
       stat = 'w' if stat == 'l' else 'l'
 
-  def __render_static_wide_standings(self, text_color):
+  def __render_static_wide_standings(self):
     coords = self.data.config.layout.coords("standings")
     font = self.data.config.layout.font("standings")
     while True:
@@ -53,17 +58,17 @@ class StandingsRenderer:
 
       for team in self.data.standings_for_preferred_division().teams:
         team_text = team.team_abbrev
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, text_color, team_text)
+        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
 
         team_record = str(team.w) + "-" + str(team.l)
         stat_text = '{:6s} {:4s}'.format(team_record, str(team.gb))
         stat_text_x = self.canvas.width - (len(stat_text) * font["size"]["width"])
-        graphics.DrawText(self.canvas, font["font"], stat_text_x, offset, text_color, stat_text)
+        graphics.DrawText(self.canvas, font["font"], stat_text_x, offset, self.team_stat_color, stat_text)
 
         for x in range(0, coords["width"]):
-          self.canvas.SetPixel(x, offset, *ledcolors.standings.divider)
+          self.canvas.SetPixel(x, offset, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
         for y in range(0, coords["height"]):
-          self.canvas.SetPixel(coords["divider"]["x"], y, *ledcolors.standings.divider)
+          self.canvas.SetPixel(coords["divider"]["x"], y, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
         offset += coords["offset"]
 
         self.matrix.SwapOnVSync(self.canvas)

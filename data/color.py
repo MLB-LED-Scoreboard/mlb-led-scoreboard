@@ -1,4 +1,5 @@
 from utils import get_file
+from rgbmatrix import graphics
 import json
 import debug
 import os.path
@@ -13,6 +14,12 @@ class Color:
     except KeyError as e:
       raise e
     return d
+
+  def graphics_color(self, keypath):
+    color = self.color(keypath)
+    if not color:
+      color = self.color("default.text")
+    return graphics.Color(color["r"], color["g"], color["b"])
 
   def __find_at_keypath(self, keypath):
     keys = keypath.split('.')

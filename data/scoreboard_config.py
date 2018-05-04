@@ -33,6 +33,8 @@ class ScoreboardConfig:
     # Store color information
     json = self.__get_colors("teams")
     self.team_colors = Color(json)
+    json = self.__get_colors("scoreboard")
+    self.scoreboard_colors = Color(json)
 
     #Check the rotate_rates to make sure it's valid and not silly
     self.check_rotate_rates()
