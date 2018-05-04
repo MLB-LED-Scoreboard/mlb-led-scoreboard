@@ -11,10 +11,14 @@ class TeamsRenderer:
     self.home_team = home_team
     self.away_team = away_team
     self.data = data
-    self.colors = json.load(open(get_file('Assets/colors.json')))
+    self.default_colors = self.data.config.team_colors.color("default")
 
   def __team_colors(self, team_abbrev):
-    return self.colors.get(team_abbrev.lower(), self.colors['default'])
+    try:
+      team_colors = self.data.config.team_colors.color(team_abbrev.lower())
+    except KeyError as e:
+      team_colors = self.data.config.team_colors.color("default")
+    return team_colors
 
   def render(self):
     away_colors = self.__team_colors(self.away_team.abbrev)
@@ -47,7 +51,7 @@ class TeamsRenderer:
     self.__render_team_score(self.home_team.runs, "home", home_colors, home_score_coords["x"], home_score_coords["y"])
 
   def __render_team_text(self, team, homeaway, colors, x, y):
-    text_color = colors.get('text', self.colors['default']['text'])
+    text_color = colors.get('text', self.default_colors['text'])
     text_color_graphic = graphics.Color(text_color['r'], text_color['g'], text_color['b'])
     font = self.data.config.layout.font("teams.name.{}".format(homeaway))
     team_text = '{:3s}'.format(team.abbrev.upper())
@@ -56,7 +60,7 @@ class TeamsRenderer:
     graphics.DrawText(self.canvas, font["font"], x, y, text_color_graphic, team_text)
 
   def __render_team_score(self, runs, homeaway, colors, x, y):
-    text_color = colors.get('text', self.colors['default']['text'])
+    text_color = colors.get('text', self.default_colors['text'])
     text_color_graphic = graphics.Color(text_color['r'], text_color['g'], text_color['b'])
     coords = self.data.config.layout.coords("teams.runs.{}".format(homeaway))
     font = self.data.config.layout.font("teams.runs.{}".format(homeaway))
