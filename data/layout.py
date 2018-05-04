@@ -50,6 +50,12 @@ class Layout:
     else:
       self.state = None
 
+  def state_is_warmup():
+    return self.state == LAYOUT_STATE_WARMUP
+
+  def state_is_nohitter():
+    return self.state in [LAYOUT_STATE_NOHIT, LAYOUT_STATE_PERFECT]
+
   def __find_at_keypath(self, keypath):
     keys = keypath.split('.')
     rv = self.json

@@ -103,23 +103,20 @@
   },
   "batter_count": {
     "x": 15,
-    "y": 21,
+    "y": 24,
     "nohit": {
       "x": 15,
-      "y": 24
+      "y": 21
     },
     "perfect_game": {
       "x": 15,
-      "y": 24
+      "y": 21
     }
   },
-  "nohit_text": {
-    "x": "15",
-    "y": "26"
-  },
-  "perfect_game_text": {
-    "x": "15",
-    "y": "26"
+  "nohitter": {
+    "x": 15,
+    "y": 27,
+    "innings_until_display": 5
   },
   "pregame": {
     "matchup": {

@@ -8,10 +8,14 @@ You can edit these coordinates to display parts of the scoreboard in any way you
 If you have a 64x32 board, copy `w64h32.json.example` to a new file called `w64h32.json`, then edit the coordinates in that file as you see fit. Your customized coordinates will always take precedence.
 
 ## Fonts
-Any scoreboard element that prints text can accept a `"font_name"` attribute. Supported fonts need to be named with `<width>x<height>.bdf` (or `<width>x<height>B.bdf for bold fonts). The font loader will search `Assets/` first for the specified font and then it will fall back to searching `matrix/fonts/` if one was not found.
+Any scoreboard element that prints text can accept a `"font_name"` attribute. Supported fonts need to be named with `<width>x<height>.bdf` (or `<width>x<height>B.bdf` for bold fonts). The font loader will search `Assets/` first for the specified font and then it will fall back to searching `matrix/fonts/` if one was not found.
+
+## States
+The layout can have a couple of different states where things are rendered differently. Adding an object named for the layout state and giving it the same properties from the parent object will change the positioning of that parent object only when that state is found. For instance, when a game enters the `Warmup` state, the text `Warmup` appears under the time and the scrolling text is moved down.
+* `warmup` will	only render on the `pregame` screen and appears when a game enters the `Warmup` status. This usually happens 15-20 minutes before a game begins.
+* `nohit` and `perfect_game` will only render on the live game screen and appears when a game returns that it is currently a no hitter or perfect game and the `innings_until_display` of `nohitter` has passed.
 
 ## Current Issues
 A couple of things are not completely implemented or have some implementation details you should understand.
 
-* `nohit` and `perfect_game` have been added to the json but aren't currently implemented
 * `bases` currently requires an even `size` value to be rendered correctly
