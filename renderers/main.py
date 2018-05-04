@@ -69,6 +69,11 @@ class MainRenderer:
           game = self.data.advance_to_next_game()
 
         self.data.refresh_overview()
+
+        if Status.is_complete(self.data.overview.status):
+          if Final(self.data.current_game()).winning_team == 'Unknown':
+            self.data.refresh_games()
+
         if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
           self.data.refresh_games()
 
