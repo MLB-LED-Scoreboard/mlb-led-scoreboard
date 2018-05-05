@@ -24,6 +24,7 @@ If you'd like to see support for another set of board dimensions, file an issue!
   * [Configuration](#configuration)
   * [Flags](#flags)
   * [Custom Board Layout](#custom-board-layout)
+  * [Custom Colors](#custom-colors)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
 * [Wiki](#wiki)
@@ -129,6 +130,9 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 
 ### Custom Board Layout
 You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `ledcoords/` directory for more information.
+
+### Custom Colors
+You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
 
 ## Sources
 This project relies on two libraries:
