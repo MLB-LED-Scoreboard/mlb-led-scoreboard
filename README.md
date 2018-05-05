@@ -8,6 +8,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 **Currently supported boards:**
  * 32x32
  * 64x32
+ * 128x32
 
 If you'd like to see support for another set of board dimensions, file an issue!
 
