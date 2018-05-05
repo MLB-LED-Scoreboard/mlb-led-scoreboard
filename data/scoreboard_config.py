@@ -1,5 +1,6 @@
 from utils import get_file, deep_update
 from layout import Layout
+from color import Color
 import json
 import os
 import sys
@@ -28,6 +29,12 @@ class ScoreboardConfig:
     # Get the layout info
     json = self.__get_layout(width, height)
     self.layout = Layout(json, width, height)
+
+    # Store color information
+    json = self.__get_colors("teams")
+    self.team_colors = Color(json)
+    json = self.__get_colors("scoreboard")
+    self.scoreboard_colors = Color(json)
 
     #Check the rotate_rates to make sure it's valid and not silly
     self.check_rotate_rates()
@@ -76,6 +83,21 @@ class ScoreboardConfig:
     if os.path.isfile(path):
       j = json.load(open(path))
     return j
+
+  def __get_colors(self, base_filename):
+    filename = "ledcolors/{}.json".format(base_filename)
+    reference_filename = "{}.example".format(filename)
+    reference_colors = self.read_json(reference_filename)
+    if not reference_colors:
+      debug.error("Invalid {} reference color file. Make sure {} exists in ledcolors/".format(base_filename, base_filename))
+      sys.exit(1)
+
+    custom_colors = self.read_json(filename)
+    if custom_colors:
+      debug.log("Custom {} colors found. Merging with default reference colors.".format(base_filename))
+      new_colors = deep_update(reference_colors, custom_colors)
+      return new_colors
+    return reference_colors
 
   def __get_layout(self, width, height):
     filename = "ledcoords/w{}h{}.json".format(width, height)

@@ -24,7 +24,8 @@ class MainRenderer:
     self.scrolling_finished = False
 
   def render(self):
-    self.canvas.Fill(*ledcolors.scoreboard.fill)
+    color = self.data.config.scoreboard_colors.color("default.background")
+    self.canvas.Fill(color["r"], color["g"], color["b"])
     starttime = time.time()
 
     # Main and only loop
@@ -101,7 +102,8 @@ class MainRenderer:
 
   # Draws the provided game on the canvas
   def __draw_game(self, game, overview):
-    self.canvas.Fill(*ledcolors.scoreboard.fill)
+    color = self.data.config.scoreboard_colors.color("default.background")
+    self.canvas.Fill(color["r"], color["g"], color["b"])
 
     # Draw the pregame renderer
     if Status.is_pregame(overview.status):

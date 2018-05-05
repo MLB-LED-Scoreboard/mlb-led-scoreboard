@@ -1,6 +1,5 @@
 from rgbmatrix import graphics
 from data.layout import Layout
-import ledcolors.scoreboard
 import data.layout
 
 class BasesRenderer:
@@ -11,10 +10,14 @@ class BasesRenderer:
     self.canvas = canvas
     self.bases = bases
     self.layout = data.config.layout
+    self.colors = data.config.scoreboard_colors
 
   def render(self):
     base_runners = self.bases.runners
-    color = graphics.Color(*ledcolors.scoreboard.text)
+    colors = []
+    colors.append(self.colors.graphics_color("bases.1B"))
+    colors.append(self.colors.graphics_color("bases.2B"))
+    colors.append(self.colors.graphics_color("bases.3B"))
 
     base_px = []
     base_px.append(self.layout.coords("bases.1B"))
@@ -22,11 +25,11 @@ class BasesRenderer:
     base_px.append(self.layout.coords("bases.3B"))
 
     for base in range(len(base_runners)):
-      self.__render_base_outline(base_px[base], color)
+      self.__render_base_outline(base_px[base], colors[base])
 
       # Fill in the base if there's currently a baserunner
       if base_runners[base]:
-        self.__render_baserunner(base_px[base], color)
+        self.__render_baserunner(base_px[base], colors[base])
 
   def __render_base_outline(self, base, color):
     x, y = (base["x"], base["y"])
