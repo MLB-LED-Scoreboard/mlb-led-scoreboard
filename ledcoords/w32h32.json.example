@@ -57,7 +57,7 @@
   "outs": {
     "1": {
       "x": 1,
-      "y": 25,
+      "y": 26,
       "size": 2,
       "nohit": {
         "x": 2,
@@ -72,7 +72,7 @@
     },
     "2": {
       "x": 5,
-      "y": 25,
+      "y": 26,
       "size": 2,
       "nohit": {
         "x": 6,
@@ -87,7 +87,7 @@
     },
     "3": {
       "x": 9,
-      "y": 25,
+      "y": 26,
       "size": 2,
       "nohit": {
         "x": 10,
@@ -103,23 +103,20 @@
   },
   "batter_count": {
     "x": 1,
-    "y": 22,
+    "y": 23,
     "nohit": {
       "x": 1,
-      "y": 24
+      "y": 21
     },
     "perfect_game": {
       "x": 1,
-      "y": 24
+      "y": 21
     }
   },
-  "nohit_text": {
+  "nohitter": {
     "x": 1,
-    "y": 26
-  },
-  "perfect_game_text": {
-    "x": 1,
-    "y": 26
+    "y": 27,
+    "innings_until_display": 5
   },
   "pregame": {
     "matchup": {
