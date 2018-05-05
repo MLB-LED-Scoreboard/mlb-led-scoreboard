@@ -1,5 +1,4 @@
 from rgbmatrix import graphics
-import ledcolors.scoreboard
 import data.layout
 import debug
 
@@ -8,15 +7,15 @@ PERFECT_GAME_TEXT = "P.G"
 UNKNOWN_TEXT = "???"
 
 class NoHitterRenderer:
-
   def __init__(self, canvas, data):
     self.canvas = canvas
     self.layout = data.config.layout
+    self.colors = data.config.scoreboard_colors
 
   def render(self):
     font = self.layout.font("nohitter")
     coords = self.layout.coords("nohitter")
-    text_color = graphics.Color(*ledcolors.scoreboard.nohit)
+    text_color = self.colors.graphics_color("nohit_text")
     text = self.nohitter_text()
     graphics.DrawText(self.canvas, font["font"], coords["x"], coords["y"], text_color,  text)
 

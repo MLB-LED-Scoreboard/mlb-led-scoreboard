@@ -1,6 +1,5 @@
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
-import ledcolors.scoreboard
 from data.inning import Inning
 
 # Because normal games are 9 innings, silly
@@ -49,7 +48,7 @@ class InningRenderer:
     num_font = self.layout.font("inning.break.number")
     text_coords = self.layout.coords("inning.break.text")
     num_coords = self.layout.coords("inning.break.number")
-    color = graphics.Color(*ledcolors.scoreboard.text)
+    color = self.colors.graphics_color("inning.break.text")
     text = self.inning.state
     num  = self.inning.ordinal()
     text_x = center_text_position(text, text_coords["x"], text_font["size"]["width"])

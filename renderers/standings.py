@@ -1,6 +1,5 @@
 from rgbmatrix import graphics
 from utils import get_font
-import ledcolors.standings
 import time
 
 class StandingsRenderer:

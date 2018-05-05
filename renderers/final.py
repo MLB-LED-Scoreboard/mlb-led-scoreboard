@@ -2,7 +2,8 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from renderers.teams import TeamsRenderer
 from renderers.scrollingtext import ScrollingText
-import ledcolors.scoreboard
+from renderers.nohitter import NoHitterRenderer
+import data.layout
 
 NORMAL_GAME_LENGTH = 9
 
@@ -42,3 +43,9 @@ class Final:
       text += " " + str(self.scoreboard.inning.number)
     text_x = center_text_position(text, coords["x"], font["size"]["width"])
     graphics.DrawText(self.canvas, font["font"], text_x, coords["y"], color, text)
+
+    if self.data.config.layout.state_is_nohitter():
+      nohit_text = NoHitterRenderer(self.canvas, self.data).nohitter_text()
+      nohit_coords = self.data.config.layout.coords("final.nohit_text")
+      nohit_color = self.colors.graphics_color("nohit_text")
+      graphics.DrawText(self.canvas, font["font"], nohit_coords["x"], nohit_coords["y"], nohit_color, nohit_text)
