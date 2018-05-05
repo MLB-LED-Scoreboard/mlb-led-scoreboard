@@ -50,10 +50,10 @@ class Layout:
     else:
       self.state = None
 
-  def state_is_warmup():
+  def state_is_warmup(self):
     return self.state == LAYOUT_STATE_WARMUP
 
-  def state_is_nohitter():
+  def state_is_nohitter(self):
     return self.state in [LAYOUT_STATE_NOHIT, LAYOUT_STATE_PERFECT]
 
   def __find_at_keypath(self, keypath):
