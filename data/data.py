@@ -21,7 +21,7 @@ class Data:
     self.config = config
 
     # Parse today's date and see if we should use today or yesterday
-    self.year, self.month, self.day = self.__parse_today()
+    self.set_current_date()
 
     # Flag to determine when to refresh data
     self.needs_refresh = True
@@ -50,6 +50,9 @@ class Data:
   def date(self):
     return datetime(self.year, self.month, self.day)
 
+  def set_current_date(self):
+    self.year, self.month, self.day = self.__parse_today()
+
 
   #
   # mlbgame refresh
@@ -61,10 +64,16 @@ class Data:
       debug.error("Failed to refresh standings.")
 
   def refresh_games(self):
+
+    debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
+        current_day = self.day
+        self.set_current_date()
         self.games = mlbgame.day(self.year, self.month, self.day)
+        if current_day != self.day:
+          self.current_game_index = self.game_index_for_preferred_team()
         self.games_refresh_time = time.time()
         break
       except URLError, e:
