@@ -7,7 +7,6 @@ from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.status import StatusRenderer
 from data.data import Data
-import ledcolors.scoreboard
 import debug
 import time
 

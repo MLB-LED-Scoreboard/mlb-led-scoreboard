@@ -1,5 +1,4 @@
 from rgbmatrix import graphics
-import ledcolors.scoreboard
 
 class OutsRenderer:
   """Renders the out circles on the scoreboard."""

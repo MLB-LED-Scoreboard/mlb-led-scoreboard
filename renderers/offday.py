@@ -2,7 +2,6 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from data.data import Data
 import debug
-import ledcolors.scoreboard
 
 class OffdayRenderer:
   def __init__(self, matrix, canvas, data):

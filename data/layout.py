@@ -32,7 +32,7 @@ class Layout:
       raise e
     except:
       return self.__get_font_object(FONTNAME_DEFAULT)
-    
+
   def coords(self, keypath):
     try:
       d = self.__find_at_keypath(keypath)

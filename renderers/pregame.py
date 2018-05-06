@@ -2,7 +2,6 @@ from data.status import Status
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from renderers.scrollingtext import ScrollingText
-import ledcolors.scoreboard
 import data.layout
 
 class Pregame:

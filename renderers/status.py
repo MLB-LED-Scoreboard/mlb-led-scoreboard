@@ -2,7 +2,6 @@ from data.status import Status
 from renderers.teams import TeamsRenderer
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
-import ledcolors.scoreboard
 
 # "Manager Challenge is too long"
 CHALLENGE_SHORTHAND = "Challenge"
