@@ -16,6 +16,9 @@ def log(text):
 	if debug_enabled:
 		__debugprint("DEBUG ({}): {}".format(__timestamp(), text))
 
+def warning(text):
+  __debugprint("WARNING ({}): {}".format(__timestamp(), text))
+
 def error(text):
 	__debugprint("ERROR ({}): {}".format(__timestamp(), text))
 

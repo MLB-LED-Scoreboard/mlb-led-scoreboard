@@ -22,6 +22,9 @@ matrixOptions = led_matrix_options(args)
 # Initialize the matrix
 matrix = RGBMatrix(options = matrixOptions)
 
+# Print some basic info on startup
+debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
+
 # Read scoreboard options from config.json if it exists
 config = ScoreboardConfig("config.json", matrix.width, matrix.height)
 debug.set_debug_status(config)
@@ -29,9 +32,6 @@ debug.set_debug_status(config)
 # Create a new data object to manage the MLB data
 # This will fetch initial data from MLB
 data = Data(config)
-
-# Print some basic info on startup
-debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
 
 # Render the standings or an off day screen
 def display_standings(matrix, data):
