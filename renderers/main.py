@@ -68,14 +68,14 @@ class MainRenderer:
           self.scrolling_text_pos = self.canvas.width
           game = self.data.advance_to_next_game()
 
+        if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
+          self.data.refresh_games()
+
         self.data.refresh_overview()
 
         if Status.is_complete(self.data.overview.status):
           if Final(self.data.current_game()).winning_pitcher == 'Unknown':
             self.data.refresh_games()
-
-        if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
-          self.data.refresh_games()
 
   def __rotate_rate_for_status(self, status):
     rotate_rate = self.data.config.live_rotate_rate
