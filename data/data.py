@@ -3,6 +3,7 @@ from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
 from status import Status
+import urllib
 import layout
 import mlbgame
 import debug
@@ -64,8 +65,8 @@ class Data:
       debug.error("Failed to refresh standings.")
 
   def refresh_games(self):
-
     debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
+    urllib.urlcleanup()
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
@@ -86,6 +87,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
   def refresh_overview(self):
+    urllib.urlcleanup()
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
