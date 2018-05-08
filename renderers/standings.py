@@ -29,7 +29,7 @@ class StandingsRenderer:
     starttime = time.time()
     while True:
       offset = coords["offset"]
-      graphics.DrawText(self.canvas, font["font"], coords["stat"]["x"], offset, self.stat_color, stat.upper())
+      graphics.DrawText(self.canvas, font["font"], coords["stat_title"]["x"], offset, self.stat_color, stat.upper())
       for team in self.data.standings_for_preferred_division().teams:
         abbrev = '{:3s}'.format(team.team_abbrev)
         team_text = '%s' % abbrev
