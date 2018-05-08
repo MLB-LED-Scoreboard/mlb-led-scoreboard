@@ -18,10 +18,12 @@ class Layout:
     self.width = width
     self.height = height
     self.state = None
+    self.default_font_name = FONTNAME_DEFAULT
+    self.default_font_name = self.coords("defaults.font_name")
 
     self.font_cache = {}
-    default_font = self.__load_font("4x6")
-    self.font_cache = {"4x6": default_font}
+    default_font = self.__load_font(self.default_font_name)
+    self.font_cache = {self.default_font_name: default_font}
 
   # Returns a dictionary with "font" and "size"
   def font(self, keypath):
@@ -31,7 +33,7 @@ class Layout:
     except KeyboardInterrupt as e:
       raise e
     except:
-      return self.__get_font_object(FONTNAME_DEFAULT)
+      return self.__get_font_object(self.default_font_name)
 
   def coords(self, keypath):
     try:
