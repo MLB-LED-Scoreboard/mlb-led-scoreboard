@@ -156,7 +156,7 @@
     "divider": {
       "x": 20
     },
-    "stat": {
+    "stat_title": {
       "x": 20
     },
     "team": {
