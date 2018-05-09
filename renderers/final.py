@@ -47,5 +47,6 @@ class Final:
     if self.data.config.layout.state_is_nohitter():
       nohit_text = NoHitterRenderer(self.canvas, self.data).nohitter_text()
       nohit_coords = self.data.config.layout.coords("final.nohit_text")
-      nohit_color = self.colors.graphics_color("nohit_text")
-      graphics.DrawText(self.canvas, font["font"], nohit_coords["x"], nohit_coords["y"], nohit_color, nohit_text)
+      nohit_color = self.colors.graphics_color("final.nohit_text")
+      nohit_font = self.data.config.layout.font("final.nohit_text")
+      graphics.DrawText(self.canvas, nohit_font["font"], nohit_coords["x"], nohit_coords["y"], nohit_color, nohit_text)
