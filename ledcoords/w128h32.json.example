@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "font_name": "4x6"
+    "font_name": "6x10"
   },
   "bases": {
     "1B": {
@@ -156,13 +156,8 @@
     "divider": {
       "x": 20
     },
-<<<<<<< HEAD
-    "stat_title": {
-      "x": 28
-=======
     "stat": {
       "x": 20
->>>>>>> Updated 128x32 json to support no hitter
     },
     "team": {
       "name": {
