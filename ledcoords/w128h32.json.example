@@ -1,4 +1,7 @@
 {
+  "defaults": {
+    "font_name": "4x6"
+  },
   "bases": {
     "1B": {
       "x": 81,
