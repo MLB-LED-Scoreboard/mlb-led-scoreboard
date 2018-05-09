@@ -1,21 +1,21 @@
 {
   "defaults": {
-    "font_name": "6x10"
+    "font_name": "6x12"
   },
   "bases": {
     "1B": {
       "x": 88,
-      "y": 11,
+      "y": 12,
       "size": 16
     },
     "2B": {
       "x": 78,
-      "y": 1,
+      "y": 2,
       "size": 16
     },
     "3B": {
       "x": 68,
-      "y": 11,
+      "y": 12,
       "size": 16
     }
   },
@@ -151,20 +151,20 @@
   },
   "standings": {
     "offset": 8,
-    "height": 8,
+    "height": 32,
     "width": 128,
     "divider": {
-      "x": 20
+      "x": 25
     },
     "stat_title": {
-      "x": 20
+      "x": 28
     },
     "team": {
       "name": {
         "x": 1
       },
       "stat": {
-        "x": 20
+        "x": 15
       }
     }
   },
