@@ -1,28 +1,28 @@
 {
   "defaults": {
-    "font_name": "6x10"
+    "font_name": "6x12"
   },
   "bases": {
     "1B": {
       "x": 88,
-      "y": 11,
+      "y": 12,
       "size": 16
     },
     "2B": {
       "x": 78,
-      "y": 1,
+      "y": 2,
       "size": 16
     },
     "3B": {
       "x": 68,
-      "y": 11,
+      "y": 12,
       "size": 16
     }
   },
   "final": {
     "inning": {
-      "x": 95,
-      "y": 15
+      "x": 96,
+      "y": 14
     },
     "scrolling_text": {
       "x": 0,
@@ -30,8 +30,8 @@
       "width": 128
     },
     "nohit_text": {
-      "x": 1,
-      "y": 20
+      "x": 85,
+      "y": 22
     }
   },
   "inning": {
@@ -87,7 +87,7 @@
         "size": 4
       },
       "perfect_game": {
-        "x": 122,
+        "x": 116,
         "y": 26,
         "size": 4
       }
@@ -116,8 +116,8 @@
       "y": 16
     },
     "perfect_game": {
-      "x": 15,
-      "y": 24
+      "x": 110,
+      "y": 16
     }
   },
   "nohitter": {
@@ -141,30 +141,30 @@
       }
     },
     "start_time": {
-      "x": 64,
+      "x": 66,
       "y": 19
     },
     "warmup_text": {
-      "x": 32,
+      "x": 24,
       "y": 19
     }
   },
   "standings": {
     "offset": 8,
-    "height": 8,
+    "height": 32,
     "width": 128,
     "divider": {
-      "x": 20
+      "x": 25
     },
     "stat_title": {
-      "x": 20
+      "x": 28
     },
     "team": {
       "name": {
         "x": 1
       },
       "stat": {
-        "x": 20
+        "x": 15
       }
     }
   },
