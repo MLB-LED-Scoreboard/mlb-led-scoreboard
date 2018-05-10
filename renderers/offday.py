@@ -2,7 +2,6 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from data.data import Data
 import debug
-import ledcolors.scoreboard
 
 class OffdayRenderer:
   def __init__(self, matrix, canvas, data):
@@ -13,9 +12,9 @@ class OffdayRenderer:
 
   def render(self):
     font = get_font()
-    text_color = graphics.Color(*ledcolors.scoreboard.text)
+    text_color = graphics.Color(255, 235, 59)
 
-    self.canvas.Fill(*ledcolors.scoreboard.fill)
+    self.canvas.Fill(7, 14, 25)
     no_text = 'No'
     no_x = center_text_position(no_text, self.canvas.width/2, 4)
     graphics.DrawText(self.canvas, font, no_x, 8, text_color, no_text)

@@ -8,6 +8,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 **Currently supported boards:**
  * 32x32
  * 64x32
+ * 128x32
 
 If you'd like to see support for another set of board dimensions, file an issue!
 
@@ -22,7 +23,9 @@ If you'd like to see support for another set of board dimensions, file an issue!
 * [Usage](#usage)
   * [Configuration](#configuration)
   * [Flags](#flags)
+* [Personalization](#personalization)
   * [Custom Board Layout](#custom-board-layout)
+  * [Custom Colors](#custom-colors)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
 * [Wiki](#wiki)
@@ -37,7 +40,7 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 
 The board refreshes the list of games every 15 minutes.
 
-![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg)
+![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png)
 
 Sometimes you don't get baseball though :(
 
@@ -46,7 +49,7 @@ Sometimes you don't get baseball though :(
 ### Pregame
 If a game hasn't started yet, a pregame screen will be displayed with the probable starting pitchers.
 
-![Pregame](img/pregame.gif) ![Pregame-wide](img/wide-pregame-demo.jpg)
+![Pregame](img/pregame.gif) ![Pregame-wide](img/wide-pregame-demo.jpg) ![Pregame-128x32](img/128x32-pregame.png)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
@@ -122,12 +125,18 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-slowdown-gpio       Slow down writing to GPIO. Range: 0..4. (Default: 1)
 --led-no-hardware-pulse   Don't use hardware pin-pulse generation.
 --led-rgb-sequence        Switch if your matrix has led colors swapped. (Default: RGB)
+--led-pixel-mapper        Apply pixel mappers. e.g Rotate:90, U-mapper
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 ```
 
+## Personalization
+If you're feeling adventurous (and we highly encourage it!), the sections below outline how you can truly personalize your scoreboard and make it your own!
 ### Custom Board Layout
 You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `ledcoords/` directory for more information.
+
+### Custom Colors
+You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
 
 ## Sources
 This project relies on two libraries:

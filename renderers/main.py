@@ -7,7 +7,6 @@ from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.status import StatusRenderer
 from data.data import Data
-import ledcolors.scoreboard
 import debug
 import time
 
@@ -24,7 +23,8 @@ class MainRenderer:
     self.scrolling_finished = False
 
   def render(self):
-    self.canvas.Fill(*ledcolors.scoreboard.fill)
+    color = self.data.config.scoreboard_colors.color("default.background")
+    self.canvas.Fill(color["r"], color["g"], color["b"])
     starttime = time.time()
 
     # Main and only loop
@@ -68,9 +68,14 @@ class MainRenderer:
           self.scrolling_text_pos = self.canvas.width
           game = self.data.advance_to_next_game()
 
-        self.data.refresh_overview()
         if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
           self.data.refresh_games()
+
+        self.data.refresh_overview()
+
+        if Status.is_complete(self.data.overview.status):
+          if Final(self.data.current_game()).winning_pitcher == 'Unknown':
+            self.data.refresh_games()
 
   def __rotate_rate_for_status(self, status):
     rotate_rate = self.data.config.live_rotate_rate
@@ -96,7 +101,8 @@ class MainRenderer:
 
   # Draws the provided game on the canvas
   def __draw_game(self, game, overview):
-    self.canvas.Fill(*ledcolors.scoreboard.fill)
+    color = self.data.config.scoreboard_colors.color("default.background")
+    self.canvas.Fill(color["r"], color["g"], color["b"])
 
     # Draw the pregame renderer
     if Status.is_pregame(overview.status):

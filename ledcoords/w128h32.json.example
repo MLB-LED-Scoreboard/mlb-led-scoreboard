@@ -1,53 +1,53 @@
 {
   "defaults": {
-    "font_name": "4x6"
+    "font_name": "6x12"
   },
   "bases": {
     "1B": {
-      "x": 44,
-      "y": 22,
-      "size": 6
+      "x": 88,
+      "y": 12,
+      "size": 16
     },
     "2B": {
-      "x": 39,
-      "y": 17,
-      "size": 6
+      "x": 78,
+      "y": 2,
+      "size": 16
     },
     "3B": {
-      "x": 34,
-      "y": 22,
-      "size": 6
+      "x": 68,
+      "y": 12,
+      "size": 16
     }
   },
   "final": {
     "inning": {
-      "x": 32,
-      "y": 20
+      "x": 96,
+      "y": 14
     },
     "scrolling_text": {
       "x": 0,
-      "y": 31,
-      "width": 64
+      "y": 30,
+      "width": 128
     },
     "nohit_text": {
-      "x": 1,
-      "y": 20
+      "x": 85,
+      "y": 22
     }
   },
   "inning": {
     "break": {
       "number": {
-        "x": 32,
-        "y": 29
+        "x": 95,
+        "y": 19
       },
       "text": {
-        "x": 32,
-        "y": 22
+        "x": 95,
+        "y": 10
       }
     },
     "number": {
-      "x": 63,
-      "y": 20
+      "x": 128,
+      "y": 8
     },
     "arrow": {
       "size": 3,
@@ -63,98 +63,98 @@
   },
   "outs": {
     "1": {
-      "x": 15,
-      "y": 26,
-      "size": 2,
+      "x": 110,
+      "y": 24,
+      "size": 4,
       "nohit": {
-        "x": 15,
-        "y": 28,
-        "size": 2
+        "x": 110,
+        "y": 26,
+        "size": 4
       },
       "perfect_game": {
-        "x": 15,
-        "y": 28,
-        "size": 2
+        "x": 110,
+        "y": 26,
+        "size": 4
       }
     },
     "2": {
-      "x": 19,
-      "y": 26,
-      "size": 2,
+      "x": 116,
+      "y": 24,
+      "size": 4,
       "nohit": {
-        "x": 19,
-        "y": 28,
-        "size": 2
+        "x": 116,
+        "y": 26,
+        "size": 4
       },
       "perfect_game": {
-        "x": 19,
-        "y": 28,
-        "size": 2
+        "x": 116,
+        "y": 26,
+        "size": 4
       }
     },
     "3": {
-      "x": 23,
-      "y": 26,
-      "size": 2,
+      "x": 122,
+      "y": 24,
+      "size": 4,
       "nohit": {
-        "x": 23,
-        "y": 28,
-        "size": 2
+        "x": 122,
+        "y": 26,
+        "size": 4
       },
       "perfect_game": {
-        "x": 23,
-        "y": 28,
-        "size": 2
+        "x": 122,
+        "y": 26,
+        "size": 4
       }
     }
   },
   "batter_count": {
-    "x": 15,
-    "y": 23,
+    "x": 110,
+    "y": 22,
     "nohit": {
-      "x": 15,
-      "y": 21
+      "x": 110,
+      "y": 16
     },
     "perfect_game": {
-      "x": 15,
-      "y": 21
+      "x": 110,
+      "y": 16
     }
   },
   "nohitter": {
-    "x": 15,
-    "y": 27,
+    "x": 110,
+    "y": 24,
     "innings_until_display": 5
   },
   "pregame": {
     "matchup": {
-      "x": 32,
-      "y": 6
+      "x": 66,
+      "y": 10
     },
     "scrolling_text": {
       "x": 0,
-      "y": 25,
-      "width": 64,
+      "y": 29,
+      "width": 128,
       "warmup": {
         "x": 0,
         "y": 29,
-        "width": 64
+        "width": 128
       }
     },
     "start_time": {
-      "x": 32,
-      "y": 13
+      "x": 66,
+      "y": 19
     },
     "warmup_text": {
-      "x": 32,
-      "y": 20
+      "x": 24,
+      "y": 19
     }
   },
   "standings": {
-    "offset": 6,
+    "offset": 8,
     "height": 32,
-    "width": 64,
+    "width": 128,
     "divider": {
-      "x": 13
+      "x": 25
     },
     "stat_title": {
       "x": 28
@@ -177,35 +177,35 @@
     "background": {
       "away": {
         "width": 64,
-        "height": 7,
+        "height": 11,
         "x": 0,
         "y": 0
       },
       "home": {
         "width": 64,
-        "height": 7,
+        "height": 11,
         "x": 0,
-        "y": 7
+        "y": 11
       }
     },
     "name": {
       "away": {
         "x": 1,
-        "y": 6
+        "y": 9
       },
       "home": {
         "x": 1,
-        "y": 13
+        "y": 20
       }
     },
     "runs": {
       "away": {
-        "x": 62,
-        "y": 6
+        "x": 64,
+        "y": 9
       },
       "home": {
-        "x": 62,
-        "y": 13
+        "x": 64,
+        "y": 20
       }
     }
   }

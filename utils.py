@@ -35,6 +35,7 @@ def args():
   parser.add_argument("--led-slowdown-gpio", action="store", help="Slow down writing to GPIO. Range: 0..4. (Default: 1)", choices=range(5), type=int)
   parser.add_argument("--led-no-hardware-pulse", action="store", help="Don't use hardware pin-pulse generation.")
   parser.add_argument("--led-rgb-sequence", action="store", help="Switch if your matrix has led colors swapped. (Default: RGB)", default="RGB", type=str)
+  parser.add_argument("--led-pixel-mapper", action="store", help="Apply pixel mappers. e.g \"Rotate:90\"", default="", type=str)
   parser.add_argument("--led-row-addr-type", action="store", help="0 = default; 1 = AB-addressed panels. (Default: 0)", default=0, type=int, choices=[0,1])
   parser.add_argument("--led-multiplexing", action="store",
                       help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)", default=0, type=int)
@@ -57,6 +58,7 @@ def led_matrix_options(args):
   options.brightness = args.led_brightness
   options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
   options.led_rgb_sequence = args.led_rgb_sequence
+  options.pixel_mapper_config = args.led_pixel_mapper
 
   if args.led_show_refresh:
     options.show_refresh_rate = 1

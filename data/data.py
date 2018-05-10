@@ -3,6 +3,7 @@ from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
 from status import Status
+import urllib
 import layout
 import mlbgame
 import debug
@@ -21,7 +22,7 @@ class Data:
     self.config = config
 
     # Parse today's date and see if we should use today or yesterday
-    self.year, self.month, self.day = self.__parse_today()
+    self.set_current_date()
 
     # Flag to determine when to refresh data
     self.needs_refresh = True
@@ -50,6 +51,9 @@ class Data:
   def date(self):
     return datetime(self.year, self.month, self.day)
 
+  def set_current_date(self):
+    self.year, self.month, self.day = self.__parse_today()
+
 
   #
   # mlbgame refresh
@@ -61,10 +65,16 @@ class Data:
       debug.error("Failed to refresh standings.")
 
   def refresh_games(self):
+    debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
+    urllib.urlcleanup()
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
+        current_day = self.day
+        self.set_current_date()
         self.games = mlbgame.day(self.year, self.month, self.day)
+        if current_day != self.day:
+          self.current_game_index = self.game_index_for_preferred_team()
         self.games_refresh_time = time.time()
         break
       except URLError, e:
@@ -77,6 +87,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
   def refresh_overview(self):
+    urllib.urlcleanup()
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
@@ -107,7 +118,7 @@ class Data:
       self.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
 
     if self.overview.is_perfect_game == "Y":
-      self.config.layout.set_state(layout.LAYOUT_PERFECT_GAME)
+      self.config.layout.set_state(layout.LAYOUT_PERFECT)
 
   #
   # Standings
