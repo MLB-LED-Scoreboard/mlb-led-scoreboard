@@ -1,5 +1,6 @@
+from PIL import Image
 from rgbmatrix import graphics
-from utils import get_font
+from utils import get_font, get_file
 import time
 
 class StandingsRenderer:
@@ -17,10 +18,13 @@ class StandingsRenderer:
   def render(self):
     self.canvas.Fill(self.bg_color["r"], self.bg_color["g"], self.bg_color["b"])
 
-    if self.canvas.width > 32:
-      self.__render_static_wide_standings()
+    if self.__is_dumpster_fire():
+      self.__render_dumpster_fire()
     else:
-      self.__render_rotating_standings()
+      if self.canvas.width > 32:
+        self.__render_static_wide_standings()
+      else:
+        self.__render_rotating_standings()
 
   def __render_rotating_standings(self):
     coords = self.data.config.layout.coords("standings")
@@ -53,7 +57,7 @@ class StandingsRenderer:
     coords = self.data.config.layout.coords("standings")
     font = self.data.config.layout.font("standings")
     while True:
-      offset = coords["offset"] 
+      offset = coords["offset"]
 
       for team in self.data.standings_for_preferred_division().teams:
         team_text = team.team_abbrev
@@ -72,4 +76,18 @@ class StandingsRenderer:
 
         self.matrix.SwapOnVSync(self.canvas)
 
+      time.sleep(20.0)
+
+  def __is_dumpster_fire(self):
+    return "comedy" in self.data.config.preferred_division.lower()
+
+  def __render_dumpster_fire(self):
+    image_file = get_file("Assets/fire.jpg")
+    image = Image.open(image_file)
+    image_rgb = image.convert("RGB")
+    image_x = (self.canvas.width / 2) - 16
+
+    self.matrix.Clear()
+    while True:
+      self.matrix.SetImage(image_rgb, image_x, 0)
       time.sleep(20.0)
