@@ -2,6 +2,7 @@ from rgbmatrix import RGBMatrixOptions, graphics
 import collections
 import argparse
 import os
+import debug
 
 def get_file(path):
   dir = os.path.dirname(__file__)
@@ -58,7 +59,11 @@ def led_matrix_options(args):
   options.brightness = args.led_brightness
   options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
   options.led_rgb_sequence = args.led_rgb_sequence
-  options.pixel_mapper_config = args.led_pixel_mapper
+  try:
+    options.pixel_mapper_config = args.led_pixel_mapper
+  except AttributeError:
+    debug.warning("Your compiled RGB Matrix Library is out of date.")
+    debug.warning("The --led-pixel-mapper argument will not work until it is updated.")
 
   if args.led_show_refresh:
     options.show_refresh_rate = 1
