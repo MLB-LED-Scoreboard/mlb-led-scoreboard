@@ -21,6 +21,25 @@ class Scoreboard:
     self.outs = Outs(overview)
     self.game_status = overview.status
 
+    try:
+      self.note = overview.note
+    except:
+      self.note = None
+
+    try:
+      self.reason = overview.reason
+    except:
+      self.reason = None
+
+  def get_text_for_reason(self):
+    if self.note:
+      return self.note
+
+    if self.reason:
+      return self.reason
+
+    return None
+
   def __str__(self):
     s = "<{} {}> {} ({}) @ {} ({}); Status: {}; Inning: (Number: {}; State: {}); B:{} S:{} O:{}; Bases: {}".format(
       self.__class__.__name__, hex(id(self)),
