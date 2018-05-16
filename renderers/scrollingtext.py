@@ -24,7 +24,6 @@ class ScrollingText:
 			return pos
 
 		else:
-			print "Centering Scrolling Text because it's too short"
 			graphics.DrawText(self.canvas, self.font["font"], self.__center_position(), self.y, self.text_color, self.text)
 			return 0
 
