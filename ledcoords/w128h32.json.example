@@ -170,8 +170,8 @@
   },
   "status": {
     "text": {
-      "x": 32,
-      "y": 20,
+      "x": 96,
+      "y": 14,
       "short_text": false
     },
     "scrolling_text": {
