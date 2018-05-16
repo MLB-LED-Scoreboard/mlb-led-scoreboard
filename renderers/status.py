@@ -9,6 +9,7 @@ CHALLENGE_SHORTHAND = "Challenge"
 # Handle statuses that are too long for 32-wide boards.
 POSTPONED_SHORTHAND = 'Postpd'
 CANCELLED_SHORTHAND = "Cancl'd"
+SUSPENDED_SHORTHAND = "Suspnd"
 CHALLENGE_SHORTHAND_32 = "Chalnge"
 
 class StatusRenderer:
@@ -48,4 +49,6 @@ class StatusRenderer:
       return CANCELLED_SHORTHAND
     if text == Status.MANAGER_CHALLENGE:
       return CHALLENGE_SHORTHAND_32
+    if text == Status.SUSPENDED:
+      return SUSPENDED_SHORTHAND
     return text

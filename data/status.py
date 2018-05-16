@@ -6,17 +6,18 @@ class Status:
   FINAL = 'Final'
   GAME_OVER = 'Game Over'
   IN_PROGRESS = 'In Progress'
-  MANAGER_CHALLENGE = "Manager Challenge"
+  MANAGER_CHALLENGE = 'Manager Challenge'
   REVIEW = 'Review'
   PRE_GAME = 'Pre-Game'
   POSTPONED = 'Postponed'
   SCHEDULED = 'Scheduled'
+  SUSPENDED = 'Suspended'
   WARMUP = 'Warmup'
 
   @staticmethod
   def is_static(status):
     """Returns whether the game being currently displayed has no text to scroll"""
-    return status in [Status.IN_PROGRESS, Status.CANCELLED, Status.DELAYED, Status.DELAYED_START, Status.POSTPONED, Status.MANAGER_CHALLENGE, Status.REVIEW]
+    return status in [Status.IN_PROGRESS, Status.CANCELLED, Status.DELAYED, Status.DELAYED_START, Status.POSTPONED, Status.SUSPENDED, Status.MANAGER_CHALLENGE, Status.REVIEW]
 
   @staticmethod
   def is_pregame(status):
@@ -37,7 +38,7 @@ class Status:
   def is_irregular(status):
     """Returns whether game is in an irregular state, such as delayed, postponed, cancelled,
     or in a challenge."""
-    return status in [Status.POSTPONED, Status.DELAYED, Status.DELAYED_START, Status.CANCELLED, Status.MANAGER_CHALLENGE]
+    return status in [Status.POSTPONED, Status.SUSPENDED, Status.DELAYED, Status.DELAYED_START, Status.CANCELLED, Status.MANAGER_CHALLENGE]
 
   @staticmethod
   def is_fresh(status):
