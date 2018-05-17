@@ -118,10 +118,17 @@
       "b": 59
     }
   },
-  "status_text": {
-    "r": 255,
-    "g": 235,
-    "b": 59
+  "status": {
+    "text": {
+      "r": 255,
+      "g": 235,
+      "b": 59
+    },
+    "scrolling_text": {
+      "r": 255,
+      "g": 235,
+      "b": 59
+    }
   },
   "standings": {
     "background": {

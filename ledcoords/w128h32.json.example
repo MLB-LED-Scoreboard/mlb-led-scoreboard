@@ -168,10 +168,17 @@
       }
     }
   },
-  "status_text": {
-    "x": 32,
-    "y": 20,
-    "short_text": false
+  "status": {
+    "text": {
+      "x": 96,
+      "y": 14,
+      "short_text": false
+    },
+    "scrolling_text": {
+      "x": 0,
+      "y": 30,
+      "width": 128
+    }
   },
   "teams": {
     "background": {
