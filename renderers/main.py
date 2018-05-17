@@ -47,7 +47,7 @@ class MainRenderer:
         refresh_rate = SCROLL_TEXT_SLOW_RATE
 
       # If we're not scrolling anything, scroll is always finished.
-      if Status.is_static(self.data.overview.status):
+      if Status.is_static(self.data.overview.status) and not Scoreboard(self.data.overview).get_text_for_reason():
         self.scrolling_finished = True
 
       time.sleep(refresh_rate)
@@ -122,7 +122,12 @@ class MainRenderer:
     # Draw the scoreboar renderer
     elif Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
-      StatusRenderer(self.canvas, scoreboard, self.data).render()
+      if scoreboard.get_text_for_reason():
+        scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
+        renderer = StatusRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
+        self.__update_scrolling_text_pos(renderer.render())
+      else:
+        StatusRenderer(self.canvas, scoreboard, self.data).render()
     else:
       scoreboard = Scoreboard(overview)
       ScoreboardRenderer(self.canvas, scoreboard, self.data).render()
