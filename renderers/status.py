@@ -59,6 +59,8 @@ class StatusRenderer:
     return text
 
   def __get_short_text(self, text):
+    if text == Status.DELAYED_START:
+      return Status.DELAYED
     if text == Status.POSTPONED:
       return POSTPONED_SHORTHAND
     if text == Status.CANCELLED:
