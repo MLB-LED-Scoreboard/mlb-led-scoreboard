@@ -22,7 +22,7 @@ class Pregame:
         overview.away_probable_pitcher_last_name,
         overview.away_probable_pitcher_wins,
         overview.away_probable_pitcher_losses,
-        overview.away_probable_pitcher_era)
+        self.__convert_era(overview.away_probable_pitcher_era))
       ) or 'TBD'
     except:
       self.away_starter = 'TBD'
@@ -33,10 +33,15 @@ class Pregame:
         overview.home_probable_pitcher_last_name,
         overview.home_probable_pitcher_wins,
         overview.home_probable_pitcher_losses,
-        overview.home_probable_pitcher_era)
+        self.__convert_era(overview.home_probable_pitcher_era))
       ) or 'TBD'
     except:
       self.home_starter = 'TBD'
+
+  def __convert_era(self, era_string):
+    if era_string == "-.--":
+      return "-.--"
+    return "{0:.2f}".format(era_string)
 
   def __convert_time(self, time):
     """Converts MLB's pregame times (Eastern) into the local time zone"""
