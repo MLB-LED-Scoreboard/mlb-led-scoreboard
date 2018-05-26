@@ -102,3 +102,16 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Ignore our customized config.json
+config.json
+
+# Ignore any customized coordinate configs
+ledcoords/*.json
+
+# Ignore any customized color configs
+ledcolors/*.json
+
+# Ignore any customized fonts
+Assets/*.bdf
+!Assets/4x6.bdf

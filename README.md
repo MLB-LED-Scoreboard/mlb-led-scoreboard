@@ -3,74 +3,159 @@ An LED scoreboard for Major League Baseball. Displays a live scoreboard for your
 
 Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 
+[![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
+
+**Currently supported boards:**
+ * 32x32
+ * 64x32
+ * 128x32
+
+If you'd like to see support for another set of board dimensions, file an issue!
+
+## Table of Contents
+* [Features](#features)
+  * [Live Games](#live-games)
+  * [Pregame](#pregame)
+  * [Division Standings](#division-standings)
+* [Installation](#installation)
+  * [Hardware Assembly](#hardware-assembly)
+  * [Software Installation](#software-installation)
+* [Usage](#usage)
+  * [Configuration](#configuration)
+  * [Flags](#flags)
+* [Personalization](#personalization)
+  * [Custom Board Layout](#custom-board-layout)
+  * [Custom Colors](#custom-colors)
+* [Sources](#sources)
+  * [Accuracy Disclaimer](#accuracy-disclaimer)
+* [Wiki](#wiki)
+* [Help and Contributing](#help-and-contributing)
+  * [Latest Features](#latest-features)
+* [Licensing](#licensing)
+
 ## Features
 
 ### Live Games
 It can display live games in action, and optionally rotate every 15 seconds through each game of the day.
 
-![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg)
+The board refreshes the list of games every 15 minutes.
+
+![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png)
+
+Sometimes you don't get baseball though :(
+
+![I hate offdays](img/offday.jpg)
+
+### Pregame
+If a game hasn't started yet, a pregame screen will be displayed with the probable starting pitchers.
+
+![Pregame](img/pregame.gif) ![Pregame-wide](img/wide-pregame-demo.jpg) ![Pregame-128x32](img/128x32-pregame.png)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
 
-![standings-wins](img/standings-wins.jpg) ![standings-losses](img/standings-losses.jpg)
+![standings-wins](img/standings-wins.jpg) ![standings-losses](img/standings-losses.jpg) ![standings-wide](img/wide-standings-demo.jpg)
 
 ## Installation
-### Note: The installation steps are very much a WIP as I'm having more people test this out. This will update as more people adopt this software.
-```
-git clone --recursive https://github.com/ajbowler/mlb-led-scoreboard
-cd matrix/bindings/python
-```
-Then follow the instructions [in that directory](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). The README there will guide you through building the necessary binaries to run the Python samples (stuff like pulsing colors, running text on the screen, etc.)
+### Hardware Assembly
+[See our wiki page.](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki) This README is primarily focused on the MLB software, but for those coming here from Reddit or elsewhere never having built things with a Raspberry Pi, this should help get you going.
 
-**You cannot run this program until you have built the RGBMatrix binaries per the instructions in that README.**
+### Software Installation
+This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
 
-A very important note not to forget is setting up the hardware you use. Make sure to edit the Makefile in the `lib/` directory to the right hardware description. I'm using `adafruit-hat` since I built this with an Adafruit HAT.
-
-Then do the following:
 ```
-cd .. # you should be in matrix/bindings now
-sudo pip install -e python/
-cd ../../ # you should be in mlb-led-scoreboard/ now
-sudo pip install mlbgame
-make
+git clone --recursive https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard
+cd mlb-led-scoreboard/
+sudo ./install.sh
 ```
-Basically, you're going to go back above the python binding directory, then run a pip install on that directory to create your own `rgbmatrix` module. Then go back up to the project directory and install `mlbgame`, the API this software uses to get baseball stats.
 
-Install anything else your Pi yells at you for. I needed `python-dev` and a few native extensions for other stuff. Outside of scope of this project but this should at least help point people in the right direction.
+This will install the rgbmatrix binaries, which we get from [another open source library](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). It controls the actual rendering of the scoreboard onto the LEDs. If you're curious, you can read through their documentation on how all of the lower level stuff works.
+
+It will also install some time zone libraries and [mlbgame](https://github.com/panzarino/mlbgame), a Python library that retrieves all of our baseball data.
+
+If you continue to run into issues, join our Slack channel located at the top of the README.
+
+#### Time Zones
+Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default.
 
 ## Usage
 `sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
 
-## Example
-If you want to just display the game for your team that day, just supply that team. If it's a team like Red Sox, encase it in quotes "Red Sox" so the team is picked up as one command line argument.
+**Adafruit HAT/Bonnet users: You must supply a command line flag:**
 
-`sudo python main.py -t Cubs` or `sudo python main.py -t "Red Sox"`
+`sudo python main.py --led-gpio-mapping="adafruit-hat"`
 
-Passing in a `-r` or `--rotate` flag will rotate through each game of the day every 15 seconds. If you passed a team in, it will start with that game, otherwise it will start with the first game in the list that MLB returned.
+See the Flags section below for more flags you can optionally provide.
 
-To display the standings for a division, supply your division's name.
+### Configuration
 
-`sudo python main.py -s "NL Central"` Make sure you follow the format of `NL/AL West/Central/East`
+A default `config.json.example` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
-See below for more usage options.
+```
+"preferred_team"              String  Pick a team to display a game for. Example: "Cubs"
+"preferred_division"          String  Pick a division to display standings for when display_standings is true. Example: "NL Central"
+"display_standings"           Bool    Display standings for the provided preferred_division.
+"display_standings_on_offday" Bool    Display standings for the provided preferred division when there are no games on the current day.
+                              Integer If 0, same as false. If 1, Same as the above. If 2, the standings are displayed if your preferred team has no games, instead of all teams.
+"rotate_games"                Bool    Rotate through each game of the day every 15 seconds.
+"rotate_rates"                Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
+                              Float   A Float can be used to set all screen types to the same rotate rate.
+"stay_on_live_preferred_team" Bool    Stop rotating through games when your preferred team is currently live.
+"scroll_until_finished"       Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+"end_of_day"                  String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
+"display_full_team_names"     Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
+"slowdown_scrolling"          Bool    If your Pi is unable to handle the normal refresh rate while scrolling, this will slow it down.
+"debug_enabled"               Bool    Game and other debug data is written to your console.
+```
 
 ### Flags
+
+You can configure your LED matrix with the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. More information on these arguments can be found in the library documentation.
 ```
--h, --help                Show this help message and exit
--t TEAM, --team TEAM      Pick a team to display a game for. Example: "Cubs"
--r, --rotate              Rotate through each game of the day every 15 seconds
--s, --standings DIVISION  Display standings for the provided division. Example: "NL Central"
+--led-rows                Display rows. 16 for 16x32, 32 for 32x32. (Default: 32)
+--led-cols                Panel columns. Typically 32 or 64. (Default: 32)
+--led-chain               Daisy-chained boards. (Default: 1)
+--led-parallel            For Plus-models or RPi2: parallel chains. 1..3. (Default: 1)
+--led-pwm-bits            Bits used for PWM. Range 1..11. (Default: 11)
+--led-brightness          Sets brightness level. Range: 1..100. (Default: 100)
+--led-gpio-mapping        Hardware Mapping: regular, adafruit-hat, adafruit-hat-pwm
+--led-scan-mode           Progressive or interlaced scan. 0 = Progressive, 1 = Interlaced. (Default: 1)
+--led-pwm-lsb-nanosecond  Base time-unit for the on-time in the lowest significant bit in nanoseconds. (Default: 130)
+--led-show-refresh        Shows the current refresh rate of the LED panel.
+--led-slowdown-gpio       Slow down writing to GPIO. Range: 0..4. (Default: 1)
+--led-no-hardware-pulse   Don't use hardware pin-pulse generation.
+--led-rgb-sequence        Switch if your matrix has led colors swapped. (Default: RGB)
+--led-pixel-mapper        Apply pixel mappers. e.g Rotate:90, U-mapper
+--led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
+--led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 ```
+
+## Personalization
+If you're feeling adventurous (and we highly encourage it!), the sections below outline how you can truly personalize your scoreboard and make it your own!
+### Custom Board Layout
+You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `ledcoords/` directory for more information.
+
+### Custom Colors
+You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
 
 ## Sources
 This project relies on two libraries:
 [MLBGame](https://github.com/panzarino/mlbgame) is the Python library used for retrieving live game data.
 [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) is the library used for making everything work with the LED board and is included as a submodule, so when cloning, make sure you add `--recursive`.
 
-## 2017-2018 Offseason
-Since it's currently the offseason I'm hardcoding everything to random games for testing purposes. I'll update to be "today's game" when the season starts otherwise this thing is useless. I can't guarantee accurate data until it starts either.
+### Accuracy Disclaimer
+The scoreboard is dependent on MLB having their data correct and up to date. If you see any weird data such as wrong pitches or scores or whatever else, MLB is drunk.
 
-See you during the season!
+## Wiki
+The wiki for this project has some cool things you can do to your Raspberry Pi, including steps on making your Pi a dedicated scoreboard runner!
 
-![I hate the offseason](img/offday.jpg)
+## Help and Contributing
+If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
+
+If you just want to talk, join the Slack channel, see the badge at the top of the README
+
+### Latest Features
+The scoreboard follows semantic versioning, for what makes sense for a project like this (it has no consumable API or anything like that). The `master` branch is always kept clean and never updated except for releases. If you want to contribute, make sure your pull request is pointed to `dev`.
+
+## Licensing
+This project as of v1.1.0 uses the GNU Public License. If you intend to sell these, the code must remain open source.
