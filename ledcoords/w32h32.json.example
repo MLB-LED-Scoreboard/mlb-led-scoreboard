@@ -126,13 +126,9 @@
     "innings_until_display": 5
   },
   "pregame": {
-    "matchup": {
-      "x": 16,
-      "y": 6
-    },
     "scrolling_text": {
       "x": 0,
-      "y": 25,
+      "y": 31,
       "width": 32,
       "warmup": {
         "x": 0,
@@ -142,7 +138,7 @@
     },
     "start_time": {
       "x": 16,
-      "y": 13
+      "y": 20
     },
     "warmup_text": {
       "x": 16,

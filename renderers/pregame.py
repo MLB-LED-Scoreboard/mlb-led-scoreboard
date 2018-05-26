@@ -1,13 +1,16 @@
 from data.status import Status
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
+from renderers.teams import TeamsRenderer
 from renderers.scrollingtext import ScrollingText
 import data.layout
 
 class Pregame:
-  def __init__(self, canvas, game, data, probable_starter_pos):
+  def __init__(self, canvas, game, scoreboard, data, probable_starter_pos):
     self.canvas = canvas
     self.game = game
+    self.scoreboard = scoreboard
+    self.data = data
     self.layout = data.config.layout
     self.colors = data.config.scoreboard_colors
     self.bgcolor = self.colors.graphics_color("default.background")
@@ -15,23 +18,12 @@ class Pregame:
 
   def render(self):
     text_len = self.__render_probable_starters()
-    self.__render_matchup()
-    self.__render_start_time()
+    TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     if self.layout.state == data.layout.LAYOUT_STATE_WARMUP:
       self.__render_warmup()
+    else:
+      self.__render_start_time()
     return text_len
-
-  def __render_matchup(self):
-    away_text = '{:>3s}'.format(self.game.away_team)
-    home_text = '{:3s}'.format(self.game.home_team)
-    teams_text = "{}  {}".format(away_text, home_text)
-    coords = self.layout.coords("pregame.matchup")
-    font = self.layout.font("pregame.matchup")
-    color = self.colors.graphics_color("pregame.matchup")
-    teams_text_x = center_text_position(teams_text, coords["x"], font["size"]["width"])
-    at_x = center_text_position("@", coords["x"], font["size"]["width"])
-    graphics.DrawText(self.canvas, font["font"], teams_text_x, coords["y"], color, teams_text)
-    graphics.DrawText(self.canvas, font["font"], at_x, coords["y"], color, "@")
 
   def __render_start_time(self):
     time_text = self.game.start_time
