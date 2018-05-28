@@ -127,11 +127,11 @@
   },
   "pregame": {
     "scrolling_text": {
-      "x": 0,
+      "x": 95,
       "y": 31,
       "width": 128,
       "warmup": {
-        "x": 0,
+        "x": 95,
         "y": 31,
         "width": 128
       }
