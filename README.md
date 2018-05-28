@@ -49,7 +49,7 @@ Sometimes you don't get baseball though :(
 ### Pregame
 If a game hasn't started yet, a pregame screen will be displayed with the probable starting pitchers.
 
-![Pregame](img/pregame.gif) ![Pregame-wide](img/wide-pregame-demo.jpg) ![Pregame-128x32](img/128x32-pregame.png)
+![Pregame](img/pregame.jpg)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
