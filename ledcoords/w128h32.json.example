@@ -126,27 +126,23 @@
     "innings_until_display": 5
   },
   "pregame": {
-    "matchup": {
-      "x": 66,
-      "y": 10
-    },
     "scrolling_text": {
-      "x": 0,
-      "y": 29,
+      "x": 95,
+      "y": 31,
       "width": 128,
       "warmup": {
-        "x": 0,
-        "y": 29,
+        "x": 95,
+        "y": 31,
         "width": 128
       }
     },
     "start_time": {
       "x": 66,
-      "y": 19
+      "y": 20
     },
     "warmup_text": {
       "x": 24,
-      "y": 19
+      "y": 20
     }
   },
   "standings": {
