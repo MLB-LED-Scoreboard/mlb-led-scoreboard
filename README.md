@@ -61,6 +61,14 @@ It can display standings for the provided division. Since the 32x32 board is too
 [See our wiki page.](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki) This README is primarily focused on the MLB software, but for those coming here from Reddit or elsewhere never having built things with a Raspberry Pi, this should help get you going.
 
 ### Software Installation
+#### Requirements
+You need Git for cloning this repo and PIP for installing the scoreboard software.
+```
+sudo apt-get update
+sudo apt-get install git python-pip
+```
+
+#### Installing the scoreboard software
 This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
 
 ```
