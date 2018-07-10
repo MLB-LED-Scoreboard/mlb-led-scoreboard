@@ -1,6 +1,6 @@
 from PIL import Image
 from rgbmatrix import graphics
-from utils import get_font, get_file
+from utils import get_font, get_file, center_text_position
 import time
 
 class StandingsRenderer:
@@ -9,15 +9,14 @@ class StandingsRenderer:
     self.canvas = canvas
     self.data = data
     self.colors = data.config.scoreboard_colors
-    self.bg_color = self.colors.color("standings.background")
-    self.divider_color = self.colors.color("standings.divider")
+    self.bg_color = self.colors.graphics_color("standings.background")
+    self.divider_color = self.colors.graphics_color("standings.divider")
     self.stat_color = self.colors.graphics_color("standings.stat")
     self.team_stat_color = self.colors.graphics_color("standings.team.stat")
     self.team_name_color = self.colors.graphics_color("standings.team.name")
 
   def render(self):
-    self.canvas.Fill(self.bg_color["r"], self.bg_color["g"], self.bg_color["b"])
-
+    self.__fill_bg()
     if self.__is_dumpster_fire():
       self.__render_dumpster_fire()
     else:
@@ -25,6 +24,11 @@ class StandingsRenderer:
         self.__render_static_wide_standings()
       else:
         self.__render_rotating_standings()
+
+  def __fill_bg(self):
+    coords = self.data.config.layout.coords("standings")
+    for y in range(0, coords["height"]):
+      graphics.DrawLine(self.canvas, 0, y, coords["width"], y, self.bg_color)
 
   def __render_rotating_standings(self):
     coords = self.data.config.layout.coords("standings")
@@ -34,23 +38,22 @@ class StandingsRenderer:
     while True:
       offset = coords["offset"]
       graphics.DrawText(self.canvas, font["font"], coords["stat_title"]["x"], offset, self.stat_color, stat.upper())
-      for team in self.data.standings_for_preferred_division().teams:
-        abbrev = '{:3s}'.format(team.team_abbrev)
-        team_text = '%s' % abbrev
-        stat_text = '%s' % getattr(team, stat)
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["stat"]["x"], offset, self.team_stat_color, stat_text)
+      graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
 
-        for x in range(0, coords["width"]):
-          self.canvas.SetPixel(x, offset, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
-        for y in range(0, coords["height"]):
-          self.canvas.SetPixel(coords["divider"]["x"], y, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
+      for team in self.data.standings_for_preferred_division().teams:
+        graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
+
+        team_text = "{:3s}".format(team.team_abbrev)
+        stat_text = str(getattr(team, stat))
+        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
+        graphics.DrawText(self.canvas, font["font"], coords["team"]["record"]["x"], offset, self.team_stat_color, stat_text)
+
         offset += coords["offset"]
 
       self.matrix.SwapOnVSync(self.canvas)
       time.sleep(5.0)
 
-      self.canvas.Fill(self.bg_color["r"], self.bg_color["g"], self.bg_color["b"])
+      self.__fill_bg()
       stat = 'w' if stat == 'l' else 'l'
 
   def __render_static_wide_standings(self):
@@ -58,24 +61,29 @@ class StandingsRenderer:
     font = self.data.config.layout.font("standings")
     while True:
       offset = coords["offset"]
+      graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
 
       for team in self.data.standings_for_preferred_division().teams:
+        graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
+
         team_text = team.team_abbrev
         graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
 
-        team_record = str(team.w) + "-" + str(team.l)
-        stat_text = '{:6s} {:4s}'.format(team_record, str(team.gb))
-        stat_text_x = self.canvas.width - (len(stat_text) * font["size"]["width"])
-        graphics.DrawText(self.canvas, font["font"], stat_text_x, offset, self.team_stat_color, stat_text)
+        record_text = "{}-{}".format(team.w, team.l)
+        record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font["size"]["width"])
 
-        for x in range(0, coords["width"]):
-          self.canvas.SetPixel(x, offset, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
-        for y in range(0, coords["height"]):
-          self.canvas.SetPixel(coords["divider"]["x"], y, self.divider_color["r"], self.divider_color["g"], self.divider_color["b"])
+        if "-" in str(team.gb):
+          gb_text = " -  "
+        else:
+          gb_text = "{:>4s}".format(str(team.gb))
+        gb_text_x = coords["team"]["games_back"]["x"] - (len(gb_text) * font["size"]["width"])
+
+        graphics.DrawText(self.canvas, font["font"], record_text_x, offset, self.team_stat_color, record_text)
+        graphics.DrawText(self.canvas, font["font"], gb_text_x, offset, self.team_stat_color, gb_text)
+
         offset += coords["offset"]
 
-        self.matrix.SwapOnVSync(self.canvas)
-
+      self.matrix.SwapOnVSync(self.canvas)
       time.sleep(20.0)
 
   def __is_dumpster_fire(self):
