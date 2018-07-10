@@ -15,6 +15,9 @@ The layout can have a couple of different states where things are rendered diffe
 * `warmup` will	only render on the `pregame` screen and appears when a game enters the `Warmup` status. This usually happens 15-20 minutes before a game begins.
 * `nohit` and `perfect_game` will only render on the live game screen and appears when a game returns that it is currently a no hitter or perfect game and the `innings_until_display` of `nohitter` has passed.
 
+## Updates
+The software develops and releases features with full support for the default layouts, so custom layouts may look unsatisfactory if you update to later versions of the scoreboard. If you as a user decide to create a custom layout file, you are responsible for tweaking the coordinates to your liking with each update.
+
 ## Current Issues
 A couple of things are not completely implemented or have some implementation details you should understand.
 

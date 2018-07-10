@@ -20,12 +20,21 @@ class TeamsRenderer:
       team_colors = self.data.config.team_colors.color("default")
     return team_colors
 
+  def __default_home_color(self):
+    return self.data.config.team_colors.color("default.home")
+
   def render(self):
     away_colors = self.__team_colors(self.away_team.abbrev)
-    away_team_color = away_colors['home']
+    try:
+      away_team_color = away_colors['home']
+    except KeyError as e:
+      away_team_color = self.__default_home_color()
 
     home_colors = self.__team_colors(self.home_team.abbrev)
-    home_team_color = home_colors['home']
+    try:
+      home_team_color = home_colors['home']
+    except KeyError as e:
+      home_team_color = self.__default_home_color()
 
     bg_coords = {}
     bg_coords["away"] = self.data.config.layout.coords("teams.background.away")
