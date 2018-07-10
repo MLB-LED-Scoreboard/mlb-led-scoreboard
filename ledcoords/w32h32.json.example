@@ -147,7 +147,7 @@
   },
   "standings": {
     "offset": 6,
-    "height": 32,
+    "height": 30,
     "width": 32,
     "divider": {
       "x": 13
@@ -159,8 +159,11 @@
       "name": {
         "x": 1
       },
-      "stat": {
+      "record": {
         "x": 15
+      },
+      "games_back": {
+        "x": 64
       }
     }
   },
