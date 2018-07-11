@@ -64,7 +64,7 @@ class TeamsRenderer:
     text_color_graphic = graphics.Color(text_color['r'], text_color['g'], text_color['b'])
     font = self.data.config.layout.font("teams.name.{}".format(homeaway))
     team_text = '{:3s}'.format(team.abbrev.upper())
-    if self.data.config.display_full_team_names and self.canvas.width > 32:
+    if self.data.config.full_team_names and self.canvas.width > 32:
       team_text = '{:13s}'.format(team.name)
     graphics.DrawText(self.canvas, font["font"], x, y, text_color_graphic, team_text)
 

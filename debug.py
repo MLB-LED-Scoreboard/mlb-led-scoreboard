@@ -6,7 +6,7 @@ debug_enabled = False
 
 def set_debug_status(config):
 	global debug_enabled
-	debug_enabled = config.debug_enabled
+	debug_enabled = config.debug
 
 def __debugprint(text):
 	print(text)

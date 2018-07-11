@@ -87,7 +87,7 @@ class StandingsRenderer:
       time.sleep(20.0)
 
   def __is_dumpster_fire(self):
-    return "comedy" in self.data.config.preferred_division.lower()
+    return "comedy" in self.data.config.preferred_divisions.lower()
 
   def __render_dumpster_fire(self):
     image_file = get_file("Assets/fire.jpg")

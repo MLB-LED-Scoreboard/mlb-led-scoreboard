@@ -106,7 +106,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
     # If we run out of retries, just move on to the next game
-    if attempts_remaining <= 0 and self.config.rotate_games:
+    if attempts_remaining <= 0 and self.config.rotation_enabled:
       self.advance_to_next_game()
 
   def __update_layout_state(self):
@@ -124,7 +124,7 @@ class Data:
   # Standings
 
   def standings_for_preferred_division(self):
-    return self.__standings_for(self.config.preferred_division)
+    return self.__standings_for(self.config.preferred_divisions)
 
   def __standings_for(self, division_name):
     return next(division for division in self.standings.divisions if division.name == division_name)
@@ -141,8 +141,8 @@ class Data:
     return self.current_game()
 
   def game_index_for_preferred_team(self):
-    if self.config.preferred_team:
-      return self.__game_index_for(self.config.preferred_team)
+    if self.config.preferred_teams:
+      return self.__game_index_for(self.config.preferred_teams)
     else:
       return 0
 
@@ -162,8 +162,8 @@ class Data:
   # Offdays
 
   def is_offday_for_preferred_team(self):
-    if self.config.preferred_team:
-      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_team in [game.away_team, game.home_team]), None))
+    if self.config.preferred_teams:
+      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams in [game.away_team, game.home_team]), None))
     else:
       return True
 
