@@ -184,7 +184,7 @@ class Data:
 
   def is_offday_for_preferred_team(self):
     if self.config.preferred_teams:
-      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams in [game.away_team, game.home_team]), None))
+      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams[0] in [game.away_team, game.home_team]), None))
     else:
       return True
 

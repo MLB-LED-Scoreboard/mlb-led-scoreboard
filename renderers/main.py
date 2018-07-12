@@ -91,7 +91,7 @@ class MainRenderer:
     if stay_on_preferred_team == False:
       return True
 
-    showing_preferred_team = self.data.config.preferred_teams in [overview.away_team_name, overview.home_team_name]
+    showing_preferred_team = self.data.config.preferred_teams[0] in [overview.away_team_name, overview.home_team_name]
     if showing_preferred_team and Status.is_live(overview.status):
       return False
 
