@@ -14,7 +14,6 @@ class StandingsRenderer:
     self.stat_color = self.colors.graphics_color("standings.stat")
     self.team_stat_color = self.colors.graphics_color("standings.team.stat")
     self.team_name_color = self.colors.graphics_color("standings.team.name")
-    self.rotating_stat = 'l'
 
   def render(self):
     self.__fill_bg()
