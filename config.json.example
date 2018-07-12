@@ -1,7 +1,7 @@
 {
 	"preferred": {
 		"teams": ["Cubs"],
-		"divisions": "NL Central"
+		"divisions": ["NL Central"]
 	},
 	"standings": {
 		"team_offday": false,

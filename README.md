@@ -102,7 +102,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 ```
 "preferred":                           Options for team and division preference
   "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                  String  Pick a division to display standings for when display_standings is true. (This will accept an array in the future) Example: "NL Central"
+  "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
 "standings":                           Options for displaying standings for a division
   "always_display"             Bool    Display standings for the provided preferred_divisions.

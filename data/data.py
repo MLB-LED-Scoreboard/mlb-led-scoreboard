@@ -36,6 +36,7 @@ class Data:
 
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
+    self.current_division_index = 0
 
 
   #
@@ -130,11 +131,23 @@ class Data:
   # Standings
 
   def standings_for_preferred_division(self):
-    return self.__standings_for(self.config.preferred_divisions)
+    return self.__standings_for(self.config.preferred_divisions[0])
 
   def __standings_for(self, division_name):
     return next(division for division in self.standings.divisions if division.name == division_name)
 
+  def current_standings(self):
+    return self.__standings_for(self.config.preferred_divisions[self.current_division_index])
+
+  def advance_to_next_standings(self):
+    self.current_division_index = self.__next_division_index()
+    return self.current_standings()
+
+  def __next_division_index(self):
+    counter = self.current_division_index + 1
+    if counter >= len(self.config.preferred_divisions):
+      counter = 0
+    return counter
 
   #
   # Games
