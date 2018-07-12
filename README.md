@@ -112,7 +112,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
-"scrolling_speed"              Integer Supports an integer between 0 and 3. Sets how fast the scrolling text scrolls.
+"scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
 "debug"                        Bool    Game and other debug data is written to your console.
 ```
 
