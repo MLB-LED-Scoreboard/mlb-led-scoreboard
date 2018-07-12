@@ -7,6 +7,7 @@ import sys
 import debug
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05]
+DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
@@ -34,8 +35,14 @@ class ScoreboardConfig:
     # Misc config options
     self.end_of_day = json["end_of_day"]
     self.full_team_names = json["full_team_names"]
-    self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
     self.debug = json["debug"]
+
+    # Make sure the scrolling speed setting is in range so we don't crash
+    try:
+      self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
+    except:
+      debug.warning("Scrolling speed should be an integer between 0 and 4. Using default value of {}".format(DEFAULT_SCROLLING_SPEED))
+      self.scrolling_speed = SCROLLING_SPEEDS[DEFAULT_SCROLLING_SPEED]
 
     # Get the layout info
     json = self.__get_layout(width, height)
