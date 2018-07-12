@@ -101,7 +101,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 
 ```
 "preferred":                           Options for team and division preference
-  "teams"                      String  Pick a team to display a game for. (This will accept an array in the future) Example: "Cubs"
+  "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                  String  Pick a division to display standings for when display_standings is true. (This will accept an array in the future) Example: "NL Central"
 
 "standings":                           Options for displaying standings for a division
@@ -112,6 +112,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "rotation":                            Options for rotation through the day's games
   "enabled"                    Bool    Rotate through each game of the day every 15 seconds.
   "scroll_until_finished"      Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+  "only_preferred"             Bool    Only rotate through games in your preferred_teams list.
   "rates"                      Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
                                Float   A Float can be used to set all screen types to the same rotate rate.
 

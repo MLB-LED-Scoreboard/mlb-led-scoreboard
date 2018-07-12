@@ -1,6 +1,6 @@
 {
 	"preferred": {
-		"teams": "Cubs",
+		"teams": ["Cubs"],
 		"divisions": "NL Central"
 	},
 	"standings": {
@@ -11,6 +11,7 @@
 	"rotation": {
 		"enabled": true,
 		"scroll_until_finished": true,
+		"only_preferred": false,
 		"rates": {
 			"live": 15.0,
 			"final": 15.0,

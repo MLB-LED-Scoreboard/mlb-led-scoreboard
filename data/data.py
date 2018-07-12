@@ -72,7 +72,13 @@ class Data:
       try:
         current_day = self.day
         self.set_current_date()
-        self.games = mlbgame.day(self.year, self.month, self.day)
+
+        all_games = mlbgame.day(self.year, self.month, self.day)
+        if self.config.rotation_only_preferred:
+          self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
+        else:
+          self.games = all_games
+
         if current_day != self.day:
           self.current_game_index = self.game_index_for_preferred_team()
         self.games_refresh_time = time.time()
@@ -142,9 +148,12 @@ class Data:
 
   def game_index_for_preferred_team(self):
     if self.config.preferred_teams:
-      return self.__game_index_for(self.config.preferred_teams)
+      return self.__game_index_for(self.config.preferred_teams[0])
     else:
       return 0
+
+  def __filter_list_of_games(self, games, teams):
+    return list(filter(lambda game: set(teams) & set([game.away_team, game.home_team]), games))
 
   def __game_index_for(self, team_name):
     game_idx = 0
@@ -156,7 +165,6 @@ class Data:
     if counter >= len(self.games):
       counter = 0
     return counter
-
 
   #
   # Offdays
