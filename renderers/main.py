@@ -93,6 +93,8 @@ class MainRenderer:
 
     showing_preferred_team = self.data.config.preferred_teams in [overview.away_team_name, overview.home_team_name]
     if showing_preferred_team and Status.is_live(overview.status):
+      if self.data.config.rotation_preferred_team_live_mid_inning == True and Status.is_inning_break(overview.inning_state):
+        return True
       return False
 
     return True
