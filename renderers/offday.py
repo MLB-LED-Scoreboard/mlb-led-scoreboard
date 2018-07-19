@@ -2,8 +2,6 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from data.data import Data
 import debug
-import time
-from datetime import datetime
 from time import strftime
 
 class OffdayRenderer:
@@ -16,17 +14,14 @@ class OffdayRenderer:
   def render(self):
     font = get_font()
     text_color = graphics.Color(255, 235, 59)
-    #text_color = self.data.config.scoreboard_colors.color("default.text")
-    #background_color = self.data.config.scoreboard_colors.color("default.background")
     if self.canvas.width > 32:
       long_word = 'scheduled'
     else:
       long_word = 'today'
     
     while True:
-      time_now = strftime("%-I:%M %p") 
-      #self.canvas.Fill(background_color["r"], color["g"], color["b"])
-      self.canvas.Fill(0, 0, 0)
+      time_now = strftime("%-I:%M%p") 
+      self.canvas.Fill(7, 14, 25)
 
       no_games_text = 'No games'
       no_games_x = center_text_position(no_games_text, self.canvas.width/2, 4)
@@ -42,8 +37,6 @@ class OffdayRenderer:
 
       self.matrix.SwapOnVSync(self.canvas)
       time.sleep(15)
-
-      self.canvas.Clear()
       pass # I hate the offseason and off days.
 
   def __str_(self):
