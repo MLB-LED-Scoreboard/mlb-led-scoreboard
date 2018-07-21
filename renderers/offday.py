@@ -2,7 +2,7 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from data.data import Data
 import debug
-from time import strftime
+import time
 
 class OffdayRenderer:
   def __init__(self, matrix, canvas, data):
@@ -20,7 +20,7 @@ class OffdayRenderer:
       long_word = 'today'
     
     while True:
-      time_now = strftime("%-I:%M%p") 
+      time_now = time.strftime("%-I:%M%p") 
       self.canvas.Fill(7, 14, 25)
 
       no_games_text = 'No games'
