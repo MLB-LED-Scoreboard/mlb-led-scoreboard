@@ -151,7 +151,7 @@ class Data:
     # rotating during mid-innings
     if self.config.rotation_preferred_team_live_mid_inning and not self.is_offday_for_preferred_team:
       preferred_overview = self.fetch_preferred_team_overview()
-      if Status.is_live(preferred_overview.status) and not Inning.is_break(preferred_overview.inning_state):
+      if Status.is_live(preferred_overview.status) and not Status.is_inning_break(preferred_overview.inning_state):
         self.current_game_index = self.game_index_for_preferred_team()
         self.overview = preferred_overview
         self.needs_refresh = False
