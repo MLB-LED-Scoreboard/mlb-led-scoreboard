@@ -3,6 +3,7 @@ from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
 from status import Status
+from inning import Inning
 import urllib
 import layout
 import mlbgame
@@ -109,6 +110,15 @@ class Data:
     if attempts_remaining <= 0 and self.config.rotation_enabled:
       self.advance_to_next_game()
 
+  # Will use a network call to fetch the preferred team's game overview
+  def fetch_preferred_team_overview(self):
+    if not self.is_offday_for_preferred_team():
+      urllib.urlcleanup()
+      game = self.games[self.game_index_for_preferred_team()]
+      game_overview = mlbgame.overview(game.game_id)
+      debug.log("Preferred Team's Game Status: {}, {} {}".format(game_overview.status, game_overview.inning_state, game_overview.inning))
+      return game_overview
+
   def __update_layout_state(self):
     self.config.layout.set_state()
     if self.overview.status == Status.WARMUP:
@@ -137,7 +147,18 @@ class Data:
     return self.games[self.current_game_index]
 
   def advance_to_next_game(self):
-    self.current_game_index = self.__next_game_index()
+    # We only need to check the preferred team's game status if we're
+    # rotating during mid-innings
+    if self.config.rotation_preferred_team_live_mid_inning:
+      preferred_overview = self.fetch_preferred_team_overview()
+      if Status.is_live(preferred_overview.status) and not Inning.is_break(preferred_overview.inning_state):
+        self.current_game_index = self.game_index_for_preferred_team()
+        self.overview = preferred_overview
+        self.needs_refresh = False
+        self.__update_layout_state()
+        self.print_overview_debug()
+      else:
+        self.current_game_index = self.__next_game_index()
     return self.current_game()
 
   def game_index_for_preferred_team(self):
