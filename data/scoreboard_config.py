@@ -11,6 +11,8 @@ DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
+DEFAULT_PREFERRED_TEAMS = ["Cubs"]
+DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 class ScoreboardConfig:
   def __init__(self, filename_base, width, height):
@@ -29,6 +31,7 @@ class ScoreboardConfig:
     # Rotation
     self.rotation_enabled = json["rotation"]["enabled"]
     self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
+    self.rotation_only_preferred = json["rotation"]["only_preferred"]
     self.rotation_rates = json["rotation"]["rates"]
     self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
 
@@ -54,8 +57,29 @@ class ScoreboardConfig:
     json = self.__get_colors("scoreboard")
     self.scoreboard_colors = Color(json)
 
+    # Check the preferred teams and divisions are a list or a string
+    self.check_preferred_teams()
+    self.check_preferred_divisions()
+
     #Check the rotation_rates to make sure it's valid and not silly
     self.check_rotate_rates()
+
+  def check_preferred_teams(self):
+    if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
+      debug.warning("preferred_teams should be an array of team names or a single team name string. Using default preferred_teams, {}".format(DEFAULT_PREFERRED_TEAMS))
+      self.preferred_teams = DEFAULT_PREFERRED_TEAMS
+    if isinstance(self.preferred_teams, str):
+      team = self.preferred_teams
+      self.preferred_teams = [team]
+
+  def check_preferred_divisions(self):
+    if not isinstance(self.preferred_divisions, str) and not isinstance(self.preferred_divisions, list):
+      debug.warning("preferred_divisions should be an array of division names or a single division name string. Using default preferred_divisions, {}".format(DEFAULT_PREFERRED_DIVISIONS))
+      self.preferred_divisions = DEFAULT_PREFERRED_DIVISIONS
+    if isinstance(self.preferred_divisions, str):
+      division = self.preferred_divisions
+      self.preferred_divisions = [division]
+
 
   def check_rotate_rates(self):
     if isinstance(self.rotation_rates, dict) == False:

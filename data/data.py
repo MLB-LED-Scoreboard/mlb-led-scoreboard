@@ -36,6 +36,7 @@ class Data:
 
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
+    self.current_division_index = 0
 
 
   #
@@ -72,7 +73,13 @@ class Data:
       try:
         current_day = self.day
         self.set_current_date()
-        self.games = mlbgame.day(self.year, self.month, self.day)
+
+        all_games = mlbgame.day(self.year, self.month, self.day)
+        if self.config.rotation_only_preferred:
+          self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
+        else:
+          self.games = all_games
+
         if current_day != self.day:
           self.current_game_index = self.game_index_for_preferred_team()
         self.games_refresh_time = time.time()
@@ -124,11 +131,23 @@ class Data:
   # Standings
 
   def standings_for_preferred_division(self):
-    return self.__standings_for(self.config.preferred_divisions)
+    return self.__standings_for(self.config.preferred_divisions[0])
 
   def __standings_for(self, division_name):
     return next(division for division in self.standings.divisions if division.name == division_name)
 
+  def current_standings(self):
+    return self.__standings_for(self.config.preferred_divisions[self.current_division_index])
+
+  def advance_to_next_standings(self):
+    self.current_division_index = self.__next_division_index()
+    return self.current_standings()
+
+  def __next_division_index(self):
+    counter = self.current_division_index + 1
+    if counter >= len(self.config.preferred_divisions):
+      counter = 0
+    return counter
 
   #
   # Games
@@ -142,9 +161,12 @@ class Data:
 
   def game_index_for_preferred_team(self):
     if self.config.preferred_teams:
-      return self.__game_index_for(self.config.preferred_teams)
+      return self.__game_index_for(self.config.preferred_teams[0])
     else:
       return 0
+
+  def __filter_list_of_games(self, games, teams):
+    return list(filter(lambda game: set(teams) & set([game.away_team, game.home_team]), games))
 
   def __game_index_for(self, team_name):
     game_idx = 0
@@ -157,13 +179,12 @@ class Data:
       counter = 0
     return counter
 
-
   #
   # Offdays
 
   def is_offday_for_preferred_team(self):
     if self.config.preferred_teams:
-      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams in [game.away_team, game.home_team]), None))
+      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams[0] in [game.away_team, game.home_team]), None))
     else:
       return True
 

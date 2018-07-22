@@ -40,7 +40,7 @@ class StandingsRenderer:
       graphics.DrawText(self.canvas, font["font"], coords["stat_title"]["x"], offset, self.stat_color, stat.upper())
       graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
 
-      for team in self.data.standings_for_preferred_division().teams:
+      for team in self.data.current_standings().teams:
         graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
 
         team_text = "{:3s}".format(team.team_abbrev)
@@ -54,7 +54,12 @@ class StandingsRenderer:
       time.sleep(5.0)
 
       self.__fill_bg()
-      stat = 'w' if stat == 'l' else 'l'
+
+      if stat == 'l':
+        self.data.advance_to_next_standings()
+        stat = 'w'
+      else:
+        stat = 'l'
 
   def __render_static_wide_standings(self):
     coords = self.data.config.layout.coords("standings")
@@ -63,7 +68,7 @@ class StandingsRenderer:
       offset = coords["offset"]
       graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
 
-      for team in self.data.standings_for_preferred_division().teams:
+      for team in self.data.current_standings().teams:
         graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
 
         team_text = team.team_abbrev
@@ -84,10 +89,12 @@ class StandingsRenderer:
         offset += coords["offset"]
 
       self.matrix.SwapOnVSync(self.canvas)
-      time.sleep(20.0)
+      time.sleep(10.0)
+      self.__fill_bg()
+      self.data.advance_to_next_standings()
 
   def __is_dumpster_fire(self):
-    return "comedy" in self.data.config.preferred_divisions.lower()
+    return "comedy" in self.data.config.preferred_divisions[self.data.current_division_index].lower()
 
   def __render_dumpster_fire(self):
     image_file = get_file("Assets/fire.jpg")
