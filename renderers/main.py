@@ -69,7 +69,8 @@ class MainRenderer:
         if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
           self.data.refresh_games()
 
-        self.data.refresh_overview()
+        if self.data.needs_refresh:
+          self.data.refresh_overview()
 
         if Status.is_complete(self.data.overview.status):
           if Final(self.data.current_game()).winning_pitcher == 'Unknown':
@@ -93,6 +94,8 @@ class MainRenderer:
 
     showing_preferred_team = self.data.config.preferred_teams[0] in [overview.away_team_name, overview.home_team_name]
     if showing_preferred_team and Status.is_live(overview.status):
+      if self.data.config.rotation_preferred_team_live_mid_inning == True and Status.is_inning_break(overview.inning_state):
+        return True
       return False
 
     return True

@@ -34,6 +34,7 @@ class ScoreboardConfig:
     self.rotation_only_preferred = json["rotation"]["only_preferred"]
     self.rotation_rates = json["rotation"]["rates"]
     self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
+    self.rotation_preferred_team_live_mid_inning = json["rotation"]["while_preferred_team_live"]["during_inning_breaks"]
 
     # Misc config options
     self.end_of_day = json["end_of_day"]

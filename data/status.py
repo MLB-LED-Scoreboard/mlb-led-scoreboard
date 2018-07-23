@@ -1,3 +1,5 @@
+from inning import Inning
+
 class Status:
   CANCELLED = 'Cancelled'
   COMPLETED_EARLY = 'Completed Early'
@@ -46,3 +48,8 @@ class Status:
     comes between In Progress and Final and allows a few minutes to see the final outcome before
     the rotation kicks in."""
     return status in [Status.IN_PROGRESS, Status.GAME_OVER]
+
+  @staticmethod
+  def is_inning_break(inning_state):
+    """Returns whether a game is in an inning break (mid/end). Pass in the inning state."""
+    return inning_state not in [Inning.TOP, Inning.BOTTOM]
