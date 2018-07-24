@@ -168,7 +168,7 @@ class Data:
   def advance_to_next_game(self):
     # We only need to check the preferred team's game status if we're
     # rotating during mid-innings
-    if self.config.rotation_preferred_team_live_mid_inning and not self.is_offday_for_preferred_team:
+    if self.config.rotation_preferred_team_live_mid_inning and not self.is_offday_for_preferred_team():
       preferred_overview = self.fetch_preferred_team_overview()
       if Status.is_live(preferred_overview.status) and not Status.is_inning_break(preferred_overview.inning_state):
         self.current_game_index = self.game_index_for_preferred_team()
@@ -176,8 +176,8 @@ class Data:
         self.needs_refresh = False
         self.__update_layout_state()
         self.print_overview_debug()
-    else:
-      self.current_game_index = self.__next_game_index()
+        return self.current_game()
+    self.current_game_index = self.__next_game_index()
     return self.current_game()
 
   def game_index_for_preferred_team(self):
@@ -205,7 +205,7 @@ class Data:
 
   def is_offday_for_preferred_team(self):
     if self.config.preferred_teams:
-      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams[0] in [game.away_team, game.home_team]), None))
+      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams[0] in [game.away_team, game.home_team]), False))
     else:
       return True
 
