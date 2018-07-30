@@ -38,7 +38,7 @@
     "break": {
       "number": {
         "x": 95,
-        "y": 19
+        "y": 20
       },
       "text": {
         "x": 95,
@@ -127,27 +127,27 @@
   },
   "pregame": {
     "scrolling_text": {
-      "x": 95,
-      "y": 31,
+      "x": 0,
+      "y": 30,
       "width": 128,
       "warmup": {
-        "x": 95,
-        "y": 31,
+        "x": 0,
+        "y": 30,
         "width": 128
       }
     },
     "start_time": {
-      "x": 66,
-      "y": 20
+      "x": 95,
+      "y": 15
     },
     "warmup_text": {
-      "x": 24,
-      "y": 20
+      "x": 95,
+      "y": 15
     }
   },
   "standings": {
     "offset": 8,
-    "height": 30,
+    "height": 32,
     "width": 128,
     "divider": {
       "x": 25

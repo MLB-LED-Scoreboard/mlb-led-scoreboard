@@ -11,7 +11,7 @@ import mlbgame
 import debug
 
 SCRIPT_NAME = "MLB LED Scoreboard"
-SCRIPT_VERSION = "1.8.0"
+SCRIPT_VERSION = "2.0.0"
 
 # Get supplied command line arguments
 args = args()
@@ -26,7 +26,7 @@ matrix = RGBMatrix(options = matrixOptions)
 debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
 
 # Read scoreboard options from config.json if it exists
-config = ScoreboardConfig("config.json", matrix.width, matrix.height)
+config = ScoreboardConfig("config", matrix.width, matrix.height)
 debug.set_debug_status(config)
 
 # Create a new data object to manage the MLB data
@@ -42,22 +42,22 @@ def display_standings(matrix, data):
     OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
 
 # Check if we should just display the standings
-if config.display_standings:
+if config.standings_always_display:
 	display_standings(matrix, data)
 
 # Otherwise, we'll start displaying games depending on config settings
 else:
   # No baseball today.
   if data.is_offday():
-    if config.display_standings_on_offday:
+    if config.standings_mlb_offday:
       display_standings(matrix, data)
     else:
       OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
 
   # Baseball!
   else:
-    if config.preferred_team:
-      if data.is_offday_for_preferred_team() and config.display_standings_on_offday == 2:
+    if config.preferred_teams:
+      if data.is_offday_for_preferred_team() and config.standings_team_offday:
         display_standings(matrix, data)
       else:
         MainRenderer(matrix, data).render()

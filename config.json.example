@@ -1,14 +1,29 @@
 {
-	"preferred_team": "Cubs",
-	"preferred_division": "NL Central",
-	"display_standings": false,
-	"display_standings_on_offday": true,
-	"rotate_games": false,
-	"rotate_rates": { "live": 15.0, "final": 15.0, "pregame": 15.0 },
-	"stay_on_live_preferred_team": true,
-	"scroll_until_finished": true,
+	"preferred": {
+		"teams": ["Cubs"],
+		"divisions": ["NL Central"]
+	},
+	"standings": {
+		"team_offday": false,
+		"mlb_offday": true,
+		"always_display": false
+	},
+	"rotation": {
+		"enabled": true,
+		"scroll_until_finished": true,
+		"only_preferred": false,
+		"rates": {
+			"live": 15.0,
+			"final": 15.0,
+			"pregame": 15.0
+		},
+		"while_preferred_team_live": {
+			"enabled": false,
+			"during_inning_breaks": false
+		}
+	},
 	"end_of_day": "00:00",
-	"display_full_team_names": true,
-	"slower_scrolling": false,
-	"debug_enabled": false
+	"full_team_names": true,
+	"scrolling_speed": 2,
+	"debug": false
 }

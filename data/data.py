@@ -3,6 +3,7 @@ from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
 from status import Status
+from inning import Inning
 import urllib
 import layout
 import mlbgame
@@ -36,6 +37,7 @@ class Data:
 
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
+    self.current_division_index = 0
 
 
   #
@@ -72,7 +74,13 @@ class Data:
       try:
         current_day = self.day
         self.set_current_date()
-        self.games = mlbgame.day(self.year, self.month, self.day)
+
+        all_games = mlbgame.day(self.year, self.month, self.day)
+        if self.config.rotation_only_preferred:
+          self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
+        else:
+          self.games = all_games
+
         if current_day != self.day:
           self.current_game_index = self.game_index_for_preferred_team()
         self.games_refresh_time = time.time()
@@ -106,8 +114,17 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
     # If we run out of retries, just move on to the next game
-    if attempts_remaining <= 0 and self.config.rotate_games:
+    if attempts_remaining <= 0 and self.config.rotation_enabled:
       self.advance_to_next_game()
+
+  # Will use a network call to fetch the preferred team's game overview
+  def fetch_preferred_team_overview(self):
+    if not self.is_offday_for_preferred_team():
+      urllib.urlcleanup()
+      game = self.games[self.game_index_for_preferred_team()]
+      game_overview = mlbgame.overview(game.game_id)
+      debug.log("Preferred Team's Game Status: {}, {} {}".format(game_overview.status, game_overview.inning_state, game_overview.inning))
+      return game_overview
 
   def __update_layout_state(self):
     self.config.layout.set_state()
@@ -124,11 +141,23 @@ class Data:
   # Standings
 
   def standings_for_preferred_division(self):
-    return self.__standings_for(self.config.preferred_division)
+    return self.__standings_for(self.config.preferred_divisions[0])
 
   def __standings_for(self, division_name):
     return next(division for division in self.standings.divisions if division.name == division_name)
 
+  def current_standings(self):
+    return self.__standings_for(self.config.preferred_divisions[self.current_division_index])
+
+  def advance_to_next_standings(self):
+    self.current_division_index = self.__next_division_index()
+    return self.current_standings()
+
+  def __next_division_index(self):
+    counter = self.current_division_index + 1
+    if counter >= len(self.config.preferred_divisions):
+      counter = 0
+    return counter
 
   #
   # Games
@@ -137,14 +166,28 @@ class Data:
     return self.games[self.current_game_index]
 
   def advance_to_next_game(self):
+    # We only need to check the preferred team's game status if we're
+    # rotating during mid-innings
+    if self.config.rotation_preferred_team_live_mid_inning and not self.is_offday_for_preferred_team():
+      preferred_overview = self.fetch_preferred_team_overview()
+      if Status.is_live(preferred_overview.status) and not Status.is_inning_break(preferred_overview.inning_state):
+        self.current_game_index = self.game_index_for_preferred_team()
+        self.overview = preferred_overview
+        self.needs_refresh = False
+        self.__update_layout_state()
+        self.print_overview_debug()
+        return self.current_game()
     self.current_game_index = self.__next_game_index()
     return self.current_game()
 
   def game_index_for_preferred_team(self):
-    if self.config.preferred_team:
-      return self.__game_index_for(self.config.preferred_team)
+    if self.config.preferred_teams:
+      return self.__game_index_for(self.config.preferred_teams[0])
     else:
       return 0
+
+  def __filter_list_of_games(self, games, teams):
+    return list(filter(lambda game: set(teams) & set([game.away_team, game.home_team]), games))
 
   def __game_index_for(self, team_name):
     game_idx = 0
@@ -157,13 +200,12 @@ class Data:
       counter = 0
     return counter
 
-
   #
   # Offdays
 
   def is_offday_for_preferred_team(self):
-    if self.config.preferred_team:
-      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_team in [game.away_team, game.home_team]), None))
+    if self.config.preferred_teams:
+      return not (next((i for i, game in enumerate(self.games) if self.config.preferred_teams[0] in [game.away_team, game.home_team]), False))
     else:
       return True
 

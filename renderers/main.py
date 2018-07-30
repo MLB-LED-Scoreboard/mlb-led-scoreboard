@@ -38,13 +38,11 @@ class MainRenderer:
       self.__draw_game(self.data.current_game(), self.data.overview)
 
       # Check if we need to scroll until it's finished
-      if self.data.config.scroll_until_finished == False:
+      if self.data.config.rotation_scroll_until_finished == False:
         self.scrolling_finished = True
 
       # Set the refresh rate
-      refresh_rate = SCROLL_TEXT_FAST_RATE
-      if self.data.config.slower_scrolling == True:
-        refresh_rate = SCROLL_TEXT_SLOW_RATE
+      refresh_rate = self.data.config.scrolling_speed
 
       # If we're not scrolling anything, scroll is always finished.
       if Status.is_static(self.data.overview.status) and not Scoreboard(self.data.overview).get_text_for_reason():
@@ -71,30 +69,33 @@ class MainRenderer:
         if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
           self.data.refresh_games()
 
-        self.data.refresh_overview()
+        if self.data.needs_refresh:
+          self.data.refresh_overview()
 
         if Status.is_complete(self.data.overview.status):
           if Final(self.data.current_game()).winning_pitcher == 'Unknown':
             self.data.refresh_games()
 
   def __rotate_rate_for_status(self, status):
-    rotate_rate = self.data.config.live_rotate_rate
+    rotate_rate = self.data.config.rotation_rates_live
     if Status.is_pregame(status):
-      rotate_rate = self.data.config.pregame_rotate_rate
+      rotate_rate = self.data.config.rotation_rates_pregame
     if Status.is_complete(status):
-      rotate_rate = self.data.config.final_rotate_rate
+      rotate_rate = self.data.config.rotation_rates_final
     return rotate_rate
 
   def __should_rotate_to_next_game(self, overview):
-    if self.data.config.rotate_games == False:
+    if self.data.config.rotation_enabled == False:
       return False
 
-    stay_on_preferred_team = self.data.config.preferred_team and self.data.config.stay_on_live_preferred_team
+    stay_on_preferred_team = self.data.config.preferred_teams and not self.data.config.rotation_preferred_team_live_enabled
     if stay_on_preferred_team == False:
       return True
 
-    showing_preferred_team = self.data.config.preferred_team in [overview.away_team_name, overview.home_team_name]
+    showing_preferred_team = self.data.config.preferred_teams[0] in [overview.away_team_name, overview.home_team_name]
     if showing_preferred_team and Status.is_live(overview.status):
+      if self.data.config.rotation_preferred_team_live_mid_inning == True and Status.is_inning_break(overview.inning_state):
+        return True
       return False
 
     return True
