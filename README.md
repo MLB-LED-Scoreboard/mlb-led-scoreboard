@@ -9,6 +9,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
  * 32x32
  * 64x32
  * 128x32
+ * 128x64
 
 If you'd like to see support for another set of board dimensions, file an issue!
 
@@ -40,7 +41,7 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 
 The board refreshes the list of games every 15 minutes.
 
-![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png)
+![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png) ![Astros-Athletics game](img/128x64.png)
 
 Sometimes you don't get baseball though :(
 
