@@ -6,6 +6,8 @@ from renderers.final import Final as FinalRenderer
 from renderers.pregame import Pregame as PregameRenderer
 from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.status import StatusRenderer
+from renderers.standings import StandingsRenderer
+from renderers.offday import OffdayRenderer
 from data.data import Data
 import debug
 import time
@@ -21,15 +23,66 @@ class MainRenderer:
     self.canvas = matrix.CreateFrameCanvas()
     self.scrolling_text_pos = self.canvas.width
     self.scrolling_finished = False
+    self.starttime = time.time()
 
   def render(self):
     color = self.data.config.scoreboard_colors.color("default.background")
     self.canvas.Fill(color["r"], color["g"], color["b"])
-    starttime = time.time()
+    self.starttime = time.time()
 
-    # Main and only loop
+    # Always display the news ticker
+    if self.data.config.news_ticker_always_display:
+      debug.log("Always display the news")
+      self.__render_offday()
+
+    # Always display the standings
+    elif self.data.config.standings_always_display:
+      debug.log("Always Display Standings Configured.")
+      self.__render_standings()
+
+    # Full MLB Offday
+    elif self.data.is_offday():
+      debug.log("MLB Offday")
+      if self.data.config.standings_mlb_offday:
+        debug.log("Standings on MLB offday configured")
+        self.__render_standings()
+      else:
+        debug.log("Rendering Offday on MLB offday")
+        self.__render_offday()
+
+    # Preferred Team Offday
+    elif self.data.is_offday_for_preferred_team():
+      debug.log("Team Offday")
+      if self.data.config.news_ticker_team_offday:
+        debug.log("News Ticker on Team Offday")
+        self.__render_offday()
+      elif self.data.config.standings_team_offday:
+        debug.log("Standings on Team Offday configured")
+        self.__render_standings()
+      else:
+        debug.log("Playball!!")
+        self.__render_game()
+
+    # Playball!
+    else:
+      debug.log("Playball!")
+      self.__render_game()
+
+  # Render an offday screen with the weather, clock and news
+  def __render_offday(self):
+    OffdayRenderer(self.matrix, self.canvas, self.data).render()
+
+  # Render the standings screen
+  def __render_standings(self):
+    try:
+      StandingsRenderer(self.matrix, self.canvas, self.data).render()
+    except:
+      # Out of season off days don't always return standings so fall back on the offday renderer
+      self.__render_offday()
+
+  # Renders a game screen based on it's status
+  def __render_game(self):
     while True:
-
       # If we need to refresh the overview data, do that
       if self.data.needs_refresh:
         self.data.refresh_overview()
@@ -50,12 +103,12 @@ class MainRenderer:
 
       time.sleep(refresh_rate)
       endtime = time.time()
-      time_delta = endtime - starttime
+      time_delta = endtime - self.starttime
       rotate_rate = self.__rotate_rate_for_status(self.data.overview.status)
 
       # If we're ready to rotate, let's do it
       if time_delta >= rotate_rate and self.scrolling_finished:
-        starttime = time.time()
+        self.starttime = time.time()
         self.scrolling_finished = False
         self.data.needs_refresh = True
 

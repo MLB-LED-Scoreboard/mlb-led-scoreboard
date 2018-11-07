@@ -33,31 +33,4 @@ debug.set_debug_status(config)
 # This will fetch initial data from MLB
 data = Data(config)
 
-# Render the standings or an off day screen
-def display_standings(matrix, data):
-  try:
-    StandingsRenderer(matrix, matrix.CreateFrameCanvas(), data).render()
-  except:
-    # Out of season off days don't always return standings so fall back on the offday renderer
-    OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
-
-# Check if we should just display the standings
-if config.standings_always_display:
-	display_standings(matrix, data)
-
-# Otherwise, we'll start displaying games depending on config settings
-else:
-  # No baseball today.
-  if data.is_offday():
-    if config.standings_mlb_offday:
-      display_standings(matrix, data)
-    else:
-      OffdayRenderer(matrix, matrix.CreateFrameCanvas(), datetime(data.year, data.month, data.day)).render()
-
-  # Baseball!
-  else:
-    if config.preferred_teams:
-      if data.is_offday_for_preferred_team() and config.standings_team_offday:
-        display_standings(matrix, data)
-      else:
-        MainRenderer(matrix, data).render()
+MainRenderer(matrix, data).render()
