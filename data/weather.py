@@ -69,7 +69,6 @@ class Weather:
     return "{} {}".format(self.wind_speed_string(), self.wind_dir_string())
 
   def icon_filename(self):
-    return "Assets/weather/02n.png"
     return "Assets/weather/{}.png".format(self.icon_name)
 
   def __should_update(self):
