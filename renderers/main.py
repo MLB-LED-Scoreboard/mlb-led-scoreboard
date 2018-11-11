@@ -26,51 +26,51 @@ class MainRenderer:
     self.starttime = time.time()
 
   def render(self):
-    color = self.data.config.scoreboard_colors.color("default.background")
-    self.canvas.Fill(color["r"], color["g"], color["b"])
     self.starttime = time.time()
 
     # Always display the news ticker
     if self.data.config.news_ticker_always_display:
-      debug.log("Always display the news")
       self.__render_offday()
 
     # Always display the standings
     elif self.data.config.standings_always_display:
-      debug.log("Always Display Standings Configured.")
       self.__render_standings()
 
     # Full MLB Offday
     elif self.data.is_offday():
-      debug.log("MLB Offday")
       if self.data.config.standings_mlb_offday:
-        debug.log("Standings on MLB offday configured")
         self.__render_standings()
       else:
-        debug.log("Rendering Offday on MLB offday")
         self.__render_offday()
 
     # Preferred Team Offday
     elif self.data.is_offday_for_preferred_team():
-      debug.log("Team Offday")
       if self.data.config.news_ticker_team_offday:
-        debug.log("News Ticker on Team Offday")
         self.__render_offday()
       elif self.data.config.standings_team_offday:
-        debug.log("Standings on Team Offday configured")
         self.__render_standings()
       else:
-        debug.log("Playball!!")
         self.__render_game()
 
     # Playball!
     else:
-      debug.log("Playball!")
       self.__render_game()
 
   # Render an offday screen with the weather, clock and news
   def __render_offday(self):
-    OffdayRenderer(self.matrix, self.canvas, self.data).render()
+    self.scrolling_finished = False
+
+    while True:
+      color = self.data.config.scoreboard_colors.color("default.background")
+      self.canvas.Fill(color["r"], color["g"], color["b"])
+
+      scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
+      renderer = OffdayRenderer(self.canvas, self.data, self.scrolling_text_pos)
+      self.__update_scrolling_text_pos(renderer.render())
+      self.data.refresh_weather()
+      self.data.refresh_news_ticker()
+      self.canvas = self.matrix.SwapOnVSync(self.canvas)
+      time.sleep(self.data.config.scrolling_speed)
 
   # Render the standings screen
   def __render_standings(self):

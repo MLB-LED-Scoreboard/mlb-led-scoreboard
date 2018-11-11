@@ -5,7 +5,9 @@
 	},
 	"news_ticker": {
 		"team_offday": true,
-		"always_display": false
+		"always_display": false,
+		"preferred_teams": true,
+		"mlb_news": true
 	},
 	"standings": {
 		"team_offday": false,
@@ -25,6 +27,12 @@
 			"enabled": false,
 			"during_inning_breaks": false
 		}
+	},
+	"weather": {
+		"apikey": "YOUR_API_KEY_HERE",
+		"location": "Chicago,il,us",
+		"metric_units": false,
+		"pregame": true
 	},
 	"end_of_day": "00:00",
 	"full_team_names": true,

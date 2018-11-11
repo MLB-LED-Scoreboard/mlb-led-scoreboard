@@ -214,5 +214,42 @@
         "y": 13
       }
     }
+  },
+  "offday": {
+    "scrolling_text": {
+      "x": 0,
+      "y": 30,
+      "width": 64
+    },
+    "time": {
+      "x": 16,
+      "y": 23
+    },
+    "conditions": {
+      "x": 0,
+      "y": -2
+    },
+    "temperature": {
+      "x": 25,
+      "y": 12
+    },
+    "wind_speed": {
+      "x": 0,
+      "y": -2
+    },
+    "wind_dir": {
+      "x": 0,
+      "y": -2
+    },
+    "wind": {
+      "x": 0,
+      "y": -2
+    },
+    "weather_icon": {
+      "x": 1,
+      "y": 1,
+      "width": 15,
+      "height": 15
+    }
   }
 }

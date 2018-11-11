@@ -104,6 +104,12 @@ A default `config.json.example` file is included for reference. Copy this file t
   "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
+"news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
+  "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
+  "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
+  "preferred_teams"            Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "mlb_news"                   Bool    Include MLB's frontpage news
+
 "standings":                           Options for displaying standings for a division
   "always_display"             Bool    Display standings for the provided preferred_divisions.
   "mlb_offday"                 Bool    Display standings for the provided preferred_divisions when there are no games on the current day.
@@ -119,6 +125,13 @@ A default `config.json.example` file is included for reference. Copy this file t
   "while_preferred_team_live":         Options for rotating while your chosen preferred_teams is live
     "enabled"                  Bool    Rotation is enabled while your configured preferred_teams game is live.
     "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
+
+"weather":                             Options for retreiving the weather
+  "apikey"                     String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
+  "zipcode"                    String  The zipcode/postcode for the location you wish to receive weather data
+  "country"                    String  The ISO 3166 country code associated with the zipcode
+  "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
+  "pregame"                    Bool    Add a weather report to the pregame scroll for the game location (Not yet implemented)
 
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
