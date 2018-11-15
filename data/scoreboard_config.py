@@ -27,6 +27,7 @@ class ScoreboardConfig:
     self.news_ticker_always_display = json["news_ticker"]["always_display"]
     self.news_ticker_preferred_teams = json["news_ticker"]["preferred_teams"]
     self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
+    self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
 
     # Display Standings
     self.standings_team_offday = json["standings"]["team_offday"]

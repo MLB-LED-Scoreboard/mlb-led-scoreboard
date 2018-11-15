@@ -45,7 +45,7 @@ class Data:
     self.weather = Weather(self.config.weather_apikey, self.config.weather_location, self.config.weather_metric_units)
 
     # News headlines
-    self.headlines = Headlines(self.config.preferred_teams, self.config.news_ticker_mlb_news, self.config.news_ticker_preferred_teams)
+    self.headlines = Headlines(self.config.preferred_teams, self.config.news_ticker_mlb_news, self.config.news_ticker_preferred_teams, self.config.news_ticker_countdowns)
 
 
   #

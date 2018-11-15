@@ -1,6 +1,7 @@
 import debug
 import time
 import feedparser
+from dates import Dates
 
 
 HEADLINE_UPDATE_RATE = 60 * 60 # 1 hour between feed updates
@@ -20,13 +21,15 @@ RSS_FEEDS = {
 
 class Headlines:
 
-  def __init__(self, preferred_teams, include_mlb, include_preferred):
+  def __init__(self, preferred_teams, include_mlb, include_preferred, include_countdowns):
     self.preferred_teams = preferred_teams
     self.include_mlb = include_mlb
     self.include_preferred = include_preferred
+    self.include_countdowns = include_countdowns
     self.feed_urls = []
     self.feed_data = None
     self.starttime = time.time()
+    self.important_dates = Dates()
 
     self.__compile_feed_list()
     self.update(True)
@@ -49,10 +52,17 @@ class Headlines:
 
   def ticker_string(self, max_entries=HEADLINE_MAX_ENTRIES):
     ticker = ""
+    if self.include_countdowns:
+      countdown_string = self.important_dates.next_important_date_string()
+      if countdown_string != "":
+        ticker += countdown_string + (" " * HEADLINE_SPACER_SIZE)
+
+
     if self.feed_data != None:
       for feed in self.feed_data:
         ticker += self.__strings_for_feed(feed, max_entries)
-    return ticker
+    # In case all of the ticker options are turned off and there's no data, return a single space
+    return " " if ticker == "" else ticker
 
   def available(self):
     return self.feed_data != None
@@ -61,6 +71,7 @@ class Headlines:
     spaces = " " * HEADLINE_SPACER_SIZE
     title = feed.feed.title
     headlines = ""
+
     for idx, entry in enumerate(feed.entries):
       if idx < max_entries:
         headlines += entry.title + spaces
