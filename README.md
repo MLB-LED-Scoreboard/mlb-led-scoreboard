@@ -108,6 +108,7 @@ A default `config.json.example` file is included for reference. Copy this file t
   "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
   "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
   "preferred_teams"            Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "traderumors"                Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
   "mlb_news"                   Bool    Include MLB's frontpage news
   "countdowns"                 Bool    Include various countdowns in the ticker.
 
