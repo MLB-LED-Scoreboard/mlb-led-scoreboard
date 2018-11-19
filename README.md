@@ -170,6 +170,13 @@ You have the ability to customize the way things are placed on the board (maybe 
 ### Custom Colors
 You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
 
+### Weather
+This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
+
+You can find the signup page for OpenWeatherMaps at [https://home.openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up). Once logged in, you'll find an `API keys` tab where you'll find a default key was already created for you. You can copy this key and paste it into the `conig.json` under `"weather"`, `"apikey"`.
+
+You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurments, set the `"metric"` option to `true`.
+
 ## Sources
 This project relies on two libraries:
 [MLBGame](https://github.com/panzarino/mlbgame) is the Python library used for retrieving live game data.
