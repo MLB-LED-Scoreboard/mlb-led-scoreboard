@@ -45,9 +45,9 @@ class Data:
   #
   # Date
 
-  def __parse_today(self, demo):
+  def __parse_today(self):
     if self.config.demo == True:
-        today = datetime.strptime(self.config.demodate, '%Y-%m-%d')
+        today = datetime.strptime(self.config.demo_date, '%Y-%m-%d')
     else:
         today = datetime.today()
     end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(year=today.year, month=today.month, day=today.day)
