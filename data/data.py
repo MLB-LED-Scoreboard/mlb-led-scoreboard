@@ -38,13 +38,18 @@ class Data:
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
     self.current_division_index = 0
+    
+    #
 
 
   #
   # Date
 
-  def __parse_today(self):
-    today = datetime.today()
+  def __parse_today(self, demo):
+    if self.config.demo == True:
+        today = datetime.strptime(self.config.demodate, '%Y-%m-%d')
+    else:
+        today = datetime.today()
     end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(year=today.year, month=today.month, day=today.day)
     if end_of_day > datetime.now():
       today -= timedelta(days=1)
