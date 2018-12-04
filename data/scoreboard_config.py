@@ -40,7 +40,6 @@ class ScoreboardConfig:
     self.end_of_day = json["end_of_day"]
     self.full_team_names = json["full_team_names"]
     self.debug = json["debug"]
-    self.demo = json["demo"]
     self.demo_date = json["demo_date"]
 
     # Make sure the scrolling speed setting is in range so we don't crash
