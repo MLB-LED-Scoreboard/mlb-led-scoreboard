@@ -38,8 +38,6 @@ class Data:
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
     self.current_division_index = 0
-    
-    #
 
 
   #
