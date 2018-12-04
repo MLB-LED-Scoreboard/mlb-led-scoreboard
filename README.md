@@ -125,7 +125,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
 "scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
 "debug"                        Bool    Game and other debug data is written to your console.
-"demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard.
+"demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Flags
