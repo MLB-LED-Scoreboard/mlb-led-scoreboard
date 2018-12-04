@@ -44,7 +44,10 @@ class Data:
   # Date
 
   def __parse_today(self):
-    today = datetime.today()
+    if self.config.demo_date:
+        today = datetime.strptime(self.config.demo_date, '%Y-%m-%d')
+    else:
+        today = datetime.today()
     end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(year=today.year, month=today.month, day=today.day)
     if end_of_day > datetime.now():
       today -= timedelta(days=1)
