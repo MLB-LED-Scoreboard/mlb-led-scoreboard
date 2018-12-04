@@ -25,5 +25,6 @@
 	"end_of_day": "00:00",
 	"full_team_names": true,
 	"scrolling_speed": 2,
-	"debug": false
+	"debug": false,
+	"demo_date": false
 }
