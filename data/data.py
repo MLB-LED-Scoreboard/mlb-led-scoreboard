@@ -46,7 +46,8 @@ class Data:
   # Date
 
   def __parse_today(self):
-    if self.config.demo == True:
+  #    if self.config.demo == True:
+    if self.config.demo_date:
         today = datetime.strptime(self.config.demo_date, '%Y-%m-%d')
     else:
         today = datetime.today()
