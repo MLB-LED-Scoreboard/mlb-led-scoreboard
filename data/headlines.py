@@ -104,19 +104,26 @@ class Headlines:
   def ticker_string(self, max_entries=HEADLINE_MAX_ENTRIES):
     ticker = ""
     if self.include_date:
-      ticker += datetime.now().strftime(self.date_format) + (" " * HEADLINE_SPACER_SIZE)
+      date_string = datetime.now().strftime(self.date_format)
+      ticker = self.__add_string_to_ticker(ticker, date_string)
 
     if self.include_countdowns:
       countdown_string = self.important_dates.next_important_date_string()
-      if countdown_string != "":
-        ticker += countdown_string + (" " * HEADLINE_SPACER_SIZE)
+      ticker = self.__add_string_to_ticker(ticker, countdown_string)
 
     if self.feed_data != None:
+      ticker = self.__add_string_to_ticker(ticker, "")
       for feed in self.feed_data:
         ticker += self.__strings_for_feed(feed, max_entries)
 
     # In case all of the ticker options are turned off and there's no data, return the date
-    return datetime.now().strftime(FALLBACK_DATE_FORMAT) if ticker == "" else ticker
+    return datetime.now().strftime(FALLBACK_DATE_FORMAT) if len(ticker) < 1 else ticker
+
+  def __add_string_to_ticker(self, ticker, text_to_add):
+    t = ticker
+    if len(t) > 0:
+      t += (" " * HEADLINE_SPACER_SIZE)
+    return (t + text_to_add)
 
   def available(self):
     return self.feed_data != None
