@@ -63,9 +63,8 @@ class OffdayRenderer:
     coords = self.layout.coords("offday.scrolling_text")
     font = self.layout.font("offday.scrolling_text")
     color = self.colors.graphics_color("offday.scrolling_text")
-    if self.data.headlines.available():
-      ticker_text = self.data.headlines.ticker_string()
-      return ScrollingText(self.canvas, coords["x"], coords["y"], coords["width"], font, color, self.bgcolor, ticker_text).render(self.scrolling_text_pos)
+    ticker_text = self.data.headlines.ticker_string()
+    return ScrollingText(self.canvas, coords["x"], coords["y"], coords["width"], font, color, self.bgcolor, ticker_text).render(self.scrolling_text_pos)
 
   def __str_(self):
     s = "<{} {}> Date: {}".format(self.__class__.__name__, hex(id(self)), self.data.date())
