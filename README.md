@@ -111,6 +111,8 @@ A default `config.json.example` file is included for reference. Copy this file t
   "traderumors"                Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
   "mlb_news"                   Bool    Include MLB's frontpage news
   "countdowns"                 Bool    Include various countdowns in the ticker.
+  "date"                       Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
+  "date_format"                String  Display the date with a given format. You can check all of the date formatting options at [strftime.org](strftime.org)
 
 "standings":                           Options for displaying standings for a division
   "always_display"             Bool    Display standings for the provided preferred_divisions.

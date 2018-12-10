@@ -9,7 +9,9 @@
 		"preferred_teams": true,
 		"traderumors": true,
 		"mlb_news": true,
-		"countdowns": true
+		"countdowns": true,
+		"date": true,
+		"date_format": "%A, %B %-d"
 	},
 	"standings": {
 		"team_offday": false,

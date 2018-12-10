@@ -1,6 +1,7 @@
 import debug
 import time
 import feedparser
+from datetime import datetime
 from dates import Dates
 
 try:
@@ -13,6 +14,7 @@ HEADLINE_UPDATE_RATE = 60 * 60 # 1 hour between feed updates
 HEADLINE_SPACER_SIZE = 10 # Number of spaces between headlines
 HEADLINE_MAX_FEEDS = 3 # Number of preferred team's feeds to fetch
 HEADLINE_MAX_ENTRIES = 7 # Number of headlines per feed
+FALLBACK_DATE_FORMAT = "%A, %B %-d"
 
 MLB_BASE = "http://mlb.mlb.com/partnerxml/gen/news/rss"
 MLB_FEEDS = {
@@ -68,6 +70,8 @@ class Headlines:
     self.include_preferred = config.news_ticker_preferred_teams
     self.include_traderumors = config.news_ticker_traderumors
     self.include_countdowns = config.news_ticker_countdowns
+    self.include_date = config.news_ticker_date
+    self.date_format = config.news_ticker_date_format
     self.feed_urls = []
     self.feed_data = None
     self.starttime = time.time()
@@ -99,17 +103,20 @@ class Headlines:
 
   def ticker_string(self, max_entries=HEADLINE_MAX_ENTRIES):
     ticker = ""
+    if self.include_date:
+      ticker += datetime.now().strftime(self.date_format) + (" " * HEADLINE_SPACER_SIZE)
+
     if self.include_countdowns:
       countdown_string = self.important_dates.next_important_date_string()
       if countdown_string != "":
         ticker += countdown_string + (" " * HEADLINE_SPACER_SIZE)
 
-
     if self.feed_data != None:
       for feed in self.feed_data:
         ticker += self.__strings_for_feed(feed, max_entries)
-    # In case all of the ticker options are turned off and there's no data, return a single space
-    return " " if ticker == "" else ticker
+
+    # In case all of the ticker options are turned off and there's no data, return the date
+    return datetime.now().strftime(FALLBACK_DATE_FORMAT) if ticker == "" else ticker
 
   def available(self):
     return self.feed_data != None
