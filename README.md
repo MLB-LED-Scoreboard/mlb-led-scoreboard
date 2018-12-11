@@ -81,6 +81,8 @@ This will install the rgbmatrix binaries, which we get from [another open source
 
 It will also install some time zone libraries and [mlbgame](https://github.com/panzarino/mlbgame), a Python library that retrieves all of our baseball data.
 
+To show the local weather on the offday screen, make sure you check out the [weather section](#weather) of this README.
+
 If you continue to run into issues, join our Slack channel located at the top of the README.
 
 #### Time Zones
@@ -130,12 +132,11 @@ A default `config.json.example` file is included for reference. Copy this file t
     "enabled"                  Bool    Rotation is enabled while your configured preferred_teams game is live.
     "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
 
-"weather":                             Options for retreiving the weather
+"weather":                             Options for retrieving the weather
   "apikey"                     String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
   "zipcode"                    String  The zipcode/postcode for the location you wish to receive weather data
   "country"                    String  The ISO 3166 country code associated with the zipcode
   "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
-  "pregame"                    Bool    Add a weather report to the pregame scroll for the game location (Not yet implemented)
 
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.

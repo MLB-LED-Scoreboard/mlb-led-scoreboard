@@ -50,7 +50,6 @@ class ScoreboardConfig:
     self.weather_apikey = json["weather"]["apikey"]
     self.weather_location = json["weather"]["location"]
     self.weather_metric_units = json["weather"]["metric_units"]
-    self.weather_pregame = json["weather"]["pregame"]
 
     # Misc config options
     self.end_of_day = json["end_of_day"]

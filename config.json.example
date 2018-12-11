@@ -35,8 +35,7 @@
 	"weather": {
 		"apikey": "YOUR_API_KEY_HERE",
 		"location": "Chicago,il,us",
-		"metric_units": false,
-		"pregame": true
+		"metric_units": false
 	},
 	"end_of_day": "00:00",
 	"full_team_names": true,
