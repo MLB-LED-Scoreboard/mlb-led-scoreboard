@@ -82,6 +82,8 @@ This will install the rgbmatrix binaries, which we get from [another open source
 
 It will also install some time zone libraries and [mlbgame](https://github.com/panzarino/mlbgame), a Python library that retrieves all of our baseball data.
 
+To show the local weather on the offday screen, make sure you check out the [weather section](#weather) of this README.
+
 If you continue to run into issues, join our Slack channel located at the top of the README.
 
 #### Time Zones
@@ -105,6 +107,16 @@ A default `config.json.example` file is included for reference. Copy this file t
   "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
+"news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
+  "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
+  "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
+  "preferred_teams"            Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "traderumors"                Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "mlb_news"                   Bool    Include MLB's frontpage news
+  "countdowns"                 Bool    Include various countdowns in the ticker.
+  "date"                       Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
+  "date_format"                String  Display the date with a given format. You can check all of the date formatting options at [strftime.org](strftime.org)
+
 "standings":                           Options for displaying standings for a division
   "always_display"             Bool    Display standings for the provided preferred_divisions.
   "mlb_offday"                 Bool    Display standings for the provided preferred_divisions when there are no games on the current day.
@@ -120,6 +132,12 @@ A default `config.json.example` file is included for reference. Copy this file t
   "while_preferred_team_live":         Options for rotating while your chosen preferred_teams is live
     "enabled"                  Bool    Rotation is enabled while your configured preferred_teams game is live.
     "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
+
+"weather":                             Options for retrieving the weather
+  "apikey"                     String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
+  "zipcode"                    String  The zipcode/postcode for the location you wish to receive weather data
+  "country"                    String  The ISO 3166 country code associated with the zipcode
+  "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
 
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
@@ -157,6 +175,13 @@ You have the ability to customize the way things are placed on the board (maybe 
 
 ### Custom Colors
 You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
+
+### Weather
+This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
+
+You can find the signup page for OpenWeatherMaps at [https://home.openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up). Once logged in, you'll find an `API keys` tab where you'll find a default key was already created for you. You can copy this key and paste it into the `conig.json` under `"weather"`, `"apikey"`.
+
+You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurments, set the `"metric"` option to `true`.
 
 ## Sources
 This project relies on two libraries:

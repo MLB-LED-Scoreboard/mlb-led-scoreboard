@@ -4,6 +4,8 @@ from pregame import Pregame
 from scoreboard import Scoreboard
 from status import Status
 from inning import Inning
+from weather import Weather
+from headlines import Headlines
 import urllib
 import layout
 import mlbgame
@@ -38,6 +40,12 @@ class Data:
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
     self.current_division_index = 0
+
+    # Weather info
+    self.weather = Weather(self.config.weather_apikey, self.config.weather_location, self.config.weather_metric_units)
+
+    # News headlines
+    self.headlines = Headlines(self.config)
 
 
   #
@@ -119,6 +127,12 @@ class Data:
     # If we run out of retries, just move on to the next game
     if attempts_remaining <= 0 and self.config.rotation_enabled:
       self.advance_to_next_game()
+
+  def refresh_weather(self):
+    self.weather.update()
+
+  def refresh_news_ticker(self):
+    self.headlines.update()
 
   # Will use a network call to fetch the preferred team's game overview
   def fetch_preferred_team_overview(self):

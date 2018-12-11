@@ -22,6 +22,16 @@ class ScoreboardConfig:
     self.preferred_teams = json["preferred"]["teams"]
     self.preferred_divisions = json["preferred"]["divisions"]
 
+    # News Ticker
+    self.news_ticker_team_offday = json["news_ticker"]["team_offday"]
+    self.news_ticker_always_display = json["news_ticker"]["always_display"]
+    self.news_ticker_preferred_teams = json["news_ticker"]["preferred_teams"]
+    self.news_ticker_traderumors = json["news_ticker"]["traderumors"]
+    self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
+    self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
+    self.news_ticker_date = json["news_ticker"]["date"]
+    self.news_ticker_date_format = json["news_ticker"]["date_format"]
+
     # Display Standings
     self.standings_team_offday = json["standings"]["team_offday"]
     self.standings_mlb_offday = json["standings"]["mlb_offday"]
@@ -35,6 +45,11 @@ class ScoreboardConfig:
     self.rotation_rates = json["rotation"]["rates"]
     self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
     self.rotation_preferred_team_live_mid_inning = json["rotation"]["while_preferred_team_live"]["during_inning_breaks"]
+
+    # Weather
+    self.weather_apikey = json["weather"]["apikey"]
+    self.weather_location = json["weather"]["location"]
+    self.weather_metric_units = json["weather"]["metric_units"]
 
     # Misc config options
     self.end_of_day = json["end_of_day"]
