@@ -9,6 +9,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
  * 32x32
  * 64x32
  * 128x32
+ * 128x64
 
 If you'd like to see support for another set of board dimensions, file an issue!
 
@@ -40,7 +41,7 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 
 The board refreshes the list of games every 15 minutes.
 
-![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png)
+![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png) ![Astros-Athletics game](img/128x64.png)
 
 Sometimes you don't get baseball though :(
 
@@ -142,6 +143,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
 "scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
 "debug"                        Bool    Game and other debug data is written to your console.
+"demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Flags
