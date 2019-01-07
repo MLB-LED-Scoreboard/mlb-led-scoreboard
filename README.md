@@ -80,12 +80,26 @@ sudo ./install.sh
 
 This will install the rgbmatrix binaries, which we get from [another open source library](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). It controls the actual rendering of the scoreboard onto the LEDs. If you're curious, you can read through their documentation on how all of the lower level stuff works.
 
-It will also install some time zone libraries and [mlbgame](https://github.com/panzarino/mlbgame), a Python library that retrieves all of our baseball data.
+It will also install the following python libraries that are required for certain parts of the scoreboard to function.
+
+* [pytz](http://pytz.sourceforge.net/), [tzlocal](https://github.com/regebro/tzlocal): Timezone libraries. These allow the scoreboard to convert times to your local timezone
+* [feedparser](https://pypi.org/project/feedparser/): Used to fetch and parse RSS feeds. The scoreboard uses this to show news headlines.
+* [pyowm](https://github.com/csparpa/pyowm): OpenWeatherMap API interactions. We use this to get the local weather for display on the offday screen. For more information on how to finish setting up the weather, visit the [weather section](#weather) of this README.
+* [mlbgame](https://github.com/panzarino/mlbgame): The main library that fetches and parses all of the actual MLB data being displayed.
 
 If you continue to run into issues, join our Slack channel located at the top of the README.
 
+#### Updating
+Updating the scoreboard is usually as simple as running `git fetch origin --prune && git pull` from the mlb-led-scoreboard directory. This will always update you to the latest version in the master branch. If an update is substantial and requires additional steps to finish updating, we'll always bump up the major version (i.e. 2.1.0 becomes 3.0.0). If additional steps are required, you will want to do the following extra steps from your `mlb-led-scoreboard` directory.
+
+* **Re-run the install file**. Run `./install.sh` again. Any additional dependencies that were added with the update will be installed this way.
+* **Re-make your config file**. The biggest reason for a major version bump is going to be a lot of extra config options so you'll probably need to recreate one. Run `rm config.json` followed by `cp config.json.example config.json` to delete your old config file and recreate a new one. You'll need to customize this new `config.json` file to suit your needs again.
+* **Check your custom layout files**. There's a good chance some new keys were added to the layout and color files. These changes should just merge right in with the customized .json file you have but you might want to look at the new .json.example files and see if there's anything new you want to customize.
+
+That should be it! Your latest version should now be working with whatever new fangled features were just added.
+
 #### Time Zones
-Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default.
+Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default. You can change the timezone of your raspberry pi by running `sudo raspi-config`.
 
 ## Usage
 `sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
@@ -105,6 +119,16 @@ A default `config.json.example` file is included for reference. Copy this file t
   "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
+"news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
+  "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
+  "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
+  "preferred_teams"            Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "traderumors"                Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "mlb_news"                   Bool    Include MLB's frontpage news
+  "countdowns"                 Bool    Include various countdowns in the ticker.
+  "date"                       Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
+  "date_format"                String  Display the date with a given format. You can check all of the date formatting options at [strftime.org](strftime.org)
+
 "standings":                           Options for displaying standings for a division
   "always_display"             Bool    Display standings for the provided preferred_divisions.
   "mlb_offday"                 Bool    Display standings for the provided preferred_divisions when there are no games on the current day.
@@ -120,6 +144,12 @@ A default `config.json.example` file is included for reference. Copy this file t
   "while_preferred_team_live":         Options for rotating while your chosen preferred_teams is live
     "enabled"                  Bool    Rotation is enabled while your configured preferred_teams game is live.
     "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
+
+"weather":                             Options for retrieving the weather
+  "apikey"                     String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
+  "zipcode"                    String  The zipcode/postcode for the location you wish to receive weather data
+  "country"                    String  The ISO 3166 country code associated with the zipcode
+  "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
 
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
@@ -157,6 +187,13 @@ You have the ability to customize the way things are placed on the board (maybe 
 
 ### Custom Colors
 You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
+
+### Weather
+This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
+
+You can find the signup page for OpenWeatherMaps at [https://home.openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up). Once logged in, you'll find an `API keys` tab where you'll find a default key was already created for you. You can copy this key and paste it into the `conig.json` under `"weather"`, `"apikey"`.
+
+You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurments, set the `"metric"` option to `true`.
 
 ## Sources
 This project relies on two libraries:

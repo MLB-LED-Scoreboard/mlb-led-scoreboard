@@ -3,6 +3,16 @@
 		"teams": ["Cubs"],
 		"divisions": ["NL Central"]
 	},
+	"news_ticker": {
+		"team_offday": true,
+		"always_display": false,
+		"preferred_teams": true,
+		"traderumors": true,
+		"mlb_news": true,
+		"countdowns": true,
+		"date": true,
+		"date_format": "%A, %B %-d"
+	},
 	"standings": {
 		"team_offday": false,
 		"mlb_offday": true,
@@ -21,6 +31,11 @@
 			"enabled": false,
 			"during_inning_breaks": false
 		}
+	},
+	"weather": {
+		"apikey": "YOUR_API_KEY_HERE",
+		"location": "Chicago,il,us",
+		"metric_units": false
 	},
 	"end_of_day": "00:00",
 	"full_team_names": true,
