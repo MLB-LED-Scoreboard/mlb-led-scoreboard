@@ -80,14 +80,26 @@ sudo ./install.sh
 
 This will install the rgbmatrix binaries, which we get from [another open source library](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). It controls the actual rendering of the scoreboard onto the LEDs. If you're curious, you can read through their documentation on how all of the lower level stuff works.
 
-It will also install some time zone libraries and [mlbgame](https://github.com/panzarino/mlbgame), a Python library that retrieves all of our baseball data.
+It will also install the following python libraries that are required for certain parts of the scoreboard to function.
 
-To show the local weather on the offday screen, make sure you check out the [weather section](#weather) of this README.
+* [pytz](http://pytz.sourceforge.net/), [tzlocal](https://github.com/regebro/tzlocal): Timezone libraries. These allow the scoreboard to convert times to your local timezone
+* [feedparser](https://pypi.org/project/feedparser/): Used to fetch and parse RSS feeds. The scoreboard uses this to show news headlines.
+* [pyowm](https://github.com/csparpa/pyowm): OpenWeatherMap API interactions. We use this to get the local weather for display on the offday screen. For more information on how to finish setting up the weather, visit the [weather section](#weather) of this README.
+* [mlbgame](https://github.com/panzarino/mlbgame): The main library that fetches and parses all of the actual MLB data being displayed.
 
 If you continue to run into issues, join our Slack channel located at the top of the README.
 
+#### Updating
+Updating the scoreboard is usually as simple as running `git fetch origin --prune && git pull` from the mlb-led-scoreboard directory. This will always update you to the latest version in the master branch. If an update is substantial and requires additional steps to finish updating, we'll always bump up the major version (i.e. 2.1.0 becomes 3.0.0). If additional steps are required, you will want to do the following extra steps from your `mlb-led-scoreboard` directory.
+
+* **Re-run the install file**. Run `./install.sh` again. Any additional dependencies that were added with the update will be installed this way.
+* **Re-make your config file**. The biggest reason for a major version bump is going to be a lot of extra config options so you'll probably need to recreate one. Run `rm config.json` followed by `cp config.json.example config.json` to delete your old config file and recreate a new one. You'll need to customize this new `config.json` file to suit your needs again.
+* **Check your custom layout files**. There's a good chance some new keys were added to the layout and color files. These changes should just merge right in with the customized .json file you have but you might want to look at the new .json.example files and see if there's anything new you want to customize.
+
+That should be it! Your latest version should now be working with whatever new fangled features were just added.
+
 #### Time Zones
-Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default.
+Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default. You can change the timezone of your raspberry pi by running `sudo raspi-config`.
 
 ## Usage
 `sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
