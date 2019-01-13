@@ -115,3 +115,6 @@ ledcolors/*.json
 # Ignore any customized fonts
 Assets/*.bdf
 !Assets/4x6.bdf
+
+# Ignore src directory if we installed a custom mlbgame while in this directory
+src/
