@@ -1,3 +1,4 @@
+#!/bin/bash
 cd matrix
 echo "Running rgbmatrix installation..."
 sudo apt-get update && sudo apt-get install python2.7-dev python-pillow -y
@@ -6,9 +7,24 @@ sudo make install-python
 cd bindings
 sudo pip install -e python/
 cd ../../
-echo "Installing required dependencies. This may take some time (10 minutes-ish)..."
+echo "Installing required dependencies. This may take some time (10-20 minutes-ish)..."
 sudo apt-get install libxml2-dev libxslt-dev
 sudo pip install pytz tzlocal feedparser pyowm
+sudo pip uninstall -y mlbgame
 sudo pip install git+git://github.com/panzarino/mlbgame.git@365532125b0fe1286c32fa2471c2623e2437ab80#egg=mlbgame
 make
-echo "Installation complete. Play around with the examples in matrix/bindings/python/samples, or make your config file and turn on your scoreboard!"
+echo "If you didn't see any errors above, everything should be installed!"
+echo -e "\nYou'll need a config.json file to customize your settings. If you are updating"
+echo "from an older version and you were required to run this install script again or"
+echo "this is a fresh install, it's recommended we make a fresh one right now."
+echo "This will create a brand new 'config.json' file with default values so edit this"
+echo -e "file with your own settings.\n"
+read -p "Would you like to do this now? [Y/n] " answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+    rm config.json
+    cp config.json.example config.json
+    echo -e "\nYou should now have a fresh config.json file you can customize with your own settings.\n"
+else
+    echo -e "\nIf you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
+fi
+echo "Installation complete! Play around with the examples in matrix/bindings/python/samples to make sure your matrix is working."
