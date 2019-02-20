@@ -44,9 +44,9 @@ class Weather:
         try:
           self.observation = self.client.weather_at_place(self.location)
           weather = self.observation.get_weather()
-          self.temp = weather.get_temperature(self.temperature_unit)['temp']
-          self.wind_speed = weather.get_wind(self.speed_unit)['speed']
-          self.wind_dir = weather.get_wind(self.speed_unit)['deg']
+          self.temp = weather.get_temperature(self.temperature_unit).get('temp', -99)
+          self.wind_speed = weather.get_wind(self.speed_unit).get('speed', -9)
+          self.wind_dir = weather.get_wind(self.speed_unit).get('deg', 0)
           self.conditions = weather.get_status()
           self.icon_name = weather.get_weather_icon_name()
           debug.log("Weather: {}; Wind: {}; {} ({})".format(self.temperature_string(), self.wind_string(), self.conditions, self.icon_filename()))
