@@ -5,6 +5,10 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 
 [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
+**2019 Spring Training Update**
+
+Games are currently not working due to an upstream issue with MLB. We are working on a solution. Things are going to be weird for a while, especially because Spring Training games are full of weirdness.
+
 **Currently supported boards:**
  * 32x32
  * 64x32
