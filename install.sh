@@ -11,7 +11,7 @@ echo "Installing required dependencies. This may take some time (10-20 minutes-i
 sudo apt-get install libxml2-dev libxslt-dev
 sudo pip install pytz tzlocal feedparser pyowm
 sudo pip uninstall -y mlbgame
-sudo pip install git+git://github.com/panzarino/mlbgame.git@365532125b0fe1286c32fa2471c2623e2437ab80#egg=mlbgame
+sudo pip install git+git://github.com/ajbowler/mlbgame.git@#egg=mlbgame
 make
 echo "If you didn't see any errors above, everything should be installed!"
 echo -e "\nYou'll need a config.json file to customize your settings. If you are updating"
