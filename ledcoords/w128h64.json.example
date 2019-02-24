@@ -218,38 +218,38 @@
   "offday": {
     "scrolling_text": {
       "x": 0,
-      "y": 30,
-      "width": 64
+      "y": 60,
+      "width": 128
     },
     "time": {
-      "x": 40,
-      "y": 7
-    },
-    "conditions": {
-      "x": 40,
+      "x": 80,
       "y": 15
     },
+    "conditions": {
+      "x": 80,
+      "y": 30
+    },
     "temperature": {
-      "x": 10,
-      "y": 23
+      "x": 20,
+      "y": 44
     },
     "wind_speed": {
       "x": 0,
-      "y": -2
+      "y": -4
     },
     "wind_dir": {
       "x": 0,
-      "y": -2
+      "y": -4
     },
     "wind": {
-      "x": 40,
-      "y": 21
+      "x": 80,
+      "y": 44
     },
     "weather_icon": {
-      "x": 2,
-      "y": 1,
-      "width": 15,
-      "height": 15
+      "x": 6,
+      "y": 2,
+      "width": 30,
+      "height": 30
     }
   }
 }
