@@ -27,4 +27,5 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 else
     echo -e "\nIf you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
 fi
+chown pi:pi config.json
 echo "Installation complete! Play around with the examples in matrix/bindings/python/samples to make sure your matrix is working."
