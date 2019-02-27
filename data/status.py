@@ -3,6 +3,7 @@ from inning import Inning
 class Status:
   CANCELLED = 'Cancelled'
   COMPLETED_EARLY = 'Completed Early'
+  COMPLETED_EARLY_RAIN = 'Completed Early: Rain'
   DELAYED = 'Delayed'
   DELAYED_START = 'Delayed Start'
   FINAL = 'Final'
@@ -30,7 +31,7 @@ class Status:
   @staticmethod
   def is_complete(status):
     """Returns whether the game has been completed"""
-    return status in [Status.FINAL, Status.GAME_OVER, Status.COMPLETED_EARLY, Status.TIED]
+    return status in [Status.FINAL, Status.GAME_OVER, Status.COMPLETED_EARLY, Status.COMPLETED_EARLY_RAIN, Status.TIED]
 
   @staticmethod
   def is_live(status):
