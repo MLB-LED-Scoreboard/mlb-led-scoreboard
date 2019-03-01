@@ -16,6 +16,7 @@ class Status:
   SCHEDULED = 'Scheduled'
   SUSPENDED = 'Suspended'
   TIED = 'Final: Tied'
+  GAME_OVER_TIED = 'Game Over: Tied'
   WARMUP = 'Warmup'
 
   @staticmethod
@@ -31,7 +32,7 @@ class Status:
   @staticmethod
   def is_complete(status):
     """Returns whether the game has been completed"""
-    return status in [Status.FINAL, Status.GAME_OVER, Status.COMPLETED_EARLY, Status.COMPLETED_EARLY_RAIN, Status.TIED]
+    return status in [Status.FINAL, Status.GAME_OVER, Status.COMPLETED_EARLY, Status.COMPLETED_EARLY_RAIN, Status.TIED, Status.GAME_OVER_TIED]
 
   @staticmethod
   def is_live(status):
