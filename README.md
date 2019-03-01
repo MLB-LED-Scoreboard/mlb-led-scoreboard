@@ -10,6 +10,9 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
  * 64x32
  * 128x32
  * 128x64
+ 
+**Boards not supported but on our radar - we welcome contributors!**
+ * 64x64 - [#199](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/issues/199)
 
 If you'd like to see support for another set of board dimensions, file an issue!
 
