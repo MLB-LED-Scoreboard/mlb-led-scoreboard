@@ -32,7 +32,7 @@ class Status:
   @staticmethod
   def is_complete(status):
     """Returns whether the game has been completed"""
-    return status in [Status.FINAL, Status.GAME_OVER, Status.COMPLETED_EARLY, Status.COMPLETED_EARLY_RAIN, Status.TIED, Status.GAME_OVER_TIED]
+    return status in [Status.FINAL, Status.GAME_OVER, Status.COMPLETED_EARLY, Status.COMPLETED_EARLY_RAIN, Status.TIED]
 
   @staticmethod
   def is_live(status):
@@ -50,7 +50,7 @@ class Status:
     """Returns whether the game is in progress or is very recently complete. Game Over
     comes between In Progress and Final and allows a few minutes to see the final outcome before
     the rotation kicks in."""
-    return status in [Status.IN_PROGRESS, Status.GAME_OVER]
+    return status in [Status.IN_PROGRESS, Status.GAME_OVER, Status.GAME_OVER_TIED]
 
   @staticmethod
   def is_inning_break(inning_state):
