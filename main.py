@@ -11,7 +11,7 @@ import mlbgame
 import debug
 
 SCRIPT_NAME = "MLB LED Scoreboard"
-SCRIPT_VERSION = "3.1.2"
+SCRIPT_VERSION = "3.1.3"
 
 # Get supplied command line arguments
 args = args()
