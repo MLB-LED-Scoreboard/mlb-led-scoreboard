@@ -16,6 +16,7 @@ class Status:
   SCHEDULED = 'Scheduled'
   SUSPENDED = 'Suspended'
   TIED = 'Final: Tied'
+  GAME_OVER_TIED = 'Game Over: Tied'
   WARMUP = 'Warmup'
 
   @staticmethod
@@ -49,7 +50,7 @@ class Status:
     """Returns whether the game is in progress or is very recently complete. Game Over
     comes between In Progress and Final and allows a few minutes to see the final outcome before
     the rotation kicks in."""
-    return status in [Status.IN_PROGRESS, Status.GAME_OVER]
+    return status in [Status.IN_PROGRESS, Status.GAME_OVER, Status.GAME_OVER_TIED]
 
   @staticmethod
   def is_inning_break(inning_state):
