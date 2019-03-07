@@ -194,6 +194,20 @@
         "y": 7
       }
     },
+    "accent": {
+      "away": {
+        "width": 1,
+        "height": 7,
+        "x": 0,
+        "y": 0
+      },
+      "home": {
+        "width": 1,
+        "height": 7,
+        "x": 0,
+        "y": 7
+      }
+    }
     "name": {
       "away": {
         "x": 1,
