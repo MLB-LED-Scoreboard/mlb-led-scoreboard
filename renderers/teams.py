@@ -22,6 +22,9 @@ class TeamsRenderer:
 
   def __default_home_color(self):
     return self.data.config.team_colors.color("default.home")
+  
+  def __default_accent_color(self):
+    return self.data.config.team_colors.color("default.accent")
 
   def render(self):
     away_colors = self.__team_colors(self.away_team.abbrev)
