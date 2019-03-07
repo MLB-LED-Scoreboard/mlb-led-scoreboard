@@ -196,24 +196,24 @@
     },
     "name": {
       "away": {
-        "x": 2,
+        "x": 3,
         "y": 6
       },
       "home": {
-        "x": 2,
+        "x": 3,
         "y": 13
       }
     },
     "accent": {
       "away": {
         "width": 1,
-        "height": 6,
+        "height": 7,
         "x": 0,
         "y": 0
       },
       "home": {
         "width": 1,
-        "height": 6,
+        "height": 7,
         "x": 0,
         "y": 7
       }
