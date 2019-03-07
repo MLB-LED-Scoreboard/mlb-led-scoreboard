@@ -30,10 +30,8 @@ class TeamsRenderer:
     away_colors = self.__team_colors(self.away_team.abbrev)
     try:
       away_team_color = away_colors['home']
-      away_team_accent = away_colors['accent']
     except KeyError as e:
       away_team_color = self.__default_home_color()
-      away_team_accent = self.__default_accent_color()
       
     home_colors = self.__team_colors(self.home_team.abbrev)
     try:
@@ -41,6 +39,18 @@ class TeamsRenderer:
       home_team_accent = home_accent['accent']
     except KeyError as e:
       home_team_color = self.__default_home_color()
+      home_team_accent = self.__default_accent_color()
+      
+    away_accents = self.__team_colors(self.away_team.abbrev)
+    try:
+      away_team_accent = away_accent['accent']
+    except KeyError as e:
+      away_team_accent = self.__default_accent_color()
+      
+    home_accents = self.__team_colors(self.home_team.abbrev)
+    try:
+      home_team_accent = home_accent['accent']
+    except KeyError as e:
       home_team_accent = self.__default_accent_color()
 
     bg_coords = {}
