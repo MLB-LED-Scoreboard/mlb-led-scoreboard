@@ -27,18 +27,26 @@ class TeamsRenderer:
     away_colors = self.__team_colors(self.away_team.abbrev)
     try:
       away_team_color = away_colors['home']
+      away_team_accent = away_colors['accent']
     except KeyError as e:
       away_team_color = self.__default_home_color()
-
+      away_team_accent = self.__default_accent_color()
+      
     home_colors = self.__team_colors(self.home_team.abbrev)
     try:
       home_team_color = home_colors['home']
+      home_team_accent = home_accent['accent']
     except KeyError as e:
       home_team_color = self.__default_home_color()
+      home_team_accent = self.__default_accent_color()
 
     bg_coords = {}
     bg_coords["away"] = self.data.config.layout.coords("teams.background.away")
     bg_coords["home"] = self.data.config.layout.coords("teams.background.home")
+    
+    accent_coords = {}
+    accent_coords["away"] = self.data.config.layout.coords("teams.accent.away")
+    accent_coords["home"] = self.data.config.layout.coords("teams.accent.home")
 
     away_name_coords = self.data.config.layout.coords("teams.name.away")
     home_name_coords = self.data.config.layout.coords("teams.name.home")
@@ -53,7 +61,15 @@ class TeamsRenderer:
           x_offset = bg_coords[team]["x"]
           y_offset = bg_coords[team]["y"]
           self.canvas.SetPixel(x + x_offset, y + y_offset, color['r'], color['g'], color['b'])
-
+    
+    for team in ["away","home"]:
+      for x in range(accent_coords[team]["width"]):
+        for y in range(accent_coords[team]["height"]):
+          color = away_team_accent if team == "away" else home_team_accent
+          x_offset = accent_coords[team]["x"]
+          y_offset = accent_coords[team]["y"]
+          self.canvas.SetPixel(x + x_offset, y + y_offset, color['r'], color['g'], color['b'])
+          
     self.__render_team_text(self.away_team, "away", away_colors, away_name_coords["x"], away_name_coords["y"])
     self.__render_team_text(self.home_team, "home", home_colors, home_name_coords["x"], home_name_coords["y"])
     self.__render_team_score(self.away_team.runs, "away", away_colors, away_score_coords["x"], away_score_coords["y"])
