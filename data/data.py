@@ -152,7 +152,7 @@ class Data:
       self.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
 
     if self.overview.is_perfect_game == "Y":
-      self.config.layout.set_state(layout.LAYOUT_PERFECT)
+      self.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
 
   #
   # Standings
