@@ -204,7 +204,7 @@ class Data:
       return 0
 
   def __filter_list_of_games(self, games, teams):
-    return list(filter(lambda game: set(teams) & set([game.away_team, game.home_team]), games))
+    return list(game for game in set(games) if set([game.away_team, game.home_team]).intersection(set(teams)))
 
   def __game_index_for(self, team_name):
     game_idx = 0
