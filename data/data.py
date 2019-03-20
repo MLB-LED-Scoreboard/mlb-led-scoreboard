@@ -152,7 +152,7 @@ class Data:
       self.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
 
     if self.overview.is_perfect_game == "Y":
-      self.config.layout.set_state(layout.LAYOUT_PERFECT)
+      self.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
 
   #
   # Standings
@@ -204,7 +204,7 @@ class Data:
       return 0
 
   def __filter_list_of_games(self, games, teams):
-    return list(filter(lambda game: set(teams) & set([game.away_team, game.home_team]), games))
+    return list(game for game in set(games) if set([game.away_team, game.home_team]).intersection(set(teams)))
 
   def __game_index_for(self, team_name):
     game_idx = 0
@@ -222,11 +222,7 @@ class Data:
 
   def is_offday_for_preferred_team(self):
     if self.config.preferred_teams:
-      offday = True
-      for game in self.games:
-        if self.config.preferred_teams[0] in [game.away_team, game.home_team]:
-          offday = False
-      return offday
+      return not any([self.config.preferred_teams[0] in [game.away_team, game.home_team] for game in self.games])
     else:
       return True
 

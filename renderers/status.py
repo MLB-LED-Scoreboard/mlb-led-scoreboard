@@ -12,6 +12,7 @@ POSTPONED_SHORTHAND = 'Postpd'
 CANCELLED_SHORTHAND = "Cancl'd"
 SUSPENDED_SHORTHAND = "Suspnd"
 CHALLENGE_SHORTHAND_32 = "Chalnge"
+UMPIRE_REVIEW_SHORTHAND = "Review"
 
 class StatusRenderer:
   def __init__(self, canvas, scoreboard, data, scroll_pos = 0):
@@ -59,14 +60,16 @@ class StatusRenderer:
     return text
 
   def __get_short_text(self, text):
-    if text == Status.DELAYED_START:
+    if "delayed" in text.lower():
       return Status.DELAYED
-    if text == Status.POSTPONED:
+    if "postponed" in text.lower():
       return POSTPONED_SHORTHAND
-    if text == Status.CANCELLED:
+    if "cancelled" in text.lower():
       return CANCELLED_SHORTHAND
-    if text == Status.MANAGER_CHALLENGE:
+    if "challenge" in text.lower():
       return CHALLENGE_SHORTHAND_32
-    if text == Status.SUSPENDED:
+    if "review" in text.lower():
+      return UMPIRE_REVIEW_SHORTHAND
+    if "suspended" in text.lower():
       return SUSPENDED_SHORTHAND
     return text

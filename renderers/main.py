@@ -97,8 +97,12 @@ class MainRenderer:
       # Set the refresh rate
       refresh_rate = self.data.config.scrolling_speed
 
-      # If we're not scrolling anything, scroll is always finished.
-      if Status.is_static(self.data.overview.status) and not Scoreboard(self.data.overview).get_text_for_reason():
+      # Currently the only thing that's always static is the live scoreboard
+      if Status.is_static(self.data.overview.status):
+        self.scrolling_finished = True
+
+      # If the status is irregular and there's no 'reason' text, finish scrolling
+      if Status.is_irregular(self.data.overview.status) and Scoreboard(self.data.overview).get_text_for_reason() is None:
         self.scrolling_finished = True
 
       time.sleep(refresh_rate)
