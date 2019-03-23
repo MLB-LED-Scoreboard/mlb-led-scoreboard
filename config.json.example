@@ -37,6 +37,7 @@
 		"location": "Chicago,il,us",
 		"metric_units": false
 	},
+	"time_format": "12h",
 	"end_of_day": "00:00",
 	"full_team_names": true,
 	"scrolling_speed": 2,

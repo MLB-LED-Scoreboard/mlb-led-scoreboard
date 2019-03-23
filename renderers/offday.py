@@ -27,7 +27,10 @@ class OffdayRenderer:
     return text_len
 
   def __render_clock(self):
-    time_text = time.strftime("%-I:%M%p")
+    time_format_str = "{}:%M".format(self.data.config.time_format)
+    if self.data.config.time_format == "%-I":
+      time_format_str += "%p"
+    time_text = time.strftime(time_format_str)
     coords = self.layout.coords("offday.time")
     font = self.layout.font("offday.time")
     color = self.colors.graphics_color("offday.time")
