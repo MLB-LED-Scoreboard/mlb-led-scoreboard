@@ -100,9 +100,7 @@ class ScoreboardConfig:
       self.preferred_divisions = [division]
 
   def check_time_format(self):
-    if self.time_format.lower() == "12h":
-      self.time_format = "%-I"
-    elif self.time_format.lower() == "24h":
+    if self.time_format.lower() == "24h":
       self.time_format = "%-H"
     else:
       self.time_format = "%-I"
