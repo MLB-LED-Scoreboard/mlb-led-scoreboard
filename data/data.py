@@ -234,7 +234,7 @@ class Data:
 
   def print_overview_debug(self):
     debug.log("Overview Refreshed: {}".format(self.overview.id))
-    debug.log("Pre: {}".format(Pregame(self.overview)))
+    debug.log("Pre: {}".format(Pregame(self.overview, self.config.time_format)))
     debug.log("Live: {}".format(Scoreboard(self.overview)))
     debug.log("Final: {}".format(Final(self.current_game())))
 

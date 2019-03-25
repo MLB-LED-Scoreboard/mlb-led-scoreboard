@@ -5,9 +5,10 @@ import pytz
 import tzlocal
 
 class Pregame:
-  def __init__(self, overview):
+  def __init__(self, overview, time_format):
     self.home_team = overview.home_name_abbrev
     self.away_team = overview.away_name_abbrev
+    self.time_format = time_format
 
     try:
       self.start_time = self.__convert_time(overview.time + overview.ampm)
@@ -45,12 +46,16 @@ class Pregame:
 
   def __convert_time(self, time):
     """Converts MLB's pregame times (Eastern) into the local time zone"""
+    time_str = "{}:%M".format(self.time_format)
+    if self.time_format == "%-I":
+      time_str += "%p"
+
     game_time_eastern = datetime.strptime(time, '%I:%M%p')
     now = datetime.now()
     game_time_eastern = game_time_eastern.replace(year=now.year, month=now.month, day=now.day)
     eastern_tz = pytz.timezone('America/New_York')
     game_time_eastern = eastern_tz.localize(game_time_eastern)
-    return game_time_eastern.astimezone(tzlocal.get_localzone()).strftime('%I:%M%p').lstrip('0')
+    return game_time_eastern.astimezone(tzlocal.get_localzone()).strftime(time_str)
 
   def __str__(self):
     s = "<{} {}> {} @ {}; {}; {} vs {}".format(

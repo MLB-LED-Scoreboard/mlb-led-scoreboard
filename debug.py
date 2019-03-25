@@ -3,10 +3,14 @@ import time
 import sys
 
 debug_enabled = False
+time_format = "%H"
 
 def set_debug_status(config):
 	global debug_enabled
 	debug_enabled = config.debug
+
+	global time_format
+	time_format = config.time_format
 
 def __debugprint(text):
 	print(text)
@@ -26,4 +30,4 @@ def info(text):
 	__debugprint("INFO ({}): {}".format(__timestamp(), text))
 
 def __timestamp():
-	return time.strftime("%H:%M:%S", time.localtime())
+	return time.strftime("{}:%M:%S".format(time_format), time.localtime())

@@ -166,7 +166,7 @@ class MainRenderer:
     if Status.is_pregame(overview.status):
       scoreboard = Scoreboard(overview)
       scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("pregame.scrolling_text"))
-      pregame = Pregame(overview)
+      pregame = Pregame(overview, self.data.config.time_format)
       renderer = PregameRenderer(self.canvas, pregame, scoreboard, self.data, self.scrolling_text_pos)
       self.__update_scrolling_text_pos(renderer.render())
 
