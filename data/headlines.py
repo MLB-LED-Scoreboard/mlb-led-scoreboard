@@ -109,7 +109,10 @@ class Headlines:
 
     if self.include_countdowns:
       countdown_string = self.important_dates.next_important_date_string()
-      ticker = self.__add_string_to_ticker(ticker, countdown_string)
+
+      # If we get None back from this method, we don't have an important date coming soon
+      if countdown_string is not None:
+        ticker = self.__add_string_to_ticker(ticker, countdown_string)
 
     if self.feed_data != None:
       ticker = self.__add_string_to_ticker(ticker, "")
