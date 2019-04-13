@@ -30,8 +30,9 @@ class StatusRenderer:
     TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_game_status()
 
-    if self.scoreboard.get_text_for_reason():
-      return text_len
+    if self.scoreboard.get_text_for_reason() is None:
+      return 0
+    return text_len
 
   def __render_game_status(self):
     color = self.colors.graphics_color("status.text")
