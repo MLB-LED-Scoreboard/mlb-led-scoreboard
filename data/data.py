@@ -207,10 +207,11 @@ class Data:
     return list(game for game in set(games) if set([game.away_team, game.home_team]).intersection(set(teams)))
 
   def __game_index_for(self, team_name):
-    game_idx = 0
-    game_idx = next((i for i, game in enumerate(self.games) if team_name in [game.away_team, game.home_team]), 0)
-    return game_idx
-
+    team_idxs = [i for i, game in enumerate(self.games) if team_name in [game.away_team, game.home_team]]
+    if len(team_idxs) > 0:
+        return next((i for i in team_idxs if Status.is_live(mlbgame.overview(self.games[i].game_id))), team_idxs[0])
+    return 0
+    
   def __next_game_index(self):
     counter = self.current_game_index + 1
     if counter >= len(self.games):
