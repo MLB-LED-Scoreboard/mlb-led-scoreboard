@@ -108,6 +108,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
       except ValueError:
         self.network_issues = True
+        debug.error("Value Error Occurred while refreshing master list of games. {} retries remaining.".format(attempts_remaining))
         debug.error("ValueError: Failed to refresh list of games")
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
@@ -131,6 +132,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
       except ValueError:
         self.network_issues = True
+        debug.error("Value Error Occurred while refreshing current game overview. {} retries remaining.".format(attempts_remaining))
         debug.error("ValueError: Failed to refresh overview for {}".format(self.current_game().game_id))
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
@@ -231,6 +233,12 @@ class Data:
           self.network_issues = True
           debug.error("Networking Error while refreshing live game status of {}. {} retries remaining.".format(team_name,retries))
           debug.error("URLError: {}".format(e.reason))
+          attempts_remaining -= 1
+          time.sleep(NETWORK_RETRY_SLEEP_TIME)
+        except ValueError:
+          self.network_issues = True
+          debug.error("Value Error Occurred while refreshing live game status of {}. {} retries remaining.".format(team_name,retries))
+          debug.error("ValueError: Failed to refresh overview for {}".format(self.current_game().game_id))
           attempts_remaining -= 1
           time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
