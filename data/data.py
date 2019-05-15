@@ -108,7 +108,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
       except ValueError:
         self.network_issues = True
-        debug.error("Value Error Occurred while refreshing master list of games. {} retries remaining.".format(attempts_remaining))
+        debug.error("Value Error while refreshing master list of games. {} retries remaining.".format(attempts_remaining))
         debug.error("ValueError: Failed to refresh list of games")
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
@@ -132,7 +132,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
       except ValueError:
         self.network_issues = True
-        debug.error("Value Error Occurred while refreshing current game overview. {} retries remaining.".format(attempts_remaining))
+        debug.error("Value Error while refreshing current overview. {} retries remaining.".format(attempts_remaining))
         debug.error("ValueError: Failed to refresh overview for {}".format(self.current_game().game_id))
         attempts_remaining -= 1
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
@@ -237,7 +237,7 @@ class Data:
           time.sleep(NETWORK_RETRY_SLEEP_TIME)
         except ValueError:
           self.network_issues = True
-          debug.error("Value Error Occurred while refreshing live game status of {}. {} retries remaining.".format(team_name,retries))
+          debug.error("Value Error while refreshing live game status of {}. {} retries remaining.".format(team_name,retries))
           debug.error("ValueError: Failed to refresh overview for {}".format(self.current_game().game_id))
           attempts_remaining -= 1
           time.sleep(NETWORK_RETRY_SLEEP_TIME)
@@ -247,7 +247,7 @@ class Data:
         debug.error("Returning team_index of 0 because we ran out of networking retries.")
 
     return team_index
-    
+
   def __next_game_index(self):
     counter = self.current_game_index + 1
     if counter >= len(self.games):
