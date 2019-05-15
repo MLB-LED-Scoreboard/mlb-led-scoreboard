@@ -1,6 +1,7 @@
 from PIL import Image
 from rgbmatrix import graphics
 from utils import get_font, get_file, center_text_position
+from renderers.network import NetworkErrorRenderer
 import time
 
 class StandingsRenderer:
@@ -24,6 +25,7 @@ class StandingsRenderer:
         self.__render_static_wide_standings()
       else:
         self.__render_rotating_standings()
+    NetworkErrorRenderer(self.canvas, self.data).render()
 
   def __fill_bg(self):
     coords = self.data.config.layout.coords("standings")

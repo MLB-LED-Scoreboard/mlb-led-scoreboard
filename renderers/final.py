@@ -3,6 +3,7 @@ from utils import get_font, center_text_position
 from renderers.teams import TeamsRenderer
 from renderers.scrollingtext import ScrollingText
 from renderers.nohitter import NoHitterRenderer
+from renderers.network import NetworkErrorRenderer
 import data.layout
 
 NORMAL_GAME_LENGTH = 9
@@ -21,6 +22,7 @@ class Final:
     text_len = self.__render_scroll_text()
     TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_final_inning()
+    NetworkErrorRenderer(self.canvas, self.data).render()
     return text_len
 
   def __render_scroll_text(self):
