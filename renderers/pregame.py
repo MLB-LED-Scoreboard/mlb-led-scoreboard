@@ -3,6 +3,7 @@ from rgbmatrix import graphics
 from utils import get_font, center_text_position
 from renderers.teams import TeamsRenderer
 from renderers.scrollingtext import ScrollingText
+from renderers.network import NetworkErrorRenderer
 import data.layout
 
 class Pregame:
@@ -23,6 +24,7 @@ class Pregame:
       self.__render_warmup()
     else:
       self.__render_start_time()
+    NetworkErrorRenderer(self.canvas, self.data).render()
     return text_len
 
   def __render_start_time(self):

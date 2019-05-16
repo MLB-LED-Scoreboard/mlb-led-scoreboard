@@ -2,6 +2,7 @@ from rgbmatrix import graphics
 from PIL import Image
 from utils import get_font, get_file, center_text_position
 from renderers.scrollingtext import ScrollingText
+from renderers.network import NetworkErrorRenderer
 from data.data import Data
 import data.layout
 import time
@@ -24,6 +25,7 @@ class OffdayRenderer:
     text_len = self.__render_news_ticker()
     self.__render_clock()
     self.__render_weather()
+    NetworkErrorRenderer(self.canvas, self.data).render()
     return text_len
 
   def __render_clock(self):
