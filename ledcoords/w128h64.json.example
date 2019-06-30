@@ -265,5 +265,18 @@
       "width": 30,
       "height": 30
     }
+  },
+  "network": {
+    "font_name": "4x6",
+    "background": {
+      "width": 7,
+      "height": 7,
+      "x": 57,
+      "y": 25
+    },
+    "text": {
+      "x": 125,
+      "y": 31
+    }
   }
 }

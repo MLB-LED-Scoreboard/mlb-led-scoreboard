@@ -52,6 +52,7 @@ class ScoreboardConfig:
     self.weather_metric_units = json["weather"]["metric_units"]
 
     # Misc config options
+    self.time_format = json["time_format"]
     self.end_of_day = json["end_of_day"]
     self.full_team_names = json["full_team_names"]
     self.debug = json["debug"]
@@ -75,6 +76,7 @@ class ScoreboardConfig:
     self.scoreboard_colors = Color(json)
 
     # Check the preferred teams and divisions are a list or a string
+    self.check_time_format()
     self.check_preferred_teams()
     self.check_preferred_divisions()
 
@@ -97,6 +99,11 @@ class ScoreboardConfig:
       division = self.preferred_divisions
       self.preferred_divisions = [division]
 
+  def check_time_format(self):
+    if self.time_format.lower() == "24h":
+      self.time_format = "%-H"
+    else:
+      self.time_format = "%-I"
 
   def check_rotate_rates(self):
     if isinstance(self.rotation_rates, dict) == False:

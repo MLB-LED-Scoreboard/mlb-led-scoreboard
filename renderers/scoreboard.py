@@ -4,6 +4,7 @@ from renderers.outs import OutsRenderer
 from renderers.pitches import PitchesRenderer
 from renderers.teams import TeamsRenderer
 from renderers.nohitter import NoHitterRenderer
+from renderers.network import NetworkErrorRenderer
 from data.inning import Inning
 from data.layout import Layout
 import data.layout
@@ -29,3 +30,4 @@ class Scoreboard:
       PitchesRenderer(self.canvas, self.scoreboard.pitches, self.data).render()
       OutsRenderer(self.canvas, self.scoreboard.outs, self.data).render()
       BasesRenderer(self.canvas, self.scoreboard.bases, self.data).render()
+    NetworkErrorRenderer(self.canvas, self.data).render()

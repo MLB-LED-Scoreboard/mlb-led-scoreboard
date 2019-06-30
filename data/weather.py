@@ -54,7 +54,7 @@ class Weather:
           debug.warning("[WEATHER] The API key provided doesn't appear to be valid. Please check your config.json.")
           debug.warning("[WEATHER] You can get a free API key by visiting https://home.openweathermap.org/users/sign_up")
           self.apikey_valid = False
-        except (pyowm.exceptions.api_call_error.APICallTimeoutError, ConnectTimeoutError, MaxRetryError, NewConnectionError) as e:
+        except (pyowm.exceptions.api_call_error.APICallTimeoutError, pyowm.exceptions.api_call_error.APICallError, pyowm.exceptions.api_call_error.APIInvalidSSLCertificateError, pyowm.exceptions.api_call_error.BadGatewayError) as e:
           debug.warning("[WEATHER] Fetching weather information failed from a connection issue.")
           debug.log("[WEATHER] Error Message: {}".format(e))
           # Set some placeholder weather info if this is our first weather update

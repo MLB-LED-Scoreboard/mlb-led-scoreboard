@@ -201,6 +201,18 @@
       "b": 59
     }
   },
+  "network": {
+    "background": {
+      "r": 255,
+      "g": 0,
+      "b": 0
+    },
+    "text": {
+      "r": 255,
+      "g": 255,
+      "b": 255
+    }
+  },
   "default": {
     "background": {
       "r": 7,

@@ -10,7 +10,7 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
  * 64x32
  * 128x32
  * 128x64
- 
+
 **Boards not supported but on our radar - we welcome contributors!**
  * 64x64 - [#199](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/issues/199)
 
@@ -151,6 +151,7 @@ A default `config.json.example` file is included for reference. Copy this file t
   "country"                    String  The ISO 3166 country code associated with the zipcode
   "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
 
+"time_format"                  String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
 "scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.

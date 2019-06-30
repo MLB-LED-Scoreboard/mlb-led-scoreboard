@@ -1,6 +1,7 @@
 from data.status import Status
 from renderers.teams import TeamsRenderer
 from renderers.scrollingtext import ScrollingText
+from renderers.network import NetworkErrorRenderer
 from rgbmatrix import graphics
 from utils import get_font, center_text_position
 
@@ -30,8 +31,10 @@ class StatusRenderer:
     TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
     self.__render_game_status()
 
-    if self.scoreboard.get_text_for_reason():
-      return text_len
+    if self.scoreboard.get_text_for_reason() is None:
+      return 0
+    NetworkErrorRenderer(self.canvas, self.data).render()
+    return text_len
 
   def __render_game_status(self):
     color = self.colors.graphics_color("status.text")
