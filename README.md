@@ -93,7 +93,7 @@ It will also install the following python libraries that are required for certai
 If you continue to run into issues, join our Slack channel located at the top of the README.
 
 #### Updating
-* **Re-run the install file**. Run `./install.sh` again. Any additional dependencies that were added with the update will be installed this way. If you are moving to a new major release version, answer "Y" to have it make you a new config file.
+* **Re-run the install file**. Run `sudo ./install.sh` again. Any additional dependencies that were added with the update will be installed this way. If you are moving to a new major release version, answer "Y" to have it make you a new config file.
 * **Check your custom layout/color files if you made any**. There's a good chance some new keys were added to the layout and color files. These changes should just merge right in with the customized .json file you have but you might want to look at the new .json.example files and see if there's anything new you want to customize.
 
 That should be it! Your latest version should now be working with whatever new fangled features were just added.
