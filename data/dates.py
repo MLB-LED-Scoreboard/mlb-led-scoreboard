@@ -21,8 +21,8 @@ class Dates:
 
   def __parse_important_dates(self, dates):
     self.important_dates = []
-    self.__add_date("2019-02-13T00:00:00",     "pitchers and catchers report")
-    self.__add_date("2019-02-21T00:00:00",     "Spring Training begins")
+    self.__add_date("2020-02-10T00:00:00",     "pitchers and catchers report")
+    self.__add_date("2020-02-21T00:00:00",     "Spring Training begins")
     self.__add_date(dates.first_date_seas,     "Opening Day {}".format(dates.year))
     self.__add_date(dates.last_date_1sth,      "the {} All-Star Break".format(dates.year), 30)
     self.__add_date(dates.all_star_date,       "the {} All-Star Game".format(dates.year))
