@@ -16,14 +16,17 @@ HEADLINE_MAX_FEEDS = 3 # Number of preferred team's feeds to fetch
 HEADLINE_MAX_ENTRIES = 7 # Number of headlines per feed
 FALLBACK_DATE_FORMAT = "%A, %B %-d"
 
-MLB_BASE = "http://mlb.mlb.com/partnerxml/gen/news/rss"
+
+MLB_BASE = "https://www.mlb.com"
+MLB_PATH = "feeds/news/rss.xml"
 MLB_FEEDS = {
-  "MLB": "mlb", "Angels": "ana", "Astros": "hou", "Athletics": "oak", "Blue Jays": "tor", "Indians": "cle",
-  "Mariners": "sea", "Orioles": "bal", "Rangers": "tex", "Rays": "tb", "Red Sox": "bos", "Royals": "kc",
-  "Tigers": "det", "Twins": "min", "White Sox": "chw", "Yankees": "nyy", "Braves": "atl", "Brewers": "mil",
-  "Cardinals": "stl", "Cubs": "chc", "Diamondbacks": "ari", "D-Backs": "ari", "Dodgers": "la", "Giants": "sf",
-  "Marlins": "mia", "Mets": "nym", "Nationals": "was", "Padres": "sd", "Phillies": "phi", "Pirates": "pit",
-  "Reds": "cin", "Rockies": "col"
+  "MLB": "", "Angels": "angels", "Astros": "astros", "Athletics": "athletics", "Blue Jays": "bluejays", 
+  "Indians": "indians", "Mariners": "mariners", "Orioles": "orioles", "Rangers": "rangers", "Rays": "rays", 
+  "Red Sox": "redsox", "Royals": "royals", "Tigers": "tigers", "Twins": "twins", "White Sox": "whitesox", 
+  "Yankees": "yankees", "Braves": "braves", "Brewers": "brewers", "Cardinals": "cardinals", "Cubs": "cubs", 
+  "Diamondbacks": "dbacks", "D-Backs": "dbacks", "Dodgers": "dodgers", "Giants": "giants", "Marlins": "marlins", 
+  "Mets": "mets", "Nationals": "nationals", "Padres": "padres", "Phillies": "phillies", "Pirates": "pirates",
+  "Reds": "reds", "Rockies": "rockies"
 }
 
 TRADE_BASE = "https://www.mlbtraderumors.com"
@@ -158,7 +161,7 @@ class Headlines:
           self.feed_urls.append(self.__traderumors_url_for_team(team))
 
   def __mlb_url_for_team(self, team_name):
-    return "{}/{}.xml".format(MLB_BASE, MLB_FEEDS[team_name])
+    return "{}/{}/{}".format(MLB_BASE, MLB_FEEDS[team_name], MLB_PATH)
 
   def __traderumors_url_for_team(self, team_name):
     return "{}/{}/{}".format(TRADE_BASE, TRADE_FEEDS[team_name], TRADE_PATH)
