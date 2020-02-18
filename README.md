@@ -36,6 +36,7 @@ If you'd like to see support for another set of board dimensions, file an issue!
 * [Help and Contributing](#help-and-contributing)
   * [Latest Features](#latest-features)
 * [Licensing](#licensing)
+* [Other cool projects](#other-cool-projects)
 
 ## Features
 
@@ -217,3 +218,6 @@ The scoreboard follows semantic versioning, for what makes sense for a project l
 
 ## Licensing
 This project as of v1.1.0 uses the GNU Public License. If you intend to sell these, the code must remain open source.
+
+## Other Cool Projects
+Inspired by this board, check out the [NHL scoreboard](https://github.com/riffnshred/nhl-led-scoreboard) 🏒
