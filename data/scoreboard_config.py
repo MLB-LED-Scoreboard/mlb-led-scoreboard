@@ -6,7 +6,7 @@ import os
 import sys
 import debug
 
-SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05]
+SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
@@ -62,7 +62,7 @@ class ScoreboardConfig:
     try:
       self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
     except:
-      debug.warning("Scrolling speed should be an integer between 0 and 4. Using default value of {}".format(DEFAULT_SCROLLING_SPEED))
+      debug.warning("Scrolling speed should be an integer between 0 and 6. Using default value of {}".format(DEFAULT_SCROLLING_SPEED))
       self.scrolling_speed = SCROLLING_SPEEDS[DEFAULT_SCROLLING_SPEED]
 
     # Get the layout info
