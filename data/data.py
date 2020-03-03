@@ -223,26 +223,26 @@ class Data:
     team_index = 0
     team_idxs = [i for i, game in enumerate(self.games) if team_name in [game.away_team, game.home_team]]
     if len(team_idxs) > 0:
-      retries = 5
-      while retries > 0:
+      attempts_remaining = 5
+      while attempts_remaining > 0:
         try:
           team_index = next((i for i in team_idxs if Status.is_live(mlbgame.overview(self.games[i].game_id))), team_idxs[0])
           self.network_issues = False
           break
         except URLError, e:
           self.network_issues = True
-          debug.error("Networking Error while refreshing live game status of {}. {} retries remaining.".format(team_name,retries))
+          debug.error("Networking Error while refreshing live game status of {}. {} retries remaining.".format(team_name,attempts_remaining))
           debug.error("URLError: {}".format(e.reason))
           attempts_remaining -= 1
           time.sleep(NETWORK_RETRY_SLEEP_TIME)
         except ValueError:
           self.network_issues = True
-          debug.error("Value Error while refreshing live game status of {}. {} retries remaining.".format(team_name,retries))
+          debug.error("Value Error while refreshing live game status of {}. {} retries remaining.".format(team_name,attempts_remaining))
           debug.error("ValueError: Failed to refresh overview for {}".format(self.current_game().game_id))
           attempts_remaining -= 1
           time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
-      if retries <= 0:
+      if attempts_remaining <= 0:
         debug.error("Major networking error while refreshing live game status of {}".format(team_name))
         debug.error("Returning team_index of 0 because we ran out of networking retries.")
 
