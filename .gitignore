@@ -118,3 +118,6 @@ Assets/*.bdf
 
 # Ignore src directory if we installed a custom mlbgame while in this directory
 src/
+
+# Ignore logs
+logs.txt
