@@ -8,11 +8,9 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
 **Currently supported boards:**
  * 32x32
  * 64x32
+ * 64x64
  * 128x32
  * 128x64
-
-**Boards not supported but on our radar - we welcome contributors!**
- * 64x64 - [#199](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/issues/199)
 
 If you'd like to see support for another set of board dimensions, file an issue!
 
@@ -45,7 +43,7 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 
 The board refreshes the list of games every 15 minutes.
 
-![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png) ![Astros-Athletics game](img/128x64.png)
+![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png) ![Astros-Athletics game](img/128x64.png) ![64x64 example](img/64x64-live.jpg)
 
 Sometimes you don't get baseball though :(
 
