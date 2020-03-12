@@ -1,7 +1,7 @@
 # mlb-led-scoreboard
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
 
-Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
+Requires a Raspberry Pi and an LED board hooked up via the GPIO pins.
 
 [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
@@ -13,6 +13,9 @@ Requires a Raspberry PI and an LED board hooked up via the GPIO pins.
  * 128x64
 
 If you'd like to see support for another set of board dimensions, file an issue!
+
+**Pi's with known issues**
+ * Raspberry Pi Zero has had numerous reports of slowness and unreliabilty during installation and running the software.
 
 ## Table of Contents
 * [Features](#features)
