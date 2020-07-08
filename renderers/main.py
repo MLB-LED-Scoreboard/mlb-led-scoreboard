@@ -11,7 +11,6 @@ from renderers.offday import OffdayRenderer
 from data.data import Data
 import debug
 import time
-import sys
 
 GAMES_REFRESH_RATE = 900.0
 SCROLL_TEXT_FAST_RATE = 0.1
