@@ -1,4 +1,5 @@
 #!/bin/bash
+git submodule update
 cd matrix
 echo "Running rgbmatrix installation..."
 sudo apt-get update && sudo apt-get install python2.7-dev python-pillow -y
