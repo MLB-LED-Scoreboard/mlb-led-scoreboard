@@ -76,8 +76,10 @@ class MainRenderer:
   def __render_standings(self):
     try:
       StandingsRenderer(self.matrix, self.canvas, self.data).render()
-    except:
+    except Exception as ex:
       # Out of season off days don't always return standings so fall back on the offday renderer
+      debug.error("Could not render standings.  Falling back to off day.")
+      debug.error("{}: {}".format(type(ex).__name__, ex.args))
       self.__render_offday()
 
   # Renders a game screen based on it's status

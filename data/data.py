@@ -76,7 +76,10 @@ class Data:
 
   def refresh_standings(self):
     try:
-      self.standings = mlbgame.standings()
+      if self.config.demo_date:
+        self.standings = mlbgame.standings(datetime(self.year, self.month, self.day, 23, 59, 0, 0))
+      else:
+        self.standings = mlbgame.standings()
     except:
       debug.error("Failed to refresh standings.")
 

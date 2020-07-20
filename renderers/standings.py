@@ -49,9 +49,9 @@ class StandingsRenderer:
         stat_text = str(getattr(team, stat))
         graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
         graphics.DrawText(self.canvas, font["font"], coords["team"]["record"]["x"], offset, self.team_stat_color, stat_text)
-
+      
         offset += coords["offset"]
-
+      
       self.matrix.SwapOnVSync(self.canvas)
       time.sleep(5.0)
 
@@ -89,11 +89,21 @@ class StandingsRenderer:
         graphics.DrawText(self.canvas, font["font"], gb_text_x, offset, self.team_stat_color, gb_text)
 
         offset += coords["offset"]
+      
+      self.__fill_standings_footer()
 
       self.matrix.SwapOnVSync(self.canvas)
       time.sleep(10.0)
       self.__fill_bg()
       self.data.advance_to_next_standings()
+
+  def __fill_standings_footer(self):
+    coords = self.data.config.layout.coords("standings")
+    graphics.DrawLine(self.canvas, 0, coords["height"], coords["width"], coords["height"], self.bg_color)
+    graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
+    graphics.DrawLine(self.canvas, 0, coords["height"]+1, coords["width"], coords["height"]+1, self.bg_color)
+    graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"]+1, self.divider_color)
+    
 
   def __is_dumpster_fire(self):
     return "comedy" in self.data.config.preferred_divisions[self.data.current_division_index].lower()
