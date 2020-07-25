@@ -75,11 +75,19 @@ class Data:
   # mlbgame refresh
 
   def refresh_standings(self):
+    # TODO: This function is a workaround for MLB and mlbgame package no longer supporting GameDay XML API
+    # Old code is left for reference only!
+
     try:
-      if self.config.demo_date:
-        self.standings = mlbgame.standings(datetime(self.year, self.month, self.day, 23, 59, 0, 0))
-      else:
-        self.standings = mlbgame.standings()
+      # if self.config.demo_date:
+        # self.standings = mlbgame.standings(datetime(self.year, self.month, self.day, 23, 59, 
+      # else:
+        # self.standings = mlbgame.standings()
+
+      # Import a handler for the standings data to minimize impact to rest of the codebase
+      from standings import *
+
+      self.standings = Standings.fetch(self.year, self.month, self.day)
     except:
       debug.error("Failed to refresh standings.")
 
