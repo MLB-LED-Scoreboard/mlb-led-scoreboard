@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
+# Import a handler for the standings data to minimize impact to rest of the codebase
+from standings import *
 from status import Status
 from inning import Inning
 from weather import Weather
@@ -83,9 +85,6 @@ class Data:
         # self.standings = mlbgame.standings(datetime(self.year, self.month, self.day, 23, 59, 
       # else:
         # self.standings = mlbgame.standings()
-
-      # Import a handler for the standings data to minimize impact to rest of the codebase
-      from standings import *
 
       self.standings = Standings.fetch(self.year, self.month, self.day)
     except:
