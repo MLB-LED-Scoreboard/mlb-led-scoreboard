@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from final import Final
 from pregame import Pregame
 from scoreboard import Scoreboard
+from standings import Standings, Division, Team
 from status import Status
 from inning import Inning
 from weather import Weather
@@ -76,10 +77,7 @@ class Data:
 
   def refresh_standings(self):
     try:
-      if self.config.demo_date:
-        self.standings = mlbgame.standings(datetime(self.year, self.month, self.day, 23, 59, 0, 0))
-      else:
-        self.standings = mlbgame.standings()
+      self.standings = Standings.fetch(self.year, self.month, self.day)
     except:
       debug.error("Failed to refresh standings.")
 
