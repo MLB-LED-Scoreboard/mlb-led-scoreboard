@@ -2,12 +2,14 @@ import requests
 import re
 
 class Standings:
-    __URL = 'https://statsapi.mlb.com/api/v1/standings?season={year}&leagueId={league_id}&date={month:0>2}/{day:0>2}/{year}&division=all'
-    __LEAGUE_ID = '103,104'
+    __URL = 'https://statsapi.mlb.com/api/v1/standings?season={year}&leagueId={league_ids}&date={month:0>2}/{day:0>2}/{year}&division=all'
+    AL_LEAGUE_ID = '103'
+    NL_LEAGUE_ID = '104'
+    __LEAGUE_IDS = ','.join([AL_LEAGUE_ID, NL_LEAGUE_ID])
 
     @classmethod
     def fetch(cls, year, month, day):
-        standings_data = requests.get(Standings.__URL.format(day=day, month=month, year=year, league_id=Standings.__LEAGUE_ID))
+        standings_data = requests.get(Standings.__URL.format(day=day, month=month, year=year, league_ids=Standings.__LEAGUE_IDS))
 
         if standings_data.status_code == 200:
             return Standings(standings_data.json())
@@ -99,9 +101,3 @@ class Team:
 
     def __parse_losses(self):
         return self.__division_standings['losses']
-
-if __name__ == '__main__':
-    standings = Standings.fetch(2020, 7, 25)
-
-    import pdb
-    pdb.set_trace()
