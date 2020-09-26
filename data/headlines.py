@@ -97,7 +97,7 @@ class Headlines:
             debug.log("Fetching {}".format(url))
             f = feedparser.parse(url)
             try:
-              title = f.feed.title.encode("ascii", "ignore")
+              title = f.feed.title
               debug.log("Fetched feed '{}' with {} entries.".format(title, len(f.entries)))
               feeds.append(f)
             except AttributeError:
@@ -136,13 +136,13 @@ class Headlines:
 
   def __strings_for_feed(self, feed, max_entries):
     spaces = " " * HEADLINE_SPACER_SIZE
-    title = feed.feed.title.encode("ascii", "ignore")
+    title = feed.feed.title
     headlines = ""
 
     for idx, entry in enumerate(feed.entries):
       if idx < max_entries:
         h = HTMLParser()
-        text = h.unescape(entry.title.encode("ascii", "ignore"))
+        text = h.unescape(entry.title)
         headlines += text + spaces
     return title + spaces + headlines
 
