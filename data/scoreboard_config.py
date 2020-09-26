@@ -1,6 +1,6 @@
 from utils import get_file, deep_update
-from layout import Layout
-from color import Color
+from data.layout import Layout
+from data.color import Color
 import json
 import os
 import sys

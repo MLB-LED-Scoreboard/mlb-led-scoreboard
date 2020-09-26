@@ -2,7 +2,7 @@ import debug
 import time
 import feedparser
 from datetime import datetime
-from dates import Dates
+from data.dates import Dates
 
 try:
   from HTMLParser import HTMLParser
