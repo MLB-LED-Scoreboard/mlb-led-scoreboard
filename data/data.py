@@ -8,7 +8,7 @@ from data.inning import Inning
 from data.weather import Weather
 from data.headlines import Headlines
 import urllib
-import data.layout
+import data.layout as layout
 import mlbgame
 import debug
 import time
