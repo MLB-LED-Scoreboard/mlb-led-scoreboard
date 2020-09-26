@@ -43,7 +43,7 @@ class BasesRenderer:
   def __render_baserunner(self, base, color):
     x, y = (base["x"], base["y"])
     size = base["size"]
-    half = abs(size/2)
+    half = abs(int(size/2))
     for offset in range(1, half+1):
       graphics.DrawLine(self.canvas, x + half - offset, y + size - offset, x + half + offset, y + size - offset, color)
       graphics.DrawLine(self.canvas, x + half - offset, y + offset, x + half + offset, y + offset, color)
