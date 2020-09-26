@@ -8,10 +8,11 @@ cd bindings
 sudo python3 -m pip install -e python/
 cd ../../
 echo "Installing required dependencies. This may take some time (10-20 minutes-ish)..."
-git reset --hard
-git checkout master
-git fetch origin --prune
-git pull
+# TODO: Revert this. Don't update scoreboard to master while testing!
+# git reset --hard
+# git checkout master
+# git fetch origin --prune
+# git pull
 sudo apt-get install libxml2-dev libxslt-dev -y
 sudo python3 -m pip install pytz tzlocal "feedparser<6.0.0" pyowm
 sudo python3 -m pip uninstall -y mlbgame
