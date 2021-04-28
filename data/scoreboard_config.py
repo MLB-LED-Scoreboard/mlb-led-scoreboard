@@ -41,6 +41,7 @@ class ScoreboardConfig:
     # Rotation
     self.rotation_enabled = json["rotation"]["enabled"]
     self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
+    self.rotation_avoid_scrolling_partial_messages = json["rotation"]["avoid_scrolling_partial_messages"]
     self.rotation_only_preferred = json["rotation"]["only_preferred"]
     self.rotation_rates = json["rotation"]["rates"]
     self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]

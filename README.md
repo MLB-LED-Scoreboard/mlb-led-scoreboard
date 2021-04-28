@@ -117,48 +117,49 @@ See the Flags section below for more flags you can optionally provide.
 A default `config.json.example` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
 ```
-"preferred":                           Options for team and division preference
-  "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
+"preferred":                                 Options for team and division preference
+  "teams"                            Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
+  "divisions"                        Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
-"news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
-  "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
-  "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
-  "preferred_teams"            Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
-  "traderumors"                Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
-  "mlb_news"                   Bool    Include MLB's frontpage news
-  "countdowns"                 Bool    Include various countdowns in the ticker.
-  "date"                       Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
-  "date_format"                String  Display the date with a given format. You can check all of the date formatting options at [strftime.org](strftime.org)
+"news_ticker":                               Options for displaying a nice clock/weather/news ticker screen
+  "always_display"                   Bool    Display the news ticker screen at all times (supercedes the standings setting)
+  "team_offday"                      Bool    Display the news ticker when your prefered team is on an offday
+  "preferred_teams"                  Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "traderumors"                      Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
+  "mlb_news"                         Bool    Include MLB's frontpage news
+  "countdowns"                       Bool    Include various countdowns in the ticker.
+  "date"                             Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
+  "date_format"                      String  Display the date with a given format. You can check all of the date formatting options at [strftime.org](strftime.org)
 
-"standings":                           Options for displaying standings for a division
-  "always_display"             Bool    Display standings for the provided preferred_divisions.
-  "mlb_offday"                 Bool    Display standings for the provided preferred_divisions when there are no games on the current day.
-  "team_offday"                Bool    Display standings for the provided preferred_divisions when the preferred_teams is not playing on the current day.
+"standings":                                 Options for displaying standings for a division
+  "always_display"                   Bool    Display standings for the provided preferred_divisions.
+  "mlb_offday"                       Bool    Display standings for the provided preferred_divisions when there are no games on the current day.
+  "team_offday"                      Bool    Display standings for the provided preferred_divisions when the preferred_teams is not playing on the current day.
 
-"rotation":                            Options for rotation through the day's games
-  "enabled"                    Bool    Rotate through each game of the day every 15 seconds.
-  "scroll_until_finished"      Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"             Bool    Only rotate through games in your preferred_teams list.
-  "rates"                      Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
-                               Float   A Float can be used to set all screen types to the same rotate rate.
+"rotation":                                  Options for rotation through the day's games
+  "enabled"                          Bool    Rotate through each game of the day every 15 seconds.
+  "scroll_until_finished"            Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+  "avoid_scrolling_partial_messages" Bool    If scrolling text would be interrupted mid scroll by a rotation, don't start scrolling. Text will always be scrolled at least once.
+  "only_preferred"                   Bool    Only rotate through games in your preferred_teams list.
+  "rates"                            Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
+                                     Float   A Float can be used to set all screen types to the same rotate rate.
 
-  "while_preferred_team_live":         Options for rotating while your chosen preferred_teams is live
-    "enabled"                  Bool    Rotation is enabled while your configured preferred_teams game is live.
-    "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
+  "while_preferred_team_live":               Options for rotating while your chosen preferred_teams is live
+    "enabled"                        Bool    Rotation is enabled while your configured preferred_teams game is live.
+    "during_inning_breaks"           Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
 
-"weather":                             Options for retrieving the weather
-  "apikey"                     String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
-  "zipcode"                    String  The zipcode/postcode for the location you wish to receive weather data
-  "country"                    String  The ISO 3166 country code associated with the zipcode
-  "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
+"weather":                                   Options for retrieving the weather
+  "apikey"                           String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
+  "zipcode"                          String  The zipcode/postcode for the location you wish to receive weather data
+  "country"                          String  The ISO 3166 country code associated with the zipcode
+  "metric_units"                     Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
 
-"time_format"                  String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
-"end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
-"full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
-"scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
-"debug"                        Bool    Game and other debug data is written to your console.
-"demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
+"time_format"                        String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
+"end_of_day"                         String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
+"full_team_names"                    Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
+"scrolling_speed"                    Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
+"debug"                              Bool    Game and other debug data is written to your console.
+"demo_date"                          String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Flags

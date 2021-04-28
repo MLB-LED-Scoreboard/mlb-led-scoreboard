@@ -23,6 +23,7 @@ class MainRenderer:
     self.canvas = matrix.CreateFrameCanvas()
     self.scrolling_text_pos = self.canvas.width
     self.scrolling_finished = False
+    self.scrolling_period = 0.0
     self.starttime = time.time()
 
   def render(self):
@@ -59,6 +60,7 @@ class MainRenderer:
   # Render an offday screen with the weather, clock and news
   def __render_offday(self):
     self.scrolling_finished = False
+    self.scrolling_period = 0.0
 
     while True:
       color = self.data.config.scoreboard_colors.color("default.background")
@@ -116,6 +118,7 @@ class MainRenderer:
       if time_delta >= rotate_rate and self.scrolling_finished:
         self.starttime = time.time()
         self.scrolling_finished = False
+        self.scrolling_period = 0.0
         self.data.needs_refresh = True
 
         if Status.is_fresh(self.data.overview.status):
@@ -205,7 +208,16 @@ class MainRenderer:
     """Updates the position of the probable starting pitcher text."""
     pos_after_scroll = self.scrolling_text_pos - 1
     if pos_after_scroll + new_pos < 0:
-      self.scrolling_finished = True
-      self.scrolling_text_pos = self.canvas.width
+
+      # If this is the first time through scrolling the text then record the scrolling period
+      if self.scrolling_finished == False:
+        self.scrolling_finished = True
+        self.scrolling_period = time.time() - self.starttime
+
+      # If we don't care about partial messages or there's enough time left for another scrolling period then reset the scrolling text
+      time_delta = time.time() - self.starttime
+      rotate_rate = self.__rotate_rate_for_status(self.data.overview.status)
+      if not self.data.config.rotation_avoid_scrolling_partial_messages or time_delta + self.scrolling_period < rotate_rate:
+        self.scrolling_text_pos = self.canvas.width
     else:
       self.scrolling_text_pos = pos_after_scroll

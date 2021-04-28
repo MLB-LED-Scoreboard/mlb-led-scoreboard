@@ -21,6 +21,7 @@
 	"rotation": {
 		"enabled": true,
 		"scroll_until_finished": true,
+		"avoid_scrolling_partial_messages": false,
 		"only_preferred": false,
 		"rates": {
 			"live": 15.0,
