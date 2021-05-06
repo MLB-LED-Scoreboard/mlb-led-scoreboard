@@ -233,7 +233,7 @@
     "scrolling_text": {
       "x": 0,
       "y": 30,
-      "width": 64
+      "width": 32
     },
     "time": {
       "x": 16,
