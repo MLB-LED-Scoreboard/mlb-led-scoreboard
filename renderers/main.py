@@ -22,6 +22,7 @@ class MainRenderer:
     self.data = data
     self.canvas = matrix.CreateFrameCanvas()
     self.scrolling_text_pos = self.canvas.width
+    self.scrolling_status_pos = self.canvas.width
     self.scrolling_finished = False
     self.starttime = time.time()
 
@@ -181,14 +182,20 @@ class MainRenderer:
       self.__update_scrolling_text_pos(renderer.render())
 
     # Draw the scoreboar renderer
-    elif Status.is_irregular(overview.status):
+    elif True: # Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
       if scoreboard.get_text_for_reason():
         scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
-        renderer = StatusRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
-        self.__update_scrolling_text_pos(renderer.render())
+        renderer = StatusRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos, self.scrolling_status_pos)
+        scrolling_text_pos, status_text_pos = renderer.render()
+
+        self.__update_scrolling_status_pos(status_text_pos)
+        self.__update_scrolling_text_pos(scrolling_text_pos)
       else:
-        StatusRenderer(self.canvas, scoreboard, self.data).render()
+        renderer = StatusRenderer(self.canvas, scoreboard, self.data, status_scroll_pos = self.scrolling_status_pos)
+        _scrolling_text_pos, status_text_pos = renderer.render()
+
+        self.__update_scrolling_status_pos(status_text_pos)
     else:
       scoreboard = Scoreboard(overview)
       ScoreboardRenderer(self.canvas, scoreboard, self.data).render()
@@ -209,3 +216,11 @@ class MainRenderer:
       self.scrolling_text_pos = self.canvas.width
     else:
       self.scrolling_text_pos = pos_after_scroll
+
+  def __update_scrolling_status_pos(self, new_pos):
+    """Updates the position of the status text."""
+    pos_after_scroll = self.scrolling_status_pos - 1
+    if pos_after_scroll + new_pos < 0:
+      self.scrolling_status_pos = self.canvas.width
+    else:
+      self.scrolling_status_pos = pos_after_scroll
