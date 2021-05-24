@@ -246,7 +246,7 @@
                     "type": "boolean",
                     "title": "avoid_scrolling_partial_messages",
                     "description": "If scrolling text would be interrupted mid scroll by a rotation, don't start scrolling. Text will always be scrolled at least once.",
-                    "default": true
+                    "default": false
                 },
                 "only_preferred": {
                     "$id": "#/properties/rotation/properties/only_preferred",
@@ -316,6 +316,7 @@
             "required": [
                 "enabled",
                 "scroll_until_finished",
+                "avoid_scrolling_partial_messages",
                 "only_preferred",
                 "rates",
                 "while_preferred_team_live"
