@@ -241,6 +241,13 @@
                     "description": "If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.",
                     "default": true
                 },
+                "avoid_scrolling_partial_messages": {
+                    "$id": "#/properties/rotation/properties/avoid_scrolling_partial_messages",
+                    "type": "boolean",
+                    "title": "avoid_scrolling_partial_messages",
+                    "description": "If scrolling text would be interrupted mid scroll by a rotation, don't start scrolling. Text will always be scrolled at least once.",
+                    "default": true
+                },
                 "only_preferred": {
                     "$id": "#/properties/rotation/properties/only_preferred",
                     "type": "boolean",
