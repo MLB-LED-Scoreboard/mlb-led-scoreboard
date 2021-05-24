@@ -1,0 +1,436 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://github.com/sflems/led-board-manager/staticfiles/schema/mlb.config.schema.json",
+    "type": "object",
+    "title": "MLB LED Scoreboard configuration",
+    "description": "Configuration that controls the MLB LED scoreboard rgb matrix application",
+    "default": {},
+    "additionalProperties": true,
+    "required": [
+        "preferred",
+        "news_ticker",
+        "standings",
+        "rotation",
+        "weather",
+        "time_format",
+        "end_of_day",
+        "full_team_names",
+        "scrolling_speed",
+        "debug",
+        "demo_date"
+    ],
+    "properties": {
+        "preferred": {
+            "$id": "#/properties/preferred",
+            "type": "object",
+            "title": "preferred",
+            "description": "Options for team and division preference",
+            "required": [
+                "teams",
+                "divisions"
+            ],
+            "properties": {
+                "teams": {
+                    "$id": "#/properties/preferred/properties/teams",
+                    "type": "array",
+                    "title": "teams",
+                    "description": "Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team.",
+                    "default": [
+                        "Cubs"
+                    ],
+                    "examples": [
+                        "Cubs",
+                        "Brewers"
+                    ],
+                    "items": {
+                        "$id": "#/properties/preferred/properties/teams/items",
+                        "type": "string",
+                        "title": "team",
+                        "description": "Team selected to display",
+                        "default": "Cubs",
+                        "enum": [
+                            "Angels",
+                            "Astros",
+                            "Athletics",
+                            "Blue Jays",
+                            "Braves",
+                            "Brewers",
+                            "Cardinals",
+                            "Cubs",
+                            "Diamondbacks",
+                            "Dodgers",
+                            "Giants",
+                            "Indians",
+                            "Mariners",
+                            "Marlins",
+                            "Mets",
+                            "Nationals",
+                            "Orioles",
+                            "Padres",
+                            "Phillies",
+                            "Pirates",
+                            "Rangers",
+                            "Rays",
+                            "Red Sox",
+                            "Reds",
+                            "Rockies",
+                            "Royals",
+                            "Tigers",
+                            "Twins",
+                            "White Sox",
+                            "Yankees"
+                        ]
+                    }
+                },
+                "divisions": {
+                    "$id": "#/properties/preferred/properties/divisions",
+                    "type": "array",
+                    "title": "divisions",
+                    "description": "Pass an array of preferred divisions that will be rotated through in the order they are entered.",
+                    "default": [
+                        "AL East"
+                    ],
+                    "examples": [
+                        "NL West",
+                        "AL Central"
+                    ],
+                    "items": {
+                        "$id": "#/properties/preferred/properties/divisions/items",
+                        "type": "string",
+                        "title": "division",
+                        "description": "Division selected to display",
+                        "default": "AL East",
+                        "enum": [
+                            "AL East",
+                            "AL Central",
+                            "AL West",
+                            "NL East",
+                            "NL Central",
+                            "NL West"
+                        ]
+                    }
+                }
+            }
+        },
+        "news_ticker": {
+            "$id": "#/properties/news_ticker",
+            "type": "object",
+            "title": "news_ticker",
+            "description": "Options for displaying a nice clock/weather/news ticker screen.",
+            "default": {},
+            "properties": {
+                "always_display": {
+                    "$id": "#/properties/news_ticker/properties/always_display",
+                    "type": "boolean",
+                    "title": "always_display",
+                    "description": "Display the news ticker screen at all times (supercedes the standings setting).",
+                    "default": false
+                },
+                "team_offday": {
+                    "$id": "#/properties/news_ticker/properties/team_offday",
+                    "type": "boolean",
+                    "title": "team_offday",
+                    "description": "Display the news ticker when your prefered team is on an offday",
+                    "default": true
+                },
+                "preferred_teams": {
+                    "$id": "#/properties/news_ticker/properties/preferred_teams",
+                    "type": "boolean",
+                    "title": "preferred_teams",
+                    "description": "Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams",
+                    "default": true
+                },
+                "traderumors": {
+                    "$id": "#/properties/news_ticker/properties/traderumors",
+                    "type": "boolean",
+                    "title": "traderumors",
+                    "description": "Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.",
+                    "default": true
+                },
+                "mlb_news": {
+                    "$id": "#/properties/news_ticker/properties/mlb_news",
+                    "type": "boolean",
+                    "title": "mlb_news",
+                    "description": "Include MLB's frontpage news.",
+                    "default": true
+                },
+                "countdowns": {
+                    "$id": "#/properties/news_ticker/properties/countdowns",
+                    "type": "boolean",
+                    "title": "countdowns",
+                    "description": "Include various countdowns in the ticker.",
+                    "default": true
+                },
+                "date": {
+                    "$id": "#/properties/news_ticker/properties/date",
+                    "type": "boolean",
+                    "title": "date",
+                    "description": "Display today's date to start the ticker. This will always be enabled if no other ticker options are.",
+                    "default": true
+                },
+                "date_format": {
+                    "$id": "#/properties/news_ticker/properties/date_format",
+                    "type": "string",
+                    "title": "date_format",
+                    "description": "Display the date with a given format. You can check all of the date formatting options at strftime.org.",
+                    "default": "%x"
+                }
+            },
+            "required": [
+                "always_display",
+                "team_offday",
+                "preferred_teams",
+                "traderumors",
+                "mlb_news",
+                "countdowns",
+                "date",
+                "date_format"
+            ]
+        },
+        "standings": {
+            "id": "#/properties/standings",
+            "type": "object",
+            "title": "standings",
+            "description": "Options for displaying standings for a division.",
+            "properties": {
+                "team_offday": {
+                    "$id": "#/properties/standings/properties/team_offday",
+                    "type": "boolean",
+                    "title": "team_offday",
+                    "description": "Display standings for the provided preferred_divisions when the preferred_teams is not playing on the current day.",
+                    "default": false
+                },
+                "mlb_offday": {
+                    "$id": "#/properties/standings/properties/mlb_offday",
+                    "type": "boolean",
+                    "title": "mlb_offday",
+                    "description": "Display standings for the provided preferred_divisions when there are no games on the current day.",
+                    "default": true
+                },
+                "always_display": {
+                    "$id": "#/properties/standings/properties/always_display",
+                    "type": "boolean",
+                    "title": "always_display",
+                    "description": "Display standings for the provided preferred_divisions.",
+                    "default": false
+                }
+            },
+            "required": [
+                "team_offday",
+                "mlb_offday",
+                "always_display"
+            ]
+        },
+        "rotation": {
+            "id": "#/properties/rotation",
+            "type": "object",
+            "title": "rotation",
+            "description": "Options for rotation through the day's games.",
+            "properties": {
+                "enabled": {
+                    "$id": "#/properties/rotation/properties/enabled",
+                    "type": "boolean",
+                    "title": "enabled",
+                    "description": "Rotate through each game of the day every 15 seconds.",
+                    "default": true
+                },
+                "scroll_until_finished": {
+                    "$id": "#/properties/rotation/properties/scroll_until_finished",
+                    "type": "boolean",
+                    "title": "scroll_until_finished",
+                    "description": "If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.",
+                    "default": true
+                },
+                "only_preferred": {
+                    "$id": "#/properties/rotation/properties/only_preferred",
+                    "type": "boolean",
+                    "title": "only_preferred",
+                    "description": "Only rotate through games in your preferred_teams list.",
+                    "default": false
+                },
+                "rates": {
+                    "id": "#/properties/rotation/properties/rates",
+                    "type": "object",
+                    "title": "rates",
+                    "description": "Dictionary of Floats. Each type of screen can use a different rotation rate.",
+                    "properties": {
+                        "live": {
+                            "id": "#/properties/rotation/properties/rates/properties/live",
+                            "type": "number",
+                            "multipleOf": 1.0,
+                            "default": "15.0"
+                        },
+                        "final": {
+                            "id": "#/properties/rotation/properties/rates/properties/final",
+                            "type": "number",
+                            "multipleOf": 1.0,
+                            "default": "15.0"
+                        },
+                        "pregame": {
+                            "id": "#/properties/rotation/properties/rates/properties/pregame",
+                            "type": "number",
+                            "multipleOf": 1.0,
+                            "default": "15.0"
+                        }
+                    },
+                    "required": [
+                        "live",
+                        "final",
+                        "pregame"
+                    ]
+                },
+                "while_preferred_team_live": {
+                    "id": "#/properties/rotation/properties/while_preferred_team_live",
+                    "type": "object",
+                    "title": "while_preferred_team_live",
+                    "description": "Options for rotating while your chosen preferred_teams is live.",
+                    "properties": {
+                        "enabled": {
+                            "$id": "#/properties/rotation/properties/while_preferred_team_live/properties/enabled",
+                            "type": "boolean",
+                            "title": "enabled",
+                            "description": "Rotation is enabled while your configured preferred_teams game is live.",
+                            "default": false
+                        },
+                        "during_inning_breaks": {
+                            "$id": "#/properties/rotation/properties/while_preferred_team_live/properties/during_inning_breaks",
+                            "type": "boolean",
+                            "title": "during_inning_breaks",
+                            "description": "Rotation is enabled while your configured preferred_teams game is live during an inning break.",
+                            "default": false
+                        }
+                    },
+                    "required": [
+                        "enabled",
+                        "during_inning_breaks"
+                    ]
+                }
+            },
+            "required": [
+                "enabled",
+                "scroll_until_finished",
+                "only_preferred",
+                "rates",
+                "while_preferred_team_live"
+            ]
+        },
+        "weather": {
+            "$id": "#/properties/weather",
+            "type": "object",
+            "title": "weather",
+            "description": "Options for retrieving the weather.",
+            "default": {},
+            "properties": {
+                "apikey": {
+                    "$id": "#/properties/weather/properties/apikey",
+                    "type": "string",
+                    "title": "apikey",
+                    "description": "An API key is requires to use the weather service. You can get one for free at https://home.openweathermap.org/users/sign_up.",
+                    "default": ""
+                },
+                "location": {
+                    "$id": "#/properties/weather/properties/apikey",
+                    "type": "string",
+                    "title": "location",
+                    "description": "Your location in City, State, country format ie. Toronto,on,ca",
+                    "default": "Chicago,il,us",
+                    "examples": [
+                        "Chicago,il,us"
+                    ]
+                },
+                "metric_units": {
+                    "$id": "#/properties/weather/properties/metric_units",
+                    "type": "boolean",
+                    "title": "metric_units",
+                    "description": "Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.",
+                    "default": false
+                }
+            },
+            "required": [
+                "apikey",
+                "location",
+                "metric_units"
+            ]
+        },
+        "time_format": {
+            "$id": "#/properties/time_format",
+            "type": "string",
+            "title": "time_format",
+            "description": "Sets the preferred hour format for displaying time. Accepted values are 12h or 24h depending on which you prefer.",
+            "default": "12h",
+            "enum": [
+                "12h",
+                "24h"
+            ]
+        },
+        "end_of_day": {
+            "$id": "#/properties/end_of_day",
+            "type": "string",
+            "title": "end_of_day",
+            "description": "A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.",
+            "default": "00:00",
+            "examples": [
+                "08:00",
+                "21:12"
+            ],
+            "maxLength": 5,
+            "pattern": "([01]?[0-9]|2[0-3]):[0-5][0-9]"
+        },
+        "full_team_names": {
+            "$id": "#/properties/full_team_names",
+            "type": "boolean",
+            "title": "full_team_names",
+            "description": "If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.",
+            "default": false
+        },
+        "scrolling_speed": {
+            "$id": "#/properties/scrolling_speed",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4,
+            "description": "Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.",
+            "default": 2
+        },
+        "debug": {
+            "$id": "#/properties/debug",
+            "type": "boolean",
+            "title": "debug",
+            "description": "Game and other debug data is written to your console.",
+            "default": false
+        },
+        "demo_date": {
+            "$id": "#/properties/demo_date",
+            "title": "demo_date",
+            "description": "YYYY-MM-DD from which to pull data to demonstrate the scoreboard. An empty string will disable demo mode.",
+            "anyOf": [
+                {
+                    "type": "string",
+                    "title": "Date",
+                    "format": "date"
+                },
+                {
+                    "type": "string",
+                    "title": "Disabled",
+                    "maxLength": 0,
+                    "default": "",
+                    "enum": [
+                        ""
+                    ]
+                }
+            ]
+        }
+    },
+    "required": [
+        "preferred",
+        "news_ticker",
+        "standings",
+        "rotation",
+        "weather",
+        "time_format",
+        "end_of_day",
+        "full_team_names",
+        "scrolling_speed",
+        "debug",
+        "demo_date"
+    ]
+}
