@@ -182,7 +182,7 @@ class MainRenderer:
       self.__update_scrolling_text_pos(renderer.render())
 
     # Draw the scoreboar renderer
-    elif True: # Status.is_irregular(overview.status):
+    elif Status.is_irregular(overview.status):
       scoreboard = Scoreboard(overview)
       if scoreboard.get_text_for_reason():
         scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
