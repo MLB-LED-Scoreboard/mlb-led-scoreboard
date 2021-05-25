@@ -79,25 +79,17 @@ class Team:
 
     def __init__(self, data, division_id):
         self.__data = data
-        self.__division_standings = self.__find_division(division_id)
         self.name = self.__name()
         self.team_abbrev = self.__TEAM_ABBREVIATIONS[self.name]
         self.w = self.__parse_wins()
         self.l = self.__parse_losses()
         self.gb = self.__data['divisionGamesBack']
 
-    def __find_division(self, division_id):
-        for record in self.__data['records']['divisionRecords']:
-            if record['division']['id'] == division_id:
-                return record
-
-        raise Exception('Could not find division record.')
-
     def __name(self):
         return self.__data['team']['name']
 
     def __parse_wins(self):
-        return self.__division_standings['wins']
+        return self.__data['wins']
 
     def __parse_losses(self):
-        return self.__division_standings['losses']
+        return self.__data['losses']
