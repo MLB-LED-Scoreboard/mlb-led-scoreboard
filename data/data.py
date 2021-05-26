@@ -31,12 +31,12 @@ class Data:
     # Flag to determine when to refresh data
     self.needs_refresh = True
 
-    # Fetch the games for today
-    self.refresh_games()
-
     # Fetch all standings data for today
     # (Good to have in case we add a standings screen while rotating scores)
     self.refresh_standings()
+
+    # Fetch the games for today
+    self.refresh_games()
 
     # What game do we want to start on?
     self.current_game_index = self.game_index_for_preferred_team()
@@ -91,8 +91,10 @@ class Data:
         self.set_current_date()
 
         all_games = mlbgame.day(self.year, self.month, self.day)
-        if self.config.rotation_only_preferred:
+        if self.config.rotation_only_preferred_teams:
           self.games = self.__filter_list_of_games(all_games, self.config.preferred_teams)
+        elif self.config.rotation_only_preferred_divisions:
+          self.games = self.__filter_list_of_games(all_games, self.__get_teams_from_divisions(self.config.preferred_divisions))
         else:
           self.games = all_games
 
@@ -219,6 +221,9 @@ class Data:
 
   def __filter_list_of_games(self, games, teams):
     return list(game for game in set(games) if set([game.away_team, game.home_team]).intersection(set(teams)))
+
+  def __get_teams_from_divisions(self, divisions):
+    return list(team.short_name for division in self.standings.divisions for team in division.teams if division.name in divisions)
 
   def __game_index_for(self, team_name):
     team_index = 0

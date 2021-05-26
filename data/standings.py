@@ -43,44 +43,45 @@ class Division:
 
 
 class Team:
-    __TEAM_ABBREVIATIONS = {
-        'Arizona Diamondbacks': 'ARI',
-        'Atlanta Braves': 'ATL',
-        'Baltimore Orioles': 'BAL',
-        'Boston Red Sox': 'BOS',
-        'Chicago Cubs': 'CHC',
-        'Chicago White Sox': 'CHW',
-        'Cincinnati Reds': 'CIN',
-        'Cleveland Indians': 'CLE',
-        'Colorado Rockies': 'COL',
-        'Detroit Tigers': 'DET',
-        'Florida Marlins': 'FLA',
-        'Houston Astros': 'HOU',
-        'Kansas City Royals': 'KAN',
-        'Los Angeles Angels': 'LAA',
-        'Los Angeles Dodgers': 'LAD',
-        'Miami Marlins': 'MIA',
-        'Milwaukee Brewers': 'MIL',
-        'Minnesota Twins': 'MIN',
-        'New York Mets': 'NYM',
-        'New York Yankees': 'NYY',
-        'Oakland Athletics': 'OAK',
-        'Philadelphia Phillies': 'PHI',
-        'Pittsburgh Pirates': 'PIT',
-        'San Diego Padres': 'SD',
-        'San Francisco Giants': 'SF',
-        'Seattle Mariners': 'SEA',
-        'St. Louis Cardinals': 'STL',
-        'Tampa Bay Rays': 'TB',
-        'Texas Rangers': 'TEX',
-        'Toronto Blue Jays': 'TOR',
-        'Washington Nationals': 'WAS',
+    __TEAM_NAMES = {
+        'Arizona Diamondbacks': {'abbrev': 'ARI', 'short': 'Diamondbacks'},
+        'Atlanta Braves': {'abbrev': 'ATL', 'short': 'Braves'},
+        'Baltimore Orioles': {'abbrev': 'BAL', 'short': 'Orioles'},
+        'Boston Red Sox': {'abbrev': 'BOS', 'short': 'Red Sox'},
+        'Chicago Cubs': {'abbrev': 'CHC', 'short': 'Cubs'},
+        'Chicago White Sox': {'abbrev': 'CHW', 'short': 'White Sox'},
+        'Cincinnati Reds': {'abbrev': 'CIN', 'short': 'Reds'},
+        'Cleveland Indians': {'abbrev': 'CLE', 'short': 'Indians'},
+        'Colorado Rockies': {'abbrev': 'COL', 'short': 'Rockies'},
+        'Detroit Tigers': {'abbrev': 'DET', 'short': 'Tigers'},
+        'Florida Marlins': {'abbrev': 'FLA', 'short': 'Marlins'},
+        'Houston Astros': {'abbrev': 'HOU', 'short': 'Astros'},
+        'Kansas City Royals': {'abbrev': 'KAN', 'short': 'Royals'},
+        'Los Angeles Angels': {'abbrev': 'LAA', 'short': 'Angels'},
+        'Los Angeles Dodgers': {'abbrev': 'LAD', 'short': 'Dodgers'},
+        'Miami Marlins': {'abbrev': 'MIA', 'short': 'Marlins'},
+        'Milwaukee Brewers': {'abbrev': 'MIL', 'short': 'Brewers'},
+        'Minnesota Twins': {'abbrev': 'MIN', 'short': 'Twins'},
+        'New York Mets': {'abbrev': 'NYM', 'short': 'Mets'},
+        'New York Yankees': {'abbrev': 'NYY', 'short': 'Yankees'},
+        'Oakland Athletics': {'abbrev': 'OAK', 'short': 'Athletics'},
+        'Philadelphia Phillies': {'abbrev': 'PHI', 'short': 'Phillies'},
+        'Pittsburgh Pirates': {'abbrev': 'PIT', 'short': 'Pirates'},
+        'San Diego Padres': {'abbrev': 'SD', 'short': 'Padres'},
+        'San Francisco Giants': {'abbrev': 'SF', 'short': 'Giants'},
+        'Seattle Mariners': {'abbrev': 'SEA', 'short': 'Mariners'},
+        'St. Louis Cardinals': {'abbrev': 'STL', 'short': 'Cardinals'},
+        'Tampa Bay Rays': {'abbrev': 'TB', 'short': 'Rays'},
+        'Texas Rangers': {'abbrev': 'TEX', 'short': 'Rangers'},
+        'Toronto Blue Jays': {'abbrev': 'TOR', 'short': 'Blue Jays'},
+        'Washington Nationals': {'abbrev': 'WAS', 'short': 'Nationals'},
     }
 
     def __init__(self, data, division_id):
         self.__data = data
         self.name = self.__name()
-        self.team_abbrev = self.__TEAM_ABBREVIATIONS[self.name]
+        self.short_name = self.__TEAM_NAMES[self.name]["short"]
+        self.team_abbrev = self.__TEAM_NAMES[self.name]["abbrev"]
         self.w = self.__parse_wins()
         self.l = self.__parse_losses()
         self.gb = self.__data['divisionGamesBack']

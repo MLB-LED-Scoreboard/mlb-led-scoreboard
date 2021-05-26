@@ -139,7 +139,8 @@ A default `config.json.example` file is included for reference. Copy this file t
 "rotation":                            Options for rotation through the day's games
   "enabled"                    Bool    Rotate through each game of the day every 15 seconds.
   "scroll_until_finished"      Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"             Bool    Only rotate through games in your preferred_teams list.
+  "only_preferred_teams"       Bool    Only rotate through games in your preferred_teams list (supercedes the only_preferred_divisions setting).
+  "only_preferred_divisions"   Bool    Only rotate through games in your preferred_divisions list.
   "rates"                      Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
                                Float   A Float can be used to set all screen types to the same rotate rate.
 
