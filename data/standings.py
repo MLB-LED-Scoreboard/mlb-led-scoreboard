@@ -79,7 +79,7 @@ class Team:
 
     def __init__(self, data, division_id):
         self.__data = data
-        self.__division_standings = self.__find_division(division_id)
+        self.__division_standings = self.__data['leagueRecord']
         self.name = self.__name()
         self.team_abbrev = self.__TEAM_ABBREVIATIONS[self.name]
         self.w = self.__parse_wins()
