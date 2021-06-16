@@ -2,7 +2,11 @@ from data.status import Status
 from renderers.teams import TeamsRenderer
 from renderers.scrollingtext import ScrollingText
 from renderers.network import NetworkErrorRenderer
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+
 from utils import get_font, center_text_position
 
 # "Manager Challenge is too long"

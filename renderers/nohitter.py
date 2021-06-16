@@ -1,4 +1,8 @@
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 import data.layout
 import debug
 

@@ -1,5 +1,8 @@
-from rgbmatrix import graphics
-
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 class OutsRenderer:
   """Renders the out circles on the scoreboard."""
 

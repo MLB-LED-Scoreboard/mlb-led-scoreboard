@@ -1,5 +1,9 @@
 from utils import get_file
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 import json
 import debug
 import os.path

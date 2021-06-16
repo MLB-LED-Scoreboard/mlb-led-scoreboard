@@ -3,7 +3,10 @@ from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
 from renderers.offday import OffdayRenderer
 from renderers.standings import StandingsRenderer
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
+try:
+    from rgbmatrix import RGBMatrix, RGBMatrixOptions
+except ImportError:
+     from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
 from utils import args, led_matrix_options
 from data.data import Data
 import renderers.standings

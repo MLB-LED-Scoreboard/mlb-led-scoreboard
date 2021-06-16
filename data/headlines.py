@@ -2,7 +2,7 @@ import debug
 import time
 import feedparser
 from datetime import datetime
-from dates import Dates
+from data.dates import Dates
 
 try:
   from HTMLParser import HTMLParser
@@ -136,13 +136,13 @@ class Headlines:
 
   def __strings_for_feed(self, feed, max_entries):
     spaces = " " * HEADLINE_SPACER_SIZE
-    title = feed.feed.title.encode("ascii", "ignore")
+    title = feed.feed.title
     headlines = ""
 
     for idx, entry in enumerate(feed.entries):
       if idx < max_entries:
         h = HTMLParser()
-        text = h.unescape(entry.title.encode("ascii", "ignore"))
+        text = h.unescape(entry.title)
         headlines += text + spaces
     return title + spaces + headlines
 

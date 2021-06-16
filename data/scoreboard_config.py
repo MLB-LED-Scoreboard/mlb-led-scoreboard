@@ -1,6 +1,6 @@
 from utils import get_file, deep_update
-from layout import Layout
-from color import Color
+from data.layout import Layout
+from data.color import Color
 import json
 import os
 import sys
@@ -101,9 +101,9 @@ class ScoreboardConfig:
 
   def check_time_format(self):
     if self.time_format.lower() == "24h":
-      self.time_format = "%-H"
+      self.time_format = "%H"
     else:
-      self.time_format = "%-I"
+      self.time_format = "%I"
 
   def check_rotate_rates(self):
     if isinstance(self.rotation_rates, dict) == False:

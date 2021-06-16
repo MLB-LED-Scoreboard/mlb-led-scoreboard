@@ -1,4 +1,8 @@
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 from utils import center_text_position
 import data.layout
 import debug

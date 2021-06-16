@@ -1,4 +1,8 @@
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+
 from data.layout import Layout
 import data.layout
 
@@ -34,7 +38,7 @@ class BasesRenderer:
   def __render_base_outline(self, base, color):
     x, y = (base["x"], base["y"])
     size = base["size"]
-    half = abs(size/2)
+    half = abs(size//2)
     graphics.DrawLine(self.canvas, x + half, y, x, y + half, color)
     graphics.DrawLine(self.canvas, x + half, y, x + size, y + half, color)
     graphics.DrawLine(self.canvas, x + half, y + size, x, y + half, color)
@@ -43,7 +47,7 @@ class BasesRenderer:
   def __render_baserunner(self, base, color):
     x, y = (base["x"], base["y"])
     size = base["size"]
-    half = abs(size/2)
+    half = abs(size//2)
     for offset in range(1, half+1):
       graphics.DrawLine(self.canvas, x + half - offset, y + size - offset, x + half + offset, y + size - offset, color)
       graphics.DrawLine(self.canvas, x + half - offset, y + offset, x + half + offset, y + offset, color)

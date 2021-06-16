@@ -1,4 +1,8 @@
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 from utils import center_text_position
 
 class ScrollingText:
@@ -32,4 +36,4 @@ class ScrollingText:
 		return len(self.text) * self.font["size"]["width"] > self.width
 
 	def __center_position(self):
-		return center_text_position(self.text, abs(self.width/2) + self.x, self.font["size"]["width"])
+		return center_text_position(self.text, abs(self.width//2) + self.x, self.font["size"]["width"])

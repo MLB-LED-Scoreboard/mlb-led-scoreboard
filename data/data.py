@@ -1,22 +1,19 @@
 from datetime import datetime, timedelta
-from final import Final
-from pregame import Pregame
-from scoreboard import Scoreboard
-from standings import Standings, Division, Team
-from status import Status
-from inning import Inning
-from weather import Weather
-from headlines import Headlines
+from data.final import Final
+from data.pregame import Pregame
+from data.scoreboard import Scoreboard
+from data.standings import Standings, Division, Team
+from data.status import Status
+from data.inning import Inning
+from data.weather import Weather
+from data.headlines import Headlines
 import urllib
-import layout
+import data.layout as layout
 import mlbgame
 import debug
 import time
 
-try:
-    from urllib.error import URLError
-except ImportError:
-    from urllib2 import URLError
+from urllib.error import URLError
 
 NETWORK_RETRY_SLEEP_TIME = 10.0
 
@@ -83,7 +80,7 @@ class Data:
 
   def refresh_games(self):
     debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
-    urllib.urlcleanup()
+    urllib.request.urlcleanup()
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
@@ -101,7 +98,7 @@ class Data:
         self.games_refresh_time = time.time()
         self.network_issues = False
         break
-      except URLError, e:
+      except URLError as e:
         self.network_issues = True
         debug.error("Networking error while refreshing the master list of games. {} retries remaining.".format(attempts_remaining))
         debug.error("URLError: {}".format(e.reason))
@@ -115,7 +112,7 @@ class Data:
         time.sleep(NETWORK_RETRY_SLEEP_TIME)
 
   def refresh_overview(self):
-    urllib.urlcleanup()
+    urllib.request.urlcleanup()
     attempts_remaining = 5
     while attempts_remaining > 0:
       try:
@@ -125,7 +122,7 @@ class Data:
         self.print_overview_debug()
         self.network_issues = False
         break
-      except URLError, e:
+      except URLError as e:
         self.network_issues = True
         debug.error("Networking Error while refreshing the current overview. {} retries remaining.".format(attempts_remaining))
         debug.error("URLError: {}".format(e.reason))
@@ -151,7 +148,7 @@ class Data:
   # Will use a network call to fetch the preferred team's game overview
   def fetch_preferred_team_overview(self):
     if not self.is_offday_for_preferred_team():
-      urllib.urlcleanup()
+      urllib.request.urlcleanup()
       game = self.games[self.game_index_for_preferred_team()]
       game_overview = mlbgame.overview(game.game_id)
       debug.log("Preferred Team's Game Status: {}, {} {}".format(game_overview.status, game_overview.inning_state, game_overview.inning))
@@ -230,7 +227,7 @@ class Data:
           team_index = next((i for i in team_idxs if Status.is_live(mlbgame.overview(self.games[i].game_id))), team_idxs[0])
           self.network_issues = False
           break
-        except URLError, e:
+        except URLError as e:
           self.network_issues = True
           debug.error("Networking Error while refreshing live game status of {}. {} retries remaining.".format(team_name,attempts_remaining))
           debug.error("URLError: {}".format(e.reason))

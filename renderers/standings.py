@@ -1,5 +1,9 @@
 from PIL import Image
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 from utils import get_font, get_file, center_text_position
 from renderers.network import NetworkErrorRenderer
 import time
@@ -112,7 +116,7 @@ class StandingsRenderer:
     image_file = get_file("Assets/fire.jpg")
     image = Image.open(image_file)
     image_rgb = image.convert("RGB")
-    image_x = (self.canvas.width / 2) - 16
+    image_x = (self.canvas.width // 2) - 16
 
     self.matrix.Clear()
     while True:

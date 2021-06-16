@@ -1,4 +1,8 @@
-from rgbmatrix import graphics
+try:
+  from rgbmatrix import graphics
+except ImportError:
+  from RGBMatrixEmulator import graphics
+  
 from PIL import Image
 from utils import get_font, get_file, center_text_position
 from renderers.scrollingtext import ScrollingText
@@ -30,7 +34,7 @@ class OffdayRenderer:
 
   def __render_clock(self):
     time_format_str = "{}:%M".format(self.data.config.time_format)
-    if self.data.config.time_format == "%-I":
+    if self.data.config.time_format == "%I":
       time_format_str += "%p"
     time_text = time.strftime(time_format_str)
     coords = self.layout.coords("offday.time")

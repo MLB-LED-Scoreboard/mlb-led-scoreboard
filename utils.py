@@ -1,4 +1,7 @@
-from rgbmatrix import RGBMatrixOptions, graphics
+try:
+    from rgbmatrix import graphics, RGBMatrixOptions
+except ImportError:
+     from RGBMatrixEmulator import graphics, RGBMatrixOptions
 import collections
 import argparse
 import os
@@ -14,7 +17,7 @@ def get_font():
   return font
 
 def center_text_position(text, center_pos, font_width):
-  return abs(center_pos - ((len(text) * font_width) / 2))
+  return abs(center_pos - ((len(text) * font_width) // 2))
 
 def split_string(string, num_chars):
   return [(string[i:i + num_chars]).strip() for i in range(0, len(string), num_chars)]

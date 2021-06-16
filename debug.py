@@ -30,4 +30,4 @@ def info(text):
 	__debugprint("INFO ({}): {}".format(__timestamp(), text))
 
 def __timestamp():
-	return time.strftime("{}:%M:%S".format(time_format), time.localtime())
+	return time.strftime("%H:%M:%S", time.localtime())
