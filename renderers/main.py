@@ -66,9 +66,9 @@ class MainRenderer:
             color = self.data.config.scoreboard_colors.color("default.background")
             self.canvas.Fill(color["r"], color["g"], color["b"])
 
-            scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
+            self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
             renderer = OffdayRenderer(self.canvas, self.data, self.scrolling_text_pos)
-            self.__update_scrolling_text_pos(renderer.render())
+            self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
             self.data.refresh_weather()
             self.data.refresh_news_ticker()
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
@@ -125,8 +125,8 @@ class MainRenderer:
                 #     self.scrolling_text_pos = self.canvas.width
 
                 if self.__should_rotate_to_next_game(self.data.game_data):
+                    self.data.advance_to_next_game()
                     self.scrolling_text_pos = self.canvas.width
-                    game = self.data.advance_to_next_game()
 
                 if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
                     self.data.refresh_games()

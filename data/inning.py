@@ -6,6 +6,6 @@ class Inning:
     END = "End"
 
     def __init__(self, game_data):
-        self.number = game_data["liveData"]["linescore"]["currentInning"]
-        self.state = game_data["liveData"]["linescore"]["inningState"]
-        self.ordinal = game_data["liveData"]["linescore"]["currentInningOrdinal"]
+        self.number = game_data["liveData"]["linescore"].get("currentInning", 0)
+        self.state = game_data["liveData"]["linescore"].get("inningState", "Top")
+        self.ordinal = game_data["liveData"]["linescore"].get("currentInningOrdinal", 0)

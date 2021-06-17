@@ -15,12 +15,12 @@ class Scoreboard:
     def __init__(self, game_data):
         self.away_team = Team(
             game_data["gameData"]["teams"]["away"]["abbreviation"],
-            game_data["liveData"]["linescore"]["teams"]["away"]["runs"],
+            game_data["liveData"]["linescore"]["teams"]["away"].get("runs", 0),
             game_data["gameData"]["teams"]["away"]["teamName"],
         )
         self.home_team = Team(
             game_data["gameData"]["teams"]["home"]["abbreviation"],
-            game_data["liveData"]["linescore"]["teams"]["home"]["runs"],
+            game_data["liveData"]["linescore"]["teams"]["home"].get("runs", 0),
             game_data["gameData"]["teams"]["home"]["teamName"],
         )
         self.inning = Inning(game_data)
