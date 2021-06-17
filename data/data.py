@@ -101,7 +101,7 @@ class Data:
                 else:
                     return all_games
 
-            except (HTTPError, URLError) as e:
+            except (HTTPError, URLError, TimeoutError) as e:
                 self.network_issues = True
                 debug.error(
                     "Networking error while refreshing the master list of games. {} retries remaining.".format(
@@ -135,7 +135,7 @@ class Data:
                 self.print_game_data_debug()
                 self.network_issues = False
                 break
-            except (HTTPError, URLError) as e:
+            except (HTTPError, URLError, TimeoutError) as e:
                 self.network_issues = True
                 debug.error(
                     "Networking Error while refreshing the current game_data. {} retries remaining.".format(

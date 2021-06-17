@@ -397,7 +397,6 @@ class Status:
 
     @staticmethod
     def is_live(status):
-        print(status)
         """Returns whether the game is currently live"""
         return status in Status.GAME_STATE_LIVE
 

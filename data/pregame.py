@@ -24,11 +24,11 @@ class Pregame:
 
         try:
             away_id = "ID" + str(game_data["gameData"]["probablePitchers"]["away"]["id"])
-            away_name = game_data["gameData"]["players"][away_id]["boxscore_name"]
+            away_name = game_data["gameData"]["players"][away_id]["boxscoreName"]
             away_stats = game_data["liveData"]["boxscore"]["teams"]["away"]["players"][away_id]["seasonStats"][
                 "pitching"
             ]
-            self.away_starter = "({}-{} {} ERA)".format(
+            self.away_starter = "{} ({}-{} {} ERA)".format(
                 away_name, away_stats["wins"], away_stats["losses"], away_stats["era"]
             )
         except:
@@ -36,11 +36,11 @@ class Pregame:
 
         try:
             home_id = "ID" + str(game_data["gameData"]["probablePitchers"]["home"]["id"])
-            home_name = game_data["gameData"]["players"][home_id]["boxscore_name"]
+            home_name = game_data["gameData"]["players"][home_id]["boxscoreName"]
             home_stats = game_data["liveData"]["boxscore"]["teams"]["home"]["players"][home_id]["seasonStats"][
                 "pitching"
             ]
-            self.home_starter = "({}-{} {} ERA)".format(
+            self.home_starter = "{} ({}-{} {} ERA)".format(
                 home_name, home_stats["wins"], home_stats["losses"], home_stats["era"]
             )
         except:

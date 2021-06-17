@@ -13,11 +13,12 @@ NORMAL_GAME_LENGTH = 9
 class InningRenderer:
     """Renders the inning and inning arrow on the scoreboard."""
 
-    def __init__(self, canvas, inning, data):
+    def __init__(self, canvas, inning, data, atbat):
         self.canvas = canvas
         self.inning = inning
         self.layout = data.config.layout
         self.colors = data.config.scoreboard_colors
+        self.atbat = atbat
 
     def render(self):
         if self.inning.state == Inning.TOP or self.inning.state == Inning.BOTTOM:
@@ -55,11 +56,23 @@ class InningRenderer:
         num_coords = self.layout.coords("inning.break.number")
         color = self.colors.graphics_color("inning.break.text")
         text = self.inning.state
-        num = self.inning.ordinal()
+        num = self.inning.ordinal
         text_x = center_text_position(text, text_coords["x"], text_font["size"]["width"])
         num_x = center_text_position(num, num_coords["x"], num_font["size"]["width"])
-        graphics.DrawText(self.canvas, text_font["font"], text_x, text_coords["y"], color, text)
-        graphics.DrawText(self.canvas, num_font["font"], num_x, num_coords["y"], color, num)
+        graphics.DrawText(self.canvas, text_font["font"], text_coords["x"], text_coords["y"], color, text)
+        graphics.DrawText(self.canvas, num_font["font"], num_coords["x"], num_coords["y"], color, num)
+
+        name_coords = self.layout.coords("inning.break.names")
+        graphics.DrawText(self.canvas, text_font["font"], name_coords["x"], name_coords["y"], color, "Due Up:")
+        graphics.DrawText(
+            self.canvas, text_font["font"], name_coords["x"] + 5, name_coords["y"] + 4, color, self.atbat.batter
+        )
+        graphics.DrawText(
+            self.canvas, text_font["font"], name_coords["x"] + 5, name_coords["y"] + 4, color, self.atbat.onDeck
+        )
+        graphics.DrawText(
+            self.canvas, text_font["font"], name_coords["x"] + 5, name_coords["y"] + 4, color, self.atbat.inHole
+        )
 
     # direction can be -1 for down or 1 for up
     def __render_arrow(self, x, y, size, direction):
