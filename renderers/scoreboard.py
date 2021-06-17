@@ -10,15 +10,15 @@ from renderers.atbat import AtBatRenderer
 
 
 class Scoreboard:
-    def __init__(self, canvas, scoreboard, data):
+    def __init__(self, canvas, scoreboard, data, text_pos):
         self.canvas = canvas
         self.scoreboard = scoreboard
         self.data = data
+        self.start_pos = text_pos
 
     def render(self):
-        TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
-        InningRenderer(self.canvas, self.scoreboard.inning, self.data, self.scoreboard.atbat).render()
 
+        pos = 0
         if self.scoreboard.inning.state == Inning.TOP or self.scoreboard.inning.state == Inning.BOTTOM:
 
             # Check if we're deep enough into a game and it's a no hitter or perfect game
@@ -27,8 +27,13 @@ class Scoreboard:
                 if self.data.config.layout.state_is_nohitter():
                     NoHitterRenderer(self.canvas, self.data).render()
 
+            pos = AtBatRenderer(self.canvas, self.scoreboard.atbat, self.data, self.start_pos).render()
+
             PitchesRenderer(self.canvas, self.scoreboard.pitches, self.data).render()
             OutsRenderer(self.canvas, self.scoreboard.outs, self.data).render()
             BasesRenderer(self.canvas, self.scoreboard.bases, self.data).render()
-            AtBatRenderer(self.canvas, self.scoreboard.atbat, self.data).render()
+
+        TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()
+        InningRenderer(self.canvas, self.scoreboard.inning, self.data, self.scoreboard.atbat).render()
         NetworkErrorRenderer(self.canvas, self.data).render()
+        return pos

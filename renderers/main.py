@@ -121,8 +121,8 @@ class MainRenderer:
                 self.scrolling_finished = False
                 self.data.needs_refresh = True
 
-                if Status.is_fresh(status):
-                    self.scrolling_text_pos = self.canvas.width
+                # if Status.is_fresh(status):
+                #     self.scrolling_text_pos = self.canvas.width
 
                 if self.__should_rotate_to_next_game(self.data.game_data):
                     self.scrolling_text_pos = self.canvas.width
@@ -178,31 +178,33 @@ class MainRenderer:
         # Draw the pregame renderer
         if Status.is_pregame(status):
             scoreboard = Scoreboard(game_data)
-            scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("pregame.scrolling_text"))
+            self.__max_scroll_x(self.data.config.layout.coords("pregame.scrolling_text"))
             pregame = Pregame(game_data, self.data.config.time_format)
             renderer = PregameRenderer(self.canvas, pregame, scoreboard, self.data, self.scrolling_text_pos)
-            self.__update_scrolling_text_pos(renderer.render())
+            self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
 
         # Draw the final game renderer
         elif Status.is_complete(status):
-            scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("final.scrolling_text"))
+            self.__max_scroll_x(self.data.config.layout.coords("final.scrolling_text"))
             final = Final(game_data)
             scoreboard = Scoreboard(game_data)
             renderer = FinalRenderer(self.canvas, final, scoreboard, self.data, self.scrolling_text_pos)
-            self.__update_scrolling_text_pos(renderer.render())
+            self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
 
         # Draw the scoreboar renderer
         elif Status.is_irregular(status):
             scoreboard = Scoreboard(game_data)
             if scoreboard.get_text_for_reason():
-                scroll_max_x = self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
+                self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
                 renderer = StatusRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
-                self.__update_scrolling_text_pos(renderer.render())
+                self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
             else:
                 StatusRenderer(self.canvas, scoreboard, self.data).render()
         else:
+            self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
             scoreboard = Scoreboard(game_data)
-            ScoreboardRenderer(self.canvas, scoreboard, self.data).render()
+            renderer = ScoreboardRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
+            self.__update_scrolling_text_pos(renderer.render(), 36)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
     def __max_scroll_x(self, scroll_coords):
@@ -212,11 +214,11 @@ class MainRenderer:
             self.scrolling_text_pos = scroll_max_x
         return scroll_max_x
 
-    def __update_scrolling_text_pos(self, new_pos):
+    def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of the probable starting pitcher text."""
         pos_after_scroll = self.scrolling_text_pos - 1
         if pos_after_scroll + new_pos < 0:
             self.scrolling_finished = True
-            self.scrolling_text_pos = self.canvas.width
+            self.scrolling_text_pos = end
         else:
             self.scrolling_text_pos = pos_after_scroll
