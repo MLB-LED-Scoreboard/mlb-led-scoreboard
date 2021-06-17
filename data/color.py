@@ -1,33 +1,36 @@
 from utils import get_file
+
 try:
-  from rgbmatrix import graphics
+    from rgbmatrix import graphics
 except ImportError:
-  from RGBMatrixEmulator import graphics
-  
+    from RGBMatrixEmulator import graphics
+
 import json
-import debug
 import os.path
 
+import debug
+
+
 class Color:
-  def __init__(self, color_json):
-    self.json = color_json
+    def __init__(self, color_json):
+        self.json = color_json
 
-  def color(self, keypath):
-    try:
-      d = self.__find_at_keypath(keypath)
-    except KeyError as e:
-      raise e
-    return d
+    def color(self, keypath):
+        try:
+            d = self.__find_at_keypath(keypath)
+        except KeyError as e:
+            raise e
+        return d
 
-  def graphics_color(self, keypath):
-    color = self.color(keypath)
-    if not color:
-      color = self.color("default.text")
-    return graphics.Color(color["r"], color["g"], color["b"])
+    def graphics_color(self, keypath):
+        color = self.color(keypath)
+        if not color:
+            color = self.color("default.text")
+        return graphics.Color(color["r"], color["g"], color["b"])
 
-  def __find_at_keypath(self, keypath):
-    keys = keypath.split('.')
-    rv = self.json
-    for key in keys:
-      rv = rv[key]
-    return rv
+    def __find_at_keypath(self, keypath):
+        keys = keypath.split(".")
+        rv = self.json
+        for key in keys:
+            rv = rv[key]
+        return rv

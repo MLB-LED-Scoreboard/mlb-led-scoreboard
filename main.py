@@ -1,17 +1,14 @@
-from datetime import datetime, timedelta
 from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
-from renderers.offday import OffdayRenderer
-from renderers.standings import StandingsRenderer
+
 try:
     from rgbmatrix import RGBMatrix, RGBMatrixOptions
 except ImportError:
-     from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
-from utils import args, led_matrix_options
-from data.data import Data
-import renderers.standings
-import mlbgame
+    from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
+
 import debug
+from data.data import Data
+from utils import args, led_matrix_options
 
 SCRIPT_NAME = "MLB LED Scoreboard"
 SCRIPT_VERSION = "4.0.1"
@@ -23,7 +20,7 @@ args = args()
 matrixOptions = led_matrix_options(args)
 
 # Initialize the matrix
-matrix = RGBMatrix(options = matrixOptions)
+matrix = RGBMatrix(options=matrixOptions)
 
 # Print some basic info on startup
 debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))

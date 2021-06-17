@@ -1,3 +1,3 @@
 class Outs:
-  def __init__(self, overview):
-    self.number = overview.outs
+    def __init__(self, game_data):
+        self.number = game_data["liveData"]["linescore"]["outs"]
