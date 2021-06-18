@@ -95,8 +95,9 @@ class MainRenderer:
                 try:
                     debug.log("Rendering Standings because no games are playing")
                     StandingsRenderer(self.matrix, self.canvas, self.data).render()
-                except:  # skip if this fails
-                    pass
+                except Exception as ex:
+                    debug.info("Could not render standings.")
+                    debug.log("%s: %s", type(ex).__name__, ex.args)
                 else:  # loop again to check if we succeeded
                     self.data.needs_refresh = True
                     continue

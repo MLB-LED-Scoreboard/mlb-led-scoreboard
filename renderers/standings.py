@@ -46,6 +46,8 @@ class StandingsRenderer:
         stat = "w"
         while True:
             offset = coords["offset"]
+            graphics.DrawLine(self.canvas, 0, 0, coords["width"], 0, self.divider_color)
+
             graphics.DrawText(
                 self.canvas, font["font"], coords["stat_title"]["x"], offset, self.stat_color, stat.upper()
             )
@@ -85,6 +87,8 @@ class StandingsRenderer:
         font = self.data.config.layout.font("standings")
         while True:
             offset = coords["offset"]
+            graphics.DrawLine(self.canvas, 0, 0, coords["width"], 0, self.divider_color)
+
             graphics.DrawLine(
                 self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color
             )
@@ -122,13 +126,10 @@ class StandingsRenderer:
 
     def __fill_standings_footer(self):
         coords = self.data.config.layout.coords("standings")
-        graphics.DrawLine(self.canvas, 0, coords["height"], coords["width"], coords["height"], self.bg_color)
+        graphics.DrawLine(self.canvas, 0, coords["height"], coords["width"], coords["height"], self.divider_color)
+
         graphics.DrawLine(
-            self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color
-        )
-        graphics.DrawLine(self.canvas, 0, coords["height"] + 1, coords["width"], coords["height"] + 1, self.bg_color)
-        graphics.DrawLine(
-            self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"] + 1, self.divider_color
+            self.canvas, 0, coords["height"] + 1, coords["width"], coords["height"] + 1, graphics.Color(0, 0, 0)
         )
 
     def __games_playing(self):
