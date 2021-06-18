@@ -42,5 +42,6 @@
 	"full_team_names": true,
 	"scrolling_speed": 2,
 	"debug": false,
-	"demo_date": false
+	"demo_date": false,
+	"no_live_games_like_offday": false
 }

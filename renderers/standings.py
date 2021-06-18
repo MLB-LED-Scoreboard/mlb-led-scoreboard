@@ -1,3 +1,4 @@
+from data.status import Status
 from PIL import Image
 
 try:
@@ -22,6 +23,7 @@ class StandingsRenderer:
         self.stat_color = self.colors.graphics_color("standings.stat")
         self.team_stat_color = self.colors.graphics_color("standings.team.stat")
         self.team_name_color = self.colors.graphics_color("standings.team.name")
+        self.update_count = 0
 
     def render(self):
         self.__fill_bg()
@@ -76,6 +78,8 @@ class StandingsRenderer:
                 stat = "w"
             else:
                 stat = "l"
+            if self.__games_playing():
+                break
 
     def __render_static_wide_standings(self):
         coords = self.data.config.layout.coords("standings")
@@ -114,6 +118,8 @@ class StandingsRenderer:
             time.sleep(10.0)
             self.__fill_bg()
             self.data.advance_to_next_standings()
+            if self.__games_playing():
+                break
 
     def __fill_standings_footer(self):
         coords = self.data.config.layout.coords("standings")
@@ -124,6 +130,22 @@ class StandingsRenderer:
         graphics.DrawLine(self.canvas, 0, coords["height"] + 1, coords["width"], coords["height"] + 1, self.bg_color)
         graphics.DrawLine(
             self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"] + 1, self.divider_color
+        )
+
+    def __games_playing(self):
+        # if a game is playing, we may want to break out of this screen
+        if self.data.is_offday():
+            return False
+        if not self.data.config.no_games:
+            return False
+
+        self.update_count += 1
+        if self.update_count > 4:
+            self.data.refresh_games()
+            self.update_count = 0
+        return any(
+            Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME
+            for g in self.data.games
         )
 
     def __is_dumpster_fire(self):

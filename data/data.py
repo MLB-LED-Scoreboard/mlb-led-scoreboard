@@ -172,8 +172,8 @@ class Data:
             debug.log(
                 "Preferred Team's Game Status: {}, {} {}".format(
                     game_data["gameData"]["status"]["detailedState"],
-                    game_data["liveData"]["linescore"]["inningState"],
-                    game_data["liveData"]["linescore"]["currentInning"],
+                    game_data["liveData"]["linescore"].get("inningState", "Top"),
+                    game_data["liveData"]["linescore"].get("currentInning", 0),
                 )
             )
             return game_data

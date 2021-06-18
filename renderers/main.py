@@ -24,6 +24,7 @@ class MainRenderer:
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished = False
+        self.definitely_games = False
         self.starttime = time.time()
 
     def render(self):
@@ -90,8 +91,26 @@ class MainRenderer:
             if self.data.needs_refresh:
                 self.data.refresh_game_data()
 
+            if (
+                self.data.config.no_games
+                and not self.definitely_games
+                and not any(
+                    Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME
+                    for g in self.data.games
+                )
+            ):
+                try:
+                    debug.log("Rendering Standings because no games are playing")
+                    StandingsRenderer(self.matrix, self.canvas, self.data).render()
+                except:
+                    pass
+                else:
+                    continue
+
+            self.definitely_games = True
+
             # Draw the current game
-            self.__draw_game(self.data.current_game(), self.data.game_data)
+            self.__draw_game(self.data.game_data)
 
             # Check if we need to scroll until it's finished
             if not self.data.config.rotation_scroll_until_finished:
@@ -169,7 +188,7 @@ class MainRenderer:
         return True
 
     # Draws the provided game on the canvas
-    def __draw_game(self, game, game_data):
+    def __draw_game(self, game_data):
         color = self.data.config.scoreboard_colors.color("default.background")
         self.canvas.Fill(color["r"], color["g"], color["b"])
 

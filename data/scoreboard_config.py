@@ -61,7 +61,7 @@ class ScoreboardConfig:
         self.full_team_names = json["full_team_names"]
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
-
+        self.no_games = json["no_live_games_like_offday"]
         # Make sure the scrolling speed setting is in range so we don't crash
         try:
             self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
