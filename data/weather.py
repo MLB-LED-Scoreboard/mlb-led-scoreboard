@@ -51,9 +51,11 @@ class Weather:
                     self.conditions = weather.get_status()
                     self.icon_name = weather.get_weather_icon_name()
                     debug.log(
-                        "Weather: {}; Wind: {}; {} ({})".format(
-                            self.temperature_string(), self.wind_string(), self.conditions, self.icon_filename()
-                        )
+                        "Weather: %s; Wind: %s; %s (%s)",
+                        self.temperature_string(),
+                        self.wind_string(),
+                        self.conditions,
+                        self.icon_filename(),
                     )
                 except pyowm.exceptions.api_response_error.UnauthorizedError:
                     debug.warning(
@@ -70,7 +72,7 @@ class Weather:
                     pyowm.exceptions.api_call_error.BadGatewayError,
                 ) as e:
                     debug.warning("[WEATHER] Fetching weather information failed from a connection issue.")
-                    debug.log("[WEATHER] Error Message: {}".format(e))
+                    debug.log("[WEATHER] Error Message: $s", e)
                     # Set some placeholder weather info if this is our first weather update
                     if self.temp is None:
                         self.temp = -99

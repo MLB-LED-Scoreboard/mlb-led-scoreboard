@@ -192,7 +192,7 @@ class ScoreboardConfig:
 
         custom_colors = self.read_json(filename)
         if custom_colors:
-            debug.info("Custom '{}.json' colors found. Merging with default reference colors.".format(base_filename))
+            debug.info("Custom '%s.json' colors found. Merging with default reference colors.", base_filename)
             new_colors = deep_update(reference_colors, custom_colors)
             return new_colors
         return reference_colors
@@ -212,7 +212,7 @@ class ScoreboardConfig:
         # Load and merge any layout customizations
         custom_layout = self.read_json(filename)
         if custom_layout:
-            debug.info("Custom '{}x{}.json' found. Merging with default reference layout.".format(width, height))
+            debug.info("Custom '%dx%d.json' found. Merging with default reference layout.", width, height)
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout

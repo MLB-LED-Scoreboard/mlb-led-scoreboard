@@ -3,6 +3,7 @@ from data.data import Data
 from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
 from utils import args, led_matrix_options
+import logging
 
 try:
     from rgbmatrix import RGBMatrix, version
@@ -25,18 +26,22 @@ def main(args_in):
     # Initialize the matrix
     matrix = RGBMatrix(options=matrixOptions)
 
-    # Print some basic info on startup
-    debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
-
     # Read scoreboard options from config.json if it exists
     config = ScoreboardConfig("config", matrix.width, matrix.height)
-    debug.set_debug_status(config)
+    logger = logging.getLogger("mlbled")
+    if config.debug:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.WARNING)
+
+    # Print some basic info on startup
+    debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
 
     if emulated:
         debug.log("rgbmatrix not installed, falling back to emulator!")
-        debug.log("Using RGBMatrixEmulator version {}".format(version.__version__))
+        debug.log("Using RGBMatrixEmulator version %s", version.__version__)
     else:
-        debug.log("Using rgbmatrix version {}".format(version.__version__))
+        debug.log("Using rgbmatrix version %s", version.__version__)
 
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB

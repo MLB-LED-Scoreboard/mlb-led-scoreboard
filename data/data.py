@@ -81,7 +81,7 @@ class Data:
             debug.error("Failed to refresh standings.")
 
     def refresh_games(self):
-        debug.log("Updating games for {}".format(self.date()))
+        debug.log("Updating games for %s", self.date())
         self.games = self.get_games()
         self.games_refresh_time = time.time()
         self.network_issues = False
@@ -167,11 +167,10 @@ class Data:
             game = self.games[self.game_index_for_preferred_team()]
             game_data = statsapi.get("game", {"gamePk": game["game_id"]})
             debug.log(
-                "Preferred Team's Game Status: {}, {} {}".format(
-                    game_data["gameData"]["status"]["detailedState"],
-                    game_data["liveData"]["linescore"].get("inningState", "Top"),
-                    game_data["liveData"]["linescore"].get("currentInning", 0),
-                )
+                "Preferred Team's Game Status: %s, %s %d",
+                game_data["gameData"]["status"]["detailedState"],
+                game_data["liveData"]["linescore"].get("inningState", "Top"),
+                game_data["liveData"]["linescore"].get("currentInning", 0),
             )
             return game_data
 
@@ -227,7 +226,7 @@ class Data:
                 self.needs_refresh = False
                 self.__update_layout_state()
                 self.print_game_data_debug()
-                debug.log("Moving to preferred game, index: {}".format(self.current_game_index))
+                debug.log("Moving to preferred game, index: %d", self.current_game_index)
                 return self.current_game()
         self.current_game_index = self.__next_game_index()
         return self.current_game()
@@ -259,7 +258,7 @@ class Data:
         counter = self.current_game_index + 1
         if counter >= len(self.games):
             counter = 0
-        debug.log("Going to game index {}".format(counter))
+        debug.log("Going to game index %d", counter)
         return counter
 
     #
@@ -287,7 +286,7 @@ class Data:
     # Debug info
 
     def print_game_data_debug(self):
-        debug.log("Game Data Refreshed: {}".format(self.game_data["gameData"]["game"]["id"]))
-        debug.log("Pre: {}".format(Pregame(self.game_data, self.config.time_format)))
-        debug.log("Live: {}".format(Scoreboard(self.game_data)))
-        debug.log("Final: {}".format(Final(self.game_data)))
+        debug.log("Game Data Refreshed: %s", self.game_data["gameData"]["game"]["id"])
+        debug.log("Pre: %s", Pregame(self.game_data, self.config.time_format))
+        debug.log("Live: %s", Scoreboard(self.game_data))
+        debug.log("Final: %s", Final(self.game_data))

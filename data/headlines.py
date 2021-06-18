@@ -115,17 +115,17 @@ class Headlines:
             debug.log("Headlines should update!")
             self.starttime = time.time()
             feeds = []
-            debug.log("{} feeds to update...".format(len(self.feed_urls)))
+            debug.log("%d feeds to update...", len(self.feed_urls))
             feedparser.USER_AGENT = "mlb-led-scoreboard/3.0 +https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard"
             if len(self.feed_urls) > 0:
                 debug.log("Feed URLs found...")
                 for idx, url in enumerate(self.feed_urls):
                     if idx < HEADLINE_MAX_FEEDS:  # Only parse MAX teams to prevent potential hangs
-                        debug.log("Fetching {}".format(url))
+                        debug.log("Fetching %s", url)
                         f = feedparser.parse(url)
                         try:
                             title = f.feed.title.encode("ascii", "ignore")
-                            debug.log("Fetched feed '{}' with {} entries.".format(title, len(f.entries)))
+                            debug.log("Fetched feed '%s' with %d entries.", title, len(f.entries))
                             feeds.append(f)
                         except AttributeError:
                             debug.warning("There was a problem fetching {}".format(url))
