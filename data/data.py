@@ -280,6 +280,12 @@ class Data:
     def is_offday(self):
         return not len(self.games)
 
+    def games_live(self):
+        return any(
+            Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME
+            for g in self.games
+        )
+
     #
     # Debug info
 

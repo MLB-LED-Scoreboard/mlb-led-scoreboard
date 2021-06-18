@@ -1,4 +1,3 @@
-from data.status import Status
 from PIL import Image
 
 try:
@@ -143,10 +142,7 @@ class StandingsRenderer:
         if self.update_count > 4:
             self.data.refresh_games()
             self.update_count = 0
-        return any(
-            Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME
-            for g in self.data.games
-        )
+        return self.data.games_live()
 
     def __is_dumpster_fire(self):
         return "comedy" in self.data.config.preferred_divisions[self.data.current_division_index].lower()

@@ -12,6 +12,7 @@ from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.standings import StandingsRenderer
 from renderers.status import StatusRenderer
 
+
 GAMES_REFRESH_RATE = 900.0
 SCROLL_TEXT_FAST_RATE = 0.1
 SCROLL_TEXT_SLOW_RATE = 0.2
@@ -24,7 +25,6 @@ class MainRenderer:
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished = False
-        self.definitely_games = False
         self.starttime = time.time()
 
     def render(self):
@@ -91,23 +91,15 @@ class MainRenderer:
             if self.data.needs_refresh:
                 self.data.refresh_game_data()
 
-            if (
-                self.data.config.no_games
-                and not self.definitely_games
-                and not any(
-                    Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME
-                    for g in self.data.games
-                )
-            ):
+            if self.data.config.no_games and not self.data.games_live():
                 try:
                     debug.log("Rendering Standings because no games are playing")
                     StandingsRenderer(self.matrix, self.canvas, self.data).render()
-                except:
+                except:  # skip if this fails
                     pass
-                else:
+                else:  # loop again to check if we succeeded
+                    self.data.needs_refresh = True
                     continue
-
-            self.definitely_games = True
 
             # Draw the current game
             self.__draw_game(self.data.game_data)
