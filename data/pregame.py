@@ -1,11 +1,6 @@
 from datetime import datetime
 
-import mlbgame
-import pytz
 import tzlocal
-
-import debug
-
 
 class Pregame:
     def __init__(self, game_data, time_format):
@@ -14,9 +9,7 @@ class Pregame:
         self.time_format = time_format
 
         try:
-            self.start_time = self.__convert_time(
-                game_data["gameData"]["datetime"]["time"] + game_data["gameData"]["datetime"]["ampm"]
-            )
+            self.start_time = self.__convert_time(game_data["gameData"]["datetime"]["dateTime"])
         except:
             self.start_time = "TBD"
 
@@ -51,13 +44,9 @@ class Pregame:
         time_str = "{}:%M".format(self.time_format)
         if self.time_format == "%I":
             time_str += "%p"
+        game_time_utc = datetime.fromisoformat(time.replace("Z", "+00:00"))
 
-        game_time_eastern = datetime.strptime(time, "%I:%M%p")
-        now = datetime.now()
-        game_time_eastern = game_time_eastern.replace(year=now.year, month=now.month, day=now.day)
-        eastern_tz = pytz.timezone("America/New_York")
-        game_time_eastern = eastern_tz.localize(game_time_eastern)
-        return game_time_eastern.astimezone(tzlocal.get_localzone()).strftime(time_str)
+        return game_time_utc.astimezone(tzlocal.get_localzone()).strftime(time_str)
 
     def __str__(self):
         s = "<{} {}> {} @ {}; {}; {} vs {}".format(

@@ -3,9 +3,6 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-import data.layout
-from data.layout import Layout
-
 
 class BasesRenderer:
     """Renders the bases on the scoreboard and fills them in if they

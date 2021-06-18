@@ -203,6 +203,7 @@ class MainRenderer:
         else:
             self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
             scoreboard = Scoreboard(game_data)
+            self.scrolling_text_pos = min(self.scrolling_text_pos, 36)
             renderer = ScoreboardRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(renderer.render(), 36)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)

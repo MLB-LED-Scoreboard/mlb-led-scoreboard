@@ -168,7 +168,6 @@ class Status:
 
     GAME_STATE_LIVE = [
         IN_PROGRESS,
-        WARMUP,
         INSTANT_REPLAY,
         GAME_OVER,
         GAME_OVER_TIE_DECISION_BY_TIEBREAKER,

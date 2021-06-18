@@ -31,16 +31,17 @@ class Data:
         # Flag to determine when to refresh data
         self.needs_refresh = True
 
+        # What game do we want to start on?
+        self.current_game_index = 0
+        self.current_division_index = 0
+
         # Fetch the games for today
         self.refresh_games()
+        self.current_game_index = self.game_index_for_preferred_team()
 
         # Fetch all standings data for today
         # (Good to have in case we add a standings screen while rotating scores)
         self.refresh_standings()
-
-        # What game do we want to start on?
-        self.current_game_index = self.game_index_for_preferred_team()
-        self.current_division_index = 0
 
         # Network status state
         self.network_issues = False
@@ -83,14 +84,12 @@ class Data:
             debug.error("Failed to refresh standings.")
 
     def refresh_games(self):
+        debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
         self.games = self.get_games()
-
-        self.current_game_index = self.game_index_for_preferred_team()
         self.games_refresh_time = time.time()
         self.network_issues = False
 
     def get_games(self):
-        debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
         urllib.request.urlcleanup()
         attempts_remaining = 5
         while attempts_remaining > 0:
@@ -231,6 +230,7 @@ class Data:
                 self.needs_refresh = False
                 self.__update_layout_state()
                 self.print_game_data_debug()
+                debug.log("Moving to preferred game, index: {}".format(self.current_game_index))
                 return self.current_game()
         self.current_game_index = self.__next_game_index()
         return self.current_game()
@@ -239,7 +239,7 @@ class Data:
         if self.config.preferred_teams:
             return self.__game_index_for(self.config.preferred_teams[0])
         else:
-            return 0
+            return self.current_game_index
 
     @classmethod
     def __filter_list_of_games(cls, games, filter_teams):
@@ -248,7 +248,7 @@ class Data:
 
     def __game_index_for(self, team_name):
         team_name = data.teams.TEAM_FULL[team_name]
-        team_index = 0
+        team_index = self.current_game_index
         team_idxs = [i for i, game in enumerate(self.games) if team_name in [game["away_name"], game["home_name"]]]
         if len(team_idxs) > 0:
             team_index = next(
@@ -262,6 +262,7 @@ class Data:
         counter = self.current_game_index + 1
         if counter >= len(self.games):
             counter = 0
+        debug.log("Going to game index {}".format(counter))
         return counter
 
     #
