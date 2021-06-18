@@ -26,7 +26,7 @@ class Data:
         self.config = config
 
         # Parse today's date and see if we should use today or yesterday
-        self.year, self.month, self.day = self.__parse_today()
+        self.today = self.__parse_today()
 
         # Flag to determine when to refresh data
         self.needs_refresh = True
@@ -64,27 +64,24 @@ class Data:
             today = datetime.strptime(self.config.demo_date, "%Y-%m-%d")
         else:
             today = datetime.today()
-        end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(
-            year=today.year, month=today.month, day=today.day
-        )
-        if end_of_day > datetime.now():
-            today -= timedelta(days=1)
-        return (today.year, today.month, today.day)
+            end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(
+                year=today.year, month=today.month, day=today.day
+            )
+            if end_of_day > datetime.now():
+                today -= timedelta(days=1)
+        return today
 
     def date(self):
-        return f"{self.year}-{self.month}-{self.day}"
-
-    #
-    # mlbgame refresh
+        return self.today.strftime("%Y-%m-%d")
 
     def refresh_standings(self):
         try:
-            self.standings = Standings.fetch(self.year, self.month, self.day)
+            self.standings = Standings(self.today)
         except:
             debug.error("Failed to refresh standings.")
 
     def refresh_games(self):
-        debug.log("Updating games for {}/{}/{}".format(self.month, self.day, self.year))
+        debug.log("Updating games for {}".format(self.date()))
         self.games = self.get_games()
         self.games_refresh_time = time.time()
         self.network_issues = False
