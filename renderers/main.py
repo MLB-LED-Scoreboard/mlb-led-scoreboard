@@ -1,7 +1,6 @@
 import time
 
 import debug
-from data.data import Data
 from data.final import Final
 from data.pregame import Pregame
 from data.scoreboard import Scoreboard
@@ -95,7 +94,7 @@ class MainRenderer:
             self.__draw_game(self.data.current_game(), self.data.game_data)
 
             # Check if we need to scroll until it's finished
-            if self.data.config.rotation_scroll_until_finished == False:
+            if not self.data.config.rotation_scroll_until_finished:
                 self.scrolling_finished = True
 
             # Set the refresh rate
@@ -147,13 +146,13 @@ class MainRenderer:
         return rotate_rate
 
     def __should_rotate_to_next_game(self, game_data):
-        if self.data.config.rotation_enabled == False:
+        if not self.data.config.rotation_enabled:
             return False
 
         stay_on_preferred_team = (
             self.data.config.preferred_teams and not self.data.config.rotation_preferred_team_live_enabled
         )
-        if stay_on_preferred_team == False:
+        if not stay_on_preferred_team:
             return True
 
         showing_preferred_team = self.data.config.preferred_teams[0] in [
@@ -161,7 +160,7 @@ class MainRenderer:
             game_data["gameData"]["teams"]["home"]["teamName"],
         ]
         if showing_preferred_team and Status.is_live(game_data["gameData"]["status"]["detailedState"]):
-            if self.data.config.rotation_preferred_team_live_mid_inning == True and Status.is_inning_break(
+            if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(
                 game_data["liveData"]["linescore"]["inningState"]
             ):
                 return True
@@ -203,9 +202,10 @@ class MainRenderer:
         else:
             self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
             scoreboard = Scoreboard(game_data)
-            self.scrolling_text_pos = min(self.scrolling_text_pos, 36)
+            loop_point = self.data.config.layout.coords("atbat")["loop"]
+            self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             renderer = ScoreboardRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
-            self.__update_scrolling_text_pos(renderer.render(), 36)
+            self.__update_scrolling_text_pos(renderer.render(), loop_point)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
     def __max_scroll_x(self, scroll_coords):

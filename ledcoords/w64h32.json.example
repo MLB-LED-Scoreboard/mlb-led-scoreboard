@@ -115,12 +115,15 @@
   "atbat": {
     "batter": {
       "x": 65,
-      "y": 33
+      "y": 33,
+      "width": 20
     },
     "pitcher": {
       "x": 65,
-      "y": 33
-    }
+      "y": 33,
+      "width": 24
+    },
+    "loop": 36
   },
   "batter_count": {
     "x": 15,

@@ -4,7 +4,6 @@ except ImportError:
     from RGBMatrixEmulator import graphics
 
 from renderers.scrollingtext import ScrollingText
-from utils import get_font, get_file
 
 
 class AtBatRenderer:
@@ -16,38 +15,48 @@ class AtBatRenderer:
         self.pitcher = atbat.pitcher
         self.data = data
         self.colors = data.config.scoreboard_colors
-        self.default_colors = self.data.config.team_colors.color("default")
         self.bgcolor = self.colors.graphics_color("default.background")
 
         self.start_pos = text_pos
 
     def render(self):
 
-        batter_coords = self.data.config.layout.coords("atbat.batter")
-        pitcher_coords = self.data.config.layout.coords("atbat.pitcher")
-
-        blength = self.__render_batter_text(self.batter, batter_coords["x"], batter_coords["y"])
-        plength = self.__render_pitcher_text(self.pitcher, pitcher_coords["x"], pitcher_coords["y"])
+        blength = self.__render_batter_text()
+        plength = self.__render_pitcher_text()
 
         return max(plength, blength)
 
-    def __render_batter_text(self, batter, x, y):
-        text_color = self.default_colors["text"]
-        text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
+    def __render_batter_text(self):
+        coords = self.data.config.layout.coords("atbat.batter")
+        color = self.colors.graphics_color("atbat.pitcher")
         font = self.data.config.layout.font("atbat.batter")
         size = ScrollingText(
-            self.canvas, x + font["size"]["width"] * 3, y, 20, font, text_color_graphic, self.bgcolor, batter
+            self.canvas,
+            coords["x"] + font["size"]["width"] * 3,
+            coords["y"],
+            coords["width"],
+            font,
+            color,
+            self.bgcolor,
+            self.batter,
         ).render(self.start_pos)
-        graphics.DrawText(self.canvas, font["font"], x, y, text_color_graphic, "AB:")
+        graphics.DrawText(self.canvas, font["font"], coords["x"], coords["y"], color, "AB:")
         return size
 
-    def __render_pitcher_text(self, pitcher, x, y):
-        text_color = self.default_colors["text"]
-        text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
+    def __render_pitcher_text(self):
+        coords = self.data.config.layout.coords("atbat.pitcher")
+        color = self.colors.graphics_color("atbat.pitcher")
         font = self.data.config.layout.font("atbat.pitcher")
 
         size = ScrollingText(
-            self.canvas, x + font["size"]["width"] * 2, y, 24, font, text_color_graphic, self.bgcolor, pitcher
+            self.canvas,
+            coords["x"] + font["size"]["width"] * 2,
+            coords["y"],
+            coords["width"],
+            font,
+            color,
+            self.bgcolor,
+            self.pitcher,
         ).render(self.start_pos)
-        graphics.DrawText(self.canvas, font["font"], x, y, text_color_graphic, "P:")
+        graphics.DrawText(self.canvas, font["font"], coords["x"], coords["y"], color, "P:")
         return size
