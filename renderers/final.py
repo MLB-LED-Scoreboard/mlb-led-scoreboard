@@ -7,7 +7,7 @@ from renderers.network import NetworkErrorRenderer
 from renderers.nohitter import NoHitterRenderer
 from renderers.scrollingtext import ScrollingText
 from renderers.teams import TeamsRenderer
-from utils import center_text_position, get_font
+from utils import center_text_position
 
 NORMAL_GAME_LENGTH = 9
 

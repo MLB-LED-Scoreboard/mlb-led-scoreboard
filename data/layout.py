@@ -3,10 +3,8 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-import json
 import os.path
 
-import debug
 from utils import get_file
 
 FONTNAME_DEFAULT = "4x6"

@@ -1,5 +1,3 @@
-from data.status import Status
-
 try:
     from rgbmatrix import graphics
 except ImportError:
@@ -9,7 +7,7 @@ import data.layout
 from renderers.network import NetworkErrorRenderer
 from renderers.scrollingtext import ScrollingText
 from renderers.teams import TeamsRenderer
-from utils import center_text_position, get_font
+from utils import center_text_position
 
 
 class Pregame:

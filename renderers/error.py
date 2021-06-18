@@ -3,8 +3,6 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-import time
-
 from utils import center_text_position, get_font
 
 """ Render a simple error message on the matrix

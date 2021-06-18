@@ -1,5 +1,3 @@
-import statsapi
-
 UNKNOWN = "Unknown"
 
 

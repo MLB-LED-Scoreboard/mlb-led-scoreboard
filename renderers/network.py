@@ -3,8 +3,6 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-import data.layout
-import debug
 from utils import center_text_position
 
 NETWORK_ERROR_TEXT = "!"
@@ -18,7 +16,7 @@ class NetworkErrorRenderer:
         self.colors = data.config.scoreboard_colors
 
     def render(self):
-        if self.data.network_issues == True:
+        if self.data.network_issues:
             font = self.layout.font("network")
             coords = self.layout.coords("network")
             bg_coords = coords["background"]

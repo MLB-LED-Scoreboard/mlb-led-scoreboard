@@ -94,9 +94,8 @@ class ScoreboardConfig:
     def check_preferred_teams(self):
         if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
             debug.warning(
-                "preferred_teams should be an array of team names or a single team name string. Using default preferred_teams, {}".format(
-                    DEFAULT_PREFERRED_TEAMS
-                )
+                "preferred_teams should be an array of team names or a single team name string."
+                "Using default preferred_teams, {}".format(DEFAULT_PREFERRED_TEAMS)
             )
             self.preferred_teams = DEFAULT_PREFERRED_TEAMS
         if isinstance(self.preferred_teams, str):
@@ -106,9 +105,8 @@ class ScoreboardConfig:
     def check_preferred_divisions(self):
         if not isinstance(self.preferred_divisions, str) and not isinstance(self.preferred_divisions, list):
             debug.warning(
-                "preferred_divisions should be an array of division names or a single division name string. Using default preferred_divisions, {}".format(
-                    DEFAULT_PREFERRED_DIVISIONS
-                )
+                "preferred_divisions should be an array of division names or a single division name string."
+                "Using default preferred_divisions, {}".format(DEFAULT_PREFERRED_DIVISIONS)
             )
             self.preferred_divisions = DEFAULT_PREFERRED_DIVISIONS
         if isinstance(self.preferred_divisions, str):
@@ -122,7 +120,7 @@ class ScoreboardConfig:
             self.time_format = "%I"
 
     def check_rotate_rates(self):
-        if isinstance(self.rotation_rates, dict) == False:
+        if not isinstance(self.rotation_rates, dict):
             try:
                 rate = float(self.rotation_rates)
                 self.rotation_rates = {"live": rate, "final": rate, "pregame": rate}
@@ -206,7 +204,8 @@ class ScoreboardConfig:
         if not reference_layout:
             # Unsupported coordinates
             debug.error(
-                "Invalid matrix dimensions provided. See top of README for supported dimensions.\nIf you would like to see new dimensions supported, please file an issue on GitHub!"
+                "Invalid matrix dimensions provided. See top of README for supported dimensions."
+                "\nIf you would like to see new dimensions supported, please file an issue on GitHub!"
             )
             sys.exit(1)
 

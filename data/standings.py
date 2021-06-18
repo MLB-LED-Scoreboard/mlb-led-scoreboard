@@ -2,9 +2,11 @@ import re
 
 import requests
 
-# todo use statsapi
+
+# TODO use statsapi
 class Standings:
-    __URL = "https://statsapi.mlb.com/api/v1/standings?season={year}&leagueId={league_ids}&date={month:0>2}/{day:0>2}/{year}&division=all"
+    __URL = "https://statsapi.mlb.com/api/v1/standings?season={year}&leagueId={league_ids}"
+    "&date={month:0>2}/{day:0>2}/{year}&division=all"
     AL_LEAGUE_ID = "103"
     NL_LEAGUE_ID = "104"
     __LEAGUE_IDS = ",".join([AL_LEAGUE_ID, NL_LEAGUE_ID])

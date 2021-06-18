@@ -3,10 +3,6 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-import json
-
-from utils import get_file, get_font
-
 
 class TeamsRenderer:
     """Renders the scoreboard team banners including background color, team abbreviation text,
@@ -22,7 +18,7 @@ class TeamsRenderer:
     def __team_colors(self, team_abbrev):
         try:
             team_colors = self.data.config.team_colors.color(team_abbrev.lower())
-        except KeyError as e:
+        except KeyError:
             team_colors = self.data.config.team_colors.color("default")
         return team_colors
 
@@ -36,25 +32,25 @@ class TeamsRenderer:
         away_colors = self.__team_colors(self.away_team.abbrev)
         try:
             away_team_color = away_colors["home"]
-        except KeyError as e:
+        except KeyError:
             away_team_color = self.__default_home_color()
 
         home_colors = self.__team_colors(self.home_team.abbrev)
         try:
             home_team_color = home_colors["home"]
-        except KeyError as e:
+        except KeyError:
             home_team_color = self.__default_home_color()
 
         away_accents = self.__team_colors(self.away_team.abbrev)
         try:
             away_team_accent = away_accents["accent"]
-        except KeyError as e:
+        except KeyError:
             away_team_accent = self.__default_accent_color()
 
         home_accents = self.__team_colors(self.home_team.abbrev)
         try:
             home_team_accent = home_accents["accent"]
-        except KeyError as e:
+        except KeyError:
             home_team_accent = self.__default_accent_color()
 
         bg_coords = {}

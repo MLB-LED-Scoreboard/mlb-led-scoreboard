@@ -1,9 +1,9 @@
+from data.atbat import AtBat
 from data.bases import Bases
 from data.inning import Inning
 from data.outs import Outs
 from data.pitches import Pitches
 from data.team import Team
-from data.atbat import AtBat
 
 
 class Scoreboard:
@@ -52,22 +52,25 @@ class Scoreboard:
         return None
 
     def __str__(self):
-        s = "<{} {}> {} ({}) @ {} ({}); Status: {}; Inning: (Number: {}; State: {}); B:{} S:{} O:{}; P:{}; AB:{}; Bases: {};".format(
-            self.__class__.__name__,
-            hex(id(self)),
-            self.away_team.abbrev,
-            str(self.away_team.runs),
-            self.home_team.abbrev,
-            str(self.home_team.runs),
-            self.game_status,
-            str(self.inning.number),
-            str(self.inning.state),
-            str(self.pitches.balls),
-            str(self.pitches.strikes),
-            str(self.outs.number),
-            str(self.pitcher),
-            str(self.batter),
-            str(self.bases),
+        s = (
+            "<{} {}> {} ({}) @ {} ({}); Status: {}; Inning: (Number: {};"
+            " State: {}); B:{} S:{} O:{}; P:{}; AB:{}; Bases: {};".format(
+                self.__class__.__name__,
+                hex(id(self)),
+                self.away_team.abbrev,
+                str(self.away_team.runs),
+                self.home_team.abbrev,
+                str(self.home_team.runs),
+                self.game_status,
+                str(self.inning.number),
+                str(self.inning.state),
+                str(self.pitches.balls),
+                str(self.pitches.strikes),
+                str(self.outs.number),
+                str(self.pitcher),
+                str(self.batter),
+                str(self.bases),
+            )
         )
         if self.reason:
             s += " Reason: '{}';".format(self.reason)

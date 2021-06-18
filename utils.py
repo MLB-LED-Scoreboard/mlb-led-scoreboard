@@ -114,7 +114,8 @@ def args():
     parser.add_argument(
         "--led-multiplexing",
         action="store",
-        help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)",
+        help="Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe;"
+        "6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)",
         default=0,
         type=int,
     )
@@ -125,7 +126,7 @@ def args():
 def led_matrix_options(args):
     options = RGBMatrixOptions()
 
-    if args.led_gpio_mapping != None:
+    if args.led_gpio_mapping is not None:
         options.hardware_mapping = args.led_gpio_mapping
 
     options.rows = args.led_rows
@@ -147,7 +148,7 @@ def led_matrix_options(args):
     if args.led_show_refresh:
         options.show_refresh_rate = 1
 
-    if args.led_slowdown_gpio != None:
+    if args.led_slowdown_gpio is not None:
         options.gpio_slowdown = args.led_slowdown_gpio
 
     if args.led_no_hardware_pulse:

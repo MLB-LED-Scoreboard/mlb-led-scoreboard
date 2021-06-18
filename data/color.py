@@ -1,14 +1,7 @@
-from utils import get_file
-
 try:
     from rgbmatrix import graphics
 except ImportError:
     from RGBMatrixEmulator import graphics
-
-import json
-import os.path
-
-import debug
 
 
 class Color:

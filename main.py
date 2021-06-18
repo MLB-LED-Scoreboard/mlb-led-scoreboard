@@ -2,9 +2,9 @@ from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
 
 try:
-    from rgbmatrix import RGBMatrix, RGBMatrixOptions
+    from rgbmatrix import RGBMatrix
 except ImportError:
-    from RGBMatrixEmulator import RGBMatrix, RGBMatrixOptions
+    from RGBMatrixEmulator import RGBMatrix
 
 import debug
 from data.data import Data

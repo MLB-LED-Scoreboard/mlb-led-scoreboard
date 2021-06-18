@@ -4,7 +4,6 @@ except ImportError:
     from RGBMatrixEmulator import graphics
 
 from data.inning import Inning
-from utils import center_text_position, get_font
 
 # Because normal games are 9 innings, silly
 NORMAL_GAME_LENGTH = 9
@@ -59,8 +58,6 @@ class InningRenderer:
         if text == "Middle":
             text = "Mid"
         num = self.inning.ordinal
-        text_x = center_text_position(text, text_coords["x"], text_font["size"]["width"])
-        num_x = center_text_position(num, num_coords["x"], num_font["size"]["width"])
         graphics.DrawText(self.canvas, text_font["font"], text_coords["x"], text_coords["y"], color, text)
         graphics.DrawText(self.canvas, num_font["font"], num_coords["x"], num_coords["y"], color, num)
 

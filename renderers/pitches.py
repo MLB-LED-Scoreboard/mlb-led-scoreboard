@@ -3,8 +3,6 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-from utils import get_font
-
 
 class PitchesRenderer:
     """Renders balls and strikes on the scoreboard."""

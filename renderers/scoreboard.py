@@ -1,4 +1,5 @@
 from data.inning import Inning
+from renderers.atbat import AtBatRenderer
 from renderers.bases import BasesRenderer
 from renderers.inning import InningRenderer
 from renderers.network import NetworkErrorRenderer
@@ -6,7 +7,6 @@ from renderers.nohitter import NoHitterRenderer
 from renderers.outs import OutsRenderer
 from renderers.pitches import PitchesRenderer
 from renderers.teams import TeamsRenderer
-from renderers.atbat import AtBatRenderer
 
 
 class Scoreboard:

@@ -8,7 +8,7 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-from utils import center_text_position, get_font
+from utils import center_text_position
 
 # "Manager Challenge is too long"
 CHALLENGE_SHORTHAND = "Challenge"

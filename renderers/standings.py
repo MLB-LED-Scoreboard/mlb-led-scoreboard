@@ -8,7 +8,7 @@ except ImportError:
 import time
 
 from renderers.network import NetworkErrorRenderer
-from utils import center_text_position, get_file, get_font
+from utils import center_text_position, get_file
 
 
 class StandingsRenderer:
@@ -43,7 +43,6 @@ class StandingsRenderer:
         coords = self.data.config.layout.coords("standings")
         font = self.data.config.layout.font("standings")
         stat = "w"
-        starttime = time.time()
         while True:
             offset = coords["offset"]
             graphics.DrawText(

@@ -111,7 +111,7 @@ class Headlines:
         self.update(True)
 
     def update(self, force=False):
-        if force == True or self.__should_update():
+        if force or self.__should_update():
             debug.log("Headlines should update!")
             self.starttime = time.time()
             feeds = []
@@ -144,7 +144,7 @@ class Headlines:
             if countdown_string is not None:
                 ticker = self.__add_string_to_ticker(ticker, countdown_string)
 
-        if self.feed_data != None:
+        if self.feed_data is not None:
             ticker = self.__add_string_to_ticker(ticker, "")
             for feed in self.feed_data:
                 ticker += self.__strings_for_feed(feed, max_entries)
@@ -159,7 +159,7 @@ class Headlines:
         return t + text_to_add
 
     def available(self):
-        return self.feed_data != None
+        return self.feed_data is not None
 
     def __strings_for_feed(self, feed, max_entries):
         spaces = " " * HEADLINE_SPACER_SIZE

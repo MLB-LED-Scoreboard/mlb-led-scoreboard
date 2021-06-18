@@ -1,8 +1,6 @@
 import sys
 import time
 
-import data.scoreboard_config
-
 debug_enabled = False
 time_format = "%H"
 

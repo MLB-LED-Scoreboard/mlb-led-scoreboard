@@ -7,11 +7,9 @@ import time
 
 from PIL import Image
 
-import data.layout
-from data.data import Data
 from renderers.network import NetworkErrorRenderer
 from renderers.scrollingtext import ScrollingText
-from utils import center_text_position, get_file, get_font
+from utils import center_text_position, get_file
 
 
 class OffdayRenderer:

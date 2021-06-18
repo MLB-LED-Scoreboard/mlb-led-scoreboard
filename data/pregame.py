@@ -2,6 +2,7 @@ from datetime import datetime
 
 import tzlocal
 
+
 class Pregame:
     def __init__(self, game_data, time_format):
         self.home_team = game_data["gameData"]["teams"]["home"]["abbreviation"]
