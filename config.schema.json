@@ -417,12 +417,11 @@
                     "format": "date"
                 },
                 {
-                    "type": "string",
-                    "title": "Disabled",
-                    "maxLength": 0,
-                    "default": "",
+                    "type": "boolean",
+                    "title": "False",
+                    "default": false,
                     "enum": [
-                        ""
+                        false
                     ]
                 }
             ]
