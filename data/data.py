@@ -254,8 +254,7 @@ class Data:
 
     def games_live(self):
         return any(
-            Status.is_fresh(g["status"])
-            or (Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME)
+            Status.is_fresh(g["status"]) or (Status.is_live(g["status"]) or g["status"] == Status.WARMUP)
             for g in self.games
         )
 
