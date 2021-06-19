@@ -1,13 +1,18 @@
 from datetime import datetime, timedelta
 
 import mlbgame
+import debug
 
 MLB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 
 class Dates:
     def __init__(self):
-        self.__parse_important_dates(self.__fetch_important_dates())
+        try:
+            self.__parse_important_dates(self.__fetch_important_dates())
+        except:
+            debug.error("Failed to refresh important dates")
+            self.important_dates = [{"text": "None", "date": datetime(1970, 1, 1), "max_days": 1}]
 
     def next_important_date_string(self):
         today = datetime.today()

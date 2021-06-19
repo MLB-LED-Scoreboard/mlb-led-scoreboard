@@ -70,9 +70,9 @@ class Weather:
                     pyowm.exceptions.api_call_error.APICallError,
                     pyowm.exceptions.api_call_error.APIInvalidSSLCertificateError,
                     pyowm.exceptions.api_call_error.BadGatewayError,
-                ) as e:
+                ):
                     debug.warning("[WEATHER] Fetching weather information failed from a connection issue.")
-                    debug.log("[WEATHER] Error Message: $s", e)
+                    debug.exception("[WEATHER] Error Message:")
                     # Set some placeholder weather info if this is our first weather update
                     if self.temp is None:
                         self.temp = -99
@@ -84,6 +84,9 @@ class Weather:
                         self.conditions = "Error"
                     if self.icon_name is None:
                         self.icon_name = "50d"
+                else:
+                    return True  # success
+                return False
 
     def temperature_string(self):
         return "{}{}".format(int(round(self.temp)), self.temperature_unit[:1].upper())

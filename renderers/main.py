@@ -94,6 +94,7 @@ class MainRenderer:
             if self.data.config.no_games and not self.data.games_live():
                 try:
                     debug.log("Rendering Standings because no games are playing")
+                    self.data.refresh_standings()
                     StandingsRenderer(self.matrix, self.canvas, self.data).render()
                 except Exception as ex:
                     debug.info("Could not render standings.")

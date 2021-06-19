@@ -1,10 +1,7 @@
 import time
-import urllib
 from datetime import datetime, timedelta
-from urllib.error import URLError
 
 import statsapi
-from requests.models import HTTPError
 
 import data.layout as layout
 import data.teams
@@ -18,6 +15,14 @@ from data.status import Status
 from data.weather import Weather
 
 NETWORK_RETRY_SLEEP_TIME = 10.0
+
+
+FIELDS = (
+    "gameData,game,id,datetime,dateTime,flags,noHitter,perfectGame,status,detailedState,probablePitchers,teams,"
+    + "home,away,abbreviation,teamName,players,id,boxscoreName,liveData,decisions,winner,loser,save,id,fullName,"
+    + "linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,"
+    + "first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,losses,saves,era"
+)
 
 
 class Data:
@@ -76,102 +81,72 @@ class Data:
 
     def refresh_standings(self):
         try:
+            debug.log("Refreshing standings for %s", self.date())
             self.standings = Standings(self.today)
         except:
             debug.error("Failed to refresh standings.")
 
     def refresh_games(self):
         debug.log("Updating games for %s", self.date())
-        self.games = self.get_games()
+        self.games = self.__get_games()
         self.games_refresh_time = time.time()
-        self.network_issues = False
 
-    def get_games(self):
-        urllib.request.urlcleanup()
-        attempts_remaining = 5
-        while attempts_remaining > 0:
-            try:
-                all_games = statsapi.schedule(self.date())
-                if self.config.rotation_only_preferred:
-                    return Data.__filter_list_of_games(all_games, self.config.preferred_teams)
-                else:
-                    return all_games
+    def __get_games(self):
+        try:
+            all_games = statsapi.schedule(self.date())
+        except:
+            self.network_issues = True
+            debug.error("Networking error while refreshing the master list of games.")
+        else:
+            self.network_issues = False
+            if self.config.rotation_only_preferred:
+                return Data.__filter_list_of_games(all_games, self.config.preferred_teams)
+            else:
+                return all_games
 
-            except (HTTPError, URLError, TimeoutError) as e:
-                self.network_issues = True
-                debug.error(
-                    "Networking error while refreshing the master list of games. {} retries remaining.".format(
-                        attempts_remaining
-                    )
-                )
-                debug.error("URLError: {}".format(e.reason))
-                attempts_remaining -= 1
-                time.sleep(NETWORK_RETRY_SLEEP_TIME)
-            except ValueError:
-                self.network_issues = True
-                debug.error(
-                    "Value Error while refreshing master list of games. {} retries remaining.".format(
-                        attempts_remaining
-                    )
-                )
-                debug.error("ValueError: Failed to refresh list of games")
-                attempts_remaining -= 1
-                time.sleep(NETWORK_RETRY_SLEEP_TIME)
-
-            return []
+        return []
 
     def refresh_game_data(self):
-        urllib.request.urlcleanup()
-        attempts_remaining = 5
-        while attempts_remaining > 0:
-            try:
-                self.game_data = statsapi.get("game", {"gamePk": self.current_game()["game_id"]})
-                self.__update_layout_state()
-                self.needs_refresh = False
-                self.print_game_data_debug()
-                self.network_issues = False
-                break
-            except (HTTPError, URLError, TimeoutError) as e:
-                self.network_issues = True
-                debug.error(
-                    "Networking Error while refreshing the current game_data. {} retries remaining.".format(
-                        attempts_remaining
-                    )
-                )
-                debug.error("URLError: {}".format(e.reason))
-                attempts_remaining -= 1
-                time.sleep(NETWORK_RETRY_SLEEP_TIME)
-            except ValueError:
-                self.network_issues = True
-                debug.error(
-                    "Value Error while refreshing current game_data. {} retries remaining.".format(attempts_remaining)
-                )
-                debug.error("ValueError: Failed to refresh game_data for {}".format(self.current_game().game_id))
-                attempts_remaining -= 1
-                time.sleep(NETWORK_RETRY_SLEEP_TIME)
+        try:
+            self.game_data = statsapi.get("game", {"gamePk": self.current_game()["game_id"], "fields": FIELDS})
+        except:
+            self.network_issues = True
+            debug.error("Networking Error while refreshing the current game_data.")
+        else:
+            self.__update_layout_state()
+            self.needs_refresh = False
+            self.print_game_data_debug()
+            self.network_issues = False
+            return
 
-        # If we run out of retries, just move on to the next game
-        if attempts_remaining <= 0 and self.config.rotation_enabled:
+        # just move on to the next game
+        if self.config.rotation_enabled:
             self.advance_to_next_game()
 
     def refresh_weather(self):
-        self.weather.update()
+        self.network_issues = not self.weather.update()
 
     def refresh_news_ticker(self):
-        self.headlines.update()
+        self.network_issues = not self.headlines.update()
 
     # Will use a network call to fetch the preferred team's game game_data
     def fetch_preferred_team_game_data(self):
         if not self.is_offday_for_preferred_team():
-            urllib.request.urlcleanup()
             game = self.games[self.game_index_for_preferred_team()]
-            game_data = statsapi.get("game", {"gamePk": game["game_id"]})
-            debug.log(
-                "Preferred Team's Game Status: %s, %s %d",
-                game_data["gameData"]["status"]["detailedState"],
-                game_data["liveData"]["linescore"].get("inningState", "Top"),
-                game_data["liveData"]["linescore"].get("currentInning", 0),
-            )
+            try:
+                game_data = statsapi.get("game", {"gamePk": game["game_id"], "fields": FIELDS})
+            except:
+                game_data = self.game_data
+                self.network_issues = True
+                debug.error("Failed to refresh game data for preferred team")
+            else:
+                self.network_issues = False
+                debug.log(
+                    "Preferred Team's Game Status: %s, %s %d",
+                    game_data["gameData"]["status"]["detailedState"],
+                    game_data["liveData"]["linescore"].get("inningState", "Top"),
+                    game_data["liveData"]["linescore"].get("currentInning", 0),
+                )
             return game_data
 
     def __update_layout_state(self):
@@ -218,9 +193,10 @@ class Data:
         # rotating during mid-innings
         if self.config.rotation_preferred_team_live_mid_inning and not self.is_offday_for_preferred_team():
             preferred_game_data = self.fetch_preferred_team_game_data()
-            if Status.is_live(
-                preferred_game_data["gameData"]["status"]["detailedState"]
-            ) and not Status.is_inning_break(preferred_game_data["liveData"]["linescore"]["inningState"]):
+            if self.network_issues or (
+                Status.is_live(preferred_game_data["gameData"]["status"]["detailedState"])
+                and not Status.is_inning_break(preferred_game_data["liveData"]["linescore"]["inningState"])
+            ):
                 self.current_game_index = self.game_index_for_preferred_team()
                 self.game_data = preferred_game_data
                 self.needs_refresh = False
@@ -278,7 +254,8 @@ class Data:
 
     def games_live(self):
         return any(
-            Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME
+            Status.is_fresh(g["status"])
+            or (Status.is_live(g["status"]) and g["status"] != Status.SCHEDULED and g["status"] != Status.PREGAME)
             for g in self.games
         )
 

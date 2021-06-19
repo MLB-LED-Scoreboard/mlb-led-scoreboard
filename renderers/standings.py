@@ -33,7 +33,6 @@ class StandingsRenderer:
                 self.__render_static_wide_standings()
             else:
                 self.__render_rotating_standings()
-        NetworkErrorRenderer(self.canvas, self.data).render()
 
     def __fill_bg(self):
         coords = self.data.config.layout.coords("standings")
@@ -68,6 +67,7 @@ class StandingsRenderer:
                 )
 
                 offset += coords["offset"]
+            NetworkErrorRenderer(self.canvas, self.data).render()
 
             self.matrix.SwapOnVSync(self.canvas)
             time.sleep(5.0)
@@ -116,6 +116,7 @@ class StandingsRenderer:
                 offset += coords["offset"]
 
             self.__fill_standings_footer()
+            NetworkErrorRenderer(self.canvas, self.data).render()
 
             self.matrix.SwapOnVSync(self.canvas)
             time.sleep(10.0)

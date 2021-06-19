@@ -13,3 +13,5 @@ warning = logger.warning
 error = logger.error
 
 log = logger.debug
+
+exception = logger.exception
