@@ -141,7 +141,7 @@ class StandingsRenderer:
             return False
 
         self.update_count += 1
-        if self.update_count > 4:
+        if self.update_count > 16:
             self.data.refresh_games()
             self.update_count = 0
         return self.data.games_live()

@@ -111,6 +111,7 @@ class Headlines:
         self.update(True)
 
     def update(self, force=False):
+        succeeded = True
         if force or self.__should_update():
             debug.log("Headlines should update!")
             self.starttime = time.time()
@@ -129,7 +130,10 @@ class Headlines:
                             feeds.append(f)
                         except AttributeError:
                             debug.warning("There was a problem fetching {}".format(url))
+                            succeeded = False
                 self.feed_data = feeds
+
+        return succeeded
 
     def ticker_string(self, max_entries=HEADLINE_MAX_ENTRIES):
         ticker = ""
