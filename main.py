@@ -41,7 +41,7 @@ def main(args_in):
         debug.log("rgbmatrix not installed, falling back to emulator!")
         debug.log("Using RGBMatrixEmulator version %s", version.__version__)
     else:
-        debug.log("Using rgbmatrix version %s", version.__version__)
+        debug.log("Using rgbmatrix version %s", __version__)
 
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
