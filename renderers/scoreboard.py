@@ -21,14 +21,14 @@ class Scoreboard:
         pos = 0
         if self.scoreboard.inning.state == Inning.TOP or self.scoreboard.inning.state == Inning.BOTTOM:
 
+
+            pos = AtBatRenderer(self.canvas, self.scoreboard.atbat, self.data, self.start_pos).render()
+
             # Check if we're deep enough into a game and it's a no hitter or perfect game
             should_display_nohitter = self.data.config.layout.coords("nohitter")["innings_until_display"]
             if self.scoreboard.inning.number > should_display_nohitter:
                 if self.data.config.layout.state_is_nohitter():
                     NoHitterRenderer(self.canvas, self.data).render()
-
-            pos = AtBatRenderer(self.canvas, self.scoreboard.atbat, self.data, self.start_pos).render()
-
             PitchesRenderer(self.canvas, self.scoreboard.pitches, self.data).render()
             OutsRenderer(self.canvas, self.scoreboard.outs, self.data).render()
             BasesRenderer(self.canvas, self.scoreboard.bases, self.data).render()
