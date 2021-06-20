@@ -120,9 +120,6 @@ def args():
         type=int,
     )
     parser.add_argument(
-        "--led-show-refresh", action="store_true", help="Shows the current refresh rate of the LED panel."
-    )
-    parser.add_argument(
         "--led-limit-refresh",
         action="store",
         help="Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0",
