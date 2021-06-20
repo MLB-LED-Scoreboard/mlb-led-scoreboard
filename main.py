@@ -6,7 +6,7 @@ from utils import args, led_matrix_options
 import logging
 
 try:
-    from rgbmatrix import RGBMatrix, version
+    from rgbmatrix import RGBMatrix, __version__
 
     emulated = False
 except ImportError:
