@@ -119,7 +119,23 @@ def args():
         default=0,
         type=int,
     )
-
+    parser.add_argument(
+        "--led-show-refresh", action="store_true", help="Shows the current refresh rate of the LED panel."
+    )
+    parser.add_argument(
+        "--led-limit-refresh",
+        action="store",
+        help="Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0",
+        default=0,
+        type=int,
+    )
+    parser.add_argument(
+        "--led-pwm-dither-bits",
+        action="store",
+        help="Time dithering of lower bits (Default: 0)",
+        default=0,
+        type=int,
+    )
     return parser.parse_args()
 
 
@@ -144,6 +160,18 @@ def led_matrix_options(args):
     except AttributeError:
         debug.warning("Your compiled RGB Matrix Library is out of date.")
         debug.warning("The --led-pixel-mapper argument will not work until it is updated.")
+
+    try:
+        options.pwm_dither_bits = args.led_pwm_dither_bits
+    except AttributeError:
+        debug.warning("Your compiled RGB Matrix Library is out of date.")
+        debug.warning("The --led-pwm-dither-bits argument will not work until it is updated.")
+
+    try:
+        options.limit_refresh_rate_hz = args.led_limit_refresh
+    except AttributeError:
+        debug.warning("Your compiled RGB Matrix Library is out of date.")
+        debug.warning("The --led-limit-refresh argument will not work until it is updated.")
 
     if args.led_show_refresh:
         options.show_refresh_rate = 1
