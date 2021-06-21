@@ -8,7 +8,7 @@ from data.game import Game
 from data.status import Status
 from data.update import UpdateStatus
 
-GAMES_REFRESH_RATE = 900.0
+GAMES_REFRESH_RATE = 5 * 60
 
 
 class Schedule:
