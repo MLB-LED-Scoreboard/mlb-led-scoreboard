@@ -38,7 +38,8 @@ class Scoreboard:
             self.note = None
 
         try:
-            self.reason = None  # TODO overview.reason
+            # TODO overview.reason
+            self.reason = game_data["gameData"]["status"]["detailedState"].split("challenge:", 1)[1]
         except:
             self.reason = None
 

@@ -64,7 +64,7 @@ class StatusRenderer:
         short_text = self.data.config.layout.coords("status.text")["short_text"]
         if short_text:
             return self.__get_short_text(text)
-        if text == Status.MANAGER_CHALLENGE:
+        if "challenge" in text:
             return CHALLENGE_SHORTHAND
         if text == Status.DELAYED_START:
             return Status.DELAYED
