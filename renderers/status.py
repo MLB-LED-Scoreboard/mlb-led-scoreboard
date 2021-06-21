@@ -61,11 +61,15 @@ class StatusRenderer:
 
     def __get_text_for_status(self):
         text = self.scoreboard.game_status
+        if ":" in text:
+            text = text.split(":")[0]
         short_text = self.data.config.layout.coords("status.text")["short_text"]
         if short_text:
             return self.__get_short_text(text)
         if "challenge" in text:
             return CHALLENGE_SHORTHAND
+        if "review" in text:
+            return UMPIRE_REVIEW_SHORTHAND
         if text == Status.DELAYED_START:
             return Status.DELAYED
         return text

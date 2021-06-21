@@ -38,10 +38,12 @@ class Scoreboard:
             self.note = None
 
         try:
-            # TODO overview.reason
-            self.reason = game_data["gameData"]["status"]["detailedState"].split("challenge:", 1)[1]
+            self.reason = game_data["gameData"]["status"]["reason"]
         except:
-            self.reason = None
+            try:
+                self.reason = game_data["gameData"]["status"]["detailedState"].split(":")[1]
+            except:
+                self.reason = None
 
     def get_text_for_reason(self):
         if self.note:
