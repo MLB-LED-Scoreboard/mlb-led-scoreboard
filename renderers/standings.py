@@ -71,7 +71,7 @@ class StandingsRenderer:
 
             self.matrix.SwapOnVSync(self.canvas)
             time.sleep(5.0)
-
+            self.data.refresh_standings()
             self.__fill_bg()
 
             if stat == "l":
@@ -120,6 +120,8 @@ class StandingsRenderer:
 
             self.matrix.SwapOnVSync(self.canvas)
             time.sleep(10.0)
+            self.data.refresh_standings()
+
             self.__fill_bg()
             self.data.advance_to_next_standings()
             if self.__games_playing():

@@ -2,12 +2,40 @@ import re
 
 import statsapi
 
+import debug
+import time
+
+STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
+
 
 class Standings:
     def __init__(self, date):
-        standings_data = statsapi.standings_data(date=date.strftime("%m/%d/%Y"))
 
-        self.divisions = [Division(id, division_data) for (id, division_data) in standings_data.items()]
+        self.date = date
+        self.starttime = time.time()
+
+        self.divisions = []
+
+        self.update(True)
+
+    def update(self, force=False):
+        succeeded = True
+        if force or self.__should_update():
+            debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
+            self.starttime = time.time()
+            try:
+                standings_data = statsapi.standings_data(date=self.date.strftime("%m/%d/%Y"))
+                self.divisions = [Division(id, division_data) for (id, division_data) in standings_data.items()]
+            except AttributeError:
+                debug.error("Failed to refresh standings.")
+                succeeded = False
+
+        return succeeded
+
+    def __should_update(self):
+        endtime = time.time()
+        time_delta = endtime - self.starttime
+        return time_delta >= STANDINGS_UPDATE_RATE
 
 
 class Division:

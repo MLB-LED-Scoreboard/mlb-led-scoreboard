@@ -44,12 +44,12 @@ class Data:
         self.refresh_games()
         self.current_game_index = self.game_index_for_preferred_team()
 
-        # Fetch all standings data for today
-        # (Good to have in case we add a standings screen while rotating scores)
-        self.refresh_standings()
-
         # Network status state
         self.network_issues = False
+
+        # Fetch all standings data for today
+        # (Good to have in case we add a standings screen while rotating scores)
+        self.standings = Standings(self.today)
 
         # Weather info
         self.weather = Weather(
@@ -78,13 +78,6 @@ class Data:
 
     def date(self):
         return self.today.strftime("%Y-%m-%d")
-
-    def refresh_standings(self):
-        try:
-            debug.log("Refreshing standings for %s", self.date())
-            self.standings = Standings(self.today)
-        except:
-            debug.error("Failed to refresh standings.")
 
     def refresh_games(self):
         debug.log("Updating games for %s", self.date())
@@ -122,6 +115,9 @@ class Data:
         # just move on to the next game
         if self.config.rotation_enabled:
             self.advance_to_next_game()
+
+    def refresh_standings(self):
+        self.network_issues = not self.standings.update()
 
     def refresh_weather(self):
         self.network_issues = not self.weather.update()
