@@ -1,9 +1,9 @@
-from data.atbat import AtBat
-from data.bases import Bases
-from data.inning import Inning
-from data.outs import Outs
-from data.pitches import Pitches
-from data.team import Team
+from data.scoreboard.atbat import AtBat
+from data.scoreboard.bases import Bases
+from data.scoreboard.inning import Inning
+from data.scoreboard.outs import Outs
+from data.scoreboard.pitches import Pitches
+from data.scoreboard.team import Team
 
 
 class Scoreboard:

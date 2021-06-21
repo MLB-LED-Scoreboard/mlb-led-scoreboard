@@ -3,7 +3,7 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-from data.inning import Inning
+from data.scoreboard.inning import Inning
 
 # Because normal games are 9 innings, silly
 NORMAL_GAME_LENGTH = 9

@@ -1,4 +1,4 @@
-from data.inning import Inning
+from data.scoreboard.inning import Inning
 from renderers.atbat import AtBatRenderer
 from renderers.bases import BasesRenderer
 from renderers.inning import InningRenderer

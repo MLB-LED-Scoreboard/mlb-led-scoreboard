@@ -1,4 +1,4 @@
-from data.inning import Inning
+from data.scoreboard.inning import Inning
 
 
 class Status:
