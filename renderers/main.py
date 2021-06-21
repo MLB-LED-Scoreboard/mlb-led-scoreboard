@@ -12,8 +12,6 @@ from renderers.scoreboard import Scoreboard as ScoreboardRenderer
 from renderers.standings import StandingsRenderer
 from renderers.status import StatusRenderer
 
-
-GAMES_REFRESH_RATE = 900.0
 SCROLL_TEXT_FAST_RATE = 0.1
 SCROLL_TEXT_SLOW_RATE = 0.2
 
@@ -39,14 +37,14 @@ class MainRenderer:
             self.__render_standings()
 
         # Full MLB Offday
-        elif self.data.is_offday():
+        elif self.data.schedule.is_offday():
             if self.data.config.standings_mlb_offday:
                 self.__render_standings()
             else:
                 self.__render_offday()
 
         # Preferred Team Offday
-        elif self.data.is_offday_for_preferred_team():
+        elif self.data.schedule.is_offday_for_preferred_team():
             if self.data.config.news_ticker_team_offday:
                 self.__render_offday()
             elif self.data.config.standings_team_offday:
@@ -87,11 +85,8 @@ class MainRenderer:
     # Renders a game screen based on it's status
     def __render_game(self):
         while True:
-            # If we need to refresh the game data, do that
-            if self.data.needs_refresh:
-                self.data.refresh_game_data()
 
-            if self.data.config.no_games and not self.data.games_live():
+            if self.data.config.no_games and not self.data.schedule.games_live():
                 try:
                     debug.log("Rendering Standings because no games are playing")
                     self.data.refresh_standings()
@@ -100,11 +95,10 @@ class MainRenderer:
                     debug.info("Could not render standings.")
                     debug.log("%s: %s", type(ex).__name__, ex.args)
                 else:  # loop again to check if we succeeded
-                    self.data.needs_refresh = True
                     continue
 
             # Draw the current game
-            self.__draw_game(self.data.game_data)
+            self.__draw_game(self.data.current_game)
 
             # Check if we need to scroll until it's finished
             if not self.data.config.rotation_scroll_until_finished:
@@ -113,42 +107,34 @@ class MainRenderer:
             # Set the refresh rate
             refresh_rate = self.data.config.scrolling_speed
 
-            status = self.data.game_data["gameData"]["status"]["detailedState"]
             # Currently the only thing that's always static is the live scoreboard
-            if Status.is_static(status):
+            if Status.is_static(self.data.current_game.status()):
                 self.scrolling_finished = True
 
             # If the status is irregular and there's no 'reason' text, finish scrolling
-            if Status.is_irregular(status) and Scoreboard(self.data.game_data).get_text_for_reason() is None:
+            if (
+                Status.is_irregular(self.data.current_game.status())
+                and Scoreboard(self.data.current_game).get_text_for_reason() is None
+            ):
                 self.scrolling_finished = True
 
             time.sleep(refresh_rate)
             endtime = time.time()
             time_delta = endtime - self.starttime
-            rotate_rate = self.__rotate_rate_for_status(status)
+            rotate_rate = self.__rotate_rate_for_status(self.data.current_game.status())
 
             # If we're ready to rotate, let's do it
             if time_delta >= rotate_rate and self.scrolling_finished:
                 self.starttime = time.time()
                 self.scrolling_finished = False
-                self.data.needs_refresh = True
 
-                # if Status.is_fresh(status):
-                #     self.scrolling_text_pos = self.canvas.width
-
-                if self.__should_rotate_to_next_game(self.data.game_data):
+                if self.__should_rotate_to_next_game(self.data.current_game):
                     self.data.advance_to_next_game()
                     self.scrolling_text_pos = self.canvas.width
+                else:
+                    self.data.refresh_game()
 
-                if endtime - self.data.games_refresh_time >= GAMES_REFRESH_RATE:
-                    self.data.refresh_games()
-
-                if self.data.needs_refresh:
-                    self.data.refresh_game_data()
-
-                if Status.is_complete(status):
-                    if Final(self.data.game_data).winning_pitcher == "Unknown":
-                        self.data.refresh_games()
+                self.data.refresh_schedule()
 
     def __rotate_rate_for_status(self, status):
         rotate_rate = self.data.config.rotation_rates_live
@@ -158,7 +144,7 @@ class MainRenderer:
             rotate_rate = self.data.config.rotation_rates_final
         return rotate_rate
 
-    def __should_rotate_to_next_game(self, game_data):
+    def __should_rotate_to_next_game(self, game):
         if not self.data.config.rotation_enabled:
             return False
 
@@ -168,44 +154,37 @@ class MainRenderer:
         if not stay_on_preferred_team:
             return True
 
-        showing_preferred_team = self.data.config.preferred_teams[0] in [
-            game_data["gameData"]["teams"]["away"]["teamName"],
-            game_data["gameData"]["teams"]["home"]["teamName"],
-        ]
-        if showing_preferred_team and Status.is_live(game_data["gameData"]["status"]["detailedState"]):
-            if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(
-                game_data["liveData"]["linescore"]["inningState"]
-            ):
+        if game.features_team(self.data.config.preferred_teams[0]) and Status.is_live(game.status()):
+            if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(game.status()):
                 return True
             return False
 
         return True
 
     # Draws the provided game on the canvas
-    def __draw_game(self, game_data):
+    def __draw_game(self, game):
         color = self.data.config.scoreboard_colors.color("default.background")
         self.canvas.Fill(color["r"], color["g"], color["b"])
 
-        status = game_data["gameData"]["status"]["detailedState"]
         # Draw the pregame renderer
-        if Status.is_pregame(status):
-            scoreboard = Scoreboard(game_data)
+        if Status.is_pregame(game.status()):
+            scoreboard = Scoreboard(game)
             self.__max_scroll_x(self.data.config.layout.coords("pregame.scrolling_text"))
-            pregame = Pregame(game_data, self.data.config.time_format)
+            pregame = Pregame(game, self.data.config.time_format)
             renderer = PregameRenderer(self.canvas, pregame, scoreboard, self.data, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
 
         # Draw the final game renderer
-        elif Status.is_complete(status):
+        elif Status.is_complete(game.status()):
             self.__max_scroll_x(self.data.config.layout.coords("final.scrolling_text"))
-            final = Final(game_data)
-            scoreboard = Scoreboard(game_data)
+            final = Final(game)
+            scoreboard = Scoreboard(game)
             renderer = FinalRenderer(self.canvas, final, scoreboard, self.data, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
 
         # Draw the scoreboar renderer
-        elif Status.is_irregular(status):
-            scoreboard = Scoreboard(game_data)
+        elif Status.is_irregular(game.status()):
+            scoreboard = Scoreboard(game)
             if scoreboard.get_text_for_reason():
                 self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
                 renderer = StatusRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
@@ -214,7 +193,7 @@ class MainRenderer:
                 StatusRenderer(self.canvas, scoreboard, self.data).render()
         else:
             self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
-            scoreboard = Scoreboard(game_data)
+            scoreboard = Scoreboard(game)
             loop_point = self.data.config.layout.coords("atbat")["loop"]
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             renderer = ScoreboardRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)

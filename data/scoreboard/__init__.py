@@ -1,3 +1,4 @@
+from data.game import Game
 from data.scoreboard.atbat import AtBat
 from data.scoreboard.bases import Bases
 from data.scoreboard.inning import Inning
@@ -12,38 +13,21 @@ class Scoreboard:
     including runners on base, balls, strikes, and outs.
     """
 
-    def __init__(self, game_data):
-        self.away_team = Team(
-            game_data["gameData"]["teams"]["away"]["abbreviation"],
-            game_data["liveData"]["linescore"]["teams"]["away"].get("runs", 0),
-            game_data["gameData"]["teams"]["away"]["teamName"],
-        )
-        self.home_team = Team(
-            game_data["gameData"]["teams"]["home"]["abbreviation"],
-            game_data["liveData"]["linescore"]["teams"]["home"].get("runs", 0),
-            game_data["gameData"]["teams"]["home"]["teamName"],
-        )
-        self.inning = Inning(game_data)
-        self.bases = Bases(game_data)
-        self.pitches = Pitches(game_data)
-        self.outs = Outs(game_data)
-        self.game_status = game_data["gameData"]["status"]["detailedState"]
-        self.atbat = AtBat(game_data)
+    def __init__(self, game: Game):
+        self.away_team = Team(game.away_abbreviation(), game.away_score(), game.away_name())
+        self.home_team = Team(game.home_abbreviation(), game.home_score(), game.home_name())
+        self.inning = Inning(game)
+        self.bases = Bases(game)
+        self.pitches = Pitches(game)
+        self.outs = Outs(game)
+        self.game_status = game.status()
+        self.atbat = AtBat(game)
         self.batter = self.atbat.batter
         self.pitcher = self.atbat.pitcher
 
-        try:
-            self.note = game_data["liveData"]["linescore"]["note"]
-        except:
-            self.note = None
+        self.note = game.note()
 
-        try:
-            self.reason = game_data["gameData"]["status"]["reason"]
-        except:
-            try:
-                self.reason = game_data["gameData"]["status"]["detailedState"].split(":")[1]
-            except:
-                self.reason = None
+        self.reason = game.reason()
 
     def get_text_for_reason(self):
         if self.note:

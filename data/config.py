@@ -16,7 +16,7 @@ DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
-class ScoreboardConfig:
+class Config:
     def __init__(self, filename_base, width, height):
         json = self.__get_config(filename_base)
 

@@ -1,23 +1,11 @@
+from data.game import Game
+
+
 class Bases:
-    def __init__(self, game_data):
-        b1 = None
-        b2 = None
-        b3 = None
-
-        try:
-            b1 = game_data["liveData"]["linescore"]["offense"]["first"]["id"]
-        except KeyError:
-            pass
-
-        try:
-            b2 = game_data["liveData"]["linescore"]["offense"]["second"]["id"]
-        except KeyError:
-            pass
-
-        try:
-            b3 = game_data["liveData"]["linescore"]["offense"]["third"]["id"]
-        except KeyError:
-            pass
+    def __init__(self, game: Game):
+        b1 = game.man_on("first")
+        b2 = game.man_on("second")
+        b3 = game.man_on("third")
 
         self.runners = [b1, b2, b3]
 

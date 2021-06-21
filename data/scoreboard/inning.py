@@ -1,3 +1,6 @@
+from data.game import Game
+
+
 class Inning:
 
     TOP = "Top"
@@ -5,7 +8,7 @@ class Inning:
     MIDDLE = "Middle"
     END = "End"
 
-    def __init__(self, game_data):
-        self.number = game_data["liveData"]["linescore"].get("currentInning", 0)
-        self.state = game_data["liveData"]["linescore"].get("inningState", "Middle")
-        self.ordinal = game_data["liveData"]["linescore"].get("currentInningOrdinal", 0)
+    def __init__(self, game: Game):
+        self.number = game.inning_number()
+        self.state = game.inning_state()
+        self.ordinal = game.inning_ordinal()

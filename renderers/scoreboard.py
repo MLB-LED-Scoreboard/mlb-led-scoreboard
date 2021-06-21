@@ -21,7 +21,6 @@ class Scoreboard:
         pos = 0
         if self.scoreboard.inning.state == Inning.TOP or self.scoreboard.inning.state == Inning.BOTTOM:
 
-
             pos = AtBatRenderer(self.canvas, self.scoreboard.atbat, self.data, self.start_pos).render()
 
             # Check if we're deep enough into a game and it's a no hitter or perfect game

@@ -1,52 +1,48 @@
-from datetime import datetime
-
 import tzlocal
+
+from data.game import Game
+
+PITCHER_TBD = "TBD"
 
 
 class Pregame:
-    def __init__(self, game_data, time_format):
-        self.home_team = game_data["gameData"]["teams"]["home"]["abbreviation"]
-        self.away_team = game_data["gameData"]["teams"]["away"]["abbreviation"]
+    def __init__(self, game: Game, time_format):
+        self.home_team = game.home_abbreviation()
+        self.away_team = game.away_abbreviation()
         self.time_format = time_format
 
         try:
-            self.start_time = self.__convert_time(game_data["gameData"]["datetime"]["dateTime"])
+            self.start_time = self.__convert_time(game.datetime())
         except:
             self.start_time = "TBD"
 
-        self.status = game_data["gameData"]["status"]["detailedState"]
+        self.status = game.status()
 
-        try:
-            away_id = "ID" + str(game_data["gameData"]["probablePitchers"]["away"]["id"])
-            away_name = game_data["gameData"]["players"][away_id]["boxscoreName"]
-            away_stats = game_data["liveData"]["boxscore"]["teams"]["away"]["players"][away_id]["seasonStats"][
-                "pitching"
-            ]
-            self.away_starter = "{} ({}-{} {} ERA)".format(
-                away_name, away_stats["wins"], away_stats["losses"], away_stats["era"]
-            )
-        except:
-            self.away_starter = "TBD"
+        away_id = game.probable_pitcher_id("away")
+        if away_id is not None:
+            name = game.full_name(away_id)
+            wins = game.pitcher_stat(away_id, "wins", "away")
+            losses = game.pitcher_stat(away_id, "losses", "away")
+            era = game.pitcher_stat(away_id, "era", "away")
+            self.away_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
+        else:
+            self.away_starter = PITCHER_TBD
 
-        try:
-            home_id = "ID" + str(game_data["gameData"]["probablePitchers"]["home"]["id"])
-            home_name = game_data["gameData"]["players"][home_id]["boxscoreName"]
-            home_stats = game_data["liveData"]["boxscore"]["teams"]["home"]["players"][home_id]["seasonStats"][
-                "pitching"
-            ]
-            self.home_starter = "{} ({}-{} {} ERA)".format(
-                home_name, home_stats["wins"], home_stats["losses"], home_stats["era"]
-            )
-        except:
-            self.home_starter = "TBD"
+        home_id = game.probable_pitcher_id("home")
+        if home_id is not None:
+            name = game.full_name(home_id)
+            wins = game.pitcher_stat(home_id, "wins", "home")
+            losses = game.pitcher_stat(home_id, "losses", "home")
+            era = game.pitcher_stat(home_id, "era", "home")
+            self.home_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
+        else:
+            self.home_starter = PITCHER_TBD
 
-    def __convert_time(self, time):
-        """Converts MLB's pregame times (Eastern) into the local time zone"""
+    def __convert_time(self, game_time_utc):
+        """Converts MLB's pregame times (UTC) into the local time zone"""
         time_str = "{}:%M".format(self.time_format)
         if self.time_format == "%I":
             time_str += "%p"
-        game_time_utc = datetime.fromisoformat(time.replace("Z", "+00:00"))
-
         return game_time_utc.astimezone(tzlocal.get_localzone()).strftime(time_str)
 
     def __str__(self):

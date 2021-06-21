@@ -3,17 +3,18 @@ import time
 import pyowm
 
 import debug
+from data.update import UpdateStatus
 
 WEATHER_UPDATE_RATE = 10 * 60  # 10 minutes between weather updates
 
 
 class Weather:
-    def __init__(self, apikey, location, metric):
-        self.apikey = apikey
-        self.location = location
-        self.metric = metric
-        self.temperature_unit = "celsius" if metric else "fahrenheit"
-        self.speed_unit = "meters_sec" if metric else "miles_hour"
+    def __init__(self, config):
+        self.apikey = config.weather_apikey
+        self.location = config.weather_location
+        self.metric = config.weather_metric_units
+        self.temperature_unit = "celsius" if self.metric else "fahrenheit"
+        self.speed_unit = "meters_sec" if self.metric else "miles_hour"
         self.starttime = time.time()
         self.client = pyowm.OWM(self.apikey)
 
@@ -36,7 +37,7 @@ class Weather:
 
     # Make a call to the open weather maps API and update our instance variables
     # Pass True if you need to ignore the update rate (like for our first update)
-    def update(self, force=False):
+    def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
             debug.log("Weather should update!")
             self.starttime = time.time()
@@ -57,6 +58,7 @@ class Weather:
                         self.conditions,
                         self.icon_filename(),
                     )
+                    return UpdateStatus.SUCCESS
                 except pyowm.exceptions.api_response_error.UnauthorizedError:
                     debug.warning(
                         "[WEATHER] The API key provided doesn't appear to be valid. Please check your config.json."
@@ -65,6 +67,7 @@ class Weather:
                         "[WEATHER] You can get a free API key by visiting https://home.openweathermap.org/users/sign_up"
                     )
                     self.apikey_valid = False
+                    return UpdateStatus.DEFERRED
                 except (
                     pyowm.exceptions.api_call_error.APICallTimeoutError,
                     pyowm.exceptions.api_call_error.APICallError,
@@ -84,9 +87,9 @@ class Weather:
                         self.conditions = "Error"
                     if self.icon_name is None:
                         self.icon_name = "50d"
-                else:
-                    return True  # success
-                return False
+                    return UpdateStatus.FAIL
+
+        return UpdateStatus.DEFERRED
 
     def temperature_string(self):
         return "{}{}".format(int(round(self.temp)), self.temperature_unit[:1].upper())

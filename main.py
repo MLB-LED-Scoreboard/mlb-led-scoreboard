@@ -1,9 +1,10 @@
+import logging
+
 import debug
+from data.config import Config
 from data.data import Data
-from data.scoreboard_config import ScoreboardConfig
 from renderers.main import MainRenderer
 from utils import args, led_matrix_options
-import logging
 
 try:
     from rgbmatrix import RGBMatrix, __version__
@@ -27,7 +28,7 @@ def main(args_in):
     matrix = RGBMatrix(options=matrixOptions)
 
     # Read scoreboard options from config.json if it exists
-    config = ScoreboardConfig("config", matrix.width, matrix.height)
+    config = Config("config", matrix.width, matrix.height)
     logger = logging.getLogger("mlbled")
     if config.debug:
         logger.setLevel(logging.DEBUG)

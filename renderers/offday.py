@@ -79,5 +79,5 @@ class OffdayRenderer:
         ).render(self.scrolling_text_pos)
 
     def __str_(self):
-        s = "<{} {}> Date: {}".format(self.__class__.__name__, hex(id(self)), self.data.date())
+        s = "<{} {}> Date: {}".format(self.__class__.__name__, hex(id(self)), self.data.today.strftime("%Y-%m-%d"))
         return s

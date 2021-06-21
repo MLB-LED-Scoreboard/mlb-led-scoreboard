@@ -1,3 +1,6 @@
+from data.game import Game
+
+
 class Outs:
-    def __init__(self, game_data):
-        self.number = game_data["liveData"]["linescore"].get("outs", 0)
+    def __init__(self, game: Game):
+        self.number = game.outs()

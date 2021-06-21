@@ -5,6 +5,7 @@ import feedparser
 
 import debug
 from data.dates import Dates
+from data.update import UpdateStatus
 
 try:
     from HTMLParser import HTMLParser
@@ -110,8 +111,8 @@ class Headlines:
         self.__compile_feed_list()
         self.update(True)
 
-    def update(self, force=False):
-        succeeded = True
+    def update(self, force=False) -> UpdateStatus:
+        status = UpdateStatus.SUCCESS
         if force or self.__should_update():
             debug.log("Headlines should update!")
             self.starttime = time.time()
@@ -130,10 +131,11 @@ class Headlines:
                             feeds.append(f)
                         except AttributeError:
                             debug.warning("There was a problem fetching {}".format(url))
-                            succeeded = False
+                            status = UpdateStatus.FAIL
                 self.feed_data = feeds
-
-        return succeeded
+        else:
+            status = UpdateStatus.DEFERRED
+        return status
 
     def ticker_string(self, max_entries=HEADLINE_MAX_ENTRIES):
         ticker = ""

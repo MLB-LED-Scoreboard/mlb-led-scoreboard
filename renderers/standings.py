@@ -54,7 +54,7 @@ class StandingsRenderer:
                 self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color
             )
 
-            for team in self.data.current_standings().teams:
+            for team in self.data.standings.current_standings().teams:
                 graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
 
                 team_text = "{:3s}".format(team.team_abbrev)
@@ -75,7 +75,7 @@ class StandingsRenderer:
             self.__fill_bg()
 
             if stat == "l":
-                self.data.advance_to_next_standings()
+                self.data.standings.advance_to_next_standings()
                 stat = "w"
             else:
                 stat = "l"
@@ -93,7 +93,7 @@ class StandingsRenderer:
                 self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color
             )
 
-            for team in self.data.current_standings().teams:
+            for team in self.data.standings.current_standings().teams:
                 graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
 
                 team_text = team.team_abbrev
@@ -123,7 +123,7 @@ class StandingsRenderer:
             self.data.refresh_standings()
 
             self.__fill_bg()
-            self.data.advance_to_next_standings()
+            self.data.standings.advance_to_next_standings()
             if self.__games_playing():
                 break
 
@@ -137,19 +137,16 @@ class StandingsRenderer:
 
     def __games_playing(self):
         # if a game is playing, we may want to break out of this screen
-        if self.data.is_offday():
+        if self.data.schedule.is_offday():
             return False
         if not self.data.config.no_games:
             return False
 
-        self.update_count += 1
-        if self.update_count > 16:
-            self.data.refresh_games()
-            self.update_count = 0
-        return self.data.games_live()
+        self.data.refresh_schedule()
+        return self.data.schedule.games_live()
 
     def __is_dumpster_fire(self):
-        return "comedy" in self.data.config.preferred_divisions[self.data.current_division_index].lower()
+        return "comedy" in self.data.config.preferred_divisions[self.data.standings.current_division_index].lower()
 
     def __render_dumpster_fire(self):
         image_file = get_file("Assets/fire.jpg")

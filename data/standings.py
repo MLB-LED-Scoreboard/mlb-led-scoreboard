@@ -1,41 +1,64 @@
 import re
+import time
 
 import statsapi
 
 import debug
-import time
+from data.update import UpdateStatus
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
 
 class Standings:
-    def __init__(self, date):
+    def __init__(self, date, preferred_divisions):
 
         self.date = date
         self.starttime = time.time()
+        self.preferred_divisions = preferred_divisions
+        self.current_division_index = 0
 
         self.divisions = []
 
         self.update(True)
 
-    def update(self, force=False):
-        succeeded = True
+    def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
             debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
                 standings_data = statsapi.standings_data(date=self.date.strftime("%m/%d/%Y"))
-                self.divisions = [Division(id, division_data) for (id, division_data) in standings_data.items()]
-            except AttributeError:
+            except:
                 debug.error("Failed to refresh standings.")
-                succeeded = False
+                return UpdateStatus.FAIL
+            else:
+                self.divisions = [Division(id, division_data) for (id, division_data) in standings_data.items()]
+                return UpdateStatus.SUCCESS
 
-        return succeeded
+        return UpdateStatus.DEFERRED
 
     def __should_update(self):
         endtime = time.time()
         time_delta = endtime - self.starttime
         return time_delta >= STANDINGS_UPDATE_RATE
+
+    def standings_for_preferred_division(self):
+        return self.__standings_for(self.preferred_divisions[0])
+
+    def __standings_for(self, division_name):
+        return next(division for division in self.divisions if division.name == division_name)
+
+    def current_standings(self):
+        return self.__standings_for(self.preferred_divisions[self.current_division_index])
+
+    def advance_to_next_standings(self):
+        self.current_division_index = self.__next_division_index()
+        return self.current_standings()
+
+    def __next_division_index(self):
+        counter = self.current_division_index + 1
+        if counter >= len(self.preferred_divisions):
+            counter = 0
+        return counter
 
 
 class Division:
