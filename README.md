@@ -1,9 +1,15 @@
 # mlb-led-scoreboard
+
+## Brian Ward's fork
+
+This version differs rather signficantly from the original, including tweaks to behavior, visuals, and different underlying code
+
+---------------
+
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
 
 Requires a Raspberry Pi and an LED board hooked up via the GPIO pins.
 
-[![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
 **Currently supported boards:**
  * 32x32
