@@ -154,6 +154,9 @@ class MainRenderer:
         if not stay_on_preferred_team:
             return True
 
+        if self.data.schedule.num_games() < 2:
+            return False
+
         if game.features_team(self.data.config.preferred_teams[0]) and Status.is_live(game.status()):
             if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(game.status()):
                 return True

@@ -63,6 +63,9 @@ class Schedule:
             for g in self._games
         )
 
+    def num_games(self):
+        return len(self._games)
+
     def get_preferred_game(self):
         team_index = self._game_index_for_preferred_team()
         self.current_idx = team_index
