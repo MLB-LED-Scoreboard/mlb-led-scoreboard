@@ -39,11 +39,13 @@ class Config:
         self.standings_mlb_offday = json["standings"]["mlb_offday"]
         self.standings_always_display = json["standings"]["always_display"]
         self.standings_display_offday = False
+        self.standings_no_games = json["standings"]["display_no_games_live"]
 
         # Rotation
         self.rotation_enabled = json["rotation"]["enabled"]
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
         self.rotation_only_preferred = json["rotation"]["only_preferred"]
+        self.rotation_only_live = json["rotation"]["only_live"]
         self.rotation_rates = json["rotation"]["rates"]
         self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
         self.rotation_preferred_team_live_mid_inning = json["rotation"]["while_preferred_team_live"][
@@ -61,7 +63,6 @@ class Config:
         self.full_team_names = json["full_team_names"]
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
-        self.no_games = json["no_live_games_like_offday"]
         # Make sure the scrolling speed setting is in range so we don't crash
         try:
             self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]

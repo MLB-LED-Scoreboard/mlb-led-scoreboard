@@ -36,6 +36,10 @@ class Schedule:
                     self._games = Schedule.__filter_list_of_games(all_games, self.config.preferred_teams)
                 else:
                     self._games = all_games
+                if self.config.rotation_only_live:
+                    self._games = [
+                        g for g in self._games if Status.is_live(g["status"]) or Status.is_fresh(g["status"])
+                    ]
                 return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED

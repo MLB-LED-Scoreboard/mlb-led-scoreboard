@@ -16,12 +16,14 @@
 	"standings": {
 		"team_offday": false,
 		"mlb_offday": true,
-		"always_display": false
+		"always_display": false,
+		"display_no_games_live": true
 	},
 	"rotation": {
 		"enabled": true,
 		"scroll_until_finished": true,
 		"only_preferred": false,
+		"only_live": true,
 		"rates": {
 			"live": 15.0,
 			"final": 15.0,
@@ -42,6 +44,5 @@
 	"full_team_names": true,
 	"scrolling_speed": 2,
 	"debug": false,
-	"demo_date": false,
-	"no_live_games_like_offday": false
+	"demo_date": false
 }

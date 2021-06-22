@@ -24,6 +24,7 @@ class MainRenderer:
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished = False
         self.starttime = time.time()
+        self.animation_time = 0
 
     def render(self):
         self.starttime = time.time()
@@ -86,7 +87,7 @@ class MainRenderer:
     def __render_game(self):
         while True:
 
-            if self.data.config.no_games and not self.data.schedule.games_live():
+            if self.data.config.standings_no_games and not self.data.schedule.games_live():
                 try:
                     debug.log("Rendering Standings because no games are playing")
                     self.data.refresh_standings()
@@ -198,8 +199,11 @@ class MainRenderer:
             self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
             scoreboard = Scoreboard(game)
             loop_point = self.data.config.layout.coords("atbat")["loop"]
+            self.animation_time = 0 if not scoreboard.homerun() else (self.animation_time + 1)
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
-            renderer = ScoreboardRenderer(self.canvas, scoreboard, self.data, self.scrolling_text_pos)
+            renderer = ScoreboardRenderer(
+                self.canvas, scoreboard, self.data, self.scrolling_text_pos, self.animation_time % 16
+            )
             self.__update_scrolling_text_pos(renderer.render(), loop_point)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 

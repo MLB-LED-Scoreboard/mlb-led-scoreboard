@@ -8,11 +8,13 @@ class BasesRenderer:
     """Renders the bases on the scoreboard and fills them in if they
     currently hold a runner."""
 
-    def __init__(self, canvas, bases, data):
+    def __init__(self, canvas, bases, data, home_run, animation_time):
         self.canvas = canvas
         self.bases = bases
         self.layout = data.config.layout
         self.colors = data.config.scoreboard_colors
+        self.home_run = home_run
+        self.animation = animation_time // 5
 
     def render(self):
         base_runners = self.bases.runners
@@ -29,8 +31,8 @@ class BasesRenderer:
         for base in range(len(base_runners)):
             self.__render_base_outline(base_px[base], colors[base])
 
-            # Fill in the base if there's currently a baserunner
-            if base_runners[base]:
+            # Fill in the base if there's currently a baserunner or cycle if theres a homer
+            if base_runners[base] or self.animation == base:
                 self.__render_baserunner(base_px[base], colors[base])
 
     def __render_base_outline(self, base, color):

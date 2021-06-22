@@ -9,26 +9,35 @@ from renderers.scrollingtext import ScrollingText
 class AtBatRenderer:
     """Renders the batter and pitcher."""
 
-    def __init__(self, canvas, atbat, data, text_pos):
+    def __init__(self, canvas, atbat, data, text_pos, strikeout):
         self.canvas = canvas
         self.batter = atbat.batter
         self.pitcher = atbat.pitcher
         self.data = data
         self.colors = data.config.scoreboard_colors
         self.bgcolor = self.colors.graphics_color("default.background")
-
+        self.strikeout = strikeout
         self.start_pos = text_pos
 
     def render(self):
-
-        blength = self.__render_batter_text()
         plength = self.__render_pitcher_text()
 
-        return max(plength, blength)
+        if self.strikeout:
+            self.__render_strikeout()
+            return plength
+        else:
+            blength = self.__render_batter_text()
+            return max(plength, blength)
+
+    def __render_strikeout(self):
+        coords = self.data.config.layout.coords("atbat.strikeout")
+        color = self.colors.graphics_color("atbat.strikeout")
+        font = self.data.config.layout.font("atbat.strikeout")
+        graphics.DrawText(self.canvas, font["font"], coords["x"], coords["y"], color, "K")
 
     def __render_batter_text(self):
         coords = self.data.config.layout.coords("atbat.batter")
-        color = self.colors.graphics_color("atbat.pitcher")
+        color = self.colors.graphics_color("atbat.batter")
         font = self.data.config.layout.font("atbat.batter")
         size = ScrollingText(
             self.canvas,

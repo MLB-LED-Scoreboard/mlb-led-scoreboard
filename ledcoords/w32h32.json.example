@@ -123,7 +123,11 @@
       "y": 33,
       "width": 12
     },
-    "loop": 16
+    "loop": 16,
+    "strikeout": {
+      "x": 33,
+      "y": 33
+    }
   },
   "batter_count": {
     "x": 1,

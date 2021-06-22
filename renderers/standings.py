@@ -139,7 +139,7 @@ class StandingsRenderer:
         # if a game is playing, we may want to break out of this screen
         if self.data.schedule.is_offday():
             return False
-        if not self.data.config.no_games:
+        if not self.data.config.standings_no_games:
             return False
 
         self.data.refresh_schedule()

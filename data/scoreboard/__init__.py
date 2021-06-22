@@ -29,6 +29,14 @@ class Scoreboard:
 
         self.reason = game.reason()
 
+        self.play_result = game.current_play_result()
+
+    def homerun(self):
+        return self.play_result == "home_run"
+
+    def strikeout(self):
+        return self.play_result == "strikeout"
+
     def get_text_for_reason(self):
         if self.note:
             return self.note
