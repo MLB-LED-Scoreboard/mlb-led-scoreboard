@@ -22,7 +22,12 @@ class Scoreboard:
         if self.scoreboard.inning.state == Inning.TOP or self.scoreboard.inning.state == Inning.BOTTOM:
 
             pos = AtBatRenderer(
-                self.canvas, self.scoreboard.atbat, self.data, self.start_pos, self.scoreboard.strikeout()
+                self.canvas,
+                self.scoreboard.atbat,
+                self.data,
+                self.start_pos,
+                self.scoreboard.strikeout(),
+                self.animation_time,
             ).render()
 
             # Check if we're deep enough into a game and it's a no hitter or perfect game
@@ -33,7 +38,7 @@ class Scoreboard:
             PitchesRenderer(self.canvas, self.scoreboard.pitches, self.data).render()
             OutsRenderer(self.canvas, self.scoreboard.outs, self.data).render()
             BasesRenderer(
-                self.canvas, self.scoreboard.bases, self.data, self.scoreboard.homerun(), self.animation_time
+                self.canvas, self.scoreboard.bases, self.data, self.scoreboard.homerun(), self.animation_time % 16
             ).render()
 
         TeamsRenderer(self.canvas, self.scoreboard.home_team, self.scoreboard.away_team, self.data).render()

@@ -9,7 +9,7 @@ from renderers.scrollingtext import ScrollingText
 class AtBatRenderer:
     """Renders the batter and pitcher."""
 
-    def __init__(self, canvas, atbat, data, text_pos, strikeout):
+    def __init__(self, canvas, atbat, data, text_pos, strikeout, animation_time):
         self.canvas = canvas
         self.batter = atbat.batter
         self.pitcher = atbat.pitcher
@@ -18,12 +18,14 @@ class AtBatRenderer:
         self.bgcolor = self.colors.graphics_color("default.background")
         self.strikeout = strikeout
         self.start_pos = text_pos
+        self.animation_time = animation_time
 
     def render(self):
         plength = self.__render_pitcher_text()
 
-        if self.strikeout:
-            self.__render_strikeout()
+        if self.strikeout and self.animation_time < 60:
+            if (self.animation_time // 6) % 2:
+                self.__render_strikeout()
             return plength
         else:
             blength = self.__render_batter_text()

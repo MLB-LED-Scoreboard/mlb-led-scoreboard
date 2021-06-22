@@ -8,7 +8,7 @@ from data.update import UpdateStatus
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
     + "probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
-    + "currentPlay,result,event,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,"
+    + "currentPlay,result,eventType,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,"
     + "currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,"
     + "teams,runs,players,seasonStats,pitching,wins,losses,saves,era"
 )

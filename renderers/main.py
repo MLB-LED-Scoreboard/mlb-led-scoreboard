@@ -159,7 +159,7 @@ class MainRenderer:
             return False
 
         if game.features_team(self.data.config.preferred_teams[0]) and Status.is_live(game.status()):
-            if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(game.status()):
+            if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(game.inning_state()):
                 return True
             return False
 
@@ -199,10 +199,10 @@ class MainRenderer:
             self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
             scoreboard = Scoreboard(game)
             loop_point = self.data.config.layout.coords("atbat")["loop"]
-            self.animation_time = 0 if not scoreboard.homerun() else (self.animation_time + 1)
+            self.animation_time = 0 if not (scoreboard.homerun() or scoreboard.strikeout()) else (self.animation_time + 1)
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             renderer = ScoreboardRenderer(
-                self.canvas, scoreboard, self.data, self.scrolling_text_pos, self.animation_time % 16
+                self.canvas, scoreboard, self.data, self.scrolling_text_pos, self.animation_time 
             )
             self.__update_scrolling_text_pos(renderer.render(), loop_point)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)

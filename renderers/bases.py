@@ -32,7 +32,7 @@ class BasesRenderer:
             self.__render_base_outline(base_px[base], colors[base])
 
             # Fill in the base if there's currently a baserunner or cycle if theres a homer
-            if base_runners[base] or self.animation == base:
+            if base_runners[base] or (self.home_run and self.animation == base):
                 self.__render_baserunner(base_px[base], colors[base])
 
     def __render_base_outline(self, base, color):
