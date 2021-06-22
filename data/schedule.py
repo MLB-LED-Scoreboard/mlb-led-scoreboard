@@ -18,7 +18,9 @@ class Schedule:
         self.starttime = time.time()
         self.current_idx = 0
         self.preferred_over = False
-
+        # all games for the day
+        self.__all_games = []
+        # the actual (filtered) schedule
         self._games = []
         self.update(True)
 
@@ -27,15 +29,15 @@ class Schedule:
             debug.log("Updating schedule for %s", self.date.strftime("%Y-%m-%d"))
             self.starttime = time.time()
             try:
-                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
+                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
             except:
                 debug.error("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
             else:
                 if self.config.rotation_only_preferred:
-                    self._games = Schedule.__filter_list_of_games(all_games, self.config.preferred_teams)
+                    self._games = Schedule.__filter_list_of_games(self.__all_games, self.config.preferred_teams)
                 else:
-                    self._games = all_games
+                    self._games = self.__all_games
                 if self.config.rotation_only_live:
                     self._games = [
                         g for g in self._games if Status.is_live(g["status"]) or Status.is_fresh(g["status"])
@@ -53,13 +55,13 @@ class Schedule:
         if self.config.preferred_teams:
             return not any(
                 data.teams.TEAM_FULL[self.config.preferred_teams[0]] in [game["away_name"], game["home_name"]]
-                for game in self._games
+                for game in self.__all_games
             )
         else:
             return True
 
     def is_offday(self):
-        return not len(self._games)
+        return not len(self.__all_games)
 
     def games_live(self):
         return any(
