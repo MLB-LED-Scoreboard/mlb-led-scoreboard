@@ -124,6 +124,8 @@ class MainRenderer:
             time_delta = endtime - self.starttime
             rotate_rate = self.__rotate_rate_for_status(self.data.current_game.status())
 
+            self.data.refresh_game()
+
             # If we're ready to rotate, let's do it
             if time_delta >= rotate_rate and self.scrolling_finished:
                 self.starttime = time.time()
@@ -132,8 +134,6 @@ class MainRenderer:
                 if self.__should_rotate_to_next_game(self.data.current_game):
                     self.data.advance_to_next_game()
                     self.scrolling_text_pos = self.canvas.width
-                else:
-                    self.data.refresh_game()
 
                 self.data.refresh_schedule()
 
@@ -199,10 +199,12 @@ class MainRenderer:
             self.__max_scroll_x(self.data.config.layout.coords("status.scrolling_text"))
             scoreboard = Scoreboard(game)
             loop_point = self.data.config.layout.coords("atbat")["loop"]
-            self.animation_time = 0 if not (scoreboard.homerun() or scoreboard.strikeout()) else (self.animation_time + 1)
+            self.animation_time = (
+                0 if not (scoreboard.homerun() or scoreboard.strikeout()) else (self.animation_time + 1)
+            )
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             renderer = ScoreboardRenderer(
-                self.canvas, scoreboard, self.data, self.scrolling_text_pos, self.animation_time 
+                self.canvas, scoreboard, self.data, self.scrolling_text_pos, self.animation_time
             )
             self.__update_scrolling_text_pos(renderer.render(), loop_point)
         self.canvas = self.matrix.SwapOnVSync(self.canvas)

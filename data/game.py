@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 
 import statsapi
 
@@ -13,29 +14,33 @@ API_FIELDS = (
     + "teams,runs,players,seasonStats,pitching,wins,losses,saves,era"
 )
 
+GAME_UPDATE_RATE = 10
+
 
 class Game:
     @classmethod
     def from_ID(cls, game_id):
         game = Game(game_id)
-        if game.update() == UpdateStatus.SUCCESS:
+        if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
     def __init__(self, game_id):
         self.game_id = game_id
-
+        self.starttime = time.time()
         self._data = {}
 
-    def update(self) -> UpdateStatus:
-        try:
-            debug.log("Fetching data for game %s", str(self.game_id))
-            self._data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS})
-        except:
-            debug.error("Networking Error while refreshing the current game data.")
-            return UpdateStatus.FAIL
-
-        return UpdateStatus.SUCCESS
+    def update(self, force=False) -> UpdateStatus:
+        if force or self.__should_update():
+            self.starttime = time.time()
+            try:
+                debug.log("Fetching data for game %s", str(self.game_id))
+                self._data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS})
+                return UpdateStatus.SUCCESS
+            except:
+                debug.error("Networking Error while refreshing the current game data.")
+                return UpdateStatus.FAIL
+        return UpdateStatus.DEFERRED
 
     def datetime(self):
         time = self._data["gameData"]["datetime"]["dateTime"]
@@ -199,6 +204,11 @@ class Game:
 
     def current_play_result(self):
         return self._data["liveData"]["plays"]["currentPlay"].get("result", {}).get("eventType", None)
+
+    def __should_update(self):
+        endtime = time.time()
+        time_delta = endtime - self.starttime
+        return time_delta >= GAME_UPDATE_RATE
 
     @classmethod
     def _format_id(cls, player):
