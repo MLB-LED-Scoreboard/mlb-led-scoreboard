@@ -52,4 +52,8 @@ def main(args_in):
 
 
 if __name__ == "__main__":
-    main(args())
+    try:
+        main(args())
+    except:
+        debug.exception("Untrapped error in main!")
+        raise
