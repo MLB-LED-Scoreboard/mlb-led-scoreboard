@@ -55,13 +55,13 @@ class Schedule:
         if self.config.preferred_teams:
             return not any(
                 data.teams.TEAM_FULL[self.config.preferred_teams[0]] in [game["away_name"], game["home_name"]]
-                for game in self.__all_games
+                for game in self._games  # only care if preferred team is actually in list
             )
         else:
             return True
 
     def is_offday(self):
-        return not len(self.__all_games)
+        return not len(self.__all_games)  # care about all MLB
 
     def games_live(self):
         return any(
@@ -80,6 +80,7 @@ class Schedule:
     def next_game(self):
         # We only need to check the preferred team's game status if we're
         # rotating during mid-innings
+        # TODO verify during a double-header
         if (
             self.config.rotation_preferred_team_live_mid_inning
             and not self.is_offday_for_preferred_team()
