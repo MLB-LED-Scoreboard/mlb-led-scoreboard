@@ -124,14 +124,15 @@ class MainRenderer:
             time_delta = endtime - self.starttime
             rotate_rate = self.__rotate_rate_for_status(self.data.current_game.status())
 
-            self.data.refresh_game()
-
+            rotate = self.__should_rotate_to_next_game(self.data.current_game)
+            if not rotate:
+                self.data.refresh_game()
             # If we're ready to rotate, let's do it
             if time_delta >= rotate_rate and self.scrolling_finished:
                 self.starttime = time.time()
                 self.scrolling_finished = False
 
-                if self.__should_rotate_to_next_game(self.data.current_game):
+                if rotate:
                     self.data.advance_to_next_game()
                     self.scrolling_text_pos = self.canvas.width
 
