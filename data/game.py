@@ -203,7 +203,7 @@ class Game:
                 return None
 
     def current_play_result(self):
-        return self._data["liveData"]["plays"]["currentPlay"].get("result", {}).get("eventType", None)
+        return self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", None)
 
     def __should_update(self):
         endtime = time.time()
