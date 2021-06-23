@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 
 import data.layout as layout
@@ -25,6 +26,7 @@ class Data:
         self.schedule = Schedule(self.today, config)
         # NB: Can return none, but shouldn't matter?
         self.current_game = self.schedule.get_preferred_game()
+        self.game_changed_time = time.time()
 
         # Fetch all standings data for today
         # (Good to have in case we add a standings screen while rotating scores)
@@ -39,6 +41,9 @@ class Data:
         # Network status state - we use headlines and weather condition as a sort of sentinial value
         self.network_issues = (self.weather.conditions == "Error") and (not self.headlines.feed_data)
 
+        # RENDER ITEMS
+        self.scrolling_finished = False
+
     def __parse_today(self):
         if self.config.demo_date:
             today = datetime.strptime(self.config.demo_date, "%Y-%m-%d")
@@ -50,6 +55,25 @@ class Data:
             if end_of_day > datetime.now():
                 today -= timedelta(days=1)
         return today
+
+    def should_rotate_to_next_game(self):
+        game = self.current_game
+        if not self.config.rotation_enabled:
+            return False
+
+        stay_on_preferred_team = self.config.preferred_teams and not self.config.rotation_preferred_team_live_enabled
+        if not stay_on_preferred_team:
+            return True
+
+        if self.schedule.num_games() < 2:
+            return False
+
+        if game.features_team(self.config.preferred_teams[0]) and Status.is_live(game.status()):
+            if self.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(game.inning_state()):
+                return True
+            return False
+
+        return True
 
     def refresh_game(self):
         status = self.current_game.update()
@@ -66,6 +90,7 @@ class Data:
             self.current_game = game
             self.__update_layout_state()
             self.print_game_data_debug()
+            self.game_changed_time = time.time()
             self.network_issues = False
         else:
             self.network_issues = True
@@ -74,7 +99,6 @@ class Data:
         self.__process_network_status(self.standings.update())
 
     def refresh_weather(self):
-
         self.__process_network_status(self.weather.update())
 
     def refresh_news_ticker(self):
@@ -88,6 +112,30 @@ class Data:
             self.network_issues = False
         elif status == UpdateStatus.FAIL:
             self.network_issues = True
+
+    def get_screen_type(self):
+        # Always the news
+        if self.config.news_ticker_always_display:
+            return "news"
+        # Always the standings
+        elif self.config.standings_always_display:
+            return "standings"
+
+        # Full MLB Offday
+        elif self.schedule.is_offday():
+            if self.config.standings_mlb_offday:
+                return "standings"
+            else:
+                return "news"
+        # Preferred Team Offday
+        elif self.schedule.is_offday_for_preferred_team():
+            if self.config.news_ticker_team_offday:
+                return "news"
+            elif self.config.standings_team_offday:
+                return "standings"
+        # Playball!
+        else:
+            return "games"
 
     def __update_layout_state(self):
         self.config.layout.set_state()

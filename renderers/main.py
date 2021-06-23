@@ -22,44 +22,25 @@ class MainRenderer:
         self.data = data
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
-        self.scrolling_finished = False
-        self.starttime = time.time()
+        self.game_changed_time = time.time()
         self.animation_time = 0
 
     def render(self):
-        self.starttime = time.time()
-
-        # Always display the news ticker
-        if self.data.config.news_ticker_always_display:
+        screen = self.data.get_screen_type()
+        # display the news ticker
+        if screen == "news":
             self.__render_offday()
-
-        # Always display the standings
-        elif self.data.config.standings_always_display:
+        # display the standings
+        elif screen == "standings":
             self.__render_standings()
-
-        # Full MLB Offday
-        elif self.data.schedule.is_offday():
-            if self.data.config.standings_mlb_offday:
-                self.__render_standings()
-            else:
-                self.__render_offday()
-
-        # Preferred Team Offday
-        elif self.data.schedule.is_offday_for_preferred_team():
-            if self.data.config.news_ticker_team_offday:
-                self.__render_offday()
-            elif self.data.config.standings_team_offday:
-                self.__render_standings()
-            else:
-                self.__render_game()
-
         # Playball!
         else:
             self.__render_game()
 
     # Render an offday screen with the weather, clock and news
     def __render_offday(self):
-        self.scrolling_finished = False
+        self.data.scrolling_finished = False
+        self.scrolling_text_pos = self.canvas.width
 
         while True:
             color = self.data.config.scoreboard_colors.color("default.background")
@@ -68,19 +49,16 @@ class MainRenderer:
             self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
             renderer = OffdayRenderer(self.canvas, self.data, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(renderer.render(), self.canvas.width)
-            self.data.refresh_weather()
-            self.data.refresh_news_ticker()
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(self.data.config.scrolling_speed)
 
     # Render the standings screen
     def __render_standings(self):
-        try:
+        if self.data.standings.divisions:
             StandingsRenderer(self.matrix, self.canvas, self.data).render()
-        except Exception as ex:
+        else:
             # Out of season off days don't always return standings so fall back on the offday renderer
-            debug.error("Could not render standings.  Falling back to off day.")
-            debug.error("{}: {}".format(type(ex).__name__, ex.args))
+            debug.error("No standings data.  Falling back to off day.")
             self.__render_offday()
 
     # Renders a game screen based on it's status
@@ -90,88 +68,33 @@ class MainRenderer:
         while True:
 
             if self.data.config.standings_no_games and not self.data.schedule.games_live():
-                try:
-                    debug.log("Rendering Standings because no games are playing")
-                    self.data.refresh_standings()
-                    StandingsRenderer(self.matrix, self.canvas, self.data).render()
-                except Exception as ex:
-                    debug.info("Could not render standings.")
-                    debug.log("%s: %s", type(ex).__name__, ex.args)
-                else:  # loop again to check if we succeeded
-                    self.data.advance_to_next_game()
-                    continue
+                # we know we aren't out of season so it should be ok to do this unconditionally
+                StandingsRenderer(self.matrix, self.canvas, self.data).render()
 
             # Draw the current game
             self.__draw_game(self.data.current_game)
 
             # Check if we need to scroll until it's finished
             if not self.data.config.rotation_scroll_until_finished:
-                self.scrolling_finished = True
+                self.data.scrolling_finished = True
 
             # Currently the only thing that's always static is the live scoreboard
             if Status.is_static(self.data.current_game.status()):
-                self.scrolling_finished = True
+                self.data.scrolling_finished = True
 
             # If the status is irregular and there's no 'reason' text, finish scrolling
             if (
                 Status.is_irregular(self.data.current_game.status())
                 and Scoreboard(self.data.current_game).get_text_for_reason() is None
             ):
-                self.scrolling_finished = True
+                self.data.scrolling_finished = True
 
             time.sleep(refresh_rate)
-            endtime = time.time()
-            time_delta = endtime - self.starttime
-            rotate_rate = self.__rotate_rate_for_status(self.data.current_game.status())
 
-            rotate = self.__should_rotate_to_next_game(self.data.current_game)
-            if not rotate:
-                b = time.time()
-                self.data.refresh_game()
-                a = time.time()
-                # reduce stutter if refreshing took time
-                refresh_rate = max(self.data.config.scrolling_speed - (a - b), 0)
-            else:
-                refresh_rate = self.data.config.scrolling_speed
-
-            # If we're ready to rotate, let's do it
-            if time_delta >= rotate_rate and self.scrolling_finished:
-                self.starttime = time.time()
-                self.scrolling_finished = False
-
-                if rotate:
-                    self.data.advance_to_next_game()
-                    self.scrolling_text_pos = self.canvas.width
-
-                self.data.refresh_schedule()
-
-    def __rotate_rate_for_status(self, status):
-        rotate_rate = self.data.config.rotation_rates_live
-        if Status.is_pregame(status):
-            rotate_rate = self.data.config.rotation_rates_pregame
-        if Status.is_complete(status):
-            rotate_rate = self.data.config.rotation_rates_final
-        return rotate_rate
-
-    def __should_rotate_to_next_game(self, game):
-        if not self.data.config.rotation_enabled:
-            return False
-
-        stay_on_preferred_team = (
-            self.data.config.preferred_teams and not self.data.config.rotation_preferred_team_live_enabled
-        )
-        if not stay_on_preferred_team:
-            return True
-
-        if self.data.schedule.num_games() < 2:
-            return False
-
-        if game.features_team(self.data.config.preferred_teams[0]) and Status.is_live(game.status()):
-            if self.data.config.rotation_preferred_team_live_mid_inning and Status.is_inning_break(game.inning_state()):
-                return True
-            return False
-
-        return True
+            if self.game_changed_time < self.data.game_changed_time:
+                self.scrolling_text_pos = self.canvas.width
+                self.data.scrolling_finished = False
+                self.game_changed_time = time.time()
 
     # Draws the provided game on the canvas
     def __draw_game(self, game):
@@ -227,8 +150,8 @@ class MainRenderer:
     def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of the probable starting pitcher text."""
         pos_after_scroll = self.scrolling_text_pos - 1
-        if pos_after_scroll + new_pos < 0:
-            self.scrolling_finished = True
+        if pos_after_scroll + new_pos < -4:
+            self.data.scrolling_finished = True
             self.scrolling_text_pos = end
         else:
             self.scrolling_text_pos = pos_after_scroll

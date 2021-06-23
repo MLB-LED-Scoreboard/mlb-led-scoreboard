@@ -5,6 +5,7 @@ import sys
 import debug
 from data.color import Color
 from data.layout import Layout
+from data.status import Status
 from utils import deep_update, get_file
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -157,6 +158,14 @@ class Config:
         self.rotation_rates_live = self.rotation_rates.get("live", DEFAULT_ROTATE_RATES["live"])
         self.rotation_rates_final = self.rotation_rates.get("final", DEFAULT_ROTATE_RATES["final"])
         self.rotation_rates_pregame = self.rotation_rates.get("pregame", DEFAULT_ROTATE_RATES["pregame"])
+
+    def rotate_rate_for_status(self, status):
+        rotate_rate = self.rotation_rates_live
+        if Status.is_pregame(status):
+            rotate_rate = self.rotation_rates_pregame
+        if Status.is_complete(status):
+            rotate_rate = self.rotation_rates_final
+        return rotate_rate
 
     def read_json(self, filename):
         j = {}

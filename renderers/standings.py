@@ -1,5 +1,3 @@
-from PIL import Image
-
 try:
     from rgbmatrix import graphics
 except ImportError:
@@ -8,7 +6,7 @@ except ImportError:
 import time
 
 from renderers.network import NetworkErrorRenderer
-from utils import center_text_position, get_file
+from utils import center_text_position
 
 
 class StandingsRenderer:
@@ -22,17 +20,13 @@ class StandingsRenderer:
         self.stat_color = self.colors.graphics_color("standings.stat")
         self.team_stat_color = self.colors.graphics_color("standings.team.stat")
         self.team_name_color = self.colors.graphics_color("standings.team.name")
-        self.update_count = 0
 
     def render(self):
         self.__fill_bg()
-        if self.__is_dumpster_fire():
-            self.__render_dumpster_fire()
+        if self.canvas.width > 32:
+            self.__render_static_wide_standings()
         else:
-            if self.canvas.width > 32:
-                self.__render_static_wide_standings()
-            else:
-                self.__render_rotating_standings()
+            self.__render_rotating_standings()
 
     def __fill_bg(self):
         coords = self.data.config.layout.coords("standings")
@@ -71,7 +65,6 @@ class StandingsRenderer:
 
             self.matrix.SwapOnVSync(self.canvas)
             time.sleep(5.0)
-            self.data.refresh_standings()
             self.__fill_bg()
 
             if stat == "l":
@@ -120,7 +113,6 @@ class StandingsRenderer:
 
             self.matrix.SwapOnVSync(self.canvas)
             time.sleep(10.0)
-            self.data.refresh_standings()
 
             self.__fill_bg()
             self.data.standings.advance_to_next_standings()
@@ -143,20 +135,4 @@ class StandingsRenderer:
             return False
         if not self.data.config.standings_no_games:
             return False
-
-        self.data.refresh_schedule()
         return self.data.schedule.games_live()
-
-    def __is_dumpster_fire(self):
-        return "comedy" in self.data.config.preferred_divisions[self.data.standings.current_division_index].lower()
-
-    def __render_dumpster_fire(self):
-        image_file = get_file("Assets/fire.jpg")
-        image = Image.open(image_file)
-        image_rgb = image.convert("RGB")
-        image_x = (self.canvas.width // 2) - 16
-
-        self.matrix.Clear()
-        while True:
-            self.matrix.SetImage(image_rgb, image_x, 0)
-            time.sleep(20.0)
