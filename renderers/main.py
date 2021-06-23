@@ -85,8 +85,10 @@ class MainRenderer:
 
     # Renders a game screen based on it's status
     def __render_game(self):
+        # Set the refresh rate
+        refresh_rate = self.data.config.scrolling_speed
         while True:
-            
+
             if self.data.config.standings_no_games and not self.data.schedule.games_live():
                 try:
                     debug.log("Rendering Standings because no games are playing")
@@ -106,9 +108,6 @@ class MainRenderer:
             if not self.data.config.rotation_scroll_until_finished:
                 self.scrolling_finished = True
 
-            # Set the refresh rate
-            refresh_rate = self.data.config.scrolling_speed
-
             # Currently the only thing that's always static is the live scoreboard
             if Status.is_static(self.data.current_game.status()):
                 self.scrolling_finished = True
@@ -127,7 +126,14 @@ class MainRenderer:
 
             rotate = self.__should_rotate_to_next_game(self.data.current_game)
             if not rotate:
+                b = time.time()
                 self.data.refresh_game()
+                a = time.time()
+                # reduce stutter if refreshing took time
+                refresh_rate = max(self.data.config.scrolling_speed - (a - b), 0)
+            else:
+                refresh_rate = self.data.config.scrolling_speed
+
             # If we're ready to rotate, let's do it
             if time_delta >= rotate_rate and self.scrolling_finished:
                 self.starttime = time.time()
