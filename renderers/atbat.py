@@ -23,7 +23,7 @@ class AtBatRenderer:
     def render(self):
         plength = self.__render_pitcher_text()
 
-        if self.strikeout and self.animation_time < 60:
+        if self.strikeout and self.animation_time < 120:
             if (self.animation_time // 6) % 2:
                 self.__render_strikeout()
             return plength
