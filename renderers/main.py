@@ -86,7 +86,7 @@ class MainRenderer:
     # Renders a game screen based on it's status
     def __render_game(self):
         while True:
-
+            
             if self.data.config.standings_no_games and not self.data.schedule.games_live():
                 try:
                     debug.log("Rendering Standings because no games are playing")
@@ -96,6 +96,7 @@ class MainRenderer:
                     debug.info("Could not render standings.")
                     debug.log("%s: %s", type(ex).__name__, ex.args)
                 else:  # loop again to check if we succeeded
+                    self.data.advance_to_next_game()
                     continue
 
             # Draw the current game
