@@ -18,13 +18,13 @@ class AtBatRenderer:
         self.bgcolor = self.colors.graphics_color("default.background")
         self.strikeout = strikeout
         self.start_pos = text_pos
-        self.animation_time = animation_time
+        self.animation = (animation_time // 6) % 2
 
     def render(self):
         plength = self.__render_pitcher_text()
 
-        if self.strikeout and self.animation_time < 120:
-            if (self.animation_time // 6) % 2:
+        if self.strikeout:
+            if self.animation:
                 self.__render_strikeout()
             return plength
         else:

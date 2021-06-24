@@ -66,6 +66,9 @@ class Data:
             return True
 
         if self.schedule.num_games() < 2:
+            if self.config.rotation_only_live and self.schedule.games_live():
+                # don't want to get stuck on an dead game
+                return not Status.is_live(game.status())
             return False
 
         if game.features_team(self.config.preferred_teams[0]) and Status.is_live(game.status()):
