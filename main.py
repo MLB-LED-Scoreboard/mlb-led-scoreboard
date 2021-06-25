@@ -84,15 +84,15 @@ def __refresh_games(render_thread: threading.Thread, data: Data):
 
     while render_thread.is_alive():
         time.sleep(0.5)
+        data.refresh_schedule()
         if data.config.standings_no_games:
             if not data.schedule.games_live():
                 data.refresh_standings()
+                continue
             # make sure a game is poulated
             elif not promise_game:
                 promise_game = True
                 data.advance_to_next_game()
-
-        data.refresh_schedule()
 
         rotate = data.should_rotate_to_next_game()
         if data.schedule.games_live() and not rotate:
