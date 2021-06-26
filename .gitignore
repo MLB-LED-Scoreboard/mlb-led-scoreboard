@@ -112,9 +112,8 @@ ledcoords/*.json
 # Ignore any customized color configs
 ledcolors/*.json
 
-# Ignore any customized fonts
-Assets/*.bdf
-!Assets/4x6.bdf
+#
+submodules/
 
 # Ignore src directory if we installed a custom mlbgame while in this directory
 src/
