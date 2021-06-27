@@ -1,8 +1,38 @@
 import sys
-from data import teams
 import json
 
-TEAMS = teams.TEAM_ABBR.keys()
+TEAMS = {
+    "Athletics",
+    "Pirates",
+    "Padres",
+    "Mariners",
+    "Giants",
+    "Cardinals",
+    "Rays",
+    "Rangers",
+    "Blue Jays",
+    "Twins",
+    "Phillies",
+    "Braves",
+    "White Sox",
+    "Marlins",
+    "Yankees",
+    "Brewers",
+    "Angels",
+    "Diamondbacks",
+    "Orioles",
+    "Red Sox",
+    "Cubs",
+    "Reds",
+    "Indians",
+    "Rockies",
+    "Tigers",
+    "Astros",
+    "Royals",
+    "Dodgers",
+    "Nationals",
+    "Mets",
+}
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -17,7 +47,7 @@ if __name__ == "__main__":
             if any(t not in TEAMS for t in teams):
                 print("Invalid team supplied!")
                 sys.exit(1)
-            with open('configs/config-default.json', 'r') as default:
+            with open("configs/config-default.json", "r") as default:
                 config = json.load(default)
                 config["preferred"]["teams"] = teams
 
