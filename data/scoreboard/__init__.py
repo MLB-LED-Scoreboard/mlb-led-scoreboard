@@ -22,8 +22,6 @@ class Scoreboard:
         self.outs = Outs(game)
         self.game_status = game.status()
         self.atbat = AtBat(game)
-        self.batter = self.atbat.batter
-        self.pitcher = self.atbat.pitcher
 
         self.note = game.note()
 
@@ -62,8 +60,8 @@ class Scoreboard:
                 str(self.pitches.balls),
                 str(self.pitches.strikes),
                 str(self.outs.number),
-                str(self.pitcher),
-                str(self.batter),
+                str(self.atbat.pitcher),
+                str(self.atbat.batter),
                 str(self.bases),
             )
         )
