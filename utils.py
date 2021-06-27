@@ -26,7 +26,7 @@ def center_text_position(text, center_pos, font_width):
 
 
 def split_string(string, num_chars):
-    return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]
+    return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]  # noqa: E203
 
 
 def args():
@@ -122,7 +122,8 @@ def args():
     parser.add_argument(
         "--led-limit-refresh",
         action="store",
-        help="Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0",
+        help="Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. "
+        "0=no limit. Default: 0",
         default=0,
         type=int,
     )

@@ -114,9 +114,11 @@ ledcolors/*.json
 
 #
 submodules/
+configs/
 
 # Ignore src directory if we installed a custom mlbgame while in this directory
 src/
 
 # Ignore logs
 logs.txt
+Assets/5x8.bdf

@@ -120,7 +120,7 @@ if __name__ == "__main__":
     matrix = RGBMatrix(options=matrixOptions)
     try:
         main(matrix)
-    except:
+    except Exception:
         debug.exception("Untrapped error in main!")
         raise
     finally:

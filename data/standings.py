@@ -108,5 +108,5 @@ class Team:
         self.name = data["name"]
         self.team_abbrev = self.__TEAM_ABBREVIATIONS[self.name]
         self.w = data["w"]
-        self.l = data["l"]
+        self.l = data["l"]  # noqa: E741
         self.gb = data["gb"]

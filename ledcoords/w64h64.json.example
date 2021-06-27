@@ -4,19 +4,19 @@
   },
   "bases": {
     "1B": {
-      "x": 24,
-      "y": 35,
-      "size": 18
+      "x": 23,
+      "y": 39,
+      "size": 16
     },
     "2B": {
       "x": 13,
-      "y": 24,
-      "size": 18
+      "y": 29,
+      "size": 16
     },
     "3B": {
-      "x": 2,
-      "y": 35,
-      "size": 18
+      "x": 3,
+      "y": 39,
+      "size": 16
     }
   },
   "final": {
@@ -37,12 +37,16 @@
   "inning": {
     "break": {
       "number": {
-        "x": 32,
-        "y": 50
+        "x": 30,
+        "y": 38
       },
       "text": {
-        "x": 32,
-        "y": 38
+        "x": 30,
+        "y": 26
+      },
+      "names": {
+        "x": 0,
+        "y": 50
       }
     },
     "number": {
@@ -124,6 +128,23 @@
     "x": 48,
     "y": 42,
     "innings_until_display": 5
+  },
+  "atbat": {
+    "batter": {
+      "x": 1,
+      "y": 36,
+      "width": 20
+    },
+    "pitcher": {
+      "x": 1,
+      "y": 28,
+      "width": 24
+    },
+    "loop": 36,
+    "strikeout": {
+      "x": 15,
+      "y": 36
+    }
   },
   "pregame": {
     "scrolling_text": {

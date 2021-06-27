@@ -1,4 +1,4 @@
 [flake8]
 max-line-length = 120
 exclude = matrix/*
-ignore = E203,E722,E741,W503
+ignore = E722
