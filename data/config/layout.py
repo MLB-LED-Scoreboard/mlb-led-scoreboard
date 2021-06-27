@@ -73,7 +73,7 @@ class Layout:
         if font_name in self.font_cache:
             return self.font_cache[font_name]
 
-        font_paths = ["Assets", "matrix/fonts"]
+        font_paths = ["assets", "submodules/matrix/fonts"]
         for font_path in font_paths:
             path = get_file("{}/{}.bdf".format(font_path, font_name))
             if os.path.isfile(path):

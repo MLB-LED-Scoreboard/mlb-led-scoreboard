@@ -3,9 +3,9 @@ import os
 import sys
 
 import debug
-from data.color import Color
-from data.layout import Layout
-from data.status import Status
+from data import status
+from data.config.color import Color
+from data.config.layout import Layout
 from utils import deep_update, get_file
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -159,11 +159,11 @@ class Config:
         self.rotation_rates_final = self.rotation_rates.get("final", DEFAULT_ROTATE_RATES["final"])
         self.rotation_rates_pregame = self.rotation_rates.get("pregame", DEFAULT_ROTATE_RATES["pregame"])
 
-    def rotate_rate_for_status(self, status):
+    def rotate_rate_for_status(self, game_status):
         rotate_rate = self.rotation_rates_live
-        if Status.is_pregame(status):
+        if status.is_pregame(game_status):
             rotate_rate = self.rotation_rates_pregame
-        if Status.is_complete(status):
+        if status.is_complete(game_status):
             rotate_rate = self.rotation_rates_final
         return rotate_rate
 
@@ -189,14 +189,12 @@ class Config:
         return reference_config
 
     def __get_colors(self, base_filename):
-        filename = "ledcolors/{}.json".format(base_filename)
+        filename = "colors/{}.json".format(base_filename)
         reference_filename = "{}.example".format(filename)
         reference_colors = self.read_json(reference_filename)
         if not reference_colors:
             debug.error(
-                "Invalid {} reference color file. Make sure {} exists in ledcolors/".format(
-                    base_filename, base_filename
-                )
+                "Invalid {} reference color file. Make sure {} exists in colors/".format(base_filename, base_filename)
             )
             sys.exit(1)
 
@@ -208,7 +206,7 @@ class Config:
         return reference_colors
 
     def __get_layout(self, width, height):
-        filename = "ledcoords/w{}h{}.json".format(width, height)
+        filename = "coordinates/w{}h{}.json".format(width, height)
         reference_filename = "{}.example".format(filename)
         reference_layout = self.read_json(reference_filename)
         if not reference_layout:

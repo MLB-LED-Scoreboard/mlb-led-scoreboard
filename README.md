@@ -2,7 +2,7 @@
 
 ## Brian Ward's fork
 
-This version differs rather signficantly from the original, including tweaks to behavior, visuals, and different underlying code
+This version differs rather signficantly from the original, including tweaks to behavior, visuals, and different underlying code. The rest of this README is primarily for the original, not yet updated.
 
 ---------------
 
@@ -52,21 +52,21 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 
 The board refreshes the list of games every 15 minutes.
 
-![Cubs-Indians game](img/cubs-indians-demo.jpg) ![Pirates-Cubs game](img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](img/wide-ingame-demo.jpg) ![Cubs-Braves Final](img/wide-final-demo.jpg) ![Tigers-Royals game](img/128x32-live.png) ![Astros-Athletics game](img/128x64.png) ![64x64 example](img/64x64-live.jpg)
+![Cubs-Indians game](assets/img/cubs-indians-demo.jpg) ![Pirates-Cubs game](assets/img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](assets/img/wide-ingame-demo.jpg) ![Cubs-Braves Final](assets/img/wide-final-demo.jpg) ![Tigers-Royals game](assets/img/128x32-live.png) ![Astros-Athletics game](assets/img/128x64.png) ![64x64 example](assets/img/64x64-live.jpg)
 
 Sometimes you don't get baseball though :(
 
-![I hate offdays](img/offday.jpg)
+![I hate offdays](assets/img/offday.jpg)
 
 ### Pregame
 If a game hasn't started yet, a pregame screen will be displayed with the probable starting pitchers.
 
-![Pregame](img/pregame.jpg)
+![Pregame](assets/img/pregame.jpg)
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
 
-![standings-wins](img/standings-wins.jpg) ![standings-losses](img/standings-losses.jpg) ![standings-wide](img/wide-standings-demo.jpg)
+![standings-wins](assets/img/standings-wins.jpg) ![standings-losses](assets/img/standings-losses.jpg) ![standings-wide](assets/img/wide-standings-demo.jpg)
 
 ## Installation
 ### Hardware Assembly
@@ -192,10 +192,10 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 ## Personalization
 If you're feeling adventurous (and we highly encourage it!), the sections below outline how you can truly personalize your scoreboard and make it your own!
 ### Custom Board Layout
-You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `ledcoords/` directory for more information.
+You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `coordinates/` directory for more information.
 
 ### Custom Colors
-You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
+You have the ability to customize the colors of everything on the board. See the `colors/` directory for more information.
 
 ### Weather
 This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.

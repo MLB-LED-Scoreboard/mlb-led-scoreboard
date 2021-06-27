@@ -18,8 +18,8 @@ GAME_UPDATE_RATE = 10
 
 
 class Game:
-    @classmethod
-    def from_ID(cls, game_id):
+    @staticmethod
+    def from_ID(game_id):
         game = Game(game_id)
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
@@ -198,7 +198,7 @@ class Game:
             return self._data["gameData"]["status"]["reason"]
         except:
             try:
-                return self._data["gameData"]["status"]["detailedState"].split(":")[1]
+                return self._data["gameData"]["status"]["detailedState"].split(":")[1].strip()
             except:
                 return None
 
@@ -210,6 +210,6 @@ class Game:
         time_delta = endtime - self.starttime
         return time_delta >= GAME_UPDATE_RATE
 
-    @classmethod
-    def _format_id(cls, player):
+    @staticmethod
+    def _format_id(player):
         return player if "ID" in str(player) else "ID" + str(player)

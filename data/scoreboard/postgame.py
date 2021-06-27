@@ -3,7 +3,7 @@ from data.game import Game
 PITCHER_UNKNOWN = "Unknown"
 
 
-class Final:
+class Postgame:
     def __init__(self, game: Game):
 
         winner_side = game.winning_team()

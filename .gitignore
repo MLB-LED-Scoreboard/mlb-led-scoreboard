@@ -105,12 +105,13 @@ venv.bak/
 
 # Ignore our customized config.json
 config.json
+emulator_config.json
 
 # Ignore any customized coordinate configs
-ledcoords/*.json
+coordinates/*.json
 
 # Ignore any customized color configs
-ledcolors/*.json
+colors/*.json
 
 #
 submodules/
@@ -121,4 +122,4 @@ src/
 
 # Ignore logs
 logs.txt
-Assets/5x8.bdf
+assets/5x8.bdf

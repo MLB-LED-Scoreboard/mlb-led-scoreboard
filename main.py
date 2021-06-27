@@ -3,8 +3,8 @@ import threading
 import time
 
 import debug
+from data import Data
 from data.config import Config
-from data.data import Data
 from renderers.main import MainRenderer
 from utils import args, led_matrix_options
 

@@ -17,7 +17,7 @@ def get_file(path):
 
 def get_font():
     font = graphics.Font()
-    font.LoadFont(get_file("Assets/4x6.bdf"))
+    font.LoadFont(get_file("assets/4x6.bdf"))
     return font
 
 

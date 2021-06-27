@@ -4,8 +4,8 @@ import statsapi
 
 import data.teams
 import debug
+from data import status
 from data.game import Game
-from data.status import Status
 from data.update import UpdateStatus
 
 GAMES_REFRESH_RATE = 5 * 60
@@ -40,7 +40,7 @@ class Schedule:
                     self._games = self.__all_games
                 if self.config.rotation_only_live:
                     self._games = [
-                        g for g in self._games if Status.is_live(g["status"]) or Status.is_fresh(g["status"])
+                        g for g in self._games if status.is_live(g["status"]) or status.is_fresh(g["status"])
                     ]
                 return UpdateStatus.SUCCESS
 
@@ -67,7 +67,7 @@ class Schedule:
             return not len(self._games)
 
     def games_live(self):
-        return any(Status.is_fresh(g["status"]) or (Status.is_live(g["status"])) for g in self._games)
+        return any(status.is_fresh(g["status"]) or (status.is_live(g["status"])) for g in self._games)
 
     def num_games(self):
         return len(self._games)
@@ -82,7 +82,8 @@ class Schedule:
         # rotating during mid-innings
         # TODO verify during a double-header
         if (
-            self.config.rotation_preferred_team_live_mid_inning
+            not self.config.rotation_preferred_team_live_enabled
+            and self.config.rotation_preferred_team_live_mid_inning
             and not self.is_offday_for_preferred_team()
             and not self.preferred_over
         ):
@@ -96,13 +97,13 @@ class Schedule:
                     preferred_game.inning_number(),
                 )
 
-                if Status.is_live(preferred_game.status()) and not Status.is_inning_break(
+                if status.is_live(preferred_game.status()) and not status.is_inning_break(
                     preferred_game.inning_state()
                 ):
                     self.current_idx = game_index
                     debug.log("Moving to preferred game, index: %d", self.current_idx)
                     return preferred_game
-                if Status.is_complete(preferred_game.status()):
+                if status.is_complete(preferred_game.status()):
                     self.preferred_over = True
 
         self.current_idx = self.__next_game_index()
@@ -115,7 +116,7 @@ class Schedule:
             team_idxs = [i for i, game in enumerate(self._games) if team_name in [game["away_name"], game["home_name"]]]
             if len(team_idxs) > 0:
                 team_index = next(
-                    (i for i in team_idxs if Status.is_live(self._games[i]["status"])),
+                    (i for i in team_idxs if status.is_live(self._games[i]["status"])),
                     team_idxs[0],
                 )
             return team_index
@@ -134,7 +135,7 @@ class Schedule:
             return Game.from_ID(self._games[self.current_idx]["game_id"])
         return None
 
-    @classmethod
-    def __filter_list_of_games(cls, games, filter_teams):
+    @staticmethod
+    def __filter_list_of_games(games, filter_teams):
         teams = [data.teams.TEAM_FULL[t] for t in filter_teams]
         return list(game for game in games if set([game["away_name"], game["home_name"]]).intersection(set(teams)))

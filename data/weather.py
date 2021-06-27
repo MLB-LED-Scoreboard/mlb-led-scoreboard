@@ -33,7 +33,7 @@ class Weather:
     # Return true if we have valid weather data available.
     # If we have a valid temp, we should be able to assume wind/conditions also exist
     def available(self):
-        return self.temp is not None
+        return self.temp is not None and self.temp != -99
 
     # Make a call to the open weather maps API and update our instance variables
     # Pass True if you need to ignore the update rate (like for our first update)
