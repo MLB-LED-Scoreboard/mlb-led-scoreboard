@@ -154,7 +154,7 @@ class MainRenderer:
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
         elif status.is_irregular(game.status()):  # Draw game status
-            short_text = (self.data.config.layout.coords("status.text")["short_text"],)
+            short_text = self.data.config.layout.coords("status.text")["short_text"]
             if scoreboard.get_text_for_reason():
                 self.__max_scroll_x(layout.coords("status.scrolling_text"))
                 pos = irregular.render_irregular_status(
