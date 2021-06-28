@@ -37,16 +37,40 @@
   "inning": {
     "break": {
       "number": {
-        "x": 16,
+        "x": 11,
         "y": 29
       },
       "text": {
-        "x": 16,
+        "x": 11,
         "y": 22
       },
-      "names":{
-        "x": 33,
-        "y": 33
+      "due_up": {
+        "due": {
+          "x": 33,
+          "y": 33
+        },
+        "up": {
+          "x": 33,
+          "y": 33
+        },
+        "divider": {
+          "draw": false,
+          "x": 33,
+          "y_start": 33,
+          "y_end": 33
+        },
+        "leadoff": {
+          "x": 33,
+          "y": 33
+        },
+        "on_deck": {
+          "x": 33,
+          "y": 33
+        },
+        "in_hole": {
+          "x": 33,
+          "y": 33
+        }
       }
     },
     "number": {
