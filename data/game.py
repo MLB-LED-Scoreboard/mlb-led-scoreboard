@@ -84,6 +84,7 @@ class Game:
         return None
 
     def inning_state(self):
+        return "Mid"
         return self._data["liveData"]["linescore"].get("inningState", "Top")
 
     def inning_number(self):

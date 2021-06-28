@@ -35,7 +35,8 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
         _render_inning_display(canvas, layout, colors, scoreboard.inning)
     else:
-        _render_inning_break(canvas, layout, colors, scoreboard.inning, scoreboard.atbat)
+        _render_inning_break(canvas, layout, colors, scoreboard.inning)
+        _render_due_up(canvas, layout, colors, scoreboard.atbat)
 
     return pos
 
@@ -183,7 +184,7 @@ def __fill_out_circle(canvas, out, color):
 
 
 # --------------- inning information ---------------
-def _render_inning_break(canvas, layout, colors, inning: Inning, atbat: AtBat):
+def _render_inning_break(canvas, layout, colors, inning: Inning):
     text_font = layout.font("inning.break.text")
     num_font = layout.font("inning.break.number")
     text_coords = layout.coords("inning.break.text")
@@ -196,15 +197,36 @@ def _render_inning_break(canvas, layout, colors, inning: Inning, atbat: AtBat):
     graphics.DrawText(canvas, text_font["font"], text_coords["x"], text_coords["y"], color, text)
     graphics.DrawText(canvas, num_font["font"], num_coords["x"], num_coords["y"], color, num)
 
-    name_coords = layout.coords("inning.break.names")
-    # TODO config for this
-    graphics.DrawLine(canvas, name_coords["x"] - 3, 14, name_coords["x"] - 3, 32, color)
-    # TODO get separations based on font size
-    graphics.DrawText(canvas, text_font["font"], name_coords["x"], name_coords["y"] + 2, color, "Due")
-    graphics.DrawText(canvas, text_font["font"], name_coords["x"], name_coords["y"] + 8, color, "Up:")
-    graphics.DrawText(canvas, text_font["font"], name_coords["x"] + 14, name_coords["y"], color, atbat.batter)
-    graphics.DrawText(canvas, text_font["font"], name_coords["x"] + 14, name_coords["y"] + 6, color, atbat.onDeck)
-    graphics.DrawText(canvas, text_font["font"], name_coords["x"] + 14, name_coords["y"] + 12, color, atbat.inHole)
+
+def _render_due_up(canvas, layout, colors, atbat: AtBat):
+    due_font = layout.font("inning.break.due_up.due")
+    due_color = colors.graphics_color("inning.break.due_up")
+
+    due = layout.coords("inning.break.due_up.due")
+    up = layout.coords("inning.break.due_up.up")
+    graphics.DrawText(canvas, due_font["font"], due["x"], due["y"], due_color, "Due")
+    graphics.DrawText(canvas, due_font["font"], up["x"], up["y"], due_color, "Up:")
+
+    divider = layout.coords("inning.break.due_up.divider")
+    if divider["draw"]:
+        graphics.DrawLine(
+            canvas,
+            divider["x"],
+            divider["y_start"],
+            divider["x"],
+            divider["y_end"],
+            colors.graphics_color("inning.break.due_up_divider"),
+        )
+
+    batter_font = layout.font("inning.break.due_up.leadoff")
+    batter_color = colors.graphics_color("inning.break.due_up_names")
+
+    leadoff = layout.coords("inning.break.due_up.leadoff")
+    on_deck = layout.coords("inning.break.due_up.on_deck")
+    in_hole = layout.coords("inning.break.due_up.in_hole")
+    graphics.DrawText(canvas, batter_font["font"], leadoff["x"], leadoff["y"], batter_color, atbat.batter)
+    graphics.DrawText(canvas, batter_font["font"], on_deck["x"], on_deck["y"], batter_color, atbat.onDeck)
+    graphics.DrawText(canvas, batter_font["font"], in_hole["x"], in_hole["y"], batter_color, atbat.inHole)
 
 
 def _render_inning_display(canvas, layout, colors, inning: Inning):
