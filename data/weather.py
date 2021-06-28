@@ -16,7 +16,8 @@ class Weather:
         self.temperature_unit = "celsius" if self.metric else "fahrenheit"
         self.speed_unit = "meters_sec" if self.metric else "miles_hour"
         self.starttime = time.time()
-        self.client = pyowm.OWM(self.apikey)
+        owm = pyowm.OWM(self.apikey)
+        self.client = owm.weather_manager()
 
         self.temp = None
         self.wind_speed = None
@@ -44,13 +45,14 @@ class Weather:
             if self.apikey_valid:
                 debug.log("API Key hasn't been flagged as bad yet")
                 try:
-                    self.observation = self.client.weather_at_place(self.location)
-                    weather = self.observation.get_weather()
-                    self.temp = weather.get_temperature(self.temperature_unit).get("temp", -99)
-                    self.wind_speed = weather.get_wind(self.speed_unit).get("speed", -9)
-                    self.wind_dir = weather.get_wind(self.speed_unit).get("deg", 0)
-                    self.conditions = weather.get_status()
-                    self.icon_name = weather.get_weather_icon_name()
+                    observation = self.client.weather_at_place(self.location)
+                    weather = observation.weather
+                    self.temp = weather.temperature(self.temperature_unit).get("temp", -99)
+                    wind = weather.wind(self.speed_unit)
+                    self.wind_speed = wind.get("speed", 0)
+                    self.wind_dir = wind.get("deg", 0)
+                    self.conditions = weather.status
+                    self.icon_name = weather.weather_icon_name
                     debug.log(
                         "Weather: %s; Wind: %s; %s (%s)",
                         self.temperature_string(),
@@ -59,7 +61,7 @@ class Weather:
                         self.icon_filename(),
                     )
                     return UpdateStatus.SUCCESS
-                except pyowm.exceptions.api_response_error.UnauthorizedError:
+                except pyowm.commons.exceptions.UnauthorizedError:
                     debug.warning(
                         "[WEATHER] The API key provided doesn't appear to be valid. Please check your config.json."
                     )
@@ -68,12 +70,7 @@ class Weather:
                     )
                     self.apikey_valid = False
                     return UpdateStatus.DEFERRED
-                except (
-                    pyowm.exceptions.api_call_error.APICallTimeoutError,
-                    pyowm.exceptions.api_call_error.APICallError,
-                    pyowm.exceptions.api_call_error.APIInvalidSSLCertificateError,
-                    pyowm.exceptions.api_call_error.BadGatewayError,
-                ):
+                except pyowm.commons.exceptions.APIRequestError:
                     debug.warning("[WEATHER] Fetching weather information failed from a connection issue.")
                     debug.exception("[WEATHER] Error Message:")
                     # Set some placeholder weather info if this is our first weather update
