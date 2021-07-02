@@ -7,12 +7,14 @@ import debug
 from data.update import UpdateStatus
 
 API_FIELDS = (
-    "gameData,game,id,datetime,dateTime,flags,noHitter,perfectGame,status,detailedState,abstractGameState,reason,"
-    + "probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
+    "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
+    + "reason,probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
     + "currentPlay,result,eventType,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,"
     + "currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,"
     + "teams,runs,players,seasonStats,pitching,wins,losses,saves,era"
 )
+
+SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
 
 GAME_UPDATE_RATE = 10
 
@@ -38,19 +40,19 @@ class Game:
             try:
                 debug.log("Fetching data for game %s", str(self.game_id))
                 self._data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS})
-                try:
+                self._status = self._data["gameData"]["status"]
+                if self._data["gameData"]["datetime"]["officialDate"] > self.date:
                     # this is odd, but if a game is postponed then the 'game' endpoint gets the rescheduled game
-                    scheduled = statsapi.get(
-                        "schedule",
-                        {
-                            "gamePk": self.game_id,
-                            "sportId": 1,
-                            "fields": "dates,date,games,status,detailedState,abstractGameState,reason",
-                        },
-                    )
-                    self._status = next(g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date)
-                except:
-                    self._status = self._data["gameData"]["status"]
+                    debug.log("Getting game status from schedule for game with strange date!")
+                    try:
+                        scheduled = statsapi.get(
+                            "schedule", {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS}
+                        )
+                        self._status = next(
+                            g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date
+                        )
+                    except:
+                        debug.error("Failed to get game status from schedule")
 
                 return UpdateStatus.SUCCESS
             except:
