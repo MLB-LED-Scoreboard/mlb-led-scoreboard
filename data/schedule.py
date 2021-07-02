@@ -13,7 +13,7 @@ GAMES_REFRESH_RATE = 5 * 60
 
 class Schedule:
     def __init__(self, date, config):
-        self.date = date
+        self.date = date.strftime("%Y-%m-%d")
         self.config = config
         self.starttime = time.time()
         self.current_idx = 0
@@ -26,10 +26,10 @@ class Schedule:
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            debug.log("Updating schedule for %s", self.date.strftime("%Y-%m-%d"))
+            debug.log("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
-                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
+                self.__all_games = statsapi.schedule(self.date)
             except:
                 debug.error("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
@@ -88,7 +88,7 @@ class Schedule:
             and not self.preferred_over
         ):
             game_index = self._game_index_for_preferred_team()
-            preferred_game = Game.from_ID(self._games[game_index]["game_id"])
+            preferred_game = Game.from_ID(self._games[game_index]["game_id"], self.date)
             if preferred_game is not None:
                 debug.log(
                     "Preferred Team's Game Status: %s, %s %d",
@@ -132,7 +132,7 @@ class Schedule:
 
     def __current_game(self):
         if self._games:
-            return Game.from_ID(self._games[self.current_idx]["game_id"])
+            return Game.from_ID(self._games[self.current_idx]["game_id"], self.date)
         return None
 
     @staticmethod

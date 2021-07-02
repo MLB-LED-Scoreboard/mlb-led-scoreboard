@@ -1,7 +1,7 @@
 from data.scoreboard.inning import Inning
 
 """This will/should eventually download/read the actual json where
-the status data comes from. https://statsapi.mlb.com/api/v1/gameStatus"""
+the status data comes from. https://statsapi.mlb.com/api/v1/gameStatus/ statsapi.meta('gameStatus')"""
 
 CANCELLED = "Cancelled"  # Final
 CANCELLED_COLD = "Cancelled: Cold"  # Final

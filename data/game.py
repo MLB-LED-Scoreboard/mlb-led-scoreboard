@@ -7,7 +7,7 @@ import debug
 from data.update import UpdateStatus
 
 API_FIELDS = (
-    "gameData,game,id,datetime,dateTime,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
+    "gameData,game,id,datetime,dateTime,flags,noHitter,perfectGame,status,detailedState,abstractGameState,reason,"
     + "probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
     + "currentPlay,result,eventType,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,"
     + "currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,"
@@ -19,16 +19,18 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_ID(game_id):
-        game = Game(game_id)
+    def from_ID(game_id, date):
+        game = Game(game_id, date)
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id):
+    def __init__(self, game_id, date):
         self.game_id = game_id
+        self.date = date
         self.starttime = time.time()
         self._data = {}
+        self._status = {}
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
@@ -36,6 +38,20 @@ class Game:
             try:
                 debug.log("Fetching data for game %s", str(self.game_id))
                 self._data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS})
+                try:
+                    # this is odd, but if a game is postponed then the 'game' endpoint gets the rescheduled game
+                    scheduled = statsapi.get(
+                        "schedule",
+                        {
+                            "gamePk": self.game_id,
+                            "sportId": 1,
+                            "fields": "dates,date,games,status,detailedState,abstractGameState,reason",
+                        },
+                    )
+                    self._status = next(g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date)
+                except:
+                    self._status = self._data["gameData"]["status"]
+
                 return UpdateStatus.SUCCESS
             except:
                 debug.error("Networking Error while refreshing the current game data.")
@@ -59,7 +75,7 @@ class Game:
         return self._data["gameData"]["teams"]["away"]["abbreviation"]
 
     def status(self):
-        return self._data["gameData"]["status"]["detailedState"]
+        return self._status["detailedState"]
 
     def home_score(self):
         return self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0)
@@ -68,7 +84,7 @@ class Game:
         return self._data["liveData"]["linescore"]["teams"]["away"].get("runs", 0)
 
     def winning_team(self):
-        if self._data["gameData"]["status"]["abstractGameState"] == "Final":
+        if self._status["abstractGameState"] == "Final":
             if self.home_score() > self.away_score():
                 return "home"
             if self.home_score() < self.away_score():
@@ -195,10 +211,10 @@ class Game:
 
     def reason(self):
         try:
-            return self._data["gameData"]["status"]["reason"]
+            return self._status["reason"]
         except:
             try:
-                return self._data["gameData"]["status"]["detailedState"].split(":")[1].strip()
+                return self._status["detailedState"].split(":")[1].strip()
             except:
                 return None
 
