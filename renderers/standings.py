@@ -53,13 +53,19 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
     coords = layout.coords("standings")
     font = layout.font("standings")
     divider_color = colors.graphics_color("standings.divider")
+    bg_color = colors.graphics_color("standings.background")
     team_stat_color = colors.graphics_color("standings.team.stat")
     team_name_color = colors.graphics_color("standings.team.name")
+    start = coords.get("start", 0)
     offset = coords["offset"]
 
-    graphics.DrawLine(canvas, 0, 0, coords["width"], 0, divider_color)
+    graphics.DrawLine(canvas, 0, start, coords["width"], start, divider_color)
 
-    graphics.DrawLine(canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], divider_color)
+    graphics.DrawLine(
+        canvas, coords["divider"]["x"], start, coords["divider"]["x"], start + coords["height"], divider_color
+    )
+
+    offset += start
 
     for team in standings.current_standings().teams:
         graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
@@ -81,11 +87,12 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
 
         offset += coords["offset"]
 
-    __fill_standings_footer(canvas, layout, divider_color)
+    __fill_standings_footer(canvas, layout, divider_color, bg_color)
 
 
-def __fill_standings_footer(canvas, layout, divider_color):
+def __fill_standings_footer(canvas, layout, divider_color, bg_color):
     coords = layout.coords("standings")
-    graphics.DrawLine(canvas, 0, coords["height"], coords["width"], coords["height"], divider_color)
-
-    graphics.DrawLine(canvas, 0, coords["height"] + 1, coords["width"], coords["height"] + 1, graphics.Color(0, 0, 0))
+    end = coords["height"] + coords.get("start", 0)
+    graphics.DrawLine(canvas, 0, end, coords["width"], end, divider_color)
+    for i in range(end + 1, canvas.height):
+        graphics.DrawLine(canvas, 0, i, coords["width"], i, bg_color)

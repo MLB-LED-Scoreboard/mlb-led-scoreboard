@@ -5,7 +5,7 @@ except ImportError:
 
 import time
 
-from PIL import Image
+import PIL.Image
 
 from data.config.color import Color
 from data.config.layout import Layout
@@ -41,7 +41,7 @@ def __render_clock(canvas, layout, colors, time_format):
 def __render_weather(canvas, layout, colors, weather):
     if weather.available():
         image_file = get_file(weather.icon_filename())
-        weather_icon = Image.open(image_file)
+        weather_icon = PIL.Image.open(image_file)
         __render_weather_icon(canvas, layout, colors, weather_icon)
         __render_weather_text(canvas, layout, colors, weather.conditions, "conditions")
         __render_weather_text(canvas, layout, colors, weather.temperature_string(), "temperature")
@@ -61,8 +61,14 @@ def __render_weather_text(canvas, layout, colors, text, keyname):
 def __render_weather_icon(canvas, layout, colors, weather_icon):
     coords = layout.coords("offday.weather_icon")
     color = colors.color("offday.weather_icon")
-    for x in range(weather_icon.size[0]):
-        for y in range(weather_icon.size[1]):
+    resize = coords.get("rescale_icon")
+
+    if resize:
+        weather_icon = weather_icon.resize(
+            (weather_icon.width * resize, weather_icon.height * resize), PIL.Image.NEAREST
+        )
+    for x in range(weather_icon.width):
+        for y in range(weather_icon.height):
             pixel = weather_icon.getpixel((x, y))
             if pixel[3] > 0:
                 canvas.SetPixel(coords["x"] + x, coords["y"] + y, color["r"], color["g"], color["b"])

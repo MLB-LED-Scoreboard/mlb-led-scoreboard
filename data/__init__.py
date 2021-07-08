@@ -39,7 +39,7 @@ class Data:
         self.headlines = Headlines(config)
 
         # Network status state - we use headlines and weather condition as a sort of sentinial value
-        self.network_issues = (self.weather.conditions == "Error") and (not self.headlines.feed_data)
+        self.network_issues = (self.weather.conditions == "Error") or (not self.headlines.feed_data)
 
         # RENDER ITEMS
         self.scrolling_finished = False

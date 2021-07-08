@@ -4,19 +4,19 @@
   },
   "bases": {
     "1B": {
-      "x": 75,
-      "y": 43,
-      "size": 18
+      "x": 112,
+      "y": 42,
+      "size": 14
     },
     "2B": {
-      "x": 65,
+      "x": 103,
       "y": 33,
-      "size": 18
+      "size": 14
     },
     "3B": {
-      "x": 55,
-      "y": 43,
-      "size": 18
+      "x": 94,
+      "y": 42,
+      "size": 14
     }
   },
   "final": {
@@ -31,26 +31,64 @@
     },
     "nohit_text": {
       "x": 1,
-      "y": 33
+      "y": 61
     }
   },
   "inning": {
     "break": {
       "number": {
-        "x": 87,
-        "y": 44
+        "x": 3,
+        "y": 58
       },
       "text": {
-        "x": 46,
+        "x": 3,
         "y": 44
+      },
+      "due_up": {
+        "due": {
+          "font_name": "7x13B",
+          "x": 38,
+          "y": 44
+        },
+        "up": {
+          "x": 38,
+          "y": 56
+        },
+        "divider": {
+          "draw": true,
+          "x": 36,
+          "y_start": 32,
+          "y_end": 64
+        },
+        "leadoff": {
+          "font_name": "7x13B",
+          "x": 64,
+          "y": 42
+        },
+        "on_deck": {
+          "x": 64,
+          "y": 52
+        },
+        "in_hole": {
+          "x": 64,
+          "y": 62
+        }
       }
     },
     "number": {
-      "x": 120,
-      "y": 45
+      "x": 93,
+      "y": 45,
+      "nohit": {
+        "x": 93,
+        "y": 42
+      },
+      "perfect_game": {
+        "x": 93,
+        "y": 42
+      }
     },
     "arrow": {
-      "size": 8,
+      "size": 7,
       "up": {
         "x_offset": -12,
         "y_offset": -10
@@ -63,66 +101,55 @@
   },
   "outs": {
     "1": {
-      "x": 2,
-      "y": 48,
-      "size": 12,
-      "nohit": {
-        "x": 5,
-        "y": 58,
-        "size": 8
-      },
-      "perfect_game": {
-        "x": 5,
-        "y": 58,
-        "size": 8
-      }
+      "x": 102,
+      "y": 58,
+      "size": 4
     },
     "2": {
-      "x": 16,
-      "y": 48,
-      "size": 12,
-      "nohit": {
-        "x": 19,
-        "y": 58,
-        "size": 8
-      },
-      "perfect_game": {
-        "x": 18,
-        "y": 52,
-        "size": 8
-      }
+      "x": 108,
+      "y": 58,
+      "size": 4
     },
     "3": {
-      "x": 30,
-      "y": 48,
-      "size": 12,
-      "nohit": {
-        "x": 23,
-        "y": 58,
-        "size": 8
-      },
-      "perfect_game": {
-        "x": 23,
-        "y": 55,
-        "size": 8
-      }
+      "x": 114,
+      "y": 58,
+      "size": 4
+    }
+  },
+  "atbat": {
+    "batter": {
+      "font_name": "7x13B",
+      "x": 1,
+      "y": 60,
+      "width": 41
+    },
+    "pitcher": {
+      "font_name": "7x13B",
+      "x": 1,
+      "y": 44,
+      "width": 48
+    },
+    "loop": 68,
+    "strikeout": {
+      "x": 32,
+      "y": 60
     }
   },
   "batter_count": {
-    "x": 2,
-    "y": 45,
+    "x": 66,
+    "y": 60,
     "nohit": {
-      "x": 32,
-      "y": 45
+      "x": 66,
+      "y": 64
     },
     "perfect_game": {
-      "x": 32,
-      "y": 45
+      "x": 66,
+      "y": 64
     }
   },
   "nohitter": {
-    "x": 32,
-    "y": 45,
+    "x": 66,
+    "y": 53,
     "innings_until_display": 5
   },
   "pregame": {
@@ -146,8 +173,9 @@
     }
   },
   "standings": {
+    "start": 1,
     "offset": 12,
-    "height": 64,
+    "height": 60,
     "width": 128,
     "divider": {
       "x": 32
@@ -263,7 +291,8 @@
       "x": 6,
       "y": 2,
       "width": 30,
-      "height": 30
+      "height": 30,
+      "rescale_icon": 2
     }
   },
   "network": {

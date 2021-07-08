@@ -65,6 +65,7 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
     color = colors.graphics_color("atbat.batter")
     font = layout.font("atbat.batter")
     bgcolor = colors.graphics_color("default.background")
+    offset = coords.get("offset", 0)
     pos = scrollingtext.render_text(
         canvas,
         coords["x"] + font["size"]["width"] * 3,
@@ -74,7 +75,7 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
         color,
         bgcolor,
         batter,
-        text_pos,
+        text_pos + offset,
     )
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "AB:")
     return pos

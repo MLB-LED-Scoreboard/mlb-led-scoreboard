@@ -101,47 +101,17 @@
     "1": {
       "x": 49,
       "y": 28,
-      "size": 2,
-      "nohit": {
-        "x": 49,
-        "y": 28,
-        "size": 2
-      },
-      "perfect_game": {
-        "x": 49,
-        "y": 28,
-        "size": 2
-      }
+      "size": 2
     },
     "2": {
       "x": 53,
       "y": 28,
-      "size": 2,
-      "nohit": {
-        "x": 53,
-        "y": 28,
-        "size": 2
-      },
-      "perfect_game": {
-        "x": 53,
-        "y": 28,
-        "size": 2
-      }
+      "size": 2
     },
     "3": {
       "x": 57,
       "y": 28,
-      "size": 2,
-      "nohit": {
-        "x": 57,
-        "y": 28,
-        "size": 2
-      },
-      "perfect_game": {
-        "x": 57,
-        "y": 28,
-        "size": 2
-      }
+      "size": 2
     }
   },
   "atbat": {
