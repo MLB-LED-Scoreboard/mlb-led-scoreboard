@@ -12,24 +12,23 @@ def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_po
         # this is done so that we don't need to draw a huge bar to the left of the text
         # used primarily in the 128x32 layout
         # see similar work done here https://github.com/ty-porter/RGBMatrixEmulator/pull/3
-        character_widths = [__glyph_device_width(font["font"], letter) for letter in text]
-        first_char_width = character_widths[0]
-        total_width = sum(character_widths)
+        w = font["size"]["width"]
+        total_width = w * len(text)
         h = font["size"]["height"]
 
         # Offscreen to the left, adjust by first character width
         if scroll_pos - x < 0:
-            adjustment = abs(scroll_pos - x + first_char_width) // first_char_width
+            adjustment = abs(scroll_pos - x + w) // w
             text = text[adjustment:]
             if adjustment:
-                scroll_pos += first_char_width * adjustment
+                scroll_pos += w * adjustment
 
         if len(text) == 0:
             return 0
 
         graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, text)
 
-        for xi in range(x - first_char_width * 2, x):
+        for xi in range(x - w * 2, x):
             graphics.DrawLine(canvas, xi, y + 1, xi, y + 1 - h, bg_color)
         for xi in range(x + width, canvas.width):
             graphics.DrawLine(canvas, xi, y + 1, xi, y + 1 - h, bg_color)

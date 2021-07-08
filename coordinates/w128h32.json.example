@@ -157,20 +157,20 @@
     "batter": {
       "font_name": "5x8",
       "x": 52,
-      "y": 29,
+      "y": 30,
       "width": 40,
       "offset": 56
     },
     "pitcher": {
       "font_name": "5x8",
       "x": 1,
-      "y": 29,
+      "y": 30,
       "width": 40
     },
     "loop": 64,
     "strikeout": {
       "x": 84,
-      "y": 29
+      "y": 30
     }
   },
   "pregame": {
