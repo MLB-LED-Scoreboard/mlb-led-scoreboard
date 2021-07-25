@@ -1,6 +1,9 @@
 import logging
+import os
 import threading
 import time
+
+from PIL import Image
 
 import debug
 from data import Data
@@ -9,11 +12,11 @@ from renderers.main import MainRenderer
 from utils import args, led_matrix_options
 
 try:
-    from rgbmatrix import RGBMatrix, __version__
+    from rgbmatrix import RGBMatrix, __version__, graphics
 
     emulated = False
 except ImportError:
-    from RGBMatrixEmulator import RGBMatrix, version
+    from RGBMatrixEmulator import RGBMatrix, graphics, version
 
     emulated = True
 
@@ -41,12 +44,19 @@ def main(matrix):
     else:
         debug.log("Using rgbmatrix version %s", __version__)
 
+    # Draw startup screen
+    logo = f"assets/mlb-w{matrix.width}h{matrix.height}.png"
+    if os.path.exists(logo):
+        logo = Image.open(logo)
+        matrix.SetImage(logo.convert("RGB"))
+
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
     data = Data(config)
 
     # create render thread
     render = threading.Thread(target=__render_main, args=[matrix, data], name="render_thread", daemon=True)
+    time.sleep(1)
     render.start()
 
     screen = data.get_screen_type()
