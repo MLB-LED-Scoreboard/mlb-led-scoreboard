@@ -49,6 +49,7 @@ def main(matrix):
     if os.path.exists(logo):
         logo = Image.open(logo)
         matrix.SetImage(logo.convert("RGB"))
+        logo.close()
 
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
