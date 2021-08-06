@@ -15,7 +15,7 @@ Requires a Raspberry Pi and an LED board hooked up via the GPIO pins.
 If you'd like to see support for another set of board dimensions, file an issue!
 
 **Pi's with known issues**
- * Raspberry Pi Zero has had numerous reports of slowness and unreliabilty during installation and running the software.
+ * Raspberry Pi Zero has had numerous reports of slowness and unreliability during installation and running the software.
 
 ## Table of Contents
 * [Features](#features)
@@ -118,8 +118,8 @@ A default `config.json.example` file is included for reference. Copy this file t
 
 ```
 "preferred":                           Options for team and division preference
-  "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
+  "teams"                      Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
+  "divisions"                  Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
 "news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
   "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
@@ -148,9 +148,8 @@ A default `config.json.example` file is included for reference. Copy this file t
     "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
 
 "weather":                             Options for retrieving the weather
-  "apikey"                     String  An API key is requires to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
-  "zipcode"                    String  The zipcode/postcode for the location you wish to receive weather data
-  "country"                    String  The ISO 3166 country code associated with the zipcode
+  "apikey"                     String  An API key is required to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
+  "location"                   String  The `{city name},{state code},{country code}` according to [ISO-3166 standards](https://www.iso.org/obp/ui/#search). Check out the [OpenWeather doc](https://openweathermap.org/current#name) for more info. ex: `"Chicago,il,us"
   "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
 
 "time_format"                  String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
@@ -192,11 +191,11 @@ You have the ability to customize the way things are placed on the board (maybe 
 You have the ability to customize the colors of everything on the board. See the `ledcolors/` directory for more information.
 
 ### Weather
-This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
+This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams' offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
 
-You can find the signup page for OpenWeatherMaps at [https://home.openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up). Once logged in, you'll find an `API keys` tab where you'll find a default key was already created for you. You can copy this key and paste it into the `conig.json` under `"weather"`, `"apikey"`.
+You can find the signup page for OpenWeatherMaps at [https://home.openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up). Once logged in, you'll find an `API keys` tab where you'll find a default key was already created for you. You can copy this key and paste it into the `config.json` under `"weather"`, `"apikey"`.
 
-You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurments, set the `"metric"` option to `true`.
+You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurements, set the `"metric"` option to `true`.
 
 ## Sources
 This project relies on two libraries:
