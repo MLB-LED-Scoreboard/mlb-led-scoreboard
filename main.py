@@ -1,3 +1,9 @@
+import sys
+
+if sys.version_info <= (3, 5):
+    print("Error: Please run with python3")
+    sys.exit(1)
+
 import logging
 import os
 import threading
@@ -45,7 +51,7 @@ def main(matrix):
         debug.log("Using rgbmatrix version %s", __version__)
 
     # Draw startup screen
-    logo = f"assets/mlb-w{matrix.width}h{matrix.height}.png"
+    logo = "assets/mlb-w" + str(matrix.width) + "h" + str(matrix.height) + ".png"
     if os.path.exists(logo):
         logo = Image.open(logo)
         matrix.SetImage(logo.convert("RGB"))
@@ -69,7 +75,7 @@ def main(matrix):
         __refresh_games(render, data)
 
 
-def __refresh_offday(render_thread: threading.Thread, data: Data):
+def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> None
     debug.log("Main has selected the offday information to refresh")
     while render_thread.is_alive():
         time.sleep(30)
@@ -77,7 +83,7 @@ def __refresh_offday(render_thread: threading.Thread, data: Data):
         data.refresh_news_ticker()
 
 
-def __refresh_standings(render_thread: threading.Thread, data: Data):
+def __refresh_standings(render_thread, data):  # type: (threading.Thread, Data) -> None
     if data.standings.divisions:
         debug.log("Main has selected the standings to refresh")
         while render_thread.is_alive():
@@ -87,7 +93,7 @@ def __refresh_standings(render_thread: threading.Thread, data: Data):
         __refresh_offday(render_thread, data)
 
 
-def __refresh_games(render_thread: threading.Thread, data: Data):
+def __refresh_games(render_thread, data):  # type: (threading.Thread, Data) -> None
     debug.log("Main has selected the game and schedule information to refresh")
 
     starttime = time.time()
