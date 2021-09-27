@@ -20,7 +20,14 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
     if scoreboard.inning.state == Inning.TOP or scoreboard.inning.state == Inning.BOTTOM:
 
         pos = _render_at_bat(
-            canvas, layout, colors, scoreboard.atbat, text_pos, scoreboard.strikeout(), (animation_time // 6) % 2
+            canvas,
+            layout,
+            colors,
+            scoreboard.atbat,
+            text_pos,
+            scoreboard.strikeout(),
+            scoreboard.strikeout_looking(),
+            (animation_time // 6) % 2,
         )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
@@ -42,22 +49,23 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, animation):
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation):
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, text_pos)
     if strikeout:
         if animation:
-            __render_strikeout(canvas, layout, colors)
+            __render_strikeout(canvas, layout, colors, looking)
         return plength
     else:
         blength = __render_batter_text(canvas, layout, colors, atbat.batter, text_pos)
         return max(plength, blength)
 
 
-def __render_strikeout(canvas, layout, colors):
+def __render_strikeout(canvas, layout, colors, looking):
     coords = layout.coords("atbat.strikeout")
     color = colors.graphics_color("atbat.strikeout")
     font = layout.font("atbat.strikeout")
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "K")
+    text = "ꓘ" if looking else "K"
+    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
 
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):

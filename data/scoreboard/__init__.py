@@ -33,7 +33,10 @@ class Scoreboard:
         return self.play_result == "home_run"
 
     def strikeout(self):
-        return self.play_result == "strikeout"
+        return "strikeout" in self.play_result
+
+    def strikeout_looking(self):
+        return self.play_result == "strikeout_looking"
 
     def get_text_for_reason(self):
         if self.note:

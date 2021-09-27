@@ -9,9 +9,9 @@ from data.update import UpdateStatus
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
     + "reason,probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
-    + "currentPlay,result,eventType,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,"
-    + "currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,"
-    + "teams,runs,players,seasonStats,pitching,wins,losses,saves,era"
+    + "currentPlay,result,eventType,description,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,"
+    + "inningState,currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,first,second,third,defense,pitcher,"
+    + "boxscore,teams,runs,players,seasonStats,pitching,wins,losses,saves,era"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -221,7 +221,12 @@ class Game:
                 return None
 
     def current_play_result(self):
-        return self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", None)
+        result = self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", "")
+        if result == "strikeout" and (
+            "called" in self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_looking"
+        return result
 
     def __should_update(self):
         endtime = time.time()
