@@ -5,20 +5,8 @@ except ImportError:
 
 import argparse
 import collections
-import os
 
 import debug
-
-
-def get_file(path):
-    dir = os.path.dirname(__file__)
-    return os.path.join(dir, path)
-
-
-def get_font():
-    font = graphics.Font()
-    font.LoadFont(get_file("assets/4x6.bdf"))
-    return font
 
 
 def center_text_position(text, center_pos, font_width):

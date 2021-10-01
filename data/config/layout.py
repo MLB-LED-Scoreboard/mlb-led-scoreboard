@@ -5,7 +5,6 @@ except ImportError:
 
 import os.path
 
-from utils import get_file
 
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
@@ -75,7 +74,7 @@ class Layout:
 
         font_paths = ["assets", "submodules/matrix/fonts"]
         for font_path in font_paths:
-            path = get_file("{}/{}.bdf".format(font_path, font_name))
+            path = f"{font_path}/{font_name}.bdf"
             if os.path.isfile(path):
                 font = graphics.Font()
                 font.LoadFont(path)

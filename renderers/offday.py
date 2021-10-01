@@ -12,7 +12,7 @@ from data.config.layout import Layout
 from data.headlines import Headlines
 from data.weather import Weather
 from renderers import scrollingtext
-from utils import center_text_position, get_file
+from utils import center_text_position
 
 
 def render_offday_screen(
@@ -40,7 +40,7 @@ def __render_clock(canvas, layout, colors, time_format):
 
 def __render_weather(canvas, layout, colors, weather):
     if weather.available():
-        image_file = get_file(weather.icon_filename())
+        image_file = weather.icon_filename()
         weather_icon = PIL.Image.open(image_file)
         __render_weather_icon(canvas, layout, colors, weather_icon)
         __render_weather_text(canvas, layout, colors, weather.conditions, "conditions")
