@@ -168,19 +168,20 @@ class Config:
         return rotate_rate
 
     def read_json(self, path):
+        """Read a file expected to contain valid json.  If file not present return empty data.  Exception if json invalid."""
         j = {}
         if os.path.isfile(path):
             j = json.load(open(path))
+        else:
+            debug.warning(f"Could not find json file {path}.  Skipping.")
         return j
 
+    # example config is a "base config" which always gets read.
+    # our "custom" config contains overrides.
     def __get_config(self, base_filename):
         filename = "{}.json".format(base_filename)
-        reference_filename = "{}.example".format(filename)
+        reference_filename = "config.json.example"  # always use this filename.
         reference_config = self.read_json(reference_filename)
-        if not reference_filename:
-            debug.error("Invalid {} reference config file. Make sure {} exists.".format(base_filename, base_filename))
-            sys.exit(1)
-
         custom_config = self.read_json(filename)
         if custom_config:
             new_config = deep_update(reference_config, custom_config)
