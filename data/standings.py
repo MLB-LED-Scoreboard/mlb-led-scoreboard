@@ -36,7 +36,7 @@ class Standings:
                     {
                         "standingsTypes": "regularSeason",
                         "leagueId": "103,104",
-                        "hydrate": "team(division)",
+                        "hydrate": "division,team",
                         "season": self.date.strftime("%Y"),
                         "fields": API_FIELDS,
                     },
@@ -77,7 +77,7 @@ class Standings:
 
 class Division:
     def __init__(self, data):
-        self.name = data["teamRecords"][0]["team"]["division"]["nameShort"]
+        self.name = data["division"]["nameShort"]
         self.teams = [Team(team_data) for team_data in data["teamRecords"]]
 
 
