@@ -31,6 +31,8 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat):
     stat_color = colors.graphics_color("standings.stat")
     team_stat_color = colors.graphics_color("standings.team.stat")
     team_name_color = colors.graphics_color("standings.team.name")
+    team_elim_color = colors.graphics_color("standings.team.name_elim")
+
     offset = coords["offset"]
 
     graphics.DrawLine(canvas, 0, 0, coords["width"], 0, divider_color)
@@ -43,7 +45,15 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat):
 
         team_text = "{:3s}".format(team.team_abbrev)
         stat_text = str(getattr(team, stat))
-        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, team_name_color, team_text)
+        print(team)
+        graphics.DrawText(
+            canvas,
+            font["font"],
+            coords["team"]["name"]["x"],
+            offset,
+            team_elim_color if team.elim else team_name_color,
+            team_text,
+        )
         graphics.DrawText(canvas, font["font"], coords["team"]["record"]["x"], offset, team_stat_color, stat_text)
 
         offset += coords["offset"]
@@ -56,6 +66,8 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
     bg_color = colors.graphics_color("standings.background")
     team_stat_color = colors.graphics_color("standings.team.stat")
     team_name_color = colors.graphics_color("standings.team.name")
+    team_elim_color = colors.graphics_color("standings.team.name_elim")
+
     start = coords.get("start", 0)
     offset = coords["offset"]
 
@@ -71,7 +83,14 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
         graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
 
         team_text = team.team_abbrev
-        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, team_name_color, team_text)
+        graphics.DrawText(
+            canvas,
+            font["font"],
+            coords["team"]["name"]["x"],
+            offset,
+            team_elim_color if team.elim else team_name_color,
+            team_text,
+        )
 
         record_text = "{}-{}".format(team.w, team.l)
         record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font["size"]["width"])

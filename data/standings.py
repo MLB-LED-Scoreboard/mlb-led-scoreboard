@@ -110,3 +110,4 @@ class Team:
         self.w = data["w"]
         self.l = data["l"]  # noqa: E741
         self.gb = data["gb"]
+        self.elim = data.get("wc_elim_num", "") == "E"
