@@ -1,4 +1,3 @@
-import re
 import time
 
 import statsapi
@@ -7,6 +6,12 @@ import debug
 from data.update import UpdateStatus
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
+
+
+API_FIELDS = (
+    "records,standingsType,teamRecords,team,abbreviation,division,nameShort,divisionRank,gamesBack,"
+    "wildCardEliminationNumber,clinched,wins,losses"
+)
 
 
 class Standings:
@@ -26,12 +31,21 @@ class Standings:
             debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
-                standings_data = statsapi.standings_data(date=self.date.strftime("%m/%d/%Y"))
+                standings_data = statsapi.get(
+                    "standings",
+                    {
+                        "standingsTypes": "regularSeason",
+                        "leagueId": "103,104",
+                        "hydrate": "team(division)",
+                        "season": self.date.strftime("%Y"),
+                        "fields": API_FIELDS,
+                    },
+                )
             except:
                 debug.error("Failed to refresh standings.")
                 return UpdateStatus.FAIL
             else:
-                self.divisions = [Division(id, division_data) for (id, division_data) in standings_data.items()]
+                self.divisions = [Division(division_data) for division_data in standings_data["records"]]
                 return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED
@@ -62,52 +76,17 @@ class Standings:
 
 
 class Division:
-    def __init__(self, id, data):
-        self.id = id
-        self.name = re.sub(r"(ational|merican)\sLeague", "L", data["div_name"])
-        self.teams = [Team(team_data) for team_data in data["teams"]]
+    def __init__(self, data):
+        self.name = data["teamRecords"][0]["team"]["division"]["nameShort"]
+        self.teams = [Team(team_data) for team_data in data["teamRecords"]]
 
 
 class Team:
-    __TEAM_ABBREVIATIONS = {
-        "Arizona Diamondbacks": "ARI",
-        "Atlanta Braves": "ATL",
-        "Baltimore Orioles": "BAL",
-        "Boston Red Sox": "BOS",
-        "Chicago Cubs": "CHC",
-        "Chicago White Sox": "CHW",
-        "Cincinnati Reds": "CIN",
-        "Cleveland Indians": "CLE",
-        "Colorado Rockies": "COL",
-        "Detroit Tigers": "DET",
-        "Florida Marlins": "FLA",
-        "Houston Astros": "HOU",
-        "Kansas City Royals": "KAN",
-        "Los Angeles Angels": "LAA",
-        "Los Angeles Dodgers": "LAD",
-        "Miami Marlins": "MIA",
-        "Milwaukee Brewers": "MIL",
-        "Minnesota Twins": "MIN",
-        "New York Mets": "NYM",
-        "New York Yankees": "NYY",
-        "Oakland Athletics": "OAK",
-        "Philadelphia Phillies": "PHI",
-        "Pittsburgh Pirates": "PIT",
-        "San Diego Padres": "SD",
-        "San Francisco Giants": "SF",
-        "Seattle Mariners": "SEA",
-        "St. Louis Cardinals": "STL",
-        "Tampa Bay Rays": "TB",
-        "Texas Rangers": "TEX",
-        "Toronto Blue Jays": "TOR",
-        "Washington Nationals": "WAS",
-    }
-
     def __init__(self, data):
-        self.rank = data["div_rank"]
-        self.name = data["name"]
-        self.team_abbrev = self.__TEAM_ABBREVIATIONS[self.name]
-        self.w = data["w"]
-        self.l = data["l"]  # noqa: E741
-        self.gb = data["gb"]
-        self.elim = data.get("wc_elim_num", "") == "E"
+        self.rank = data["divisionRank"]
+        self.team_abbrev = data["team"]["abbreviation"]
+        self.w = data["wins"]
+        self.l = data["losses"]  # noqa: E741
+        self.gb = data["gamesBack"]
+        self.clinched = data.get("clinched", False)
+        self.elim = data.get("wildCardEliminationNumber", "") == "E"
