@@ -116,10 +116,7 @@ class Schedule:
             team_index = self.current_idx
             team_idxs = [i for i, game in enumerate(self._games) if team_name in [game["away_name"], game["home_name"]]]
             if len(team_idxs) > 0:
-                team_index = next(
-                    (i for i in team_idxs if status.is_live(self._games[i]["status"])),
-                    team_idxs[0],
-                )
+                team_index = next((i for i in team_idxs if status.is_live(self._games[i]["status"])), team_idxs[0],)
             return team_index
         else:
             return self.current_idx

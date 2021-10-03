@@ -168,7 +168,11 @@ class Config:
         return rotate_rate
 
     def read_json(self, path):
-        """Read a file expected to contain valid json.  If file not present return empty data.  Exception if json invalid."""
+        """
+        Read a file expected to contain valid json.
+        If file not present return empty data.
+        Exception if json invalid.
+        """
         j = {}
         if os.path.isfile(path):
             j = json.load(open(path))

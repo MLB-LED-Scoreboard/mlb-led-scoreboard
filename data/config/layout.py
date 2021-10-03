@@ -5,7 +5,6 @@ except ImportError:
 
 import os.path
 
-
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
 

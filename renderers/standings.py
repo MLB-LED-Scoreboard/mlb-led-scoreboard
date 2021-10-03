@@ -31,7 +31,7 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat):
     stat_color = colors.graphics_color("standings.stat")
     team_stat_color = colors.graphics_color("standings.team.stat")
     team_name_color = colors.graphics_color("standings.team.name")
-    team_elim_color = colors.graphics_color("standings.team.name_elim")
+    team_elim_color = colors.graphics_color("standings.team.elim")
 
     offset = coords["offset"]
 
@@ -45,16 +45,10 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat):
 
         team_text = "{:3s}".format(team.team_abbrev)
         stat_text = str(getattr(team, stat))
-        print(team)
-        graphics.DrawText(
-            canvas,
-            font["font"],
-            coords["team"]["name"]["x"],
-            offset,
-            team_elim_color if team.elim else team_name_color,
-            team_text,
-        )
-        graphics.DrawText(canvas, font["font"], coords["team"]["record"]["x"], offset, team_stat_color, stat_text)
+        color = team_elim_color if team.elim else team_name_color
+        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
+        color = team_elim_color if team.elim else team_stat_color
+        graphics.DrawText(canvas, font["font"], coords["team"]["record"]["x"], offset, color, stat_text)
 
         offset += coords["offset"]
 
@@ -66,7 +60,7 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
     bg_color = colors.graphics_color("standings.background")
     team_stat_color = colors.graphics_color("standings.team.stat")
     team_name_color = colors.graphics_color("standings.team.name")
-    team_elim_color = colors.graphics_color("standings.team.name_elim")
+    team_elim_color = colors.graphics_color("standings.team.elim")
 
     start = coords.get("start", 0)
     offset = coords["offset"]
@@ -82,15 +76,9 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
     for team in standings.current_standings().teams:
         graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
 
+        color = team_elim_color if team.elim else team_name_color
         team_text = team.team_abbrev
-        graphics.DrawText(
-            canvas,
-            font["font"],
-            coords["team"]["name"]["x"],
-            offset,
-            team_elim_color if team.elim else team_name_color,
-            team_text,
-        )
+        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
 
         record_text = "{}-{}".format(team.w, team.l)
         record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font["size"]["width"])
@@ -101,8 +89,9 @@ def __render_static_wide_standings(canvas, layout, colors, standings):
             gb_text = "{:>4s}".format(str(team.gb))
         gb_text_x = coords["team"]["games_back"]["x"] - (len(gb_text) * font["size"]["width"])
 
-        graphics.DrawText(canvas, font["font"], record_text_x, offset, team_stat_color, record_text)
-        graphics.DrawText(canvas, font["font"], gb_text_x, offset, team_stat_color, gb_text)
+        color = team_elim_color if team.elim else team_stat_color
+        graphics.DrawText(canvas, font["font"], record_text_x, offset, color, record_text)
+        graphics.DrawText(canvas, font["font"], gb_text_x, offset, color, gb_text)
 
         offset += coords["offset"]
 

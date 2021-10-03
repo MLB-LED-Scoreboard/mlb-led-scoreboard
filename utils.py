@@ -116,11 +116,7 @@ def args():
         type=int,
     )
     parser.add_argument(
-        "--led-pwm-dither-bits",
-        action="store",
-        help="Time dithering of lower bits (Default: 0)",
-        default=0,
-        type=int,
+        "--led-pwm-dither-bits", action="store", help="Time dithering of lower bits (Default: 0)", default=0, type=int,
     )
     parser.add_argument(
         "--config",
