@@ -264,6 +264,11 @@
       }
     },
     "runs": {
+      "runs_hits_errors": {
+        "show": false,
+        "compress_digits": true,
+        "spacing" : 2
+      },
       "away": {
         "x": 31,
         "y": 6

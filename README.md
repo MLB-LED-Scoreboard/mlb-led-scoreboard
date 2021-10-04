@@ -130,7 +130,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "preferred":                           Options for team and division preference
   "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
-
+  
 "news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
   "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
   "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
@@ -172,6 +172,9 @@ A default `config.json.example` file is included for reference. Copy this file t
 "debug"                        Bool    Game and other debug data is written to your console.
 "demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
+
+### Additional Features
+* Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details. 
 
 ### Flags
 

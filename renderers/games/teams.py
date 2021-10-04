@@ -55,8 +55,15 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
 
     __render_team_text(canvas, layout, away_colors, away_team, "away", full_team_names, default_colors)
     __render_team_text(canvas, layout, home_colors, home_team, "home", full_team_names, default_colors)
-    __render_team_score(canvas, layout, away_colors, away_team.runs, "away", default_colors)
-    __render_team_score(canvas, layout, home_colors, home_team.runs, "home", default_colors)
+
+    # Number of characters in each score.
+    score_spacing = {
+        "runs": max(len(str(away_team.runs)), len(str(home_team.runs))),
+        "hits": max(len(str(away_team.hits)), len(str(home_team.hits))),
+        "errors": max(len(str(away_team.errors)), len(str(home_team.errors))),
+    }
+    __render_team_score(canvas, layout, away_colors, away_team, "away", default_colors, score_spacing)
+    __render_team_score(canvas, layout, home_colors, home_team, "home", default_colors, score_spacing)
 
 
 def __team_colors(team_colors, team_abbrev):
@@ -78,11 +85,34 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
 
-def __render_team_score(canvas, layout, colors, runs, homeaway, default_colors):
+def __render_score_component(canvas, layout, colors, homeaway, default_colors, coords, component_val, width_chars):
+    # The coords passed in are the rightmost pixel.
+    font = layout.font(f"teams.runs.{homeaway}")
+    font_width = font["size"]["width"]
+    # Number of pixels between runs/hits and hits/errors.
+    rhe_spacing = layout.coords(f"teams.runs.runs_hits_errors.spacing")
     text_color = colors.get("text", default_colors["text"])
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
-    coords = layout.coords("teams.runs.{}".format(homeaway))
-    font = layout.font("teams.runs.{}".format(homeaway))
-    team_runs = str(runs)
-    team_runs_x = coords["x"] - (len(team_runs) * font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], team_runs_x, coords["y"], text_color_graphic, team_runs)
+    component_val = str(component_val)
+    compress_digits = layout.coords(f"teams.runs.runs_hits_errors.compress_digits")
+    # Draw each digit from right to left.
+    for i, c in enumerate(component_val[::-1]):
+        if i > 0 and compress_digits:
+            coords["x"] += 1
+        char_draw_x = coords["x"] - font_width * (i + 1)  # Determine character position
+        graphics.DrawText(canvas, font["font"], char_draw_x, coords["y"], text_color_graphic, c)
+    if compress_digits:
+        coords["x"] += width_chars - len(component_val)  # adjust for compaction on values not rendered
+    coords["x"] -= font_width * width_chars + rhe_spacing - 1  # adjust coordinates for next score.
+
+
+def __render_team_score(canvas, layout, colors, team, homeaway, default_colors, score_spacing):
+    coords = layout.coords(f"teams.runs.{homeaway}").copy()
+    if layout.coords(f"teams.runs.runs_hits_errors.show"):
+        __render_score_component(
+            canvas, layout, colors, homeaway, default_colors, coords, team.errors, score_spacing["errors"]
+        )
+        __render_score_component(
+            canvas, layout, colors, homeaway, default_colors, coords, team.hits, score_spacing["hits"]
+        )
+    __render_score_component(canvas, layout, colors, homeaway, default_colors, coords, team.runs, score_spacing["runs"])
