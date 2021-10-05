@@ -90,25 +90,24 @@ def __render_score_component(canvas, layout, colors, homeaway, default_colors, c
     font = layout.font(f"teams.runs.{homeaway}")
     font_width = font["size"]["width"]
     # Number of pixels between runs/hits and hits/errors.
-    rhe_spacing = layout.coords("teams.runs.runs_hits_errors.spacing")
+    rhe_coords = layout.coords("teams.runs.runs_hits_errors")
     text_color = colors.get("text", default_colors["text"])
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     component_val = str(component_val)
-    compress_digits = layout.coords("teams.runs.runs_hits_errors.compress_digits")
     # Draw each digit from right to left.
     for i, c in enumerate(component_val[::-1]):
-        if i > 0 and compress_digits:
+        if i > 0 and rhe_coords["compress_digits"]:
             coords["x"] += 1
         char_draw_x = coords["x"] - font_width * (i + 1)  # Determine character position
         graphics.DrawText(canvas, font["font"], char_draw_x, coords["y"], text_color_graphic, c)
-    if compress_digits:
+    if rhe_coords["compress_digits"]:
         coords["x"] += width_chars - len(component_val)  # adjust for compaction on values not rendered
-    coords["x"] -= font_width * width_chars + rhe_spacing - 1  # adjust coordinates for next score.
+    coords["x"] -= font_width * width_chars + rhe_coords["spacing"] - 1  # adjust coordinates for next score.
 
 
 def __render_team_score(canvas, layout, colors, team, homeaway, default_colors, score_spacing):
     coords = layout.coords(f"teams.runs.{homeaway}").copy()
-    if layout.coords("teams.runs.runs_hits_errors.show"):
+    if layout.coords("teams.runs.runs_hits_errors")["show"]:
         __render_score_component(
             canvas, layout, colors, homeaway, default_colors, coords, team.errors, score_spacing["errors"]
         )
