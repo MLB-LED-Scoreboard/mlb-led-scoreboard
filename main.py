@@ -87,7 +87,7 @@ def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> 
 
 
 def __refresh_standings(render_thread, data):  # type: (threading.Thread, Data) -> None
-    if data.standings.divisions:
+    if data.standings.standings:
         debug.log("Main has selected the standings to refresh")
         while render_thread.is_alive():
             time.sleep(30)

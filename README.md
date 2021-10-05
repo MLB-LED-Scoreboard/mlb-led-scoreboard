@@ -66,7 +66,7 @@ If a game hasn't started yet, a pregame screen will be displayed with the probab
 ![Pregame](assets/img/pregame.jpg)
 
 ### Division Standings
-It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds.
+It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds. You can also specify "NL Wild Card" or "AL Wild Card" as a 'division' to see the top 5 teams in each league's wild card race.
 
 ![standings-wins](assets/img/standings-wins.jpg) ![standings-losses](assets/img/standings-losses.jpg) ![standings-wide](assets/img/wide-standings-demo.jpg)
 

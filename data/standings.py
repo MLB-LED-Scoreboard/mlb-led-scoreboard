@@ -9,7 +9,7 @@ STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
 
 API_FIELDS = (
-    "records,standingsType,teamRecords,team,abbreviation,division,nameShort,divisionRank,gamesBack,"
+    "records,standingsType,teamRecords,team,abbreviation,division,league,nameShort,gamesBack,wildCardGamesBack,"
     "wildCardEliminationNumber,clinched,wins,losses"
 )
 
@@ -20,9 +20,10 @@ class Standings:
         self.date = date
         self.starttime = time.time()
         self.preferred_divisions = preferred_divisions
+        self.wild_cards = any("Wild" in division for division in preferred_divisions)
         self.current_division_index = 0
 
-        self.divisions = []
+        self.standings = []
 
         self.update(True)
 
@@ -31,7 +32,7 @@ class Standings:
             debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
-                standings_data = statsapi.get(
+                divisons_data = statsapi.get(
                     "standings",
                     {
                         "standingsTypes": "regularSeason",
@@ -41,11 +42,24 @@ class Standings:
                         "fields": API_FIELDS,
                     },
                 )
+                if self.wild_cards:
+                    wc_data = statsapi.get(
+                        "standings",
+                        {
+                            "standingsTypes": "wildCard",
+                            "leagueId": "103,104",
+                            "hydrate": "team,league",
+                            "season": self.date.strftime("%Y"),
+                            "fields": API_FIELDS,
+                        },
+                    )
             except:
                 debug.error("Failed to refresh standings.")
                 return UpdateStatus.FAIL
             else:
-                self.divisions = [Division(division_data) for division_data in standings_data["records"]]
+                self.standings = [Division(division_data) for division_data in divisons_data["records"]]
+                if self.wild_cards:
+                    self.standings += [Division(data, wc=True) for data in wc_data["records"]]
                 return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED
@@ -59,7 +73,7 @@ class Standings:
         return self.__standings_for(self.preferred_divisions[0])
 
     def __standings_for(self, division_name):
-        return next(division for division in self.divisions if division.name == division_name)
+        return next(division for division in self.standings if division.name == division_name)
 
     def current_standings(self):
         return self.__standings_for(self.preferred_divisions[self.current_division_index])
@@ -76,17 +90,22 @@ class Standings:
 
 
 class Division:
-    def __init__(self, data):
-        self.name = data["division"]["nameShort"]
-        self.teams = [Team(team_data) for team_data in data["teamRecords"]]
+    def __init__(self, data, wc=False):
+        if wc:
+            self.name = data["league"]["abbreviation"] + " Wild Card"
+        else:
+            self.name = data["division"]["nameShort"]
+        self.teams = [Team(team_data, wc) for team_data in data["teamRecords"][:5]]
 
 
 class Team:
-    def __init__(self, data):
-        self.rank = data["divisionRank"]
+    def __init__(self, data, wc):
         self.team_abbrev = data["team"]["abbreviation"]
         self.w = data["wins"]
         self.l = data["losses"]  # noqa: E741
-        self.gb = data["gamesBack"]
+        if wc:
+            self.gb = data["wildCardGamesBack"]
+        else:
+            self.gb = data["gamesBack"]
         self.clinched = data.get("clinched", False)
         self.elim = data.get("wildCardEliminationNumber", "") == "E"
