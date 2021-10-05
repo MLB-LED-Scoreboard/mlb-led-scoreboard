@@ -9,30 +9,39 @@ from data.standings import Standings
 from utils import center_text_position
 
 
+def get_standings_color_node(colors, node_name, league):
+    # try the league-specific color node.  If not present, go with the standard "standings"
+    try:
+        return colors.graphics_color(f"standings.{league}.{node_name}")
+    except KeyError:
+        return colors.graphics_color(f"standings.{node_name}")
+
+
 def render_standings(canvas, layout: Layout, colors: Color, standings: Standings, stat):
-    __fill_bg(canvas, layout, colors)
+    league = standings.current_standings()[:2].lower() # al or nl
+    __fill_bg(canvas, layout, colors, league)
     if canvas.width > 32:
-        __render_static_wide_standings(canvas, layout, colors, standings)
+        __render_static_wide_standings(canvas, layout, colors, standings, league)
     else:
-        return __render_rotating_standings(canvas, layout, colors, standings, stat)
+        return __render_rotating_standings(canvas, layout, colors, standings, stat, league)
 
 
-def __fill_bg(canvas, layout, colors):
+def __fill_bg(canvas, layout, colors, league):
     coords = layout.coords("standings")
-    bg_color = colors.graphics_color("standings.background")
+    bg_color = get_standings_color_node(colors, "background", league)
     for y in range(0, coords["height"]):
         graphics.DrawLine(canvas, 0, y, coords["width"], y, bg_color)
 
 
-def __render_rotating_standings(canvas, layout, colors, standings, stat):
+def __render_rotating_standings(canvas, layout, colors, standings, stat, league):
     coords = layout.coords("standings")
     font = layout.font("standings")
-    divider_color = colors.graphics_color("standings.divider")
-    stat_color = colors.graphics_color("standings.stat")
-    team_stat_color = colors.graphics_color("standings.team.stat")
-    team_name_color = colors.graphics_color("standings.team.name")
-    team_elim_color = colors.graphics_color("standings.team.elim")
-    team_clinched_color = colors.graphics_color("standings.team.clinched")
+    divider_color = get_standings_color_node(colors, "divider", league)
+    stat_color = get_standings_color_node(colors, "stat", league)
+    team_stat_color = get_standings_color_node(colors, "team.stat", league)
+    team_name_color = get_standings_color_node(colors, "team.name", league)
+    team_elim_color = get_standings_color_node(colors, "team.elim", league)
+    team_clinched_color = get_standings_color_node(colors, "team.clinched", league)
 
     offset = coords["offset"]
 
@@ -54,16 +63,15 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat):
         offset += coords["offset"]
 
 
-def __render_static_wide_standings(canvas, layout, colors, standings):
+def __render_static_wide_standings(canvas, layout, colors, standings, league):
     coords = layout.coords("standings")
     font = layout.font("standings")
-    divider_color = colors.graphics_color("standings.divider")
-    bg_color = colors.graphics_color("standings.background")
-    team_stat_color = colors.graphics_color("standings.team.stat")
-    team_name_color = colors.graphics_color("standings.team.name")
-    team_elim_color = colors.graphics_color("standings.team.elim")
-    team_clinched_color = colors.graphics_color("standings.team.clinched")
-
+    divider_color = get_standings_color_node(colors, "divider", league)
+    bg_color = get_standings_color_node(colors, "background", league)
+    team_stat_color = get_standings_color_node(colors, "team.stat", league)
+    team_name_color = get_standings_color_node(colors, "team.name", league)
+    team_elim_color = get_standings_color_node(colors, "team.elim", league)
+    team_clinched_color = get_standings_color_node(colors, "team.clinched", league)
     start = coords.get("start", 0)
     offset = coords["offset"]
 
