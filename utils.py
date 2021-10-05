@@ -1,7 +1,7 @@
 try:
-    from rgbmatrix import RGBMatrixOptions, graphics
+    from rgbmatrix import RGBMatrixOptions
 except ImportError:
-    from RGBMatrixEmulator import graphics, RGBMatrixOptions
+    from RGBMatrixEmulator import RGBMatrixOptions
 
 import argparse
 import collections

@@ -90,11 +90,11 @@ def __render_score_component(canvas, layout, colors, homeaway, default_colors, c
     font = layout.font(f"teams.runs.{homeaway}")
     font_width = font["size"]["width"]
     # Number of pixels between runs/hits and hits/errors.
-    rhe_spacing = layout.coords(f"teams.runs.runs_hits_errors.spacing")
+    rhe_spacing = layout.coords("teams.runs.runs_hits_errors.spacing")
     text_color = colors.get("text", default_colors["text"])
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     component_val = str(component_val)
-    compress_digits = layout.coords(f"teams.runs.runs_hits_errors.compress_digits")
+    compress_digits = layout.coords("teams.runs.runs_hits_errors.compress_digits")
     # Draw each digit from right to left.
     for i, c in enumerate(component_val[::-1]):
         if i > 0 and compress_digits:
@@ -108,7 +108,7 @@ def __render_score_component(canvas, layout, colors, homeaway, default_colors, c
 
 def __render_team_score(canvas, layout, colors, team, homeaway, default_colors, score_spacing):
     coords = layout.coords(f"teams.runs.{homeaway}").copy()
-    if layout.coords(f"teams.runs.runs_hits_errors.show"):
+    if layout.coords("teams.runs.runs_hits_errors.show"):
         __render_score_component(
             canvas, layout, colors, homeaway, default_colors, coords, team.errors, score_spacing["errors"]
         )

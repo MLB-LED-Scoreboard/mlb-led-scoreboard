@@ -18,11 +18,11 @@ from renderers.main import MainRenderer
 from utils import args, led_matrix_options
 
 try:
-    from rgbmatrix import RGBMatrix, __version__, graphics
+    from rgbmatrix import RGBMatrix, __version__
 
     emulated = False
 except ImportError:
-    from RGBMatrixEmulator import RGBMatrix, graphics, version
+    from RGBMatrixEmulator import RGBMatrix, version
 
     emulated = True
 
