@@ -9,11 +9,7 @@ class Color:
         self.json = color_json
 
     def color(self, keypath):
-        try:
-            d = self.__find_at_keypath(keypath)
-        except KeyError as e:
-            raise e
-        return d
+        return self.__find_at_keypath(keypath)
 
     def graphics_color(self, keypath):
         color = self.color(keypath)

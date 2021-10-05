@@ -10,6 +10,7 @@ CANCELLED_EMERGENCY = "Cancelled: Emergency"  # Final
 CANCELLED_FOG = "Cancelled: Fog"  # Final
 CANCELLED_INCLEMENT_WEATHER = "Cancelled: Inclement Weather"  # Final
 CANCELLED_LIGHTNING = "Cancelled: Lightning"  # Final
+CANCELLED_AIR_QUALITY = "Cancelled: Air Quality"  # Final
 CANCELLED_POWER = "Cancelled: Power"  # Final
 CANCELLED_RAIN = "Cancelled: Rain"  # Final
 CANCELLED_SNOW = "Cancelled: Snow"  # Final
@@ -24,6 +25,7 @@ COMPLETED_EARLY_EMERGENCY = "Completed Early: Emergency"  # Final
 COMPLETED_EARLY_FOG = "Completed Early: Fog"  # Final
 COMPLETED_EARLY_INCLEMENT_WEATHER = "Completed Early: Inclement Weather"  # Final
 COMPLETED_EARLY_LIGHTNING = "Completed Early: Lightning"  # Final
+COMPLETED_EARLY_AIR_QUALITY = "Completed Early: Air Quality"  # Final
 COMPLETED_EARLY_MERCY_RULE = "Completed Early: Mercy Rule"  # Final
 COMPLETED_EARLY_POWER = "Completed Early: Power"  # Final
 COMPLETED_EARLY_RAIN = "Completed Early: Rain"  # Final
@@ -41,6 +43,7 @@ DELAYED_EMERGENCY = "Delayed: Emergency"  # Live
 DELAYED_FOG = "Delayed: Fog"  # Live
 DELAYED_INCLEMENT_WEATHER = "Delayed: Inclement Weather"  # Live
 DELAYED_LIGHTNING = "Delayed: Lightning"  # Live
+DELAYED_AIR_QUALITY = "Delayed: Air Quality"  # Live
 DELAYED_POWER = "Delayed: Power"  # Live
 DELAYED_RAIN = "Delayed: Rain"  # Live
 DELAYED_SNOW = "Delayed: Snow"  # Live
@@ -110,6 +113,7 @@ POSTPONED_EMERGENCY = "Postponed: Emergency"  # Final
 POSTPONED_FOG = "Postponed: Fog"  # Final
 POSTPONED_INCLEMENT_WEATHER = "Postponed: Inclement Weather"  # Final
 POSTPONED_LIGHTNING = "Postponed: Lightning"  # Final
+POSTPONED_AIR_QUALITY = "Postponed: Air Quality"  # Final
 POSTPONED_POWER = "Postponed: Power"  # Final
 POSTPONED_RAIN = "Postponed: Rain"  # Final
 POSTPONED_SNOW = "Postponed: Snow"  # Final
@@ -128,6 +132,7 @@ SUSPENDED_EMERGENCY = "Suspended: Emergency"  # Live
 SUSPENDED_FOG = "Suspended: Fog"  # Live
 SUSPENDED_INCLEMENT_WEATHER = "Suspended: Inclement Weather"  # Live
 SUSPENDED_LIGHTNING = "Suspended: Lightning"  # Live
+SUSPENDED_AIR_QUALITY = "Suspended: Air Quality"  # Live
 SUSPENDED_POWER = "Suspended: Power"  # Live
 SUSPENDED_RAIN = "Suspended: Rain"  # Live
 SUSPENDED_SNOW = "Suspended: Snow"  # Live
@@ -224,6 +229,7 @@ GAME_STATE_COMPLETE = [
     COMPLETED_EARLY_FOG,
     COMPLETED_EARLY_INCLEMENT_WEATHER,
     COMPLETED_EARLY_LIGHTNING,
+    COMPLETED_EARLY_AIR_QUALITY,
     COMPLETED_EARLY_MERCY_RULE,
     COMPLETED_EARLY_POWER,
     COMPLETED_EARLY_RAIN,
@@ -250,6 +256,7 @@ GAME_STATE_IRREGULAR = [
     CANCELLED_FOG,
     CANCELLED_INCLEMENT_WEATHER,
     CANCELLED_LIGHTNING,
+    CANCELLED_AIR_QUALITY,
     CANCELLED_POWER,
     CANCELLED_RAIN,
     CANCELLED_SNOW,
@@ -266,6 +273,7 @@ GAME_STATE_IRREGULAR = [
     DELAYED_FOG,
     DELAYED_INCLEMENT_WEATHER,
     DELAYED_LIGHTNING,
+    DELAYED_AIR_QUALITY,
     DELAYED_POWER,
     DELAYED_RAIN,
     DELAYED_SNOW,
@@ -327,6 +335,7 @@ GAME_STATE_IRREGULAR = [
     POSTPONED_FOG,
     POSTPONED_INCLEMENT_WEATHER,
     POSTPONED_LIGHTNING,
+    POSTPONED_AIR_QUALITY,
     POSTPONED_POWER,
     POSTPONED_RAIN,
     POSTPONED_SNOW,
@@ -343,6 +352,7 @@ GAME_STATE_IRREGULAR = [
     SUSPENDED_FOG,
     SUSPENDED_INCLEMENT_WEATHER,
     SUSPENDED_LIGHTNING,
+    SUSPENDED_AIR_QUALITY,
     SUSPENDED_POWER,
     SUSPENDED_RAIN,
     SUSPENDED_SNOW,
