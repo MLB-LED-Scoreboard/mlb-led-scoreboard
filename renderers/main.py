@@ -64,7 +64,7 @@ class MainRenderer:
 
     # Render the standings screen
     def __render_standings(self) -> NoReturn:
-        if self.data.standings.divisions:
+        if self.data.standings.standings:
             self.__draw_standings(True)
         else:
             # Out of season off days don't always return standings so fall back on the offday renderer
