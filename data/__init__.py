@@ -93,8 +93,9 @@ class Data:
             self.current_game = game
             self.__update_layout_state()
             self.print_game_data_debug()
-            self.game_changed_time = time.time()
             self.network_issues = False
+            if game.game_id != self.current_game.game_id:
+                self.game_changed_time = time.time()
         else:
             self.network_issues = True
 
