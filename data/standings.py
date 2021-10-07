@@ -1,3 +1,4 @@
+from datetime import datetime
 import time
 
 import statsapi
@@ -15,7 +16,7 @@ API_FIELDS = (
 
 
 class Standings:
-    def __init__(self, date, preferred_divisions):
+    def __init__(self, date: datetime, preferred_divisions):
 
         self.date = date
         self.starttime = time.time()
@@ -32,29 +33,20 @@ class Standings:
             debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
-                divisons_data = statsapi.get(
-                    "standings",
-                    {
-                        "standingsTypes": "regularSeason",
-                        "leagueId": "103,104",
-                        "hydrate": "division,team",
-                        "date": self.date.strftime("%m/%d/%Y"),
-                        "season": self.date.strftime("%Y"),
-                        "fields": API_FIELDS,
-                    },
-                )
+                params = {
+                    "standingsTypes": "regularSeason",
+                    "leagueId": "103,104",
+                    "hydrate": "division,team,league",
+                    "season": self.date.strftime("%Y"),
+                    "fields": API_FIELDS,
+                }
+                if self.date.date() != datetime.today().date():
+                    params["date"] = self.date.strftime("%m/%d/%Y")
+
+                divisons_data = statsapi.get("standings", params)
                 if self.wild_cards:
-                    wc_data = statsapi.get(
-                        "standings",
-                        {
-                            "standingsTypes": "wildCard",
-                            "leagueId": "103,104",
-                            "hydrate": "team,league",
-                            "date": self.date.strftime("%m/%d/%Y"),
-                            "season": self.date.strftime("%Y"),
-                            "fields": API_FIELDS,
-                        },
-                    )
+                    params["standingsTypes"] = "wildCard"
+                    wc_data = statsapi.get("standings", params)
             except:
                 debug.error("Failed to refresh standings.")
                 return UpdateStatus.FAIL
