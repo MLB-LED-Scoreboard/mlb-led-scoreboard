@@ -104,8 +104,8 @@ class MainRenderer:
         refresh_rate = self.data.config.scrolling_speed
 
         while True:
-            # we know we aren't out of season so it should be ok to do this unconditionally
-            self.__draw_standings()
+            if self.data.standings.standings:
+                self.__draw_standings()
 
             if self.game_changed_time < self.data.game_changed_time:
                 self.scrolling_text_pos = self.canvas.width
