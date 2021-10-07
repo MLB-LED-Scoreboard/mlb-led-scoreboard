@@ -159,6 +159,20 @@ def _render_count(canvas, layout, colors, pitches: Pitches):
 
 
 # --------------- outs ---------------
+def __out_colors(colors):
+    outlines = []
+    fills = []
+    for i in range(3):
+        color = colors.graphics_color(f"outs.{i+1}")
+        outlines.append(color)
+        try:
+            color = colors.graphics_color(f"outs.fill.{i+1}")
+        except KeyError:
+            pass
+        fills.append(color)
+    return outlines, fills
+
+
 def _render_outs(canvas, layout, colors, outs):
     out_px = []
     out_px.append(layout.coords("outs.1"))
@@ -166,19 +180,18 @@ def _render_outs(canvas, layout, colors, outs):
     out_px.append(layout.coords("outs.3"))
 
     out_colors = []
-    out_colors.append(colors.graphics_color("outs.1"))
-    out_colors.append(colors.graphics_color("outs.2"))
-    out_colors.append(colors.graphics_color("outs.3"))
+    out_colors, fill_colors = __out_colors(colors)
 
     for out in range(len(out_px)):
         __render_out_circle(canvas, out_px[out], out_colors[out])
         # Fill in the circle if that out has occurred
         if outs.number > out:
-            __fill_out_circle(canvas, out_px[out], out_colors[out])
+            __fill_out_circle(canvas, out_px[out], fill_colors[out])
 
 
 def __render_out_circle(canvas, out, color):
     x, y, size = (out["x"], out["y"], out["size"])
+
     graphics.DrawLine(canvas, x, y, x + size, y, color)
     graphics.DrawLine(canvas, x, y, x, y + size, color)
     graphics.DrawLine(canvas, x + size, y + size, x, y + size, color)
@@ -188,8 +201,11 @@ def __render_out_circle(canvas, out, color):
 def __fill_out_circle(canvas, out, color):
     size = out["size"]
     x, y = (out["x"], out["y"])
+    x += 1
+    y += 1
+    size -= 1
     for y_offset in range(size):
-        graphics.DrawLine(canvas, x, y + y_offset, x + size, y + y_offset, color)
+        graphics.DrawLine(canvas, x, y + y_offset, x + size - 1 , y + y_offset, color)
 
 
 # --------------- inning information ---------------

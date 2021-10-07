@@ -64,14 +64,16 @@ class MainRenderer:
 
     # Render the standings screen
     def __render_standings(self) -> NoReturn:
-        if self.data.standings.standings:
-            self.__draw_standings(True)
-        else:
-            # Out of season off days don't always return standings so fall back on the offday renderer
-            debug.error("No standings data.  Falling back to off day.")
-            self.__render_offday()
+        self.__draw_standings(stick=True)
 
-    def __draw_standings(self, stick=False):
+        # Out of season off days don't always return standings so fall back on the offday renderer
+        debug.error("No standings data.  Falling back to off day.")
+        self.__render_offday()
+
+    def __draw_standings(self, *, stick=False):
+        if not self.data.standings.standings:
+            return
+
         while stick or (self.data.config.standings_no_games and not self.data.schedule.games_live()):
             standings.render_standings(
                 self.canvas,
@@ -104,8 +106,7 @@ class MainRenderer:
         refresh_rate = self.data.config.scrolling_speed
 
         while True:
-            if self.data.standings.standings:
-                self.__draw_standings()
+            self.__draw_standings()
 
             if self.game_changed_time < self.data.game_changed_time:
                 self.scrolling_text_pos = self.canvas.width
