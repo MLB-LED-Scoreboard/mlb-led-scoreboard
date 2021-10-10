@@ -142,7 +142,7 @@ if __name__ == "__main__":
     try:
         config, _ = os.path.splitext(command_line_args.config)
         main(matrix, config)
-    except Exception:
+    except:
         debug.exception("Untrapped error in main!")
         raise
     finally:
