@@ -144,6 +144,6 @@ if __name__ == "__main__":
         main(matrix, config)
     except:
         debug.exception("Untrapped error in main!")
-        raise
+        sys.exit(1)
     finally:
         matrix.Clear()
