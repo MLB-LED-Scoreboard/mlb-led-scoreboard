@@ -5,25 +5,17 @@ except ImportError:
 
 from data.config.color import Color
 from data.config.layout import Layout
-from data.standings import Standings
-from utils import center_text_position
+from data.standings import Division
+from utils import center_text_position, get_standings_color_node
 
 
-def get_standings_color_node(colors, node_name, league):
-    # try the league-specific color node.  If not present, go with the standard "standings"
-    try:
-        return colors.graphics_color(f"standings.{league}.{node_name}")
-    except KeyError:
-        return colors.graphics_color(f"standings.{node_name}")
-
-
-def render_standings(canvas, layout: Layout, colors: Color, standings: Standings, stat):
-    league = standings.current_standings().name[:2].lower()  # al or nl
+def render_standings(canvas, layout: Layout, colors: Color, division: Division, stat):
+    league = division.name[:2]  # al or nl
     __fill_bg(canvas, layout, colors, league)
     if canvas.width > 32:
-        __render_static_wide_standings(canvas, layout, colors, standings, league)
+        __render_static_wide_standings(canvas, layout, colors, division, league)
     else:
-        return __render_rotating_standings(canvas, layout, colors, standings, stat, league)
+        return __render_rotating_standings(canvas, layout, colors, division, stat, league)
 
 
 def __fill_bg(canvas, layout, colors, league):
@@ -33,7 +25,7 @@ def __fill_bg(canvas, layout, colors, league):
         graphics.DrawLine(canvas, 0, y, coords["width"], y, bg_color)
 
 
-def __render_rotating_standings(canvas, layout, colors, standings, stat, league):
+def __render_rotating_standings(canvas, layout, colors, division, stat, league):
     coords = layout.coords("standings")
     font = layout.font("standings")
     divider_color = get_standings_color_node(colors, "divider", league)
@@ -50,7 +42,7 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat, league)
     graphics.DrawText(canvas, font["font"], coords["stat_title"]["x"], offset, stat_color, stat.upper())
     graphics.DrawLine(canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], divider_color)
 
-    for team in standings.current_standings().teams:
+    for team in division.teams:
         graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
 
         team_text = "{:3s}".format(team.team_abbrev)
@@ -63,7 +55,7 @@ def __render_rotating_standings(canvas, layout, colors, standings, stat, league)
         offset += coords["offset"]
 
 
-def __render_static_wide_standings(canvas, layout, colors, standings, league):
+def __render_static_wide_standings(canvas, layout, colors, division, league):
     coords = layout.coords("standings")
     font = layout.font("standings")
     divider_color = get_standings_color_node(colors, "divider", league)
@@ -83,7 +75,7 @@ def __render_static_wide_standings(canvas, layout, colors, standings, league):
 
     offset += start
 
-    for team in standings.current_standings().teams:
+    for team in division.teams:
         graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
 
         color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_name_color)

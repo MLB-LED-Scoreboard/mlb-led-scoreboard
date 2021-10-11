@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta
 
 import data.config.layout as layout
+from data.game import Game
 import debug
 from data import status
 from data.headlines import Headlines
@@ -23,26 +24,27 @@ class Data:
         self.today = self.__parse_today()
 
         # get schedule
-        self.schedule = Schedule(self.today, config)
+        self.schedule: Schedule = Schedule(self.today, config)
         # NB: Can return none, but shouldn't matter?
-        self.current_game = self.schedule.get_preferred_game()
+        self.current_game: Game = self.schedule.get_preferred_game()
         self.game_changed_time = time.time()
 
-        # Fetch all standings data for today
-        # (Good to have in case we add a standings screen while rotating scores)
-        self.standings = Standings(self.today, config.preferred_divisions)
-
         # Weather info
-        self.weather = Weather(config)
+        self.weather: Weather = Weather(config)
 
         # News headlines
-        self.headlines = Headlines(config)
+        self.headlines: Headlines = Headlines(config, self.today.strftime("%Y"))
+
+        # Fetch all standings data for today
+        self.standings: Standings = Standings(
+            self.today, config.preferred_divisions, self.headlines.important_dates.playoffs_start_date
+        )
 
         # Network status state - we use headlines and weather condition as a sort of sentinial value
-        self.network_issues = (self.weather.conditions == "Error") or (not self.headlines.feed_data)
+        self.network_issues: bool = (self.weather.conditions == "Error") or (not self.headlines.feed_data)
 
         # RENDER ITEMS
-        self.scrolling_finished = False
+        self.scrolling_finished: bool = False
 
     def __parse_today(self):
         if self.config.demo_date:

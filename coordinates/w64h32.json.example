@@ -189,6 +189,14 @@
       "games_back": {
         "x": 64
       }
+    },
+    "postseason": {
+      "matchup_y_gap": 6,
+      "series_x_gap": 16,
+      "wc_x_start": 2,
+      "wc_y_start": 6,
+      "ds_b_y_start": 25,
+      "__comment": "all other coords are based off wild card position"
     }
   },
   "status": {
@@ -246,7 +254,7 @@
       "runs_hits_errors": {
         "show": true,
         "compress_digits": false,
-        "spacing" : 3
+        "spacing": 3
       },
       "away": {
         "x": 62,

@@ -95,7 +95,7 @@ TRADE_FEEDS = {
 
 
 class Headlines:
-    def __init__(self, config):
+    def __init__(self, config, year):
         self.preferred_teams = config.preferred_teams
         self.include_mlb = config.news_ticker_mlb_news
         self.include_preferred = config.news_ticker_preferred_teams
@@ -106,7 +106,7 @@ class Headlines:
         self.feed_urls = []
         self.feed_data = None
         self.starttime = time.time()
-        self.important_dates = Dates()
+        self.important_dates = Dates(year)
 
         self.__compile_feed_list()
         self.update(True)

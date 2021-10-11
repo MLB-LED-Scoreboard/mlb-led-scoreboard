@@ -2,11 +2,11 @@ import time
 from typing import NoReturn
 
 import debug
-from data import status
+from data import Data, status
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
-from renderers import network, offday, standings
+from renderers import network, offday, standings, bracket
 from renderers.games import game as gamerender
 from renderers.games import irregular
 from renderers.games import postgame as postgamerender
@@ -17,12 +17,13 @@ from renderers.games import teams
 class MainRenderer:
     def __init__(self, matrix, data):
         self.matrix = matrix
-        self.data = data
+        self.data: Data = data
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.game_changed_time = time.time()
         self.animation_time = 0
         self.standings_stat = "w"
+        self.standings_league = "NL"
 
     def render(self):
         screen = self.data.get_screen_type()
@@ -71,34 +72,49 @@ class MainRenderer:
         self.__render_offday()
 
     def __draw_standings(self, *, stick=False):
-        if not self.data.standings.standings:
+        if not self.data.standings.populated():
             return
 
         while stick or (self.data.config.standings_no_games and not self.data.schedule.games_live()):
-            standings.render_standings(
-                self.canvas,
-                self.data.config.layout,
-                self.data.config.scoreboard_colors,
-                self.data.standings,
-                self.standings_stat,
-            )
+            if self.data.standings.is_postseason():
+                bracket.render_bracket(
+                    self.canvas,
+                    self.data.config.layout,
+                    self.data.config.scoreboard_colors,
+                    self.data.standings.leagues[self.standings_league],
+                )
+            else:
+                standings.render_standings(
+                    self.canvas,
+                    self.data.config.layout,
+                    self.data.config.scoreboard_colors,
+                    self.data.standings.current_standings(),
+                    self.standings_stat,
+                )
 
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
 
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
-            # we actually keep this logic on the render thread
-            if self.canvas.width > 32:
-                time.sleep(10)
-                self.data.standings.advance_to_next_standings()
-            else:
-                if self.standings_stat == "w":
-                    self.standings_stat = "l"
+            if self.data.standings.is_postseason():
+                time.sleep(20)
+                if self.standings_league == "NL":
+                    self.standings_league = "AL"
                 else:
-                    self.standings_stat = "w"
+                    self.standings_league = "NL"
+            else:
+                # we actually keep this logic on the render thread
+                if self.canvas.width > 32:
+                    time.sleep(10)
                     self.data.standings.advance_to_next_standings()
-                time.sleep(5)
+                else:
+                    if self.standings_stat == "w":
+                        self.standings_stat = "l"
+                    else:
+                        self.standings_stat = "w"
+                        self.data.standings.advance_to_next_standings()
+                    time.sleep(5)
 
     # Renders a game screen based on it's status
     def __render_game(self) -> NoReturn:
