@@ -45,7 +45,7 @@ class Standings:
                         "season": self.date.strftime("%Y"),
                         "fields": API_FIELDS,
                     }
-                    if self.date.date() != datetime.today().date():
+                    if self.date != datetime.today().date():
                         season_params["date"] = self.date.strftime("%m/%d/%Y")
 
                     divisons_data = statsapi.get("standings", season_params)
@@ -132,8 +132,8 @@ class League:
     def __init__(self, data, league):
         self.name = league
         self.wc1, self.wc2 = self.get_seeds(data, "F", league)
-        self.ds_one, self.wc_winner = self.get_seeds(data, "D", league, "A")
-        self.ds_two, self.ds_three = self.get_seeds(data, "D", league, "B")
+        self.ds_one, self.wc_winner = self.get_seeds(data, "D", league, "'A'")
+        self.ds_two, self.ds_three = self.get_seeds(data, "D", league, "'B'")
         self.l_one, self.l_two = self.get_seeds(data, "L", league)
         self.champ = self.get_league_champ(data, league)
 

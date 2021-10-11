@@ -13,15 +13,6 @@ def center_text_position(text, center_pos, font_width):
     return abs(center_pos - ((len(text) * font_width) // 2))
 
 
-def get_standings_color_node(colors, node_name, league):
-    # try the league-specific color node.
-    # If not present, go with the standard "standings"
-    try:
-        return colors.graphics_color(f"standings.{league.lower()}.{node_name}")
-    except KeyError:
-        return colors.graphics_color(f"standings.{node_name}")
-
-
 def split_string(string, num_chars):
     return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]  # noqa: E203
 

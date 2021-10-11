@@ -6,7 +6,7 @@ from data import Data, status
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
-from renderers import network, offday, standings, bracket
+from renderers import network, offday, standings
 from renderers.games import game as gamerender
 from renderers.games import irregular
 from renderers.games import postgame as postgamerender
@@ -80,7 +80,7 @@ class MainRenderer:
 
         while stick or (self.data.config.standings_no_games and not self.data.schedule.games_live()):
             if self.data.standings.is_postseason():
-                bracket.render_bracket(
+                standings.render_bracket(
                     self.canvas,
                     self.data.config.layout,
                     self.data.config.scoreboard_colors,
