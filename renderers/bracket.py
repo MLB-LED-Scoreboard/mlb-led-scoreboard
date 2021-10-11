@@ -8,15 +8,14 @@ from data.standings import League
 from utils import get_standings_color_node
 
 
-def __fill_bg(canvas, layout, colors, league):
-    coords = layout.coords("standings")
+def __fill_bg(canvas, colors, league):
     bg_color = get_standings_color_node(colors, "background", league)
-    for y in range(0, coords["height"]):
-        graphics.DrawLine(canvas, 0, y, coords["width"], y, bg_color)
+    for y in range(0, canvas.height):
+        graphics.DrawLine(canvas, 0, y, canvas.width, y, bg_color)
 
 
 def render_bracket(canvas, layout, colors, league: League):
-    __fill_bg(canvas, layout, colors, league.name)
+    __fill_bg(canvas, colors, league.name)
 
     coords = layout.coords("standings.postseason")
     font = layout.font("standings")
