@@ -45,6 +45,8 @@ class Standings:
                         "season": self.date.strftime("%Y"),
                         "fields": API_FIELDS,
                     }
+                    if self.date.date() != datetime.today().date():
+                        season_params["date"] = self.date.strftime("%m/%d/%Y")
 
                     divisons_data = statsapi.get("standings", season_params)
                     self.standings = [Division(division_data) for division_data in divisons_data["records"]]
@@ -59,8 +61,7 @@ class Standings:
                         {
                             "season": self.date.strftime("%Y"),
                             "hydrate": "league,team",
-                            "fields": "series,id,gameType,games,description,teams,"
-                            "home,away,team,isWinner,abbreviation,name",
+                            "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
                         },
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")

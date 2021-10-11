@@ -31,7 +31,7 @@ class Schedule:
             try:
                 self.__all_games = statsapi.schedule(self.date)
             except:
-                debug.error("Networking error while refreshing schedule")
+                debug.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
             else:
                 self._games = self.__all_games

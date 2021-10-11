@@ -75,6 +75,9 @@ class MainRenderer:
         if not self.data.standings.populated():
             return
 
+        if self.data.standings.is_postseason() and self.canvas.width <= 32:
+            return
+
         while stick or (self.data.config.standings_no_games and not self.data.schedule.games_live()):
             if self.data.standings.is_postseason():
                 bracket.render_bracket(

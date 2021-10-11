@@ -56,7 +56,7 @@ class Game:
 
                 return UpdateStatus.SUCCESS
             except:
-                debug.error("Networking Error while refreshing the current game data.")
+                debug.exception("Networking Error while refreshing the current game data.")
                 return UpdateStatus.FAIL
         return UpdateStatus.DEFERRED
 

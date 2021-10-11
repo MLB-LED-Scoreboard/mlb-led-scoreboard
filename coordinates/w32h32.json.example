@@ -267,7 +267,7 @@
       "runs_hits_errors": {
         "show": false,
         "compress_digits": true,
-        "spacing" : 2
+        "spacing": 2
       },
       "away": {
         "x": 31,
