@@ -92,7 +92,7 @@ def __render_static_wide_standings(canvas, layout, colors, division, league):
 
 def __fill_bg(canvas, colors, league: str):
     bg_color = get_standings_color_node(colors, "background", league)
-    canvas.Fill(bg_color.r, bg_color.g, bg_color.b)
+    canvas.Fill(bg_color.red, bg_color.green, bg_color.blue)
 
 
 def get_standings_color_node(colors, node_name, league):
