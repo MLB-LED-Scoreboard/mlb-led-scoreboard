@@ -205,7 +205,7 @@ def __fill_out_circle(canvas, out, color):
     y += 1
     size -= 1
     for y_offset in range(size):
-        graphics.DrawLine(canvas, x, y + y_offset, x + size - 1 , y + y_offset, color)
+        graphics.DrawLine(canvas, x, y + y_offset, x + size - 1, y + y_offset, color)
 
 
 # --------------- inning information ---------------

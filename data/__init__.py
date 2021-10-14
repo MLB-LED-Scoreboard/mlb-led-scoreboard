@@ -2,9 +2,9 @@ import time
 from datetime import datetime, timedelta
 
 import data.config.layout as layout
-from data.game import Game
 import debug
 from data import status
+from data.game import Game
 from data.headlines import Headlines
 from data.schedule import Schedule
 from data.scoreboard import Scoreboard

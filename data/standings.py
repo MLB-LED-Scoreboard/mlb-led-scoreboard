@@ -1,11 +1,11 @@
-from datetime import datetime
 import time
+from datetime import datetime
 
 import statsapi
 
 import debug
-from data.update import UpdateStatus
 from data import teams
+from data.update import UpdateStatus
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
@@ -132,20 +132,34 @@ class League:
     def __init__(self, data, league):
         self.name = league
         self.wc1, self.wc2 = self.get_seeds(data, "F", league)
-        self.ds_one, self.wc_winner = self.get_seeds(data, "D", league, "'A'")
+        self.ds_one, _ = self.get_seeds(data, "D", league, "'A'")
         self.ds_two, self.ds_three = self.get_seeds(data, "D", league, "'B'")
-        self.l_one, self.l_two = self.get_seeds(data, "L", league)
-        self.champ = self.get_league_champ(data, league)
+
+        self.wc_winner = self.get_series_winner(data, "F", league)
+        self.l_two = self.get_series_winner(data, "D", league, "'A'")
+        self.l_one = self.get_series_winner(data, "D", league, "'B'")
+        self.champ = self.get_series_winner(data, "L", league)
 
     @staticmethod
-    def get_league_champ(data, league):
-        series = next(s for s in data["series"] if s["series"]["gameType"] == "L" and league in s["series"]["id"])
+    def get_series_winner(data, gametype, league, series=""):
+        series = next(
+            s
+            for s in data["series"]
+            if s["series"]["gameType"] == gametype and league in s["series"]["id"] and series in s["series"]["id"]
+        )
         game = series["games"][-1]
-        champ = f"{league}C"
+
+        if gametype == "L":
+            champ = f"{league}C"
+        elif gametype == "F":
+            champ = "WCW"
+        else:
+            champ = "TBD"
+
         if game["teams"]["home"].get("isWinner"):
             champ = League.get_abbr(game["teams"]["home"]["team"]["name"])
         elif game["teams"]["away"].get("isWinner"):
-            champ = League.get_abbr(game["teams"]["home"]["team"]["name"])
+            champ = League.get_abbr(game["teams"]["away"]["team"]["name"])
         return champ
 
     @staticmethod
@@ -155,17 +169,12 @@ class League:
             for s in data["series"]
             if s["series"]["gameType"] == gametype and league in s["series"]["id"] and series in s["series"]["id"]
         )
-
-        teams = (
+        higher, lower = (
             series["games"][0]["teams"]["home"]["team"]["name"],
             series["games"][0]["teams"]["away"]["team"]["name"],
         )
-        if gametype == "F":
-            default1 = default2 = "WCW"
-        else:
-            default1 = league + "^"
-            default2 = league + "∨"
-        return (League.get_abbr(teams[0], default1), League.get_abbr(teams[1], default2))
+
+        return (League.get_abbr(higher), League.get_abbr(lower))
 
     def __str__(self):
         return f"""{self.wc2} ---|
@@ -173,14 +182,11 @@ class League:
 {self.wc1} ---|           | --- {self.l_two} ---|
             {self.ds_one} ---|            |
                                 | {self.champ}
-            {self.ds_two} ---|            |
+            {self.ds_three} ---|            |
                    | --- {self.l_one} ---|
             {self.ds_two} ---|
         """
 
     @staticmethod
-    def get_abbr(name, default="???"):
-        try:
-            return f"{teams.TEAM_ABBR_LN[name]:>3}"
-        except:
-            return default
+    def get_abbr(name, default="TBD"):
+        return f"{teams.TEAM_ABBR_LN.get(name, default):>3}"
