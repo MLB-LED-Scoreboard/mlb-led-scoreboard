@@ -33,15 +33,15 @@ class Data:
         self.weather: Weather = Weather(config)
 
         # News headlines
-        self.headlines: Headlines = Headlines(config, self.today.strftime("%Y"))
+        self.headlines: Headlines = Headlines(config, self.today.year)
 
         # Fetch all standings data for today
         self.standings: Standings = Standings(
             self.today, config.preferred_divisions, self.headlines.important_dates.playoffs_start_date
         )
 
-        # Network status state - we use headlines and weather condition as a sort of sentinial value
-        self.network_issues: bool = (self.weather.conditions == "Error") or (not self.headlines.feed_data)
+        # Network status state - we useweather condition as a sort of sentinial value
+        self.network_issues: bool = self.weather.conditions == "Error"
 
         # RENDER ITEMS
         self.scrolling_finished: bool = False

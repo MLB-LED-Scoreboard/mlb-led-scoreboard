@@ -6,10 +6,14 @@ import debug
 
 
 class Dates:
-    def __init__(self, year):
+    def __init__(self, year: int):
         try:
             data = statsapi.get("season", {"sportId": 1, "seasonId": year})
             self.__parse_important_dates(data["seasons"][0], year)
+            now = datetime.now()
+            if year == now.year and self.season_ends_date < now:
+                data = statsapi.get("season", {"sportId": 1, "seasonId": year + 1})
+                self.__parse_important_dates(data["seasons"][0], year + 1)
         except:
             debug.exception("Failed to refresh important dates")
             self.playoffs_start_date = datetime(3000, 10, 1)
@@ -37,6 +41,7 @@ class Dates:
         self.__add_date(dates["regularSeasonEndDate"], "the final day of the regular season", 30)
         self.playoffs_start_date = datetime.strptime(dates["regularSeasonEndDate"], "%Y-%m-%d")
         self.__add_date(dates["postSeasonStartDate"], "the {} Post-Season begins".format(year))
+        self.season_ends_date = datetime.strptime(dates["postSeasonEndDate"], "%Y-%m-%d")
         self.__add_date(dates["postSeasonEndDate"], "the {} Post-Season ends".format(year))
 
     def __add_date(self, date, text, max_days_to_count=999):
