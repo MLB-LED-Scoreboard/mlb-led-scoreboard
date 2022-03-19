@@ -211,8 +211,9 @@ class MainRenderer:
     def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of the probable starting pitcher text."""
         pos_after_scroll = self.scrolling_text_pos - 1
-        if pos_after_scroll + new_pos < -4:
+        if pos_after_scroll + new_pos < 0:
             self.data.scrolling_finished = True
-            self.scrolling_text_pos = end
-        else:
-            self.scrolling_text_pos = pos_after_scroll
+            if pos_after_scroll + new_pos < -10:
+                self.scrolling_text_pos = end
+                return
+        self.scrolling_text_pos = pos_after_scroll

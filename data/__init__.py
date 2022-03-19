@@ -92,12 +92,13 @@ class Data:
     def advance_to_next_game(self):
         game = self.schedule.next_game()
         if game is not None:
+            if game.game_id != self.current_game.game_id:
+                self.game_changed_time = time.time()
             self.current_game = game
             self.__update_layout_state()
             self.print_game_data_debug()
             self.network_issues = False
-            if game.game_id != self.current_game.game_id:
-                self.game_changed_time = time.time()
+
         else:
             self.network_issues = True
 
