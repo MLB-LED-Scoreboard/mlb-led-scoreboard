@@ -24,7 +24,7 @@ TEAMS = {
     "Red Sox",
     "Cubs",
     "Reds",
-    "Indians",
+    "Guardians",
     "Rockies",
     "Tigers",
     "Astros",
