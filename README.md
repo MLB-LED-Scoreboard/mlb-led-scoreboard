@@ -82,7 +82,7 @@ sudo apt-get install git python3-pip
 This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
 
 ```
-git clone https://github.com/WardBrian/mlb-led-scoreboard.git
+git clone https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard.git
 cd mlb-led-scoreboard/
 sudo ./install.sh
 ```
