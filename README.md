@@ -1,11 +1,5 @@
 # mlb-led-scoreboard
 
-## Brian Ward's fork
-
-This version differs rather signficantly from the original, including tweaks to behavior, visuals, and different underlying code. 
-
-Some broad changes: the code is now running on Python 3.7+, it is multithreaded to make animations smoother, and more information such as pitcher and the current batter are shown. A lot more is changed under the hood, too! A more detailed (but growing outdated) review is [here](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/pull/335).
-
 ---------------
 
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
@@ -114,11 +108,11 @@ That should be it! Your latest version should now be working with whatever new f
 Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default. You can change the timezone of your raspberry pi by running `sudo raspi-config`.
 
 ## Usage
-`sudo python main.py` Running as root is 100% an absolute must, or the matrix won't render.
+`sudo python3 main.py` Running as root is 100% an absolute must, or the matrix won't render.
 
 **Adafruit HAT/Bonnet users: You must supply a command line flag:**
 
-`sudo python main.py --led-gpio-mapping="adafruit-hat"`
+`sudo python3 main.py --led-gpio-mapping="adafruit-hat"`
 
 See the Flags section below for more flags you can optionally provide.
 
@@ -130,7 +124,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "preferred":                           Options for team and division preference
   "teams"                      Array   Pass an array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                  Array   Pass an array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
-  
+
 "news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
   "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
   "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
@@ -174,7 +168,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 ```
 
 ### Additional Features
-* Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details. 
+* Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
 
 ### Flags
 
