@@ -1,0 +1,324 @@
+{
+  "defaults": {
+    "font_name": "9x18B"
+  },
+  "bases": {
+    "1B": {
+      "x": 112,
+      "y": 42,
+      "size": 14
+    },
+    "2B": {
+      "x": 103,
+      "y": 33,
+      "size": 14
+    },
+    "3B": {
+      "x": 94,
+      "y": 42,
+      "size": 14
+    }
+  },
+  "final": {
+    "inning": {
+      "x": 67,
+      "y": 61
+    },
+    "scrolling_text": {
+      "x": 0,
+      "y": 44,
+      "width": 128
+    },
+    "nohit_text": {
+      "x": 1,
+      "y": 61
+    }
+  },
+  "inning": {
+    "break": {
+      "number": {
+        "x": 3,
+        "y": 58
+      },
+      "text": {
+        "x": 3,
+        "y": 44
+      },
+      "due_up": {
+        "due": {
+          "font_name": "7x13B",
+          "x": 38,
+          "y": 44
+        },
+        "up": {
+          "x": 38,
+          "y": 56
+        },
+        "divider": {
+          "draw": true,
+          "x": 36,
+          "y_start": 32,
+          "y_end": 64
+        },
+        "leadoff": {
+          "font_name": "7x13B",
+          "x": 64,
+          "y": 42
+        },
+        "on_deck": {
+          "x": 64,
+          "y": 52
+        },
+        "in_hole": {
+          "x": 64,
+          "y": 62
+        }
+      }
+    },
+    "number": {
+      "x": 93,
+      "y": 45,
+      "nohit": {
+        "x": 93,
+        "y": 42
+      },
+      "perfect_game": {
+        "x": 93,
+        "y": 42
+      }
+    },
+    "arrow": {
+      "size": 7,
+      "up": {
+        "x_offset": -12,
+        "y_offset": -10
+      },
+      "down": {
+        "x_offset": -12,
+        "y_offset": -2
+      }
+    }
+  },
+  "outs": {
+    "1": {
+      "x": 102,
+      "y": 58,
+      "size": 4
+    },
+    "2": {
+      "x": 108,
+      "y": 58,
+      "size": 4
+    },
+    "3": {
+      "x": 114,
+      "y": 58,
+      "size": 4
+    }
+  },
+  "atbat": {
+    "batter": {
+      "font_name": "7x13B",
+      "x": 1,
+      "y": 60,
+      "width": 41
+    },
+    "pitcher": {
+      "font_name": "7x13B",
+      "x": 1,
+      "y": 44,
+      "width": 48
+    },
+    "loop": 68,
+    "strikeout": {
+      "x": 32,
+      "y": 60
+    }
+  },
+  "batter_count": {
+    "x": 66,
+    "y": 60,
+    "nohit": {
+      "x": 66,
+      "y": 64
+    },
+    "perfect_game": {
+      "x": 66,
+      "y": 64
+    }
+  },
+  "nohitter": {
+    "x": 66,
+    "y": 53,
+    "innings_until_display": 5
+  },
+  "pregame": {
+    "scrolling_text": {
+      "x": 0,
+      "y": 46,
+      "width": 128,
+      "warmup": {
+        "x": 0,
+        "y": 46,
+        "width": 128
+      }
+    },
+    "start_time": {
+      "x": 66,
+      "y": 60
+    },
+    "warmup_text": {
+      "x": 66,
+      "y": 60
+    }
+  },
+  "standings": {
+    "start": 1,
+    "offset": 12,
+    "height": 60,
+    "width": 128,
+    "divider": {
+      "x": 32
+    },
+    "stat_title": {
+      "x": 28
+    },
+    "team": {
+      "name": {
+        "x": 1
+      },
+      "record": {
+        "x": 59
+      },
+      "games_back": {
+        "x": 124
+      }
+    },
+    "postseason": {
+      "matchup_y_gap": 12,
+      "series_x_gap": 32,
+      "wc_x_start": 3,
+      "wc_y_start": 12,
+      "ds_b_y_start": 51,
+      "__comment": "all other coords are based off wild card position"
+    }
+  },
+  "status": {
+    "text": {
+      "x": 56,
+      "y": 46,
+      "short_text": false
+    },
+    "scrolling_text": {
+      "x": 0,
+      "y": 58,
+      "width": 128
+    }
+  },
+  "teams": {
+    "background": {
+      "away": {
+        "width": 128,
+        "height": 16,
+        "x": 0,
+        "y": 0
+      },
+      "home": {
+        "width": 128,
+        "height": 16,
+        "x": 0,
+        "y": 16
+      }
+    },
+    "accent": {
+      "away": {
+        "width": 2,
+        "height": 16,
+        "x": 0,
+        "y": 0
+      },
+      "home": {
+        "width": 2,
+        "height": 16,
+        "x": 0,
+        "y": 16
+      }
+    },
+    "name": {
+      "away": {
+        "x": 4,
+        "y": 12
+      },
+      "home": {
+        "x": 4,
+        "y": 28
+      }
+    },
+    "runs": {
+      "runs_hits_errors": {
+        "show": false,
+        "compress_digits": false,
+        "spacing": 3
+      },
+      "away": {
+        "x": 120,
+        "y": 12
+      },
+      "home": {
+        "x": 120,
+        "y": 28
+      }
+    }
+  },
+  "offday": {
+    "scrolling_text": {
+      "x": 0,
+      "y": 60,
+      "width": 128
+    },
+    "time": {
+      "x": 80,
+      "y": 15
+    },
+    "conditions": {
+      "x": 80,
+      "y": 30
+    },
+    "temperature": {
+      "x": 20,
+      "y": 44
+    },
+    "wind_speed": {
+      "x": 0,
+      "y": -4
+    },
+    "wind_dir": {
+      "x": 0,
+      "y": -4
+    },
+    "wind": {
+      "x": 80,
+      "y": 44
+    },
+    "weather_icon": {
+      "x": 6,
+      "y": 2,
+      "width": 30,
+      "height": 30,
+      "rescale_icon": 2
+    }
+  },
+  "network": {
+    "font_name": "4x6",
+    "background": {
+      "width": 7,
+      "height": 7,
+      "x": 57,
+      "y": 25
+    },
+    "text": {
+      "x": 125,
+      "y": 31
+    }
+  }
+}

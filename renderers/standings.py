@@ -1,120 +1,196 @@
-from PIL import Image
-from rgbmatrix import graphics
-from utils import get_font, get_file, center_text_position
-from renderers.network import NetworkErrorRenderer
-import time
+try:
+    from rgbmatrix import graphics
+except ImportError:
+    from RGBMatrixEmulator import graphics
 
-class StandingsRenderer:
-  def __init__(self, matrix, canvas, data):
-    self.matrix = matrix
-    self.canvas = canvas
-    self.data = data
-    self.colors = data.config.scoreboard_colors
-    self.bg_color = self.colors.graphics_color("standings.background")
-    self.divider_color = self.colors.graphics_color("standings.divider")
-    self.stat_color = self.colors.graphics_color("standings.stat")
-    self.team_stat_color = self.colors.graphics_color("standings.team.stat")
-    self.team_name_color = self.colors.graphics_color("standings.team.name")
+from data.config.color import Color
+from data.config.layout import Layout
+from data.standings import Division, League
+from utils import center_text_position
 
-  def render(self):
-    self.__fill_bg()
-    if self.__is_dumpster_fire():
-      self.__render_dumpster_fire()
+
+def render_standings(canvas, layout: Layout, colors: Color, division: Division, stat):
+    league = division.name[:2]  # al or nl
+    __fill_bg(canvas, colors, league)
+    if canvas.width > 32:
+        __render_static_wide_standings(canvas, layout, colors, division, league)
     else:
-      if self.canvas.width > 32:
-        self.__render_static_wide_standings()
-      else:
-        self.__render_rotating_standings()
-    NetworkErrorRenderer(self.canvas, self.data).render()
+        return __render_rotating_standings(canvas, layout, colors, division, stat, league)
 
-  def __fill_bg(self):
-    coords = self.data.config.layout.coords("standings")
-    for y in range(0, coords["height"]):
-      graphics.DrawLine(self.canvas, 0, y, coords["width"], y, self.bg_color)
 
-  def __render_rotating_standings(self):
-    coords = self.data.config.layout.coords("standings")
-    font = self.data.config.layout.font("standings")
-    stat = 'w'
-    starttime = time.time()
-    while True:
-      offset = coords["offset"]
-      graphics.DrawText(self.canvas, font["font"], coords["stat_title"]["x"], offset, self.stat_color, stat.upper())
-      graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
+def __render_rotating_standings(canvas, layout, colors, division, stat, league):
+    coords = layout.coords("standings")
+    font = layout.font("standings")
+    divider_color = get_standings_color_node(colors, "divider", league)
+    stat_color = get_standings_color_node(colors, "stat", league)
+    team_stat_color = get_standings_color_node(colors, "team.stat", league)
+    team_name_color = get_standings_color_node(colors, "team.name", league)
+    team_elim_color = get_standings_color_node(colors, "team.elim", league)
+    team_clinched_color = get_standings_color_node(colors, "team.clinched", league)
 
-      for team in self.data.current_standings().teams:
-        graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
+    offset = coords["offset"]
+
+    graphics.DrawLine(canvas, 0, 0, coords["width"], 0, divider_color)
+
+    graphics.DrawText(canvas, font["font"], coords["stat_title"]["x"], offset, stat_color, stat.upper())
+    graphics.DrawLine(canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], divider_color)
+
+    for team in division.teams:
+        graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
 
         team_text = "{:3s}".format(team.team_abbrev)
         stat_text = str(getattr(team, stat))
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["record"]["x"], offset, self.team_stat_color, stat_text)
-      
+        color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_name_color)
+        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
+        color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_stat_color)
+        graphics.DrawText(canvas, font["font"], coords["team"]["record"]["x"], offset, color, stat_text)
+
         offset += coords["offset"]
-      
-      self.matrix.SwapOnVSync(self.canvas)
-      time.sleep(5.0)
 
-      self.__fill_bg()
 
-      if stat == 'l':
-        self.data.advance_to_next_standings()
-        stat = 'w'
-      else:
-        stat = 'l'
+def __render_static_wide_standings(canvas, layout, colors, division, league):
+    coords = layout.coords("standings")
+    font = layout.font("standings")
+    divider_color = get_standings_color_node(colors, "divider", league)
+    team_stat_color = get_standings_color_node(colors, "team.stat", league)
+    team_name_color = get_standings_color_node(colors, "team.name", league)
+    team_elim_color = get_standings_color_node(colors, "team.elim", league)
+    team_clinched_color = get_standings_color_node(colors, "team.clinched", league)
+    start = coords.get("start", 0)
+    offset = coords["offset"]
 
-  def __render_static_wide_standings(self):
-    coords = self.data.config.layout.coords("standings")
-    font = self.data.config.layout.font("standings")
-    while True:
-      offset = coords["offset"]
-      graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
+    graphics.DrawLine(canvas, 0, start, coords["width"], start, divider_color)
 
-      for team in self.data.current_standings().teams:
-        graphics.DrawLine(self.canvas, 0, offset, coords["width"], offset, self.divider_color)
+    graphics.DrawLine(
+        canvas, coords["divider"]["x"], start, coords["divider"]["x"], start + coords["height"], divider_color
+    )
 
+    offset += start
+
+    for team in division.teams:
+        graphics.DrawLine(canvas, 0, offset, coords["width"], offset, divider_color)
+
+        color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_name_color)
         team_text = team.team_abbrev
-        graphics.DrawText(self.canvas, font["font"], coords["team"]["name"]["x"], offset, self.team_name_color, team_text)
+        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
 
         record_text = "{}-{}".format(team.w, team.l)
         record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font["size"]["width"])
 
         if "-" in str(team.gb):
-          gb_text = " -  "
+            gb_text = " -  "
         else:
-          gb_text = "{:>4s}".format(str(team.gb))
+            gb_text = "{:>4s}".format(str(team.gb))
         gb_text_x = coords["team"]["games_back"]["x"] - (len(gb_text) * font["size"]["width"])
 
-        graphics.DrawText(self.canvas, font["font"], record_text_x, offset, self.team_stat_color, record_text)
-        graphics.DrawText(self.canvas, font["font"], gb_text_x, offset, self.team_stat_color, gb_text)
+        color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_stat_color)
+        graphics.DrawText(canvas, font["font"], record_text_x, offset, color, record_text)
+        graphics.DrawText(canvas, font["font"], gb_text_x, offset, color, gb_text)
 
         offset += coords["offset"]
-      
-      self.__fill_standings_footer()
 
-      self.matrix.SwapOnVSync(self.canvas)
-      time.sleep(10.0)
-      self.__fill_bg()
-      self.data.advance_to_next_standings()
 
-  def __fill_standings_footer(self):
-    coords = self.data.config.layout.coords("standings")
-    graphics.DrawLine(self.canvas, 0, coords["height"], coords["width"], coords["height"], self.bg_color)
-    graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], self.divider_color)
-    graphics.DrawLine(self.canvas, 0, coords["height"]+1, coords["width"], coords["height"]+1, self.bg_color)
-    graphics.DrawLine(self.canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"]+1, self.divider_color)
-    
+def __fill_bg(canvas, colors, league: str):
+    bg_color = get_standings_color_node(colors, "background", league)
+    canvas.Fill(bg_color.red, bg_color.green, bg_color.blue)
 
-  def __is_dumpster_fire(self):
-    return "comedy" in self.data.config.preferred_divisions[self.data.current_division_index].lower()
 
-  def __render_dumpster_fire(self):
-    image_file = get_file("Assets/fire.jpg")
-    image = Image.open(image_file)
-    image_rgb = image.convert("RGB")
-    image_x = (self.canvas.width / 2) - 16
+def get_standings_color_node(colors, node_name, league):
+    # try the league-specific color node.
+    # If not present, go with the standard "standings"
+    try:
+        return colors.graphics_color(f"standings.{league.lower()}.{node_name}")
+    except KeyError:
+        return colors.graphics_color(f"standings.{node_name}")
 
-    self.matrix.Clear()
-    while True:
-      self.matrix.SetImage(image_rgb, image_x, 0)
-      time.sleep(20.0)
+
+def render_bracket(canvas, layout, colors, league: League):
+    __fill_bg(canvas, colors, league.name)
+
+    coords = layout.coords("standings.postseason")
+    font = layout.font("standings")
+    team_name_color = get_standings_color_node(colors, "team.name", league.name)
+    divider_color = get_standings_color_node(colors, "divider", league.name)
+
+    matchup_gap = coords["matchup_y_gap"]
+    winner_offset = matchup_gap // 2
+    series_gap = coords["series_x_gap"]
+    char_width = font["size"]["width"] + 2
+
+    wc_x = coords["wc_x_start"]
+    wc_y = coords["wc_y_start"]
+    ds_x = wc_x + series_gap
+    ds_a_y = wc_y + winner_offset
+    ds_b_y = coords["ds_b_y_start"]
+    lcs_x = ds_x + series_gap
+    champ_y = (ds_b_y + ds_a_y) // 2 + winner_offset
+    champ_x = lcs_x + series_gap
+
+    # draw bracket lines
+    # wc divider
+    graphics.DrawLine(canvas, wc_x, wc_y, wc_x + series_gap - char_width // 2, wc_y, divider_color)
+    # drop down
+    graphics.DrawLine(canvas, ds_x - char_width // 2, wc_y, ds_x - char_width // 2, ds_a_y, divider_color)
+    # ds a divider
+    graphics.DrawLine(
+        canvas, ds_x - char_width // 2, ds_a_y, ds_x + series_gap - char_width // 2, ds_a_y, divider_color
+    )
+    # connect to lcs
+    graphics.DrawLine(
+        canvas, lcs_x - char_width // 2, ds_a_y, lcs_x - char_width // 2, ds_a_y + winner_offset, divider_color
+    )
+    # ds b divider
+    graphics.DrawLine(canvas, ds_x, ds_b_y, ds_x + series_gap - char_width // 2, ds_b_y, divider_color)
+    # connect to lcs
+    graphics.DrawLine(
+        canvas, lcs_x - char_width // 2, ds_b_y, lcs_x - char_width // 2, ds_b_y - winner_offset, divider_color
+    )
+    # lcs horizonals
+    graphics.DrawLine(
+        canvas,
+        lcs_x - char_width // 2,
+        ds_a_y + winner_offset,
+        lcs_x + series_gap - char_width // 2,
+        ds_a_y + winner_offset,
+        divider_color,
+    )
+    graphics.DrawLine(
+        canvas,
+        lcs_x - char_width // 2,
+        ds_b_y - winner_offset,
+        lcs_x + series_gap - char_width // 2,
+        ds_b_y - winner_offset,
+        divider_color,
+    )
+    # champ lines
+    graphics.DrawLine(
+        canvas,
+        champ_x - char_width // 2,
+        ds_a_y + winner_offset,
+        champ_x - char_width // 2,
+        ds_b_y - winner_offset,
+        divider_color,
+    )
+    graphics.DrawLine(
+        canvas, champ_x - char_width // 2, champ_y - winner_offset, champ_x, champ_y - winner_offset, divider_color,
+    )
+
+    # draw bracket text
+    # wc teams
+    graphics.DrawText(canvas, font["font"], wc_x, wc_y, team_name_color, league.wc2)
+    graphics.DrawText(canvas, font["font"], wc_x, wc_y + matchup_gap, team_name_color, league.wc1)
+
+    # DS A teams
+    graphics.DrawText(canvas, font["font"], ds_x, ds_a_y, team_name_color, league.wc_winner)
+    graphics.DrawText(canvas, font["font"], ds_x, ds_a_y + matchup_gap, team_name_color, league.ds_one)
+
+    # DS B
+    graphics.DrawText(canvas, font["font"], ds_x, ds_b_y, team_name_color, league.ds_three)
+    graphics.DrawText(canvas, font["font"], ds_x, ds_b_y + matchup_gap, team_name_color, league.ds_two)
+
+    # LCS
+    graphics.DrawText(canvas, font["font"], lcs_x, ds_a_y + winner_offset, team_name_color, league.l_two)
+    graphics.DrawText(canvas, font["font"], lcs_x, ds_b_y + winner_offset, team_name_color, league.l_one)
+
+    # league champ
+    graphics.DrawText(canvas, font["font"], champ_x + 1, champ_y, team_name_color, league.champ)

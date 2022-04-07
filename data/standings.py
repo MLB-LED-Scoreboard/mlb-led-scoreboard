@@ -1,103 +1,192 @@
-import requests
-import re
+import time
+from datetime import datetime
+
+import statsapi
+
+import debug
+from data import teams
+from data.update import UpdateStatus
+
+STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
+
+
+API_FIELDS = (
+    "records,standingsType,teamRecords,team,abbreviation,division,league,nameShort,gamesBack,wildCardGamesBack,"
+    "wildCardEliminationNumber,clinched,wins,losses"
+)
+
 
 class Standings:
-    __URL = 'https://statsapi.mlb.com/api/v1/standings?season={year}&leagueId={league_ids}&date={month:0>2}/{day:0>2}/{year}&division=all'
-    AL_LEAGUE_ID = '103'
-    NL_LEAGUE_ID = '104'
-    __LEAGUE_IDS = ','.join([AL_LEAGUE_ID, NL_LEAGUE_ID])
+    def __init__(self, date: datetime, preferred_divisions, playoffs_start_date: datetime):
 
-    @classmethod
-    def fetch(cls, year, month, day):
-        standings_data = requests.get(Standings.__URL.format(day=day, month=month, year=year, league_ids=Standings.__LEAGUE_IDS))
+        self.date = date.date()
+        self.playoffs_start_date = playoffs_start_date.date()
+        self.starttime = time.time()
+        self.preferred_divisions = preferred_divisions
+        self.wild_cards = any("Wild" in division for division in preferred_divisions)
+        self.current_division_index = 0
 
-        if standings_data.status_code == 200:
-            return Standings(standings_data.json())
-        else:
-            raise Exception('Could not fetch standings.')
+        self.standings = []
+        self.leagues = {}
 
-    def __init__(self, data):
-        self.__data = data
-        self.divisions = self.__fetch_divisions()
+        self.update(True)
 
-    def __fetch_divisions(self):
-        return [Division(division_data) for division_data in self.__data['records']]
-        
+    def update(self, force=False) -> UpdateStatus:
+        if force or self.__should_update():
+            debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
+            self.starttime = time.time()
+            try:
+                if not self.is_postseason():
+
+                    season_params = {
+                        "standingsTypes": "regularSeason",
+                        "leagueId": "103,104",
+                        "hydrate": "division,team,league",
+                        "season": self.date.strftime("%Y"),
+                        "fields": API_FIELDS,
+                    }
+                    if self.date != datetime.today().date():
+                        season_params["date"] = self.date.strftime("%m/%d/%Y")
+
+                    divisons_data = statsapi.get("standings", season_params)
+                    self.standings = [Division(division_data) for division_data in divisons_data["records"]]
+
+                    if self.wild_cards:
+                        season_params["standingsTypes"] = "wildCard"
+                        wc_data = statsapi.get("standings", season_params)
+                        self.standings += [Division(data, wc=True) for data in wc_data["records"]]
+                else:
+                    postseason_data = statsapi.get(
+                        "schedule_postseason_series",
+                        {
+                            "season": self.date.strftime("%Y"),
+                            "hydrate": "league,team",
+                            "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
+                        },
+                    )
+                    self.leagues["AL"] = League(postseason_data, "AL")
+                    self.leagues["NL"] = League(postseason_data, "NL")
+
+            except:
+                debug.exception("Failed to refresh standings.")
+                return UpdateStatus.FAIL
+            else:
+
+                return UpdateStatus.SUCCESS
+
+        return UpdateStatus.DEFERRED
+
+    def __should_update(self):
+        endtime = time.time()
+        time_delta = endtime - self.starttime
+        return time_delta >= STANDINGS_UPDATE_RATE
+
+    def populated(self):
+        return bool(self.standings) or (bool(self.leagues) and self.is_postseason())
+
+    def is_postseason(self):
+        return self.date > self.playoffs_start_date
+
+    def __standings_for(self, division_name):
+        return next(division for division in self.standings if division.name == division_name)
+
+    def current_standings(self):
+        return self.__standings_for(self.preferred_divisions[self.current_division_index])
+
+    def advance_to_next_standings(self):
+        self.current_division_index = self.__next_division_index()
+        return self.current_standings()
+
+    def __next_division_index(self):
+        counter = self.current_division_index + 1
+        if counter >= len(self.preferred_divisions):
+            counter = 0
+        return counter
+
 
 class Division:
-    def __init__(self, data):
-        self.__data = data
-        self.id = self.__data['division']['id']
-        self.name = self.__name()
-        self.teams = self.__teams()
-
-    def __name(self):
-        division_records = self.__data['teamRecords'][0]['records']['divisionRecords']
-        full_name = [datum['division']['name'] for datum in division_records if datum['division']['id'] == self.id][0]
-        
-        # Use some regex to fix the division full name to what the config expects
-        return re.sub(r'(ational|merican)\sLeague', 'L', full_name)
-
-    def __teams(self):
-        return [Team(team_data, self.id) for team_data in self.__data['teamRecords']]
+    def __init__(self, data, wc=False):
+        if wc:
+            self.name = data["league"]["abbreviation"] + " Wild Card"
+        else:
+            self.name = data["division"]["nameShort"]
+        self.teams = [Team(team_data, wc) for team_data in data["teamRecords"][:5]]
 
 
 class Team:
-    __TEAM_ABBREVIATIONS = {
-        'Arizona Diamondbacks': 'ARI',
-        'Atlanta Braves': 'ATL',
-        'Baltimore Orioles': 'BAL',
-        'Boston Red Sox': 'BOS',
-        'Chicago Cubs': 'CHC',
-        'Chicago White Sox': 'CHW',
-        'Cincinnati Reds': 'CIN',
-        'Cleveland Indians': 'CLE',
-        'Colorado Rockies': 'COL',
-        'Detroit Tigers': 'DET',
-        'Florida Marlins': 'FLA',
-        'Houston Astros': 'HOU',
-        'Kansas City Royals': 'KAN',
-        'Los Angeles Angels': 'LAA',
-        'Los Angeles Dodgers': 'LAD',
-        'Miami Marlins': 'MIA',
-        'Milwaukee Brewers': 'MIL',
-        'Minnesota Twins': 'MIN',
-        'New York Mets': 'NYM',
-        'New York Yankees': 'NYY',
-        'Oakland Athletics': 'OAK',
-        'Philadelphia Phillies': 'PHI',
-        'Pittsburgh Pirates': 'PIT',
-        'San Diego Padres': 'SD',
-        'San Francisco Giants': 'SF',
-        'Seattle Mariners': 'SEA',
-        'St. Louis Cardinals': 'STL',
-        'Tampa Bay Rays': 'TB',
-        'Texas Rangers': 'TEX',
-        'Toronto Blue Jays': 'TOR',
-        'Washington Nationals': 'WAS',
-    }
+    def __init__(self, data, wc):
+        self.team_abbrev = data["team"]["abbreviation"]
+        self.w = data["wins"]
+        self.l = data["losses"]  # noqa: E741
+        if wc:
+            self.gb = data["wildCardGamesBack"]
+        else:
+            self.gb = data["gamesBack"]
+        self.clinched = data.get("clinched", False)
+        self.elim = data.get("wildCardEliminationNumber", "") == "E"
 
-    def __init__(self, data, division_id):
-        self.__data = data
-        self.__division_standings = self.__find_division(division_id)
-        self.name = self.__name()
-        self.team_abbrev = self.__TEAM_ABBREVIATIONS[self.name]
-        self.w = self.__parse_wins()
-        self.l = self.__parse_losses()
-        self.gb = self.__data['divisionGamesBack']
 
-    def __find_division(self, division_id):
-        for record in self.__data['records']['divisionRecords']:
-            if record['division']['id'] == division_id:
-                return record
+class League:
+    """Grabs postseason bracket info for one league based on the schedule"""
 
-        raise Exception('Could not find division record.')
+    def __init__(self, data, league):
+        self.name = league
+        self.wc1, self.wc2 = self.get_seeds(data, "F", league)
+        self.ds_one, _ = self.get_seeds(data, "D", league, "'A'")
+        self.ds_two, self.ds_three = self.get_seeds(data, "D", league, "'B'")
 
-    def __name(self):
-        return self.__data['team']['name']
+        self.wc_winner = self.get_series_winner(data, "F", league)
+        self.l_two = self.get_series_winner(data, "D", league, "'A'")
+        self.l_one = self.get_series_winner(data, "D", league, "'B'")
+        self.champ = self.get_series_winner(data, "L", league)
 
-    def __parse_wins(self):
-        return self.__division_standings['wins']
+    @staticmethod
+    def get_series_winner(data, gametype, league, series=""):
+        series = next(
+            s
+            for s in data["series"]
+            if s["series"]["gameType"] == gametype and league in s["series"]["id"] and series in s["series"]["id"]
+        )
+        game = series["games"][-1]
 
-    def __parse_losses(self):
-        return self.__division_standings['losses']
+        if gametype == "L":
+            champ = f"{league}C"
+        elif gametype == "F":
+            champ = "WCW"
+        else:
+            champ = "TBD"
+
+        if game["teams"]["home"].get("isWinner"):
+            champ = League.get_abbr(game["teams"]["home"]["team"]["name"])
+        elif game["teams"]["away"].get("isWinner"):
+            champ = League.get_abbr(game["teams"]["away"]["team"]["name"])
+        return champ
+
+    @staticmethod
+    def get_seeds(data, gametype, league="", series=""):
+        series = next(
+            s
+            for s in data["series"]
+            if s["series"]["gameType"] == gametype and league in s["series"]["id"] and series in s["series"]["id"]
+        )
+        higher, lower = (
+            series["games"][0]["teams"]["home"]["team"]["name"],
+            series["games"][0]["teams"]["away"]["team"]["name"],
+        )
+
+        return (League.get_abbr(higher), League.get_abbr(lower))
+
+    def __str__(self):
+        return f"""{self.wc2} ---|
+       |--- {self.wc_winner} ---|
+{self.wc1} ---|           | --- {self.l_two} ---|
+            {self.ds_one} ---|            |
+                                | {self.champ}
+            {self.ds_three} ---|            |
+                   | --- {self.l_one} ---|
+            {self.ds_two} ---|
+        """
+
+    @staticmethod
+    def get_abbr(name, default="TBD"):
+        return f"{teams.TEAM_ABBR_LN.get(name, default):>3}"

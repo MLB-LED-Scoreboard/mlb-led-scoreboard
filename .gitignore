@@ -104,20 +104,20 @@ venv.bak/
 .mypy_cache/
 
 # Ignore our customized config.json
-config.json
+config*.json
+emulator_config.json
 
 # Ignore any customized coordinate configs
-ledcoords/*.json
+coordinates/*.json
 
 # Ignore any customized color configs
-ledcolors/*.json
+colors/*.json
 
-# Ignore any customized fonts
-Assets/*.bdf
-!Assets/4x6.bdf
+#
+submodules/
+configs/
 
-# Ignore src directory if we installed a custom mlbgame while in this directory
-src/
 
 # Ignore logs
 logs.txt
+assets/5x8.bdf

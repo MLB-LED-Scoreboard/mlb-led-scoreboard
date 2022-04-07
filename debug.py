@@ -1,33 +1,17 @@
-import data.scoreboard_config
-import time
-import sys
+import logging
 
-debug_enabled = False
-time_format = "%H"
+logger = logging.getLogger("mlbled")
+fmter = logging.Formatter("{levelname} ({asctime}): {message}", style="{", datefmt="%H:%M:%S")
+strmhdl = logging.StreamHandler()
+strmhdl.setFormatter(fmter)
+logger.addHandler(strmhdl)
 
-def set_debug_status(config):
-	global debug_enabled
-	debug_enabled = config.debug
+info = logger.info
 
-	global time_format
-	time_format = config.time_format
+warning = logger.warning
 
-def __debugprint(text):
-	print(text)
-	sys.stdout.flush()
+error = logger.error
 
-def log(text):
-	if debug_enabled:
-		__debugprint("DEBUG ({}): {}".format(__timestamp(), text))
+log = logger.debug
 
-def warning(text):
-  __debugprint("WARNING ({}): {}".format(__timestamp(), text))
-
-def error(text):
-	__debugprint("ERROR ({}): {}".format(__timestamp(), text))
-
-def info(text):
-	__debugprint("INFO ({}): {}".format(__timestamp(), text))
-
-def __timestamp():
-	return time.strftime("{}:%M:%S".format(time_format), time.localtime())
+exception = logger.exception
