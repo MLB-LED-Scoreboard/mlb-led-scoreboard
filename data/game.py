@@ -29,7 +29,7 @@ class Game:
 
     def __init__(self, game_id, date):
         self.game_id = game_id
-        self.date = date
+        self.date = date.strftime("%Y-%m-%d")
         self.starttime = time.time()
         self._data = {}
         self._status = {}

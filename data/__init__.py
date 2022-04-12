@@ -1,5 +1,4 @@
 import time
-from datetime import datetime, timedelta
 
 import data.config.layout as layout
 import debug
@@ -20,11 +19,8 @@ class Data:
         # Save the parsed config
         self.config = config
 
-        # Parse today's date and see if we should use today or yesterday
-        self.today = self.__parse_today()
-
         # get schedule
-        self.schedule: Schedule = Schedule(self.today, config)
+        self.schedule: Schedule = Schedule(config)
         # NB: Can return none, but shouldn't matter?
         self.current_game: Game = self.schedule.get_preferred_game()
         self.game_changed_time = time.time()
@@ -33,30 +29,16 @@ class Data:
         self.weather: Weather = Weather(config)
 
         # News headlines
-        self.headlines: Headlines = Headlines(config, self.today.year)
+        self.headlines: Headlines = Headlines(config, self.schedule.date.year)
 
         # Fetch all standings data for today
-        self.standings: Standings = Standings(
-            self.today, config.preferred_divisions, self.headlines.important_dates.playoffs_start_date
-        )
+        self.standings: Standings = Standings(config, self.headlines.important_dates.playoffs_start_date)
 
         # Network status state - we useweather condition as a sort of sentinial value
         self.network_issues: bool = self.weather.conditions == "Error"
 
         # RENDER ITEMS
         self.scrolling_finished: bool = False
-
-    def __parse_today(self):
-        if self.config.demo_date:
-            today = datetime.strptime(self.config.demo_date, "%Y-%m-%d")
-        else:
-            today = datetime.today()
-            end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(
-                year=today.year, month=today.month, day=today.day
-            )
-            if end_of_day > datetime.now():
-                today -= timedelta(days=1)
-        return today
 
     def should_rotate_to_next_game(self):
         game = self.current_game
