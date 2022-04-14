@@ -28,7 +28,7 @@ def render_offday_screen(
 
 def __render_clock(canvas, layout, colors, time_format):
     time_format_str = "{}:%M".format(time_format)
-    if time_format == "%I":
+    if time_format == "%-I":
         time_format_str += "%p"
     time_text = time.strftime(time_format_str)
     coords = layout.coords("offday.time")
