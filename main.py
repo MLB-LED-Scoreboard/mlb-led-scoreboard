@@ -28,7 +28,7 @@ except ImportError:
 
 
 SCRIPT_NAME = "MLB LED Scoreboard"
-SCRIPT_VERSION = "5.0.3"
+SCRIPT_VERSION = "5.0.4"
 
 
 def main(matrix, config_base):
