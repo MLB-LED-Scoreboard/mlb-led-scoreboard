@@ -80,10 +80,8 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
     coords = layout.coords("teams.name.{}".format(homeaway))
     font = layout.font("teams.name.{}".format(homeaway))
     team_text = "{:3s}".format(team.abbrev.upper())
-    if full_team_names and canvas.width > 32 and short_team_names_for_runs_hits == False:
+    if full_team_names and canvas.width > 32 and not (short_team_names_for_runs_hits and (team.runs > 9 or team.hits > 9)):
         team_text = "{:13s}".format(team.name)
-    if full_team_names and canvas.width > 32 and short_team_names_for_runs_hits and (team.runs > 9 or team.hits > 9 ) :
-        team_text = "{:3s}".format(team.abbrev.upper())
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
 
