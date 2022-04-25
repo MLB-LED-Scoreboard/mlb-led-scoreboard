@@ -65,13 +65,18 @@ class Game:
         return datetime.fromisoformat(time.replace("Z", "+00:00"))
 
     def home_name(self):
-        return self._data["gameData"]["teams"]["home"]["teamName"]
-
+        if (self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["home"].get("hits", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("hits", 0) > 9 ):
+               return self._data["gameData"]["teams"]["home"]["teamName"][0:8]
+        else:
+            return self._data["gameData"]["teams"]["home"]["teamName"]
     def home_abbreviation(self):
         return self._data["gameData"]["teams"]["home"]["abbreviation"]
 
     def away_name(self):
-        return self._data["gameData"]["teams"]["away"]["teamName"]
+        if (self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["home"].get("hits", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("hits", 0) > 9 ):
+            return self._data["gameData"]["teams"]["away"]["teamName"][0:8]
+        else:
+            return self._data["gameData"]["teams"]["away"]["teamName"]
 
     def away_abbreviation(self):
         return self._data["gameData"]["teams"]["away"]["abbreviation"]
