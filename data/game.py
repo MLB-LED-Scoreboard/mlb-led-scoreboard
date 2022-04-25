@@ -66,7 +66,7 @@ class Game:
 
     def home_name(self):
         if (self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["home"].get("hits", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("hits", 0) > 9 ):
-               return self._data["gameData"]["teams"]["home"]["teamName"][0:8]
+               self._data["gameData"]["teams"]["home"]["abbreviation"]
         else:
             return self._data["gameData"]["teams"]["home"]["teamName"]
     def home_abbreviation(self):
@@ -74,7 +74,7 @@ class Game:
 
     def away_name(self):
         if (self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("runs", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["home"].get("hits", 0) > 9) or (self._data["liveData"]["linescore"]["teams"]["away"].get("hits", 0) > 9 ):
-            return self._data["gameData"]["teams"]["away"]["teamName"][0:8]
+            return self._data["gameData"]["teams"]["away"]["abbreviation"]
         else:
             return self._data["gameData"]["teams"]["away"]["teamName"]
 
