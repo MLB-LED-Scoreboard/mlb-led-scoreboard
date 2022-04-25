@@ -157,6 +157,7 @@ class MainRenderer:
             scoreboard.home_team,
             scoreboard.away_team,
             self.data.config.full_team_names,
+            self.data.config.short_team_names_for_runs_hits,
         )
 
         if status.is_pregame(game.status()):  # Draw the pregame information
