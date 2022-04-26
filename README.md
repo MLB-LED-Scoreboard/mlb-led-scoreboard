@@ -1,4 +1,4 @@
-# mlb-led-scoreboard
+# mlb-led-scoreboard [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
 ---------------
 

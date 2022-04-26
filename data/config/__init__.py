@@ -119,7 +119,7 @@ class Config:
         if self.time_format.lower() == "24h":
             self.time_format = "%H"
         else:
-            self.time_format = "%I"
+            self.time_format = "%-I"
 
     def check_rotate_rates(self):
         if not isinstance(self.rotation_rates, dict):
