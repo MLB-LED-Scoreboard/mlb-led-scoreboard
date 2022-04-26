@@ -9,6 +9,7 @@ class Pregame:
     def __init__(self, game: Game, time_format):
         self.home_team = game.home_abbreviation()
         self.away_team = game.away_abbreviation()
+        self.pregame_weather = game.pregame_weather()
         self.time_format = time_format
 
         try:
