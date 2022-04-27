@@ -53,8 +53,8 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
                 y_offset = accent_coords[team]["y"]
                 canvas.SetPixel(x + x_offset, y + y_offset, color["r"], color["g"], color["b"])
 
-    __render_team_text(canvas, layout, away_colors, away_team, "away", full_team_names, default_colors, short_team_names_for_runs_hits)
-    __render_team_text(canvas, layout, home_colors, home_team, "home", full_team_names, default_colors, short_team_names_for_runs_hits)
+    __render_team_text(canvas, layout, away_colors, away_team, "away", full_team_names, default_colors, short_team_names_for_runs_hits, home_team)
+    __render_team_text(canvas, layout, home_colors, home_team, "home", full_team_names, default_colors, short_team_names_for_runs_hits, away_team)
 
     # Number of characters in each score.
     score_spacing = {
@@ -74,13 +74,13 @@ def __team_colors(team_colors, team_abbrev):
     return team_colors
 
 
-def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, default_colors, short_team_names_for_runs_hits):
+def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, default_colors, short_team_names_for_runs_hits, vs_team):
     text_color = colors.get("text", default_colors["text"])
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     coords = layout.coords("teams.name.{}".format(homeaway))
     font = layout.font("teams.name.{}".format(homeaway))
     team_text = "{:3s}".format(team.abbrev.upper())
-    if full_team_names and canvas.width > 32 and not (short_team_names_for_runs_hits and (team.runs > 9 or team.hits > 9)):
+    if full_team_names and canvas.width > 32 and not (short_team_names_for_runs_hits and (team.runs > 9 or team.hits > 9 or vs_team.runs > 9 or vs_team.hits > 9)):
         team_text = "{:13s}".format(team.name)
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
