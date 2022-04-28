@@ -9,9 +9,10 @@ from data.update import UpdateStatus
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
     + "reason,probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
-    + "currentPlay,result,eventType,description,decisions,winner,loser,save,id,linescore,outs,balls,strikes,note,"
-    + "inningState,currentInning,currentInningOrdinal,offense,batter,inHole,onDeck,first,second,third,defense,pitcher,"
-    + "boxscore,teams,runs,players,seasonStats,pitching,wins,losses,saves,era,hits,errors"
+    + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
+    + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
+    + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
+    + "losses,saves,era,hits,errors"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -77,7 +78,7 @@ class Game:
         return self._data["gameData"]["teams"]["away"]["abbreviation"]
 
     def status(self):
-        return self._status["detailedState"]
+        return "In Progress"  # self._status["detailedState"]
 
     def home_score(self):
         return self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0)
@@ -216,6 +217,11 @@ class Game:
 
     def outs(self):
         return self._data["liveData"]["linescore"].get("outs", 0)
+
+    def last_pitch(self):
+        play = self._data["liveData"]["plays"].get("currentPlay", {}).get("playEvents", [{}])[-1]
+        if play.get("isPitch", False):
+            return play["pitchData"].get("startSpeed", 0), play["details"]["type"]["code"]
 
     def note(self):
         try:
