@@ -86,6 +86,15 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
         team_text = "{:13s}".format(team.name)
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
+def __can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
+    if enabled and canvas.width > 32:
+        if abbreviate_on_overflow:
+            for team in teams:
+                if team.runs > 9 or team.hits > 9:
+                    return False
+    else:
+        return True
+    return False
 
 def __render_score_component(canvas, layout, colors, homeaway, default_colors, coords, component_val, width_chars):
     # The coords passed in are the rightmost pixel.
