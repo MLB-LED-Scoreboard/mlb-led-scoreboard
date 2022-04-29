@@ -53,8 +53,10 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
                 y_offset = accent_coords[team]["y"]
                 canvas.SetPixel(x + x_offset, y + y_offset, color["r"], color["g"], color["b"])
 
-    __render_team_text(canvas, layout, away_colors, away_team, "away", full_team_names, default_colors, short_team_names_for_runs_hits, home_team)
-    __render_team_text(canvas, layout, home_colors, home_team, "home", full_team_names, default_colors, short_team_names_for_runs_hits, away_team)
+    use_full_team_names = can_use_full_team_names(canvas, full_team_names, short_team_names_for_runs_hits, [home_team, away_team])
+
+    __render_team_text(canvas, layout, away_colors, away_team, "away", use_full_team_names, default_colors)
+    __render_team_text(canvas, layout, home_colors, home_team, "home", use_full_team_names, default_colors)
 
     # Number of characters in each score.
     score_spacing = {
