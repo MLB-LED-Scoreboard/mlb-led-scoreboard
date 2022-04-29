@@ -1,22 +1,22 @@
 {
   "defaults": {
-    "font_name": "9x18B"
+    "font_name": "7x13"
   },
   "bases": {
     "1B": {
       "x": 112,
       "y": 42,
-      "size": 14
+      "size": 10
     },
     "2B": {
       "x": 103,
       "y": 33,
-      "size": 14
+      "size": 10
     },
     "3B": {
       "x": 94,
       "y": 42,
-      "size": 14
+      "size": 10
     }
   },
   "final": {
@@ -46,7 +46,7 @@
       },
       "due_up": {
         "due": {
-          "font_name": "7x13B",
+          "font_name": "5x7",
           "x": 38,
           "y": 44
         },
@@ -55,13 +55,13 @@
           "y": 56
         },
         "divider": {
-          "draw": true,
+          "draw": false,
           "x": 36,
           "y_start": 32,
           "y_end": 64
         },
         "leadoff": {
-          "font_name": "7x13B",
+          "font_name": "7x13",
           "x": 64,
           "y": 42
         },
@@ -76,8 +76,8 @@
       }
     },
     "number": {
-      "x": 93,
-      "y": 45,
+      "x": 87,
+      "y": 42,
       "nohit": {
         "x": 93,
         "y": 42
@@ -88,46 +88,56 @@
       }
     },
     "arrow": {
-      "size": 7,
+      "size": 6,
       "up": {
-        "x_offset": -12,
-        "y_offset": -10
+        "x_offset": -11,
+        "y_offset": -8
       },
       "down": {
-        "x_offset": -12,
-        "y_offset": -2
+        "x_offset": -11,
+        "y_offset": -4
       }
     }
   },
   "outs": {
     "1": {
-      "x": 102,
-      "y": 58,
-      "size": 4
+      "x": 95,
+      "y": 56,
+      "size": 5
     },
     "2": {
-      "x": 108,
-      "y": 58,
-      "size": 4
+      "x": 106,
+      "y": 56,
+      "size": 5
     },
     "3": {
-      "x": 114,
-      "y": 58,
-      "size": 4
+      "x": 118,
+      "y": 56,
+      "size": 5
     }
   },
   "atbat": {
     "batter": {
-      "font_name": "7x13B",
+      "font_name": "5x7",
       "x": 1,
       "y": 60,
       "width": 41
     },
     "pitcher": {
-      "font_name": "7x13B",
+      "font_name": "5x7",
       "x": 1,
-      "y": 44,
-      "width": 48
+      "y": 40,
+      "width": 41
+    },
+    "pitch": {
+      "font_name": "4x6",
+      "x": 1,
+      "y": 50,
+      "width": 41,
+      "enabled": true,
+      "mph": true,
+      "desc_length": "Long"
+      
     },
     "loop": 68,
     "strikeout": {
@@ -137,7 +147,7 @@
   },
   "batter_count": {
     "x": 66,
-    "y": 60,
+    "y": 62,
     "nohit": {
       "x": 66,
       "y": 64
@@ -246,27 +256,31 @@
     },
     "name": {
       "away": {
+        "font_name": "9x18B",
         "x": 4,
-        "y": 12
+        "y": 13
       },
       "home": {
+        "font_name": "9x18B",    
         "x": 4,
-        "y": 28
+        "y": 29
       }
     },
     "runs": {
       "runs_hits_errors": {
-        "show": false,
-        "compress_digits": false,
-        "spacing": 3
-      },
+        "show": true,
+        "compress_digits": true,
+        "spacing": 5
+      },	    
       "away": {
-        "x": 120,
-        "y": 12
+        "font_name": "9x18B",
+        "x": 126,
+        "y": 13
       },
       "home": {
-        "x": 120,
-        "y": 28
+        "font_name": "9x18B",
+        "x": 126,
+        "y": 29
       }
     }
   },
