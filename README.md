@@ -161,6 +161,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "time_format"                  String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
 "full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
+"short_team_names_for_runs_hits" Bool If true and full_team_names is true and Runs Hits Errors is enabled, will use abreviated team names when Runs or Hits > 9
 "scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
 "debug"                        Bool    Game and other debug data is written to your console.
 "demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.

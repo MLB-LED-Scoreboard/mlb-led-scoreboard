@@ -3,8 +3,7 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-
-def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_team_names):
+def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_team_names, short_team_names_for_runs_hits,):
     default_colors = team_colors.color("default")
 
     away_colors = __team_colors(team_colors, away_team.abbrev)
@@ -53,8 +52,10 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
                 y_offset = accent_coords[team]["y"]
                 canvas.SetPixel(x + x_offset, y + y_offset, color["r"], color["g"], color["b"])
 
-    __render_team_text(canvas, layout, away_colors, away_team, "away", full_team_names, default_colors)
-    __render_team_text(canvas, layout, home_colors, home_team, "home", full_team_names, default_colors)
+    use_full_team_names = can_use_full_team_names(canvas, full_team_names, short_team_names_for_runs_hits, [home_team, away_team])
+
+    __render_team_text(canvas, layout, away_colors, away_team, "away", use_full_team_names, default_colors, use_full_team_names)
+    __render_team_text(canvas, layout, home_colors, home_team, "home", use_full_team_names, default_colors, use_full_team_names)
 
     # Number of characters in each score.
     score_spacing = {
@@ -65,6 +66,15 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
     __render_team_score(canvas, layout, away_colors, away_team, "away", default_colors, score_spacing)
     __render_team_score(canvas, layout, home_colors, home_team, "home", default_colors, score_spacing)
 
+def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
+    if enabled and canvas.width > 32:
+        if abbreviate_on_overflow:
+            for team in teams:
+                if team.runs > 9 or team.hits > 9:
+                    return False
+    else:
+        return True
+    return False
 
 def __team_colors(team_colors, team_abbrev):
     try:
@@ -74,16 +84,15 @@ def __team_colors(team_colors, team_abbrev):
     return team_colors
 
 
-def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, default_colors):
+def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, default_colors, use_full_team_names):
     text_color = colors.get("text", default_colors["text"])
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     coords = layout.coords("teams.name.{}".format(homeaway))
     font = layout.font("teams.name.{}".format(homeaway))
     team_text = "{:3s}".format(team.abbrev.upper())
-    if full_team_names and canvas.width > 32:
+    if use_full_team_names:
         team_text = "{:13s}".format(team.name)
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
-
 
 def __render_score_component(canvas, layout, colors, homeaway, default_colors, coords, component_val, width_chars):
     # The coords passed in are the rightmost pixel.

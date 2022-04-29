@@ -66,7 +66,7 @@ class Game:
 
     def home_name(self):
         return self._data["gameData"]["teams"]["home"]["teamName"]
-
+    
     def home_abbreviation(self):
         return self._data["gameData"]["teams"]["home"]["abbreviation"]
 
