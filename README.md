@@ -1,4 +1,5 @@
-# mlb-led-scoreboard [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
+# mlb-led-scoreboard 
+![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://mlb-led-scoreboard.herokuapp.com/)
 
 ---------------
 
@@ -103,6 +104,12 @@ It will also install the following python libraries that are required for certai
     * **Check your custom layout/color files if you made any**. There's a good chance some new keys were added to the layout and color files. These changes should just merge right in with the customized .json file you have but you might want to look at the new .json.example files and see if there's anything new you want to customize.
 
 That should be it! Your latest version should now be working with whatever new fangled features were just added.
+
+#### Version Information
+
+You can check the version information for your installation of mlb-led-scoreboard by running `python3 version.py`.
+
+The latest version of the software is available [here](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/releases).
 
 #### Time Zones
 Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default. You can change the timezone of your raspberry pi by running `sudo raspi-config`.

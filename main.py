@@ -16,6 +16,7 @@ from data import Data
 from data.config import Config
 from renderers.main import MainRenderer
 from utils import args, led_matrix_options
+from version import SCRIPT_NAME, SCRIPT_VERSION
 
 try:
     from rgbmatrix import RGBMatrix, __version__
@@ -25,10 +26,6 @@ except ImportError:
     from RGBMatrixEmulator import RGBMatrix, version
 
     emulated = True
-
-
-SCRIPT_NAME = "MLB LED Scoreboard"
-SCRIPT_VERSION = "5.0.4"
 
 
 def main(matrix, config_base):
