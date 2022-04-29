@@ -28,6 +28,7 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
             scoreboard.strikeout(),
             scoreboard.strikeout_looking(),
             (animation_time // 6) % 2,
+            scoreboard.pitches
         )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
@@ -49,8 +50,9 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation):
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation, pitches: Pitches):
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, text_pos)
+    __render_pitch_text(canvas, layout, colors, pitches)
     if strikeout:
         if animation:
             __render_strikeout(canvas, layout, colors, looking)
@@ -108,7 +110,24 @@ def __render_pitcher_text(canvas, layout, colors, pitcher, text_pos):
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "P:")
     return pos
 
-
+def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
+#def __render_pitch_text(canvas, layout, colors):
+    coords = layout.coords("atbat.pitch")
+    color = colors.graphics_color("atbat.pitch")
+    font = layout.font("atbat.pitch")
+    bgcolor = colors.graphics_color("default.background")
+    if(int(pitches.last_pitch_speed) > 0 and layout.coords("atbat.pitch")["enabled"]):
+        mph= " "
+        if(layout.coords("atbat.pitch")["mph"]):
+            mph="mph "
+        if(layout.coords("atbat.pitch")["desc_length"]=="Long"):
+            pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type_long[0:23]
+        elif(layout.coords("atbat.pitch")["desc_length"]=="Short"):
+            pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
+        else:
+            pitch_text = None
+        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_text)
+    
 # --------------- bases ---------------
 def _render_bases(canvas, layout, colors, bases: Bases, home_run, animation):
     base_runners = bases.runners

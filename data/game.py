@@ -78,7 +78,7 @@ class Game:
         return self._data["gameData"]["teams"]["away"]["abbreviation"]
 
     def status(self):
-        return "In Progress"  # self._status["detailedState"]
+        return self._status["detailedState"]
 
     def home_score(self):
         return self._data["liveData"]["linescore"]["teams"]["home"].get("runs", 0)
@@ -219,10 +219,12 @@ class Game:
         return self._data["liveData"]["linescore"].get("outs", 0)
 
     def last_pitch(self):
-        play = self._data["liveData"]["plays"].get("currentPlay", {}).get("playEvents", [{}])[-1]
-        if play.get("isPitch", False):
-            return play["pitchData"].get("startSpeed", 0), play["details"]["type"]["code"]
-
+        try:
+            play = self._data["liveData"]["plays"].get("currentPlay", {}).get("playEvents", [{}])[-1]
+            if play.get("isPitch", False):
+                return play["pitchData"].get("startSpeed", 0), play["details"]["type"]["code"], play["details"]["type"]["description"]
+        except: 
+            return None
     def note(self):
         try:
             return self._data["liveData"]["linescore"]["note"]
