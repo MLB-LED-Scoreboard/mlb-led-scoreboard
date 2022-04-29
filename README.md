@@ -169,6 +169,8 @@ A default `config.json.example` file is included for reference. Copy this file t
 ### Additional Features
 * Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
 
+* Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the Short and Long pitch description can be changed in data/pitches.py
+
 ### Flags
 
 You can configure your LED matrix with the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. More information on these arguments can be found in the library documentation.

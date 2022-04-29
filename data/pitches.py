@@ -1,7 +1,7 @@
 #A list of mlb pitch types appearing in statcast
 #https://www.daktronics.com/en-us/support/kb/DD3312647
 #Dont change the index, but feel free to change 
-#the long descriptions
+#the descriptions
 
 PITCH_LONG = {
     "AB": "Automatic Ball",
