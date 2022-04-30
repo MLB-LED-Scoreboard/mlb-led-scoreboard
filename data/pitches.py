@@ -7,6 +7,7 @@ PITCH_LONG = {
     "AB": "Automatic Ball",
     "AS": "Automatic Strike",
     "CH": "Change-up",
+    "CU": "Curveball",
     "EP": "Eephus",
     "FC": "Cutter",
     "FF": "4 Seam Fastball",    #MLB default is "Four-Seam Fastball"
@@ -27,6 +28,7 @@ PITCH_SHORT = {
     "AB": "AB",
     "AS": "AS",
     "CH": "CH",
+    "CU": "CU",
     "EP": "EP",
     "FC": "FC",
     "FF": "FF",
