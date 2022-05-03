@@ -5,6 +5,7 @@ fmter = logging.Formatter("{levelname} ({asctime}): {message}", style="{", datef
 strmhdl = logging.StreamHandler()
 strmhdl.setFormatter(fmter)
 logger.addHandler(strmhdl)
+logger.propagate = False
 
 info = logger.info
 
