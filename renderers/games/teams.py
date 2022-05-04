@@ -72,6 +72,8 @@ def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
             for team in teams:
                 if team.runs > 9 or team.hits > 9:
                     return False
+            
+            return True
         else:
             return True
 
