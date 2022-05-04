@@ -67,16 +67,25 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
     __render_team_score(canvas, layout, home_colors, home_team, "home", default_colors, score_spacing)
 
 def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
+    # Settings enabled and size is able to display it
     if enabled and canvas.width > 32:
+
+        # If config enabled for abbreviating if runs or hits takes up an additional column (i.e. 9 -> 10)
         if abbreviate_on_overflow:
+
+            # Iterate through the teams to see if we should abbreviate
             for team in teams:
                 if team.runs > 9 or team.hits > 9:
                     return False
             
+            # Else use full names if no stats column has overflowed
             return True
+
+        # If config for abbreviating is not set, use full name
         else:
             return True
 
+    # Fallback to abbreviated names for all cases
     return False
 
 def __team_colors(team_colors, team_abbrev):
