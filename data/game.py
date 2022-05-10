@@ -12,7 +12,7 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors"
+    + "losses,saves,era,hits,errors,weather,condition,temp,wind"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -67,10 +67,18 @@ class Game:
 
     def home_name(self):
         return self._data["gameData"]["teams"]["home"]["teamName"]
-
+    
     def home_abbreviation(self):
         return self._data["gameData"]["teams"]["home"]["abbreviation"]
-
+    
+    def pregame_weather(self):
+        try:
+            wx = self._data["gameData"]["weather"]["condition"] + " and " + self._data["gameData"]["weather"]["temp"] + u"\N{DEGREE SIGN}" + " wind " + self._data["gameData"]["weather"]["wind"]
+        except KeyError:
+            return None
+        else:
+            return wx 
+    
     def away_name(self):
         return self._data["gameData"]["teams"]["away"]["teamName"]
 
