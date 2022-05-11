@@ -146,7 +146,6 @@ class MainRenderer:
         game = self.data.current_game
         bgcolor = self.data.config.scoreboard_colors.color("default.background")
         self.canvas.Fill(bgcolor["r"], bgcolor["g"], bgcolor["b"])
-
         scoreboard = Scoreboard(game)
         layout = self.data.config.layout
         colors = self.data.config.scoreboard_colors

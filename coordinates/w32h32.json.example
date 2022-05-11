@@ -147,6 +147,15 @@
       "y": 33,
       "width": 12
     },
+    "pitch": {
+      "font_name": "4x6",
+      "x": 1,
+      "y": 50,
+      "width": 41,
+      "enabled": false,
+      "mph": false,
+      "desc_length": "Short"
+    },
     "loop": 16,
     "strikeout": {
       "x": 33,
