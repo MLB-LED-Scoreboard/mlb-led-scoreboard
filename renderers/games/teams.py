@@ -3,8 +3,7 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-
-def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_team_names):
+def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_team_names, short_team_names_for_runs_hits):
     default_colors = team_colors.color("default")
 
     away_colors = __team_colors(team_colors, away_team.abbrev)
@@ -53,8 +52,10 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
                 y_offset = accent_coords[team]["y"]
                 canvas.SetPixel(x + x_offset, y + y_offset, color["r"], color["g"], color["b"])
 
-    __render_team_text(canvas, layout, away_colors, away_team, "away", full_team_names, default_colors)
-    __render_team_text(canvas, layout, home_colors, home_team, "home", full_team_names, default_colors)
+    use_full_team_names = can_use_full_team_names(canvas, full_team_names, short_team_names_for_runs_hits, [home_team, away_team])
+
+    __render_team_text(canvas, layout, away_colors, away_team, "away", use_full_team_names, default_colors)
+    __render_team_text(canvas, layout, home_colors, home_team, "home", use_full_team_names, default_colors)
 
     # Number of characters in each score.
     score_spacing = {
@@ -65,6 +66,27 @@ def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_t
     __render_team_score(canvas, layout, away_colors, away_team, "away", default_colors, score_spacing)
     __render_team_score(canvas, layout, home_colors, home_team, "home", default_colors, score_spacing)
 
+def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
+    # Settings enabled and size is able to display it
+    if enabled and canvas.width > 32:
+
+        # If config enabled for abbreviating if runs or hits takes up an additional column (i.e. 9 -> 10)
+        if abbreviate_on_overflow:
+
+            # Iterate through the teams to see if we should abbreviate
+            for team in teams:
+                if team.runs > 9 or team.hits > 9:
+                    return False
+            
+            # Else use full names if no stats column has overflowed
+            return True
+
+        # If config for abbreviating is not set, use full name
+        else:
+            return True
+
+    # Fallback to abbreviated names for all cases
+    return False
 
 def __team_colors(team_colors, team_abbrev):
     try:
@@ -80,10 +102,9 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
     coords = layout.coords("teams.name.{}".format(homeaway))
     font = layout.font("teams.name.{}".format(homeaway))
     team_text = "{:3s}".format(team.abbrev.upper())
-    if full_team_names and canvas.width > 32:
+    if full_team_names:
         team_text = "{:13s}".format(team.name)
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
-
 
 def __render_score_component(canvas, layout, colors, homeaway, default_colors, coords, component_val, width_chars):
     # The coords passed in are the rightmost pixel.
