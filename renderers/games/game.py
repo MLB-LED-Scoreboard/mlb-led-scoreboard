@@ -86,6 +86,7 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
         bgcolor,
         batter,
         text_pos + offset,
+        center=False,
     )
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "AB:")
     return pos
@@ -106,12 +107,12 @@ def __render_pitcher_text(canvas, layout, colors, pitcher, text_pos):
         bgcolor,
         pitcher,
         text_pos,
+        center=False,
     )
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "P:")
     return pos
 
 def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
-#def __render_pitch_text(canvas, layout, colors):
     coords = layout.coords("atbat.pitch")
     color = colors.graphics_color("atbat.pitch")
     font = layout.font("atbat.pitch")
@@ -127,7 +128,7 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
         else:
             pitch_text = None
         graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_text)
-    
+
 # --------------- bases ---------------
 def _render_bases(canvas, layout, colors, bases: Bases, home_run, animation):
     base_runners = bases.runners
