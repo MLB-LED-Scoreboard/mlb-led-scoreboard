@@ -1,6 +1,7 @@
 from data.game import Game
 import data.pitches
 
+
 class Pitches:
     def __init__(self, game: Game):
         self.balls = game.balls()

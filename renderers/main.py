@@ -162,7 +162,9 @@ class MainRenderer:
         if status.is_pregame(game.status()):  # Draw the pregame information
             self.__max_scroll_x(layout.coords("pregame.scrolling_text"))
             pregame = Pregame(game, self.data.config.time_format)
-            pos = pregamerender.render_pregame(self.canvas, layout, colors, pregame, self.scrolling_text_pos, self.data.config.pregame_weather)
+            pos = pregamerender.render_pregame(
+                self.canvas, layout, colors, pregame, self.scrolling_text_pos, self.data.config.pregame_weather
+            )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
         elif status.is_complete(game.status()):  # Draw the game summary
