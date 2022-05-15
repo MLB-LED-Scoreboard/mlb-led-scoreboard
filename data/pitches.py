@@ -1,7 +1,7 @@
-#A list of mlb pitch types appearing in statcast
-#https://www.daktronics.com/en-us/support/kb/DD3312647
-#Dont change the index, but feel free to change 
-#the descriptions
+# A list of mlb pitch types appearing in statcast
+# https://www.daktronics.com/en-us/support/kb/DD3312647
+# Dont change the index, but feel free to change
+# the descriptions
 
 PITCH_LONG = {
     "AB": "Automatic Ball",
@@ -10,10 +10,10 @@ PITCH_LONG = {
     "CU": "Curveball",
     "EP": "Eephus",
     "FC": "Cutter",
-    "FF": "4 Seam Fastball",    #MLB default is "Four-Seam Fastball"
+    "FF": "Fastball",  # MLB default is "Four-Seam Fastball"
     "FO": "Forkball",
     "FS": "Splitter",
-    "FT": "2 Seam Fastball",    #MLB default is "Two-Seam Fastball"
+    "FT": "2 Seamer",  # MLB default is "Two-Seam Fastball"
     "GY": "Gyroball",
     "IN": "Intentional Ball",
     "KC": "Knuckle Curve",
@@ -22,8 +22,8 @@ PITCH_LONG = {
     "SC": "Screwball",
     "SI": "Sinker",
     "SL": "Slider",
-    "UN": "Unknown"
-} 
+    "UN": "Unknown",
+}
 PITCH_SHORT = {
     "AB": "AB",
     "AS": "AS",
@@ -43,5 +43,5 @@ PITCH_SHORT = {
     "SC": "SC",
     "SI": "SI",
     "SL": "SL",
-    "UN": "UN"
-} 
+    "UN": "UN",
+}
