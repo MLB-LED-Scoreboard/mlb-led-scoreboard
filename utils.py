@@ -1,12 +1,8 @@
-try:
-    from rgbmatrix import RGBMatrixOptions
-except ImportError:
-    from RGBMatrixEmulator import RGBMatrixOptions
-
 import argparse
 import collections
 
 import debug
+import driver
 
 
 def center_text_position(text, center_pos, font_width):
@@ -125,10 +121,21 @@ def args():
         default="config",
         type=str,
     )
+    parser.add_argument(
+        "--emulated",
+        action="store_const",
+        help="Force using emulator mode over default matrix display.",
+        const=True
+    )
     return parser.parse_args()
 
 
 def led_matrix_options(args):
+    if driver.is_hardware():
+        from rgbmatrix import RGBMatrixOptions
+    else:
+        from RGBMatrixEmulator import RGBMatrixOptions
+
     options = RGBMatrixOptions()
 
     if args.led_gpio_mapping is not None:

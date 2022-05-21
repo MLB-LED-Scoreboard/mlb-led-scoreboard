@@ -1,6 +1,8 @@
-try:
+import driver
+
+if driver.is_hardware():
     from rgbmatrix import graphics
-except ImportError:
+else:
     from RGBMatrixEmulator import graphics
 
 def render_team_banner(canvas, layout, team_colors, home_team, away_team, full_team_names, short_team_names_for_runs_hits):

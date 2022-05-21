@@ -1,6 +1,8 @@
-try:
+import driver
+
+if driver.is_hardware():
     from rgbmatrix import graphics
-except ImportError:
+else:
     from RGBMatrixEmulator import graphics
 
 from utils import center_text_position

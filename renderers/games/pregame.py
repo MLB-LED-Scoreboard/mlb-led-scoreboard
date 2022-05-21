@@ -1,6 +1,8 @@
-try:
+import driver
+
+if driver.is_hardware():
     from rgbmatrix import graphics
-except ImportError:
+else:
     from RGBMatrixEmulator import graphics
 
 from data.config.color import Color
