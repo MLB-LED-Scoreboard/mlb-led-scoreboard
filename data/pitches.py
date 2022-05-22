@@ -29,7 +29,8 @@ PITCH_LONG = {
     "SL": "Slider",
     "SU": "Slurve",
     "UN": "Unknown"
-} 
+}
+
 PITCH_SHORT = {
     "AB": "AB",
     "AS": "AS",
@@ -55,4 +56,10 @@ PITCH_SHORT = {
     "SL": "SL",
     "SU": "SU",
     "UN": "UN"
-} 
+}
+
+def fetch_long(value):
+    return PITCH_LONG.get(value, PITCH_LONG["UN"])
+
+def fetch_short(value):
+    return PITCH_SHORT.get(value, PITCH_SHORT["UN"])
