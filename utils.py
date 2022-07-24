@@ -142,6 +142,7 @@ def led_matrix_options(args):
     options.multiplexing = args.led_multiplexing
     options.pwm_bits = args.led_pwm_bits
     options.brightness = args.led_brightness
+    options.scan_mode = args.led_scan_mode
     options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
     options.led_rgb_sequence = args.led_rgb_sequence
 
