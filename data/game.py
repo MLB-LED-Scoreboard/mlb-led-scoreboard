@@ -67,18 +67,25 @@ class Game:
 
     def home_name(self):
         return self._data["gameData"]["teams"]["home"]["teamName"]
-    
+
     def home_abbreviation(self):
         return self._data["gameData"]["teams"]["home"]["abbreviation"]
-    
+
     def pregame_weather(self):
         try:
-            wx = self._data["gameData"]["weather"]["condition"] + " and " + self._data["gameData"]["weather"]["temp"] + u"\N{DEGREE SIGN}" + " wind " + self._data["gameData"]["weather"]["wind"]
+            wx = (
+                self._data["gameData"]["weather"]["condition"]
+                + " and "
+                + self._data["gameData"]["weather"]["temp"]
+                + u"\N{DEGREE SIGN}"
+                + " wind "
+                + self._data["gameData"]["weather"]["wind"]
+            )
         except KeyError:
             return None
         else:
-            return wx 
-    
+            return wx
+
     def away_name(self):
         return self._data["gameData"]["teams"]["away"]["teamName"]
 
@@ -230,9 +237,14 @@ class Game:
         try:
             play = self._data["liveData"]["plays"].get("currentPlay", {}).get("playEvents", [{}])[-1]
             if play.get("isPitch", False):
-                return play["pitchData"].get("startSpeed", 0), play["details"]["type"]["code"], play["details"]["type"]["description"]
-        except: 
+                return (
+                    play["pitchData"].get("startSpeed", 0),
+                    play["details"]["type"]["code"],
+                    play["details"]["type"]["description"],
+                )
+        except:
             return None
+
     def note(self):
         try:
             return self._data["liveData"]["linescore"]["note"]

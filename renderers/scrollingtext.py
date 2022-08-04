@@ -6,7 +6,7 @@ except ImportError:
 from utils import center_text_position
 
 
-def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_pos):
+def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_pos, center=True):
     if __text_should_scroll(text, font, width):
 
         # this is done so that we don't need to draw a huge bar to the left of the text
@@ -34,9 +34,9 @@ def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_po
             graphics.DrawLine(canvas, xi, y + 1, xi, y + 1 - h, bg_color)
 
         return total_width
-
     else:
-        graphics.DrawText(canvas, font["font"], __center_position(text, font, width, x), y, text_color, text)
+        draw_x = __center_position(text, font, width, x) if center else x
+        graphics.DrawText(canvas, font["font"], draw_x, y, text_color, text)
         return 0
 
 

@@ -46,7 +46,7 @@ def _render_probable_starters(canvas, layout, colors, pregame, probable_starter_
     bgcolor = colors.graphics_color("default.background")
     if pregame_weather and pregame.pregame_weather:
         pitchers_text = pregame.away_starter + " vs " + pregame.home_starter + " Weather: " + pregame.pregame_weather
-    else :
+    else:
         pitchers_text = pregame.away_starter + " vs " + pregame.home_starter
     return scrollingtext.render_text(
         canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, pitchers_text, probable_starter_pos
