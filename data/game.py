@@ -22,17 +22,18 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_ID(game_id, date):
-        game = Game(game_id, date)
+    def from_ID(game_id, date, broadcasts=None):
+        game = Game(game_id, date, broadcasts or [])
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date):
+    def __init__(self, game_id, date, broadcasts):
         self.game_id = game_id
         self.date = date.strftime("%Y-%m-%d")
         self.starttime = time.time()
         self._data = {}
+        self._broadcasts = broadcasts
         self._status = {}
 
     def update(self, force=False) -> UpdateStatus:
@@ -259,6 +260,9 @@ class Game:
                 return self._status["detailedState"].split(":")[1].strip()
             except:
                 return None
+
+    def broadcasts(self):
+        return self._broadcasts
 
     def current_play_result(self):
         result = self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", "")
