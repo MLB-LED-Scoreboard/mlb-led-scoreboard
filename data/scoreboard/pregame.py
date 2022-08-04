@@ -39,6 +39,8 @@ class Pregame:
         else:
             self.home_starter = PITCHER_TBD
 
+        self.national_broadcasts = game.broadcasts()
+
     def __convert_time(self, game_time_utc):
         """Converts MLB's pregame times (UTC) into the local time zone"""
         time_str = "{}:%M".format(self.time_format)
