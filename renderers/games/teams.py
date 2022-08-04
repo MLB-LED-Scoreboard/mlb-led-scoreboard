@@ -5,7 +5,7 @@ except ImportError:
 
 
 def render_team_banner(
-    canvas, layout, team_colors, home_team, away_team, full_team_names, short_team_names_for_runs_hits
+    canvas, layout, team_colors, home_team, away_team, full_team_names, short_team_names_for_runs_hits, show_score,
 ):
     default_colors = team_colors.color("default")
 
@@ -62,14 +62,15 @@ def render_team_banner(
     __render_team_text(canvas, layout, away_colors, away_team, "away", use_full_team_names, default_colors)
     __render_team_text(canvas, layout, home_colors, home_team, "home", use_full_team_names, default_colors)
 
-    # Number of characters in each score.
-    score_spacing = {
-        "runs": max(len(str(away_team.runs)), len(str(home_team.runs))),
-        "hits": max(len(str(away_team.hits)), len(str(home_team.hits))),
-        "errors": max(len(str(away_team.errors)), len(str(home_team.errors))),
-    }
-    __render_team_score(canvas, layout, away_colors, away_team, "away", default_colors, score_spacing)
-    __render_team_score(canvas, layout, home_colors, home_team, "home", default_colors, score_spacing)
+    if show_score:
+        # Number of characters in each score.
+        score_spacing = {
+            "runs": max(len(str(away_team.runs)), len(str(home_team.runs))),
+            "hits": max(len(str(away_team.hits)), len(str(home_team.hits))),
+            "errors": max(len(str(away_team.errors)), len(str(home_team.errors))),
+        }
+        __render_team_score(canvas, layout, away_colors, away_team, "away", default_colors, score_spacing)
+        __render_team_score(canvas, layout, home_colors, home_team, "home", default_colors, score_spacing)
 
 
 def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
