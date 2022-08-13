@@ -23,6 +23,9 @@ class Data:
         self.schedule: Schedule = Schedule(config)
         # NB: Can return none, but shouldn't matter?
         self.current_game: Game = self.schedule.get_preferred_game()
+        if self.current_game is not None:
+            self.print_game_data_debug()
+
         self.game_changed_time = time.time()
         if self.current_game is not None:
             self.__update_layout_state()

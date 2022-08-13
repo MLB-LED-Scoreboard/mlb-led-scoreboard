@@ -49,7 +49,7 @@ class Pregame:
         return game_time_utc.astimezone(tzlocal.get_localzone()).strftime(time_str)
 
     def __str__(self):
-        s = "<{} {}> {} @ {}; {}; {} vs {}".format(
+        s = "<{} {}> {} @ {}; {}; {} vs {}; Forecast: {}; TV: {}".format(
             self.__class__.__name__,
             hex(id(self)),
             self.away_team,
@@ -57,5 +57,7 @@ class Pregame:
             self.start_time,
             self.away_starter,
             self.home_starter,
+            self.pregame_weather,
+            self.national_broadcasts,
         )
         return s
