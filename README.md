@@ -96,7 +96,7 @@ It will also install the following python libraries that are required for certai
 * [feedparser](https://pypi.org/project/feedparser/): Used to fetch and parse RSS feeds. The scoreboard uses this to show news headlines.
 * [pyowm](https://github.com/csparpa/pyowm): OpenWeatherMap API interactions. We use this to get the local weather for display on the offday screen. For more information on how to finish setting up the weather, visit the [weather section](#weather) of this README.
 * [MLB-StatsAPI](https://pypi.org/project/MLB-StatsAPI/): The main library that fetches and parses all of the actual MLB data being displayed
-* [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator): The emulation library for the matrix display. Useful for running on Windows, MacOS, or Linux, or for development.
+* [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator): The emulation library for the matrix display. Useful for running on MacOS or Linux, or for development.
 
 #### Installation on Non-Raspberry Pi Hardware
 
@@ -119,8 +119,6 @@ Additional flags are available for customizing your install:
 
 -h, --help         Displays help
 ```
-
-**NOTE**: Windows installations are supported through Windows Subsystem for Linux using the software emulation `BrowserAdapter`. 
 
 #### Updating
 * Run `git pull` in your mlb-led-scoreboard folder to fetch the latest changes. A lot of the time, this will be enough, but if something seems broken:
