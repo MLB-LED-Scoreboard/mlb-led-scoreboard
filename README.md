@@ -100,25 +100,27 @@ It will also install the following python libraries that are required for certai
 
 #### Installation on Non-Raspberry Pi Hardware
 
-The installation script is designed for physical hardware. When attempting to install it on other platforms, you should not use `sudo` to install the dependencies.
+The installation script is designed for physical hardware. When attempting to install it on other platforms, you should not use `sudo` to install the dependencies. In addition, you can pass the `--emulator-only` argument to skip installation steps that aren't required.
 
 ```
-sh install.sh
+sh install.sh --emulator-only
 ```
 
 Additional flags are available for customizing your install:
 
 ```
 -p, --skip-python  Skips Python 3 installation. You will need to install it via your platform's appropriate package manager.
--m, --skip-matrix  Skips RPI-specific matrix driver installation and build. (Recommended)
+-m, --skip-matrix  Skips RPI-specific matrix driver installation and build.
 -c, --skip-config  Skips default config overwrite without prompting.
 
 -a, --skip-all     Performs all above skips.
 
+--emulator-only:    Do not install dependencies under sudo. Skips building matrix dependencies (Recommended)
+
 -h, --help         Displays help
 ```
 
-**TODO**: Installation instructions for Windows are forthcoming.
+**NOTE**: Windows installations are supported through Windows Subsystem for Linux using the software emulation `BrowserAdapter`. 
 
 #### Updating
 * Run `git pull` in your mlb-led-scoreboard folder to fetch the latest changes. A lot of the time, this will be enough, but if something seems broken:
@@ -160,6 +162,8 @@ python3 main.py --emulated
 ```
 
 When running in emulation mode, you can continue to use your existing command line flags as normal.
+
+See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emulator configuration options.
 
 ### Configuration
 

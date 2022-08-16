@@ -12,6 +12,8 @@ function usage() {
 
         -a, --skip-all:     Skip all dependencies and config installation (equivalent to -c -p -m).
 
+        --emulator-only:    Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
+
 USAGE
     exit 1
 }
@@ -19,6 +21,7 @@ USAGE
 SKIP_PYTHON=false
 SKIP_CONFIG=false
 SKIP_MATRIX=false
+NO_SUDO=false
 
 for arg in "$@"; do
     case $arg in
@@ -40,6 +43,11 @@ for arg in "$@"; do
         SKIP_PYTHON=true
         shift # Remove -a / --skip-all from `$@`
         ;;
+    --emulator-only)
+        SKIP_MATRIX=true
+        NO_SUDO=true
+        shift # remove --emulator-only from `$@`
+        ;;
     -h | --help)
         usage # run usage function on help
         ;;
@@ -55,7 +63,11 @@ if [ "$SKIP_PYTHON" = false ]; then
 fi
 
 echo "Installing dependencies..."
-sudo pip3 install -r requirements.txt
+if [ "$NO_SUDO" = false ]; then
+    sudo python3 -m pip install -r requirements.txt
+else
+    python3 -m pip install -r requirements.txt
+fi
 
 if [ "$SKIP_MATRIX" = false ]; then
     echo "Running rgbmatrix installation..."
