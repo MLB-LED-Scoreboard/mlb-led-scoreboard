@@ -13,7 +13,7 @@ from utils import center_text_position
 
 
 def render_pregame(canvas, layout: Layout, colors: Color, pregame: Pregame, probable_starter_pos, pregame_weather):
-    text_len = _render_probable_starters(canvas, layout, colors, pregame, probable_starter_pos, pregame_weather)
+    text_len = _render_pregame_info(canvas, layout, colors, pregame, probable_starter_pos, pregame_weather)
 
     if layout.state_is_warmup():
         _render_warmup(canvas, layout, colors, pregame)
@@ -41,15 +41,17 @@ def _render_warmup(canvas, layout, colors, pregame):
     graphics.DrawText(canvas, font["font"], warmup_x, coords["y"], color, warmup_text)
 
 
-def _render_probable_starters(canvas, layout, colors, pregame, probable_starter_pos, pregame_weather):
+def _render_pregame_info(canvas, layout, colors, pregame, probable_starter_pos, pregame_weather):
     coords = layout.coords("pregame.scrolling_text")
     font = layout.font("pregame.scrolling_text")
     color = colors.graphics_color("pregame.scrolling_text")
     bgcolor = colors.graphics_color("default.background")
+    pitchers_text = pregame.away_starter + " vs " + pregame.home_starter
+    if pregame.national_broadcasts:
+        pitchers_text += " TV: " + ", ".join(pregame.national_broadcasts)
     if pregame_weather and pregame.pregame_weather:
-        pitchers_text = pregame.away_starter + " vs " + pregame.home_starter + " Weather: " + pregame.pregame_weather
-    else :
-        pitchers_text = pregame.away_starter + " vs " + pregame.home_starter
+        pitchers_text += " Weather: " + pregame.pregame_weather
+
     return scrollingtext.render_text(
         canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, pitchers_text, probable_starter_pos
     )
