@@ -1,5 +1,5 @@
 import argparse
-import collections
+from collections.abc import Mapping
 
 import debug
 import driver
@@ -149,6 +149,7 @@ def led_matrix_options(args):
     options.multiplexing = args.led_multiplexing
     options.pwm_bits = args.led_pwm_bits
     options.brightness = args.led_brightness
+    options.scan_mode = args.led_scan_mode
     options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
     options.led_rgb_sequence = args.led_rgb_sequence
 
@@ -187,7 +188,7 @@ def deep_update(source, overrides):
     Modify ``source`` in place.
     """
     for key, value in list(overrides.items()):
-        if isinstance(value, collections.Mapping) and value:
+        if isinstance(value, Mapping) and value:
             returned = deep_update(source.get(key, {}), value)
             source[key] = returned
         else:

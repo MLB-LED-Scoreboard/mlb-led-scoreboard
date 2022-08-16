@@ -82,6 +82,7 @@ else
     if [ "$answer" != "${answer#[Yy]}" ] ;then
         rm config.json
         cp config.json.example config.json
+        chmod 777 config.json
         echo -e "\nYou should now have a fresh config.json file you can customize with your own settings.\n"
     else
         echo -e "\nIf you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
