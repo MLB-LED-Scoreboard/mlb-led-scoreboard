@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "Installing python 3..."
 sudo apt-get update && sudo apt-get install python3-dev python3-pip python3-pillow libxml2-dev libxslt-dev  -y
-sudo pip3 install tzlocal feedparser "pyowm>3" mlb-statsapi
+sudo pip3 install tzlocal feedparser "pyowm>3" "mlb-statsapi>=1.5"
 
 echo "Running rgbmatrix installation..."
 mkdir submodules
