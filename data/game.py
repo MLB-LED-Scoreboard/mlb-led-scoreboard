@@ -22,20 +22,19 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_ID(game_id, date, config, broadcasts=None):
-        game = Game(game_id, date, config, broadcasts or [])
+    def from_ID(game_id, date, broadcasts=None):
+        game = Game(game_id, date, broadcasts or [])
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, config, broadcasts):
+    def __init__(self, game_id, date, broadcasts):
         self.game_id = game_id
         self.date = date.strftime("%Y-%m-%d")
         self.starttime = time.time()
         self._data = {}
         self._broadcasts = broadcasts
         self._status = {}
-        self.config = config
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
@@ -223,16 +222,20 @@ class Game:
         try:
             batter_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
             ID = "ID" + str(batter_id)
-            if self.config.show_pitch_count :
-                try:
-                    pitch_count = self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
-                    #debug.log("AWAY Pitch Count: %s", str(pitch_count))
-                except:
-                    pitch_count = self._data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
-                    #debug.log("HOME Pitch Count: %s", str(pitch_count))
-                return self.boxscore_name(batter_id) + " (" + str(pitch_count) + ")"
-            else: 
-                return self.boxscore_name(batter_id)
+            return self.boxscore_name(batter_id)
+        except:
+            return ""
+
+    def pitcher_pitch_count(self):
+        try:
+            batter_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            ID = "ID" + str(batter_id)
+            try:
+                pitch_count = self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+                return "(" + str(pitch_count) + ")"
+            except:
+                pitch_count = self._data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+                return "(" + str(pitch_count) + ")"
         except:
             return ""
 

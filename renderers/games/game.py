@@ -3,6 +3,7 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
+from distutils import config
 from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard import Scoreboard
@@ -14,7 +15,7 @@ from renderers import scrollingtext
 from renderers.games import nohitter
 
 
-def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
+def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time, config):
     pos = 0
 
     if scoreboard.inning.state == Inning.TOP or scoreboard.inning.state == Inning.BOTTOM:
@@ -29,6 +30,7 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
             scoreboard.strikeout_looking(),
             (animation_time // 6) % 2,
             scoreboard.pitches,
+            config
         )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
@@ -50,8 +52,13 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation, pitches: Pitches):
-    plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, text_pos)
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation, pitches: Pitches, config):
+    
+    if config.show_pitch_count :
+        pitcher_text = atbat.pitcher + " " + atbat.pitcher_pitch_count
+    else :
+        pitcher_text = atbat.pitcher
+    plength = __render_pitcher_text(canvas, layout, colors, pitcher_text, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     if strikeout:
         if animation:

@@ -197,7 +197,7 @@ class MainRenderer:
             loop_point = self.data.config.layout.coords("atbat")["loop"]
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             pos = gamerender.render_live_game(
-                self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time
+                self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time, self.data.config
             )
             self.__update_scrolling_text_pos(pos, loop_point)
 

@@ -8,3 +8,4 @@ class AtBat:
         self.onDeck = game.on_deck()
         self.inHole = game.in_hole()
         self.pitcher = game.pitcher()
+        self.pitcher_pitch_count = game.pitcher_pitch_count()
