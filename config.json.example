@@ -43,6 +43,7 @@
 	"end_of_day": "00:00",
 	"full_team_names": true,
 	"short_team_names_for_runs_hits": true,
+	"show_pitch_count": true,
 	"pregame_weather": true,
 	"scrolling_speed": 2,
 	"debug": false,

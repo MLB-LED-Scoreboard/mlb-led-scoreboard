@@ -12,7 +12,7 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,weather,condition,temp,wind"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -22,19 +22,20 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_ID(game_id, date, broadcasts=None):
-        game = Game(game_id, date, broadcasts or [])
+    def from_ID(game_id, date, config, broadcasts=None):
+        game = Game(game_id, date, config, broadcasts or [])
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts):
+    def __init__(self, game_id, date, config, broadcasts):
         self.game_id = game_id
         self.date = date.strftime("%Y-%m-%d")
         self.starttime = time.time()
         self._data = {}
         self._broadcasts = broadcasts
         self._status = {}
+        self.config = config
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
@@ -221,7 +222,17 @@ class Game:
     def pitcher(self):
         try:
             batter_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
-            return self.boxscore_name(batter_id)
+            ID = "ID" + str(batter_id)
+            if self.config.show_pitch_count :
+                try:
+                    pitch_count = self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+                    #debug.log("AWAY Pitch Count: %s", str(pitch_count))
+                except:
+                    pitch_count = self._data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+                    #debug.log("HOME Pitch Count: %s", str(pitch_count))
+                return self.boxscore_name(batter_id) + " (" + str(pitch_count) + ")"
+            else: 
+                return self.boxscore_name(batter_id)
         except:
             return ""
 

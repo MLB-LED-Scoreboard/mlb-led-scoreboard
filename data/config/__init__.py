@@ -66,6 +66,7 @@ class Config:
         self.pregame_weather = json["pregame_weather"]
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
+        self.show_pitch_count = json["show_pitch_count"]
         # Make sure the scrolling speed setting is in range so we don't crash
         try:
             self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
