@@ -3,7 +3,6 @@ try:
 except ImportError:
     from RGBMatrixEmulator import graphics
 
-from distutils import config
 from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard import Scoreboard
