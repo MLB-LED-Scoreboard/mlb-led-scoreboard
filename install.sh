@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function usage() {
+usage() {
     cat <<USAGE
 
     Usage: $0 [-a] [-c] [-m] [-p]
@@ -58,11 +58,21 @@ for arg in "$@"; do
 done
 
 if [ "$SKIP_PYTHON" = false ]; then
-    echo "Installing python 3..."
-    sudo apt-get update && sudo apt-get install python3-dev python3-pip python3-pillow libxml2-dev libxslt-dev -y
+    echo
+    echo "------------------------------------"
+    echo "  Installing python 3..."
+    echo "------------------------------------"
+    echo
+
+    sudo apt-get update && sudo apt-get install python3-dev python3-pip python3-pillow python3-tk libxml2-dev libxslt-dev -y
 fi
 
-echo "Installing dependencies..."
+echo
+echo "------------------------------------"
+echo "  Installing dependencies..."
+echo "------------------------------------"
+echo
+
 if [ "$NO_SUDO" = false ]; then
     sudo python3 -m pip install -r requirements.txt
 else
@@ -83,20 +93,33 @@ if [ "$SKIP_MATRIX" = false ]; then
 fi
 
 if [ "$SKIP_CONFIG" = true ]; then
-    echo -e "\nSkipping config.json file creation"
+    echo
+    echo "------------------------------------"
+    echo "  Skipping config.json file creation"
+    echo "------------------------------------"
+    echo
 else
-    echo -e "\nYou'll need a config.json file to customize your settings. If you are updating"
-    echo "from an older version and you were required to run this install script again or"
-    echo "this is a fresh install, it's recommended we make a fresh one right now."
-    echo "This will create a brand new 'config.json' file with default values so edit this"
-    echo -e "file with your own settings.\n"
+    echo
+    echo "==================================================================================="
+    echo "  You'll need a config.json file to customize your settings. If you are updating"
+    echo "  from an older version and you were required to run this install script again or"
+    echo "  this is a fresh install, it's recommended we make a fresh one right now."
+    echo "  This will create a brand new 'config.json' file with default values so edit this"
+    echo "  file with your own settings."
+    echo "==================================================================================="
+    echo
+
     read -p "Would you like to do this now? [Y/n] " answer
+
+    echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        rm config.json
+        rm -f config.json
         cp config.json.example config.json
         chmod 777 config.json
-        echo -e "\nYou should now have a fresh config.json file you can customize with your own settings.\n"
+        echo "You should now have a fresh config.json file you can customize with your own settings.\n"
     else
-        echo -e "\nIf you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
+        echo "If you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
     fi
 fi
+
+echo "Installation finished!"
