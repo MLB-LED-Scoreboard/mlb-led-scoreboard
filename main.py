@@ -23,19 +23,18 @@ from version import SCRIPT_NAME, SCRIPT_VERSION
 HARDWARE_DRIVER_LOAD_FAILED = False
 
 if args().emulated:
-    from RGBMatrixEmulator import RGBMatrix, version
-
     driver.mode = driver.DriverMode.SOFTWARE_EMULATION
 else:
-    try:
-        from rgbmatrix import RGBMatrix, __version__
+    driver.mode = driver.DriverMode.HARDWARE
 
-        driver.mode = driver.DriverMode.HARDWARE
-    except ImportError:
-        from RGBMatrixEmulator import RGBMatrix, version
+try:
+    from driver import RGBMatrix, __version__
+except ImportError:
+    from RGBMatrixEmulator import RGBMatrix
+    from RGBMatrixEmulator.version import __version__
 
-        HARDWARE_DRIVER_LOAD_FAILED = True
-        driver.mode = driver.DriverMode.SOFTWARE_EMULATION
+    HARDWARE_DRIVER_LOAD_FAILED = True
+    driver.mode = driver.DriverMode.SOFTWARE_EMULATION
 
 
 def main(matrix, config_base):
@@ -55,8 +54,6 @@ def main(matrix, config_base):
         if HARDWARE_DRIVER_LOAD_FAILED:
             debug.log("rgbmatrix not installed, falling back to emulator!")
 
-        debug.log("Using RGBMatrixEmulator version %s", version.__version__)
-    else:
         debug.log("Using rgbmatrix version %s", __version__)
 
     # Draw startup screen

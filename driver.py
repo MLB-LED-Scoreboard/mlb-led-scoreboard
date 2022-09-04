@@ -12,3 +12,9 @@ def is_hardware():
 
 def is_emulated():
     return mode == DriverMode.SOFTWARE_EMULATION
+
+if is_hardware():
+    from rgbmatrix import graphics, RGBMatrixOptions, __version__
+else:
+    from RGBMatrixEmulator import graphics, RGBMatrixOptions
+    from RGBMatrixEmulator.version import __version__

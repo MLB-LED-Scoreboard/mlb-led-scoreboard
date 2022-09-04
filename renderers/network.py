@@ -1,10 +1,4 @@
-import driver
-
-if driver.is_hardware():
-    from rgbmatrix import graphics
-else:
-    from RGBMatrixEmulator import graphics
-
+from driver import graphics
 from utils import center_text_position
 
 NETWORK_ERROR_TEXT = "!"

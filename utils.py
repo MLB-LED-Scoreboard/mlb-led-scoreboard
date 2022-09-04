@@ -2,7 +2,6 @@ import argparse
 from collections.abc import Mapping
 
 import debug
-import driver
 
 
 def center_text_position(text, center_pos, font_width):
@@ -131,10 +130,7 @@ def args():
 
 
 def led_matrix_options(args):
-    if driver.is_hardware():
-        from rgbmatrix import RGBMatrixOptions
-    else:
-        from RGBMatrixEmulator import RGBMatrixOptions
+    from driver import RGBMatrixOptions
 
     options = RGBMatrixOptions()
 

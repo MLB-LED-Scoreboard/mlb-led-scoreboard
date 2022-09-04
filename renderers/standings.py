@@ -1,9 +1,4 @@
-import driver
-
-if driver.is_hardware():
-    from rgbmatrix import graphics
-else:
-    from RGBMatrixEmulator import graphics
+from driver import graphics
 
 from data.config.color import Color
 from data.config.layout import Layout
