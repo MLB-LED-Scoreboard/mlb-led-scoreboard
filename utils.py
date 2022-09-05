@@ -1,8 +1,3 @@
-try:
-    from rgbmatrix import RGBMatrixOptions
-except ImportError:
-    from RGBMatrixEmulator import RGBMatrixOptions
-
 import argparse
 from collections.abc import Mapping
 
@@ -125,10 +120,18 @@ def args():
         default="config",
         type=str,
     )
+    parser.add_argument(
+        "--emulated",
+        action="store_const",
+        help="Force using emulator mode over default matrix display.",
+        const=True
+    )
     return parser.parse_args()
 
 
 def led_matrix_options(args):
+    from driver import RGBMatrixOptions
+
     options = RGBMatrixOptions()
 
     if args.led_gpio_mapping is not None:

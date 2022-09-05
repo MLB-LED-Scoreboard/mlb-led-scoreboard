@@ -96,7 +96,29 @@ It will also install the following python libraries that are required for certai
 * [feedparser](https://pypi.org/project/feedparser/): Used to fetch and parse RSS feeds. The scoreboard uses this to show news headlines.
 * [pyowm](https://github.com/csparpa/pyowm): OpenWeatherMap API interactions. We use this to get the local weather for display on the offday screen. For more information on how to finish setting up the weather, visit the [weather section](#weather) of this README.
 * [MLB-StatsAPI](https://pypi.org/project/MLB-StatsAPI/): The main library that fetches and parses all of the actual MLB data being displayed
+* [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator): The emulation library for the matrix display. Useful for running on MacOS or Linux, or for development.
 
+#### Installation on Non-Raspberry Pi Hardware
+
+The installation script is designed for physical hardware. When attempting to install it on other platforms, you should not use `sudo` to install the dependencies. In addition, you can pass the `--emulator-only` argument to skip installation steps that aren't required.
+
+```
+sh install.sh --emulator-only
+```
+
+Additional flags are available for customizing your install:
+
+```
+-p, --skip-python  Skips Python 3 installation. You will need to install it via your platform's appropriate package manager.
+-m, --skip-matrix  Skips RPI-specific matrix driver installation and build.
+-c, --skip-config  Skips default config overwrite without prompting.
+
+-a, --skip-all     Performs all above skips.
+
+--emulator-only:    Do not install dependencies under sudo. Skips building matrix dependencies (Recommended)
+
+-h, --help         Displays help
+```
 
 #### Updating
 * Run `git pull` in your mlb-led-scoreboard folder to fetch the latest changes. A lot of the time, this will be enough, but if something seems broken:
@@ -122,6 +144,24 @@ Make sure your Raspberry Pi's timezone is configured to your local time zone. Th
 `sudo python3 main.py --led-gpio-mapping="adafruit-hat"`
 
 See the Flags section below for more flags you can optionally provide.
+
+### Running on Other Platforms
+
+The scoreboard can run on other platforms by means of software emulation via `RGBMatrixEmulator`. When running via the emulator, you do not need to prepend your startup commands with `sudo`:
+
+```sh
+python3 main.py
+```
+
+You can also force the scoreboard into emulation mode by using the `--emulated` flag:
+
+```sh
+python3 main.py --emulated
+```
+
+When running in emulation mode, you can continue to use your existing command line flags as normal.
+
+See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emulator configuration options.
 
 ### Configuration
 
@@ -199,9 +239,10 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-pixel-mapper        Apply pixel mappers. e.g Rotate:90, U-mapper
 --led-row-addr-type       0 = default; 1 = AB-addressed panels. (Default: 0)
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
---led-limit-refresh=<Hz>  : Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
---led-pwm-dither-bits   : Time dithering of lower bits (Default: 0)
+--led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
+--led-pwm-dither-bits     Time dithering of lower bits (Default: 0)
 --config                  Specify a configuration file name other, omitting json xtn (Default: config)
+--emulated                Force the scoreboard to run in software emulation mode.
 ```
 
 ## Personalization
@@ -229,6 +270,17 @@ The scoreboard updates frequently, but it cannot retrieve information that MLB h
 
 ## Help and Contributing
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
+
+### Updating Dependencies
+
+Dependencies requirements are managed using `pipreqs`. If you are adding or making a change to a dependency (such as updating its version), make sure to update the requirements file with `pipreqs`:
+
+```sh
+# If not already installed
+pip3 install pipreqs
+
+pipreqs . --force
+```
 
 ## Licensing
 This project as of v1.1.0 uses the GNU Public License. If you intend to sell these, the code must remain open source.

@@ -1,8 +1,4 @@
-try:
-    from rgbmatrix import graphics
-except ImportError:
-    from RGBMatrixEmulator import graphics
-
+from driver import graphics
 from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard.pregame import Pregame
