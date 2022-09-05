@@ -11,30 +11,16 @@ import time
 
 from PIL import Image
 
+# Important! Import the driver first to initialize it, then import submodules as needed.
+import driver
+from driver import RGBMatrix, __version__
+from utils import args, led_matrix_options
+
 import debug
 from data import Data
 from data.config import Config
-import driver
 from renderers.main import MainRenderer
-from utils import args, led_matrix_options
 from version import SCRIPT_NAME, SCRIPT_VERSION
-
-
-HARDWARE_DRIVER_LOAD_FAILED = False
-
-if args().emulated:
-    driver.mode = driver.DriverMode.SOFTWARE_EMULATION
-else:
-    driver.mode = driver.DriverMode.HARDWARE
-
-try:
-    from driver import RGBMatrix, __version__
-except ImportError:
-    from RGBMatrixEmulator import RGBMatrix
-    from RGBMatrixEmulator.version import __version__
-
-    HARDWARE_DRIVER_LOAD_FAILED = True
-    driver.mode = driver.DriverMode.SOFTWARE_EMULATION
 
 
 def main(matrix, config_base):
@@ -51,9 +37,11 @@ def main(matrix, config_base):
     debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
 
     if driver.is_emulated():
-        if HARDWARE_DRIVER_LOAD_FAILED:
+        if driver.hardware_load_failed:
             debug.log("rgbmatrix not installed, falling back to emulator!")
-
+            
+        debug.log("Using RGBMatrixEmulator version %s", __version__)
+    else:
         debug.log("Using rgbmatrix version %s", __version__)
 
     # Draw startup screen
