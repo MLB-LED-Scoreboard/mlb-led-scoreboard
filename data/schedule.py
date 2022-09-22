@@ -126,15 +126,18 @@ class Schedule:
         return self.__current_game()
 
     def _game_index_for_preferred_team(self):
+        target_index = self.current_idx
+
         if self.config.preferred_teams:
             team_name = data.teams.TEAM_FULL[self.config.preferred_teams[0]]
-            team_index = self.current_idx
             team_idxs = [i for i, game in enumerate(self._games) if team_name in [game["away_name"], game["home_name"]]]
             if len(team_idxs) > 0:
-                team_index = next((i for i in team_idxs if status.is_live(self._games[i]["status"])), team_idxs[0],)
-            return team_index
-        else:
-            return self.current_idx
+                target_index = next((i for i in team_idxs if status.is_live(self._games[i]["status"])), team_idxs[0],)
+
+        if target_index >= len(self._games):
+            target_index = 0
+
+        return target_index
 
     def __next_game_index(self):
         counter = self.current_idx + 1
