@@ -208,7 +208,7 @@
       "series_x_gap": 32,
       "wc_x_start": 3,
       "wc_y_start": 12,
-      "ds_b_y_start": 51,
+      "ds_a_y_start": 51,
       "__comment": "all other coords are based off wild card position"
     }
   },
@@ -260,7 +260,7 @@
         "y": 13
       },
       "home": {
-        "font_name": "9x18B",    
+        "font_name": "9x18B",
         "x": 4,
         "y": 29
       }
@@ -270,7 +270,7 @@
         "show": true,
         "compress_digits": true,
         "spacing": 5
-      },	    
+      },
       "away": {
         "font_name": "9x18B",
         "x": 126,

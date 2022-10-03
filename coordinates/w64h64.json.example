@@ -186,7 +186,7 @@
       "series_x_gap": 16,
       "wc_x_start": 2,
       "wc_y_start": 20,
-      "ds_b_y_start": 39,
+      "ds_a_y_start": 39,
       "__comment": "all other coords are based off wild card position"
     }
   },
