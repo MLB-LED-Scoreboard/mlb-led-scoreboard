@@ -202,8 +202,8 @@ def render_bracket(canvas, layout, colors, league: League):
     graphics.DrawText(canvas, font["font"], ds_x, ds_a_y + matchup_gap, team_name_color, league.ds_A_bye)
 
     # LCS
-    graphics.DrawText(canvas, font["font"], lcs_x, ds_b_y + winner_offset, team_name_color, league.l_two)
-    graphics.DrawText(canvas, font["font"], lcs_x, ds_a_y + winner_offset, team_name_color, league.l_one)
+    graphics.DrawText(canvas, font["font"], lcs_x, ds_b_y + winner_offset, team_name_color, league.l_one)
+    graphics.DrawText(canvas, font["font"], lcs_x, ds_a_y + winner_offset, team_name_color, league.l_two)
 
     # league champ
     graphics.DrawText(canvas, font["font"], champ_x + 1, champ_y, team_name_color, league.champ)
