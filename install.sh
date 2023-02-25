@@ -131,6 +131,8 @@ else
     else
         echo "If you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
     fi
+
+    python3 validate_config.py
 fi
 
 echo "Installation finished!"
