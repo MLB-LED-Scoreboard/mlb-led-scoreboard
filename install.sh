@@ -6,7 +6,7 @@ usage() {
     Usage: $0 [-a] [-c] [-m] [-p]
 
     Options:
-        -c, --skip-config:  Skip creating a new JSON config.
+        -c, --skip-config:  Skip updating JSON configuration files.
         -m, --skip-matrix:  Skip building matrix driver dependency. Video display will default to emulator mode.
         -p, --skip-python:  Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
 
@@ -106,33 +106,38 @@ fi
 if [ "$SKIP_CONFIG" = true ]; then
     echo
     echo "------------------------------------"
-    echo "  Skipping config.json file creation"
+    echo "  Skipping configuration updates"
     echo "------------------------------------"
     echo
 else
+    if [ ! -f "./config.json" ]; then
+        cp config.json.example config.json
+        chmod 777 config.json
+    fi
+
+    # Yellow
+    printf "\e[33m"
     echo
     echo "==================================================================================="
-    echo "  You'll need a config.json file to customize your settings. If you are updating"
-    echo "  from an older version and you were required to run this install script again or"
-    echo "  this is a fresh install, it's recommended we make a fresh one right now."
-    echo "  This will create a brand new 'config.json' file with default values so edit this"
-    echo "  file with your own settings."
+    echo "  If you have custom configurations, colors, or coordinates, it's recommended to"
+    echo "  update them with the latest options at this time."
+    echo
+    echo "  This operation is automatic and will ensure you have up-to-date configuration."
+    echo 
+    echo "  This action will NOT override any custom configuration you already have unless"
+    echo "  the option has been obsoleted and is no longer in use."
     echo "==================================================================================="
     echo
+    printf "\e[0m"
+    # End yellow
 
     read -p "Would you like to do this now? [Y/n] " answer
 
     echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        rm -f config.json
-        cp config.json.example config.json
-        chmod 777 config.json
-        echo "You should now have a fresh config.json file you can customize with your own settings.\n"
-    else
-        echo "If you do not have a config.json, you can manually copy the config.json.example to config.json to customize settings.\n"
+        python3 validate_config.py
     fi
-
-    python3 validate_config.py
+    echo
 fi
 
 echo "Installation finished!"
