@@ -354,9 +354,7 @@ class TestPerformValidation(unittest.TestCase):
 
           perform_validation()
 
-          self.maxDiff = 9999
-          self.assertEqual(
-            mocked_stdout.getvalue(),
+          expected_output = \
 f'''
 Fetching custom config files...
   - Found custom configuration at {self.config_fixture_path}!
@@ -371,6 +369,11 @@ Fetching custom config files...
           }}
       Finished updating {self.config_fixture_path}!
 '''.lstrip("\n")
+
+          self.maxDiff = 9999
+          self.assertEqual(
+            mocked_stdout.getvalue(),
+            expected_output
           )
 
         with open(self.config_fixture_path) as config_file:
@@ -383,9 +386,9 @@ Fetching custom config files...
           self.assertEqual(
             new_config["preferred"],
             {
-		          "teams": ["Braves"],
-		          "divisions": ["AL Central", "AL Wild Card"]
-	          }
+              "teams": ["Braves"],
+              "divisions": ["AL Central", "AL Wild Card"]
+            }
           )
 
 
