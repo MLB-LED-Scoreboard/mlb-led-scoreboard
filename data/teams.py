@@ -56,7 +56,7 @@ TEAM_ABBR_LN = {
     "New York Yankees": "NYY",
     "Milwaukee Brewers": "MIL",
     "Los Angeles Angels": "LAA",
-    "Arizona Diamondbacks": "ARI",
+    "Arizona Diamondbacks": "AZ",
     "Baltimore Orioles": "BAL",
     "Boston Red Sox": "BOS",
     "Chicago Cubs": "CHC",
