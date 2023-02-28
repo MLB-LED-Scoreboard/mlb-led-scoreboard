@@ -6,18 +6,67 @@ COLORS_DIR      = os.path.join(ROOT_DIR, "colors")
 
 
 class TermColor:
-    RED     = 31
-    GREEN   = 32
-    YELLOW  = 33
-    BLUE    = 34
-    MAGENTA = 35
-    CYAN    = 36
+  RED     = 31
+  GREEN   = 32
+  YELLOW  = 33
+  BLUE    = 34
+  MAGENTA = 35
+  CYAN    = 36
 
 
 def colorize(text, color_code):
+  if color_code:
     return f"\033[{color_code}m{text}\033[0m"
+  else:
+    return text
 
-def upsert_config(config, schema, result=None, changeset={ "add": [], "delete": []}):
+def deep_pop(dictionary, key, path=[]):
+  '''
+  Pops a key from the target dictionary at the given path (or top level if not provided).
+  '''
+  temp = copy.deepcopy(dictionary)
+  dictionary = temp
+
+  for path_key in path:
+    temp = temp[path_key]
+
+  temp.pop(key)
+
+  return dictionary
+
+def deep_set(dictionary, key, value, path=[]):
+  '''
+  Sets a key from the target dictionary at the given path (or top level if not provided).
+  '''
+  temp = copy.deepcopy(dictionary)
+  dictionary = temp
+
+  for path_key in path:
+    temp = temp[path_key]
+
+  temp[key] = value
+
+  return dictionary
+
+def generate_change(origin, key, path):
+  '''
+  Creates a dictionary with all the keys along the path in the source dictionary, with the last key-value pair set to
+  the target.
+
+  The target key must be present in the origin.
+  '''
+  temp = {}
+  change = temp
+
+  for path_key in path:
+    temp[path_key] = {}
+    temp = temp[path_key]
+
+  temp[key] = origin[key]
+
+  return change  
+
+def upsert_config(config, schema, result=None, changeset=None, path=None):
   '''
   Recursively updates deeply nested configuration against a given schema.
   At each level, the keys in the configuration are compared against the schema.
@@ -34,6 +83,8 @@ def upsert_config(config, schema, result=None, changeset={ "add": [], "delete": 
   '''
   if result is None:
     result = copy.deepcopy(config)
+    changeset = { "add": [], "delete": [] }
+    path = []
 
   dirty = False
 
@@ -41,7 +92,12 @@ def upsert_config(config, schema, result=None, changeset={ "add": [], "delete": 
     for key in kind.keys():
       if key in config and key in schema and key in result:
         if isinstance(result[key], dict):
-          (possibly_dirty, result, _) = upsert_config(config[key], schema[key], result, changeset)
+          path = copy.deepcopy(path)
+          path.append(key)
+
+          (possibly_dirty, result, _) = upsert_config(config[key], schema[key], result, changeset, path)
+          
+          path.pop()
 
           # Don't let deeply nested upserts unset the dirty flag
           dirty = possibly_dirty or dirty
@@ -49,13 +105,19 @@ def upsert_config(config, schema, result=None, changeset={ "add": [], "delete": 
         continue
 
       if key in config and key not in schema:
-        changeset["delete"].append({ key: config[key] })
-        result.pop(key)
-        dirty = True
+        change = generate_change(config, key, path)
+
+        if change not in changeset["delete"]:
+          changeset["delete"].append(change)
+          result = deep_pop(result, key, path=path)
+          dirty = True
       if key in schema and key not in config:
-        changeset["add"].append({ key: schema[key] })
-        result[key] = schema[key]
-        dirty = True
+        change = generate_change(schema, key, path)
+
+        if change not in changeset["add"]:
+          changeset["add"].append(change)
+          result = deep_set(result, key, schema[key], path=path)
+          dirty = True
 
   return (dirty, result, changeset)
 
@@ -81,19 +143,18 @@ def indent_string(string, indent, num_indents=1):
   '''
   return (indent * num_indents) + string
 
-def format_change(change, indent, num_indents=0, delimiter="-", color=None):
+def format_change(change, indent="  ", num_indents=0, delimiter="-", color=None):
   '''
   Formats a change (dict) with the given indent as JSON.
   
   Optionally pass the delimiter, number of indents, and text color as required.
   '''
-
   change_string = json.dumps(change, indent=indent)
   space = " " * (len(delimiter) + 1)
   output = ""
-  whitespace_size = len(indent) + 1
+  whitespace_size = len(indent)
 
-  for line_no, line in enumerate(change_string.split("\n")[1:-1]):
+  for line_no, line in enumerate(change_string.split("\n")[1:]):
     if line_no == 0:
       # Indent the string with the delimiter, after slicing off all the extra whitespace at the beginning.
       line = indent_string(delimiter + " " + line[whitespace_size:], indent, num_indents)
@@ -105,12 +166,14 @@ def format_change(change, indent, num_indents=0, delimiter="-", color=None):
     if color:
       line = colorize(line, color)
 
-    output += line
+    output += line.rstrip()
 
-  return output
+  return output.strip("\n")
 
-
-if __name__ == "__main__":
+def perform_validation():
+  '''
+  Performs configuration validation and upserting, printing status along the way.
+  '''
   indent = "  "
 
   print("Fetching custom config files...")
@@ -152,3 +215,6 @@ if __name__ == "__main__":
           TermColor.GREEN
         )
       )
+
+if __name__ == "__main__":
+  perform_validation()
