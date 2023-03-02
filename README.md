@@ -210,7 +210,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 "standings":                             Options for displaying standings for a division
   "always_display"               Bool    Display standings for your preferred divisions.
   "mlb_offday"                   Bool    Display standings for your preferred divisions when there are no games on the current day.
-  "team_offday"                  Bool    Display standings for your preferred divisions when the preferred_teams is not playing on the current day.
+  "team_offday"                  Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
   "display_no_games_live"        Bool    Display standings when none of your games are currently live.
 
 "rotation":                              Options for rotation through the day's games
