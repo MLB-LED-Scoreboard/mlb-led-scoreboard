@@ -171,6 +171,11 @@ def format_change(change, indent="  ", num_indents=0, delimiter="-", color=None)
   return output.strip("\n")
 
 def convert_rotation_rates(config):
+  '''
+  DEPRECATION FIX
+  Detects whether config has rotation->rates set to a single float instead of a dict of floats.
+  If so, convert it, and return whether it was converted and the result.
+  '''
   changed = False
   try:
     if not isinstance(config["rotation"]["rates"], dict):
