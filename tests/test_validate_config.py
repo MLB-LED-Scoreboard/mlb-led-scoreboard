@@ -247,7 +247,7 @@ class TestValidateConfigMethods(unittest.TestCase):
       }
     )
 
-  def test_upsert_config_preserves_values(self):
+  def test_upsert_config_preserves_dict_values(self):
     config = { "this": { "is true": True } }
     schema = { "this": { "is true": False } }
 
@@ -262,6 +262,75 @@ class TestValidateConfigMethods(unittest.TestCase):
         "delete": []
       }
     )
+
+  def test_upsert_config_preserves_non_dict_values(self):
+    config = { "this": True }
+    schema = { "this": { "is true": False } }
+
+    (changed, result, changes) = upsert_config(config, schema)
+
+    self.assertFalse(changed)
+    self.assertEqual(config, result)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": []
+      }
+    )
+
+  def test_convert_rotation_rates_with_numeric(self):
+    config = { "rotation": { "rates": 15.0 } }
+    expected = {
+      "rotation": {
+        "rates": {
+          "live": 15.0,
+          "final": 15.0,
+          "pregame": 15.0
+        }
+      }
+    }
+
+    (changed, result) = convert_rotation_rates(config)
+
+    self.assertTrue(changed)
+    self.assertEqual(expected, result)
+
+  def test_convert_rotation_rates_with_dict(self):
+    config = {
+      "rotation": {
+        "rates": {
+          "live": 15.0,
+          "final": 15.0,
+          "pregame": 15.0
+        }
+      }
+    }
+
+    (changed, result) = convert_rotation_rates(config)
+
+    self.assertFalse(changed)
+    self.assertEqual(config, result)
+
+  def test_convert_rotation_rates_with_empty_dict(self):
+    config = {}
+
+    (changed, result) = convert_rotation_rates(config)
+
+    self.assertFalse(changed)
+    self.assertEqual(config, result)
+
+  def test_convert_rotation_rates_with_dict_without_nested_rates(self):
+    config = {
+      "rotation": {
+        "rates": {}
+      }
+    }
+
+    (changed, result) = convert_rotation_rates(config)
+
+    self.assertFalse(changed)
+    self.assertEqual(config, result)
 
   def test_format_change(self):
     change = { "some": { "arbitrary": "change" } }
@@ -335,7 +404,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 class TestPerformValidation(unittest.TestCase):
 
   def setUp(self):
-    self.config_fixture_path = os.path.join("tests", "fixtures", "config_fixture.json")
+    self.config_fixture_path = os.path.join("tests", "fixtures", "config.json")
     with open(self.config_fixture_path) as config_file:
       self.config = json.load(config_file)
 
@@ -345,19 +414,20 @@ class TestPerformValidation(unittest.TestCase):
 
   def test_perform_validation_end_to_end(self):
     with mock.patch("validate_config.custom_config_files") as mocked_custom_files:
-      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config_fixture.json")]
+      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json")]
 
       with mock.patch("validate_config.colorize") as mocked_color:
         mocked_color.side_effect = lambda text, _: text
 
         with mock.patch('sys.stdout', new=io.StringIO()) as mocked_stdout:
 
-          perform_validation()
+          perform_validation(root_dir=os.path.join("tests", "fixtures"))
 
           expected_output = \
 f'''
 Fetching custom config files...
   - Found custom configuration at {self.config_fixture_path}!
+    (DEPRECATION WARNING) Config option rotation->rates no longer supports single Float values! Converting this value now...
     Adding missing keys and deleting unused configuration options...
       Additions
         - "test_config": {{
@@ -388,6 +458,16 @@ Fetching custom config files...
             {
               "teams": ["Braves"],
               "divisions": ["AL Central", "AL Wild Card"]
+            }
+          )
+
+          # Check deprecated rotation rates as single float has been converted correctly
+          self.assertEqual(
+            new_config["rotation"]["rates"],
+            {
+              "live": 20.0,
+              "final": 20.0,
+              "pregame": 20.0
             }
           )
 

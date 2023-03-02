@@ -128,6 +128,10 @@ class Config:
             try:
                 rate = float(self.rotation_rates)
                 self.rotation_rates = {"live": rate, "final": rate, "pregame": rate}
+
+                debug.warning("(DEPRECATION) Config option rotation->rates no longer supports single Float values!")
+                debug.warning("              Re-run the install/update script to convert to the new format")
+                debug.warning("              Example: sudo sh ./install.sh")
             except:
                 debug.warning(
                     "rotation_rates should be a Dict or Float. Using default value. {}".format(DEFAULT_ROTATE_RATES)
@@ -179,7 +183,7 @@ class Config:
         if os.path.isfile(path):
             j = json.load(open(path))
         else:
-            debug.warning(f"Could not find json file {path}.  Skipping.")
+            debug.info(f"Could not find json file {path}.  Skipping.")
         return j
 
     # example config is a "base config" which always gets read.
