@@ -170,7 +170,28 @@ def format_change(change, indent="  ", num_indents=0, delimiter="-", color=None)
 
   return output.strip("\n")
 
-def perform_validation():
+def convert_rotation_rates(config):
+  '''
+  DEPRECATION FIX
+  Detects whether config has rotation->rates set to a single float instead of a dict of floats.
+  If so, convert it, and return whether it was converted and the result.
+  '''
+  changed = False
+  try:
+    if not isinstance(config["rotation"]["rates"], dict):
+      rate = config["rotation"]["rates"]
+
+      config["rotation"]["rates"] = {
+        "live": rate,
+        "final": rate,
+        "pregame": rate 
+      }
+
+      changed = True
+  finally:
+    return changed, config
+
+def perform_validation(root_dir=ROOT_DIR):
   '''
   Performs configuration validation and upserting, printing status along the way.
   '''
@@ -187,7 +208,27 @@ def perform_validation():
     with open(os.path.join(directory, file + ".example")) as schema_file:
       schema = json.load(schema_file)
 
+    should_overrwrite_config = False
+
+    # BEGIN DEPRECATION
+    # Can be removed when deprecated rotation rate handling of Floats is removed
+    rates_converted = False
+    if directory == root_dir and file == "config.json":
+      (rates_converted, config) = convert_rotation_rates(config)
+      should_overrwrite_config = rates_converted
+
+      if rates_converted:
+        print(
+          colorize(
+            indent_string("(DEPRECATION WARNING) Config option rotation->rates no longer supports single Float values! Converting this value now...", indent, 2),
+            TermColor.YELLOW
+          )
+        )
+    # END DEPRECATION
+
     (changed, result, changes) = upsert_config(config, schema)
+
+    should_overrwrite_config = should_overrwrite_config or changed
 
     if changed:
       print(indent_string("Adding missing keys and deleting unused configuration options...", indent, 2))
@@ -204,9 +245,9 @@ def perform_validation():
           for change in changes[change_type]:
             print(format_change(change, indent, num_indents=4, color=color))
 
+    if should_overrwrite_config:
       with open(os.path.join(directory, file), "w") as config_file:
         json.dump(result, config_file, indent=indent)
-
       print(indent_string(f"Finished updating {os.path.join(directory, file)}!", indent, 3))
     else:
       print(
