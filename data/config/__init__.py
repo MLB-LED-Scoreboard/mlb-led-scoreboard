@@ -134,7 +134,7 @@ class Config:
                 debug.warning("              Example: sudo sh ./install.sh")
             except:
                 debug.warning(
-                    "rotation_rates should be a Dict or Float. Using default value. {}".format(DEFAULT_ROTATE_RATES)
+                    "rotation_rates should be a Dict. Using default value. {}".format(DEFAULT_ROTATE_RATES)
                 )
                 self.rotation_rates = DEFAULT_ROTATE_RATES
 
