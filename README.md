@@ -1,12 +1,16 @@
-# mlb-led-scoreboard 
+# mlb-led-scoreboard
+
 ![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://join.slack.com/t/mlb-led-scoreboard/shared_invite/zt-1f6n4axo4-r32OH7dlSAjEjstFV4RDNQ)
+
+<a href="assets/img/header.jpg">
+  <img alt="Project header" width="800px" height="auto" src="assets/img/header.jpg">
+</a>
 
 ---------------
 
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
 
 Requires a Raspberry Pi and an LED board hooked up via the GPIO pins.
-
 
 **Currently supported boards:**
  * 32x32 (Limited number of features)
@@ -49,27 +53,52 @@ It can display live games in action, and optionally rotate every 15 seconds thro
 
 The board refreshes the list of games every 15 minutes.
 
-![Cubs-Indians game](assets/img/cubs-indians-demo.jpg) ![Pirates-Cubs game](assets/img/pirates-cubs-demo.jpg) ![Giants-Brewers-wide game](assets/img/wide-ingame-demo.jpg) ![Cubs-Braves Final](assets/img/wide-final-demo.jpg) ![Tigers-Royals game](assets/img/128x32-live.png) ![Astros-Athletics game](assets/img/128x64.png) ![64x64 example](assets/img/64x64-live.jpg)
+<a href="assets/img/cubs-indians-demo.jpg">
+  <img alt="Cubs-Indians game" width="auto" height="200" src="assets/img/cubs-indians-demo.jpg">
+</a>
+<a href="assets/img/pirates-cubs-demo.jpg">
+  <img alt="Pirates-Cubs game" width="auto" height="200" src="assets/img/pirates-cubs-demo.jpg">
+</a>
+<a href="assets/img/wide-final-demo.jpg">
+  <img alt="Cubs-Braves Final" width="auto" height="200" src="assets/img/wide-final-demo.jpg">
+</a>
+<a href="assets/img/64x64-live.jpg">
+  <img alt="64x64 example" width="auto" height="200" src="assets/img/64x64-live.jpg">
+</a>
 
-Sometimes you don't get baseball though :(
-
-![I hate offdays](assets/img/offday.jpg)
+<a href="assets/img/wide-ingame-demo.jpg">
+  <img alt="Giants-Brewers-wide game" width="auto" height="200" src="assets/img/wide-ingame-demo.jpg">
+</a>
+<a href="assets/img/128x32-live.png">
+  <img alt="Tigers-Royals game" width="auto" height="200" src="assets/img/128x32-live.png">
+</a>
 
 ### Pregame
 If a game hasn't started yet, a pregame screen will be displayed with the probable starting pitchers.
 
-![Pregame](assets/img/pregame.jpg)
+<a href="assets/img/pregame.jpg">
+  <img alt="Pregame" width="auto" height="200" src="assets/img/pregame.jpg"></a>
+<a href="assets/img/128x64.png">
+  <img alt="Astros-Athletics pregame" width="auto" height="200" src="assets/img/128x64.png"></a>
 
 ### Division Standings
 It can display standings for the provided division. Since the 32x32 board is too small to display wins and losses together, the wins and losses are alternated on the board every 5 seconds. You can also specify "NL Wild Card" or "AL Wild Card" as a 'division' to see the top 5 teams in each league's wild card race.
 
-![standings-wins](assets/img/standings-wins.jpg) ![standings-losses](assets/img/standings-losses.jpg) ![standings-wide](assets/img/wide-standings-demo.jpg)
+<a href="assets/img/standings-wins.jpg">
+  <img alt="standings-wins" width="auto" height="200" src="assets/img/standings-wins.jpg">
+</a>
+<a href="assets/img/standings-losses.jpg">
+  <img alt="standings-losses" width="auto" height="200" src="assets/img/standings-losses.jpg">
+</a>
+<a href="assets/img/wide-standings-demo.jpg">
+  <img alt="standings-wide" width="auto" height="200" src="assets/img/wide-standings-demo.jpg">
+</a>
 
 ## Installation
 ### Hardware Assembly
 [See the wiki page for the original project for a step-by-step guide.](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki) This README is primarily focused on the MLB software, but for those coming here from Reddit or elsewhere never having built things with a Raspberry Pi, this should help get you going.
 
-My parts list specifically is located [here](https://www.adafruit.com/wishlists/527606)
+A sample bill of materials (BOM) is located [here](https://www.adafruit.com/wishlists/527606)
 
 ### Software Installation
 #### Requirements
@@ -115,7 +144,7 @@ Additional flags are available for customizing your install:
 
 -a, --skip-all     Performs all above skips.
 
---emulator-only:    Do not install dependencies under sudo. Skips building matrix dependencies (Recommended)
+--emulator-only    Do not install dependencies under sudo. Skips building matrix dependencies.
 
 -h, --help         Displays help
 ```
@@ -168,50 +197,53 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 A default `config.json.example` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
 ```
-"preferred":                           Options for team and division preference
-  "teams"                      Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                  Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
+"preferred":                             Options for team and division preference
+  "teams"                        Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
+  "divisions"                    Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
-"news_ticker":                         Options for displaying a nice clock/weather/news ticker screen
-  "always_display"             Bool    Display the news ticker screen at all times (supercedes the standings setting)
-  "team_offday"                Bool    Display the news ticker when your prefered team is on an offday
-  "preferred_teams"            Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
-  "traderumors"                Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams
-  "mlb_news"                   Bool    Include MLB's frontpage news
-  "countdowns"                 Bool    Include various countdowns in the ticker.
-  "date"                       Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
-  "date_format"                String  Display the date with a given format. You can check all of the date formatting options at [strftime.org](strftime.org)
+"news_ticker":                           Options for displaying a nice clock/weather/news ticker screen
+  "always_display"               Bool    Display the news ticker screen at all times. Supercedes the standings setting.
+  "team_offday"                  Bool    Display the news ticker when your prefered team is on an offday.
+  "preferred_teams"              Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
+  "traderumors"                  Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
+  "mlb_news"                     Bool    Include MLB's frontpage news.
+  "countdowns"                   Bool    Include various countdowns in the ticker.
+  "date"                         Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
+  "date_format"                  String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
 
-"standings":                           Options for displaying standings for a division
-  "always_display"             Bool    Display standings for the provided preferred_divisions.
-  "mlb_offday"                 Bool    Display standings for the provided preferred_divisions when there are no games on the current day.
-  "team_offday"                Bool    Display standings for the provided preferred_divisions when the preferred_teams is not playing on the current day.
-  "display_no_games_live"      Bool    Display standings when none of your games are currently live.
+"standings":                             Options for displaying standings for a division
+  "always_display"               Bool    Display standings for your preferred divisions.
+  "mlb_offday"                   Bool    Display standings for your preferred divisions when there are no games on the current day.
+  "team_offday"                  Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
+  "display_no_games_live"        Bool    Display standings when none of your games are currently live.
 
-"rotation":                            Options for rotation through the day's games
-  "enabled"                    Bool    Rotate through each game of the day every 15 seconds.
-  "scroll_until_finished"      Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"             Bool    Only rotate through games in your preferred_teams list.
-  "only_live"                  Bool    Only rotate through games which are currently playing. Can be composed with only_preferred.
-  "rates"                      Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
-                               Float   A Float can be used to set all screen types to the same rotate rate.
+"rotation":                              Options for rotation through the day's games
+  "enabled"                      Bool    Rotate through each game of the day according to the configured `rates`.
+  "scroll_until_finished"        Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+  "only_preferred"               Bool    Only rotate through games in your preferred teams.
+  "only_live"                    Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
+  "rates"                        Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
+                                 Float   (DEPRECATED) A Float can be used to set all screen types to the same rotate rate. 
 
-  "while_preferred_team_live":         Options for rotating while your chosen preferred_teams is live
-    "enabled"                  Bool    Rotation is enabled while your configured preferred_teams game is live.
-    "during_inning_breaks"     Bool    Rotation is enabled while your configured preferred_teams game is live during an inning break.
+  "while_preferred_team_live":           Options for rotating between screens while one of your preferred teams is live
+    "enabled"                    Bool    Enable rotation while a preferred team is live.
+    "during_inning_breaks"       Bool    Enable rotation while a preferred team is live during an inning break.
 
-"weather":                             Options for retrieving the weather
-  "apikey"                     String  An API key is required to use the weather service. You can get one for free at [Open Weather Map](https://home.openweathermap.org/users/sign_up).
-  "location"                   String  The `{city name},{state code},{country code}` according to [ISO-3166 standards](https://www.iso.org/obp/ui/#search). Check out the [OpenWeather doc](https://openweathermap.org/current#name) for more info. ex: `"Chicago,il,us"
-  "metric_units"               Bool    Set true for celsius and meters/s. Set false for fahrenheit and miles per hour.
+"weather":                               Options for retrieving the weather
+  "apikey"                       String  An API key is required to use the weather service.
+                                         You can get one for free at Open Weather Map (https://home.openweathermap.org/users/sign_up).
+  "location"                     String  The `{city name},{state code},{country code}` according to ISO-3166 standards (https://www.iso.org/obp/ui/#search).
+                                         Check out the OpenWeather documentation (https://openweathermap.org/current#name) for more info.
+                                         Ex: `"Chicago,il,us"`
+  "metric_units"                 Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
 
-"time_format"                  String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
-"end_of_day"                   String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your pi.
-"full_team_names"              Bool    If true and on a 64-wide board, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards. Defaults to true when on a 64-wide board.
-"short_team_names_for_runs_hits" Bool If true and full_team_names is true and Runs Hits Errors is enabled, will use abreviated team names when Runs or Hits > 9
-"scrolling_speed"              Integer Supports an integer between 0 and 4. Sets how fast the scrolling text scrolls.
-"debug"                        Bool    Game and other debug data is written to your console.
-"demo_date"                    String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
+"time_format"                    String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
+"end_of_day"                     String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
+"full_team_names"                Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
+"short_team_names_for_runs_hits" Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
+"scrolling_speed"                Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
+"debug"                          Bool    Game and other debug data is written to your console.
+"demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Additional Features
