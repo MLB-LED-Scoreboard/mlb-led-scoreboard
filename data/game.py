@@ -12,7 +12,7 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,weather,condition,temp,wind"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -220,8 +220,8 @@ class Game:
 
     def pitcher(self):
         try:
-            batter_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
-            return self.boxscore_name(batter_id)
+            pitcher_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            return self.boxscore_name(pitcher_id)
         except:
             return ""
 
@@ -245,6 +245,17 @@ class Game:
                 )
         except:
             return None
+
+    def current_pitcher_pitch_count(self):
+        try:
+            pitcher_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            ID = Game._format_id(pitcher_id)
+            try:
+                return self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+            except:
+                return self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+        except:
+            return 0
 
     def note(self):
         try:
