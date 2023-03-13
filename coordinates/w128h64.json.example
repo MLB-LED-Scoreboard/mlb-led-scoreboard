@@ -133,10 +133,16 @@
       "font_name": "4x6",
       "x": 1,
       "y": 50,
-      "width": 41,
       "enabled": true,
       "mph": true,
       "desc_length": "Long"
+    },
+    "pitch_count": {
+      "font_name": "4x6",
+      "x": 1,
+      "y": 50,
+      "enabled": false,
+      "append_pitcher_name": false
     },
     "loop": 68,
     "strikeout": {

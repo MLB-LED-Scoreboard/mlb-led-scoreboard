@@ -47,8 +47,9 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 # --------------- at-bat ---------------
 def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation, pitches: Pitches):
-    plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, text_pos)
+    plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, pitches, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
+    __render_pitch_count(canvas, layout, colors, pitches)
     if strikeout:
         if animation:
             __render_strikeout(canvas, layout, colors, looking)
@@ -88,11 +89,16 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
     return pos
 
 
-def __render_pitcher_text(canvas, layout, colors, pitcher, text_pos):
+def __render_pitcher_text(canvas, layout, colors, pitcher, pitches: Pitches, text_pos):
     coords = layout.coords("atbat.pitcher")
     color = colors.graphics_color("atbat.pitcher")
     font = layout.font("atbat.pitcher")
     bgcolor = colors.graphics_color("default.background")
+
+    pitch_count = layout.coords("atbat.pitch_count")
+    if pitch_count["enabled"] and pitch_count["append_pitcher_name"]:
+        pitcher += f" ({pitches.pitch_count})"
+
     pos = scrollingtext.render_text(
         canvas,
         coords["x"] + font["size"]["width"] * 2,
@@ -113,18 +119,26 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
     coords = layout.coords("atbat.pitch")
     color = colors.graphics_color("atbat.pitch")
     font = layout.font("atbat.pitch")
-    bgcolor = colors.graphics_color("default.background")
-    if int(pitches.last_pitch_speed) > 0 and layout.coords("atbat.pitch")["enabled"]:
+    if int(pitches.last_pitch_speed) and coords["enabled"]:
         mph = " "
-        if layout.coords("atbat.pitch")["mph"]:
+        if coords["mph"]:
             mph = "mph "
-        if layout.coords("atbat.pitch")["desc_length"] == "Long":
+        if coords["desc_length"] == "Long":
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type_long
-        elif layout.coords("atbat.pitch")["desc_length"] == "Short":
+        elif ["desc_length"] == "Short":
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
         else:
-            pitch_text = None
+            pitch_text = ""
         graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_text)
+
+
+def __render_pitch_count(canvas, layout, colors, pitches: Pitches):
+    coords = layout.coords("atbat.pitch_count")
+    color = colors.graphics_color("atbat.pitch_count")
+    font = layout.font("atbat.pitch_count")
+    if coords["enabled"] and not coords["append_pitcher_name"]:
+        pitch_count = f"{pitches.pitch_count}P"
+        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_count)
 
 
 # --------------- bases ---------------
