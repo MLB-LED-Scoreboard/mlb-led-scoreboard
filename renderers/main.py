@@ -18,6 +18,7 @@ class MainRenderer:
     def __init__(self, matrix, data):
         self.matrix = matrix
         self.data: Data = data
+        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.game_changed_time = time.time()
@@ -164,7 +165,13 @@ class MainRenderer:
             self.__max_scroll_x(layout.coords("pregame.scrolling_text"))
             pregame = Pregame(game, self.data.config.time_format)
             pos = pregamerender.render_pregame(
-                self.canvas, layout, colors, pregame, self.scrolling_text_pos, self.data.config.pregame_weather
+                self.canvas,
+                layout,
+                colors,
+                pregame,
+                self.scrolling_text_pos,
+                self.data.config.pregame_weather,
+                self.is_playoffs,
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
@@ -172,7 +179,7 @@ class MainRenderer:
             self.__max_scroll_x(layout.coords("final.scrolling_text"))
             final = Postgame(game)
             pos = postgamerender.render_postgame(
-                self.canvas, layout, colors, final, scoreboard, self.scrolling_text_pos
+                self.canvas, layout, colors, final, scoreboard, self.scrolling_text_pos, self.is_playoffs
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 

@@ -37,6 +37,9 @@ class Postgame:
             self.losing_pitcher_wins = 0
             self.losing_pitcher_losses = 0
 
+        self.series_status = game.series_status()
+
+
     def __str__(self):
         return "<{} {}> W: {} {}-{}; L: {} {}-{}; S: {} ({})".format(
             self.__class__.__name__,

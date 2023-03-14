@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+from typing import Optional
 
 import statsapi
 
@@ -22,18 +23,24 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_ID(game_id, date, broadcasts=None):
-        game = Game(game_id, date, broadcasts or [])
+    def from_scheduled(game_data) -> Optional["Game"]:
+        game = Game(
+            game_data["game_id"],
+            game_data["game_date"],
+            game_data["national_broadcasts"] or [],
+            game_data["series_status"] or "",
+        )
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts):
+    def __init__(self, game_id, date, broadcasts, series_status):
         self.game_id = game_id
-        self.date = date.strftime("%Y-%m-%d")
+        self.date = date
         self.starttime = time.time()
         self._data = {}
         self._broadcasts = broadcasts
+        self._series_status = series_status
         self._status = {}
 
     def update(self, force=False) -> UpdateStatus:
@@ -274,6 +281,9 @@ class Game:
 
     def broadcasts(self):
         return self._broadcasts
+
+    def series_status(self):
+        return self._series_status
 
     def current_play_result(self):
         result = self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", "")
