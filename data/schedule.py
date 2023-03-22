@@ -104,7 +104,7 @@ class Schedule:
         ):
             game_index = self._game_index_for_preferred_team()
             scheduled_game = self._games[game_index]
-            preferred_game = Game.from_ID(scheduled_game["game_id"], self.date, scheduled_game["national_broadcasts"])
+            preferred_game = Game.from_scheduled(scheduled_game)
             if preferred_game is not None:
                 debug.log(
                     "Preferred Team's Game Status: %s, %s %d",
@@ -146,7 +146,7 @@ class Schedule:
     def __current_game(self):
         if self._games:
             scheduled_game = self._games[self.current_idx]
-            return Game.from_ID(scheduled_game["game_id"], self.date, scheduled_game["national_broadcasts"])
+            return Game.from_scheduled(scheduled_game)
         return None
 
     @staticmethod

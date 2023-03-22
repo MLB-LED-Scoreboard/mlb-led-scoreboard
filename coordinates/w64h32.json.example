@@ -126,13 +126,17 @@
       "width": 24
     },
     "pitch": {
-      "font_name": "4x6",
       "x": 1,
       "y": 50,
-      "width": 41,
       "enabled": false,
       "mph": false,
       "desc_length": "Short"
+    },
+    "pitch_count": {
+      "x": 1,
+      "y": 50,
+      "enabled": false,
+      "append_pitcher_name": false
     },
     "loop": 36,
     "strikeout": {

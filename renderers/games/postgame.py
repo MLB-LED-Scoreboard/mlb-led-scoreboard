@@ -10,12 +10,14 @@ from utils import center_text_position
 NORMAL_GAME_LENGTH = 9
 
 
-def render_postgame(canvas, layout: Layout, colors: Color, postgame: Postgame, scoreboard: Scoreboard, text_pos):
+def render_postgame(
+    canvas, layout: Layout, colors: Color, postgame: Postgame, scoreboard: Scoreboard, text_pos, is_playoffs
+):
     _render_final_inning(canvas, layout, colors, scoreboard)
-    return _render_decision_scroll(canvas, layout, colors, postgame, text_pos)
+    return _render_decision_scroll(canvas, layout, colors, postgame, text_pos, is_playoffs)
 
 
-def _render_decision_scroll(canvas, layout, colors, postgame, text_pos):
+def _render_decision_scroll(canvas, layout, colors, postgame, text_pos, is_playoffs):
     coords = layout.coords("final.scrolling_text")
     font = layout.font("final.scrolling_text")
     color = colors.graphics_color("final.scrolling_text")
@@ -30,6 +32,10 @@ def _render_decision_scroll(canvas, layout, colors, postgame, text_pos):
     )
     if postgame.save_pitcher:
         scroll_text += " SV: {} ({})".format(postgame.save_pitcher, postgame.save_pitcher_saves)
+
+    if is_playoffs:
+        scroll_text += "   " + postgame.series_status
+
     return scrollingtext.render_text(
         canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, scroll_text, text_pos
     )

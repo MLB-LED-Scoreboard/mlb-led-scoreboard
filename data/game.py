@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+from typing import Optional
 
 import statsapi
 
@@ -12,7 +13,7 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,weather,condition,temp,wind"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -22,18 +23,24 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_ID(game_id, date, broadcasts=None):
-        game = Game(game_id, date, broadcasts or [])
+    def from_scheduled(game_data) -> Optional["Game"]:
+        game = Game(
+            game_data["game_id"],
+            game_data["game_date"],
+            game_data["national_broadcasts"] or [],
+            game_data["series_status"] or "",
+        )
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts):
+    def __init__(self, game_id, date, broadcasts, series_status):
         self.game_id = game_id
-        self.date = date.strftime("%Y-%m-%d")
+        self.date = date
         self.starttime = time.time()
         self._data = {}
         self._broadcasts = broadcasts
+        self._series_status = series_status
         self._status = {}
 
     def update(self, force=False) -> UpdateStatus:
@@ -220,8 +227,8 @@ class Game:
 
     def pitcher(self):
         try:
-            batter_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
-            return self.boxscore_name(batter_id)
+            pitcher_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            return self.boxscore_name(pitcher_id)
         except:
             return ""
 
@@ -246,6 +253,17 @@ class Game:
         except:
             return None
 
+    def current_pitcher_pitch_count(self):
+        try:
+            pitcher_id = self._data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            ID = Game._format_id(pitcher_id)
+            try:
+                return self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+            except:
+                return self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+        except:
+            return 0
+
     def note(self):
         try:
             return self._data["liveData"]["linescore"]["note"]
@@ -263,6 +281,9 @@ class Game:
 
     def broadcasts(self):
         return self._broadcasts
+
+    def series_status(self):
+        return self._series_status
 
     def current_play_result(self):
         result = self._data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", "")
