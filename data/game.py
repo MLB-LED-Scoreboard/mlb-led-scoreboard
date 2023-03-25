@@ -260,7 +260,7 @@ class Game:
             try:
                 return self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
             except:
-                return self._data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
+                return self._data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["stats"]["pitching"]["numberOfPitches"]
         except:
             return 0
 
