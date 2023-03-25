@@ -209,8 +209,8 @@
     }
   },
   "standings": {
-    "__comment__": "Delete this next line and make offset 8 to make the font much larger but only display 4 teams",
     "font_name": "4x6",
+    "start": 0,
     "offset": 6,
     "height": 32,
     "width": 128,

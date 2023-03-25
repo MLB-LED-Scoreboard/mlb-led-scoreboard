@@ -105,7 +105,15 @@
   },
   "batter_count": {
     "x": 46,
-    "y": 46
+    "y": 46,
+    "nohit": {
+      "x": 46,
+      "y": 46
+    },
+    "perfect_game": {
+      "x": 46,
+      "y": 46
+    }
   },
   "nohitter": {
     "x": 30,

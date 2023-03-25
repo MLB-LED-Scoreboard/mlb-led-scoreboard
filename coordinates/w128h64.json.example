@@ -188,6 +188,7 @@
     }
   },
   "standings": {
+    "font_name": "4x6",
     "start": 1,
     "offset": 12,
     "height": 60,

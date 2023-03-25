@@ -206,6 +206,8 @@
     }
   },
   "standings": {
+    "font_name": "4x6",
+    "start": 0,
     "offset": 6,
     "height": 30,
     "width": 32,
@@ -225,6 +227,14 @@
       "games_back": {
         "x": 64
       }
+    },
+    "postseason": {
+      "matchup_y_gap": 12,
+      "series_x_gap": 32,
+      "wc_x_start": 3,
+      "wc_y_start": 12,
+      "ds_a_y_start": 51,
+      "__comment": "all other coords are based off wild card position"
     }
   },
   "status": {
