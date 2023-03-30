@@ -125,7 +125,7 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
             mph = "mph "
         if coords["desc_length"] == "Long":
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type_long
-        elif ["desc_length"] == "Short":
+        elif coords["desc_length"] == "Short":
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
         else:
             pitch_text = ""
