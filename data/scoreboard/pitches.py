@@ -20,6 +20,6 @@ class Pitches:
     def __str__(self) -> str:
         return (
             f"Count: {self.balls} - {self.strikes}. "
-            + f"Last pitch: {self.last_pitch_speed}mph {self.last_pitch_type} {self.last_pitch_long} "
+            + f"Last pitch: {self.last_pitch_speed}mph {self.last_pitch_type} {self.last_pitch_type_long} "
             + f" Total pitches: {self.pitch_count}"
         )
