@@ -27,8 +27,8 @@ class Game:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
-            game_data["national_broadcasts"] or [],
-            game_data["series_status"] or "",
+            game_data.get("national_broadcasts", []),
+            game_data.get("series_status", ""),
         )
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
