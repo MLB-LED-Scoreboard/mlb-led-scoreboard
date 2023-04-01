@@ -65,6 +65,10 @@ class Config:
         self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
         self.pregame_weather = json["pregame_weather"]
         self.delay_in_10s_of_seconds = json["preferred_game_update_delay_in_10s_of_seconds"]
+        if self.delay_in_10s_of_seconds < 0:
+            debug.warning("preferred_game_update_delay_in_10s_of_seconds should be a positive integer. Using default value of 0")
+            self.delay_in_10s_of_seconds = 0
+
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
         # Make sure the scrolling speed setting is in range so we don't crash

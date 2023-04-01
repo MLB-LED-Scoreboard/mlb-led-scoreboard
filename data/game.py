@@ -37,7 +37,6 @@ class Game:
         return None
 
     def __init__(self, game_id, date, broadcasts, series_status, delay_in_10s_of_seconds):
-        assert delay_in_10s_of_seconds >= 0, "delay_in_10s_of_seconds cannot be negative"
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
