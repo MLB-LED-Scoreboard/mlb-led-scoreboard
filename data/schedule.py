@@ -95,7 +95,6 @@ class Schedule:
     def next_game(self):
         # We only need to check the preferred team's game status if we're
         # rotating during mid-innings
-        # TODO verify during a double-header
         if (
             not self.config.rotation_preferred_team_live_enabled
             and self.config.rotation_preferred_team_live_mid_inning
@@ -104,7 +103,7 @@ class Schedule:
         ):
             game_index = self._game_index_for_preferred_team()
             scheduled_game = self._games[game_index]
-            preferred_game = Game.from_scheduled(scheduled_game)
+            preferred_game = Game.from_scheduled(scheduled_game, self.config.delay_in_10s_of_seconds)
             if preferred_game is not None:
                 debug.log(
                     "Preferred Team's Game Status: %s, %s %d",
@@ -146,7 +145,7 @@ class Schedule:
     def __current_game(self):
         if self._games:
             scheduled_game = self._games[self.current_idx]
-            return Game.from_scheduled(scheduled_game)
+            return Game.from_scheduled(scheduled_game, self.config.delay_in_10s_of_seconds)
         return None
 
     @staticmethod
