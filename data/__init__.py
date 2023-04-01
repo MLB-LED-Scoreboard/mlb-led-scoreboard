@@ -143,7 +143,8 @@ class Data:
             self.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
 
     def print_game_data_debug(self):
-        debug.log("Game Data Refreshed: %s", self.current_game._data["gameData"]["game"]["id"])
+        debug.log("Game Data Refreshed: %s", self.current_game._current_data["gameData"]["game"]["id"])
+        debug.log("Current game is %d seconds behind", self.current_game.current_delay())
         debug.log("Pre: %s", Pregame(self.current_game, self.config.time_format))
         debug.log("Live: %s", Scoreboard(self.current_game))
         debug.log("Final: %s", Postgame(self.current_game))
