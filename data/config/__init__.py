@@ -65,9 +65,6 @@ class Config:
         self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
         self.pregame_weather = json["pregame_weather"]
         self.delay_in_10s_of_seconds = json["preferred_game_update_delay_in_10s_of_seconds"]
-        if self.delay_in_10s_of_seconds < 0:
-            debug.warning("preferred_game_update_delay_in_10s_of_seconds should be a positive integer. Using default value of 0")
-            self.delay_in_10s_of_seconds = 0
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -99,6 +96,7 @@ class Config:
 
         # Check the rotation_rates to make sure it's valid and not silly
         self.check_rotate_rates()
+        self.check_delay()
 
     def check_preferred_teams(self):
         if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
@@ -110,6 +108,19 @@ class Config:
         if isinstance(self.preferred_teams, str):
             team = self.preferred_teams
             self.preferred_teams = [team]
+
+    def check_delay(self):
+        if self.delay_in_10s_of_seconds < 0:
+            debug.warning(
+                "preferred_game_update_delay_in_10s_of_seconds should be a positive integer. Using default value of 0"
+            )
+            self.delay_in_10s_of_seconds = 0
+        if self.delay_in_10s_of_seconds != int(self.delay_in_10s_of_seconds):
+            debug.warning(
+                "preferred_game_update_delay_in_10s_of_seconds should be an integer."
+                f" Truncating to {int(self.delay_in_10s_of_seconds)}"
+            )
+            self.delay_in_10s_of_seconds = int(self.delay_in_10s_of_seconds)
 
     def check_preferred_divisions(self):
         if not isinstance(self.preferred_divisions, str) and not isinstance(self.preferred_divisions, list):
@@ -138,9 +149,7 @@ class Config:
                 debug.warning("              Re-run the install/update script to convert to the new format")
                 debug.warning("              Example: sudo sh ./install.sh")
             except:
-                debug.warning(
-                    "rotation_rates should be a Dict. Using default value. {}".format(DEFAULT_ROTATE_RATES)
-                )
+                debug.warning("rotation_rates should be a Dict. Using default value. {}".format(DEFAULT_ROTATE_RATES))
                 self.rotation_rates = DEFAULT_ROTATE_RATES
 
         for key, value in list(self.rotation_rates.items()):
