@@ -27,6 +27,7 @@ PITCH_LONG = {
     "SC": "Screwball",
     "SI": "Sinker",
     "SL": "Slider",
+    "ST": "Sweeper",
     "SU": "Slurve",
     "UN": "Unknown",
 }
@@ -54,6 +55,7 @@ PITCH_SHORT = {
     "SC": "SC",
     "SI": "SI",
     "SL": "SL",
+    "ST": "ST",
     "SU": "SU",
     "UN": "UN",
 }
