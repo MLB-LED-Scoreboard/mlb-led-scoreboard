@@ -1,6 +1,6 @@
 import time
 
-import data.config.layout as layout
+
 import debug
 from data import status
 from data.game import Game
@@ -132,6 +132,7 @@ class Data:
             return "games"
 
     def __update_layout_state(self):
+        import data.config.layout as layout
         self.config.layout.set_state()
         if self.current_game.status() == status.WARMUP:
             self.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)
