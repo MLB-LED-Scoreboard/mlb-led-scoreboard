@@ -5,9 +5,8 @@ the status data comes from. https://statsapi.mlb.com/api/v1/gameStatus/ statsapi
 
 CANCELLED = "Cancelled"  # Final
 CANCELLED_COLD = "Cancelled: Cold"  # Final
-CANCELLED_DARKNESS = "Cancelled: Darkness"  # Final
-CANCELLED_EMERGENCY = "Cancelled: Emergency"  # Final
 CANCELLED_FOG = "Cancelled: Fog"  # Final
+CANCELLED_COVID19 = "Cancelled: COVID-19"  # Final
 CANCELLED_INCLEMENT_WEATHER = "Cancelled: Inclement Weather"  # Final
 CANCELLED_LIGHTNING = "Cancelled: Lightning"  # Final
 CANCELLED_AIR_QUALITY = "Cancelled: Air Quality"  # Final
@@ -19,9 +18,8 @@ CANCELLED_VENUE = "Cancelled: Venue"  # Final
 CANCELLED_WET_GROUNDS = "Cancelled: Wet Grounds"  # Final
 CANCELLED_WIND = "Cancelled: Wind"  # Final
 COMPLETED_EARLY = "Completed Early"  # Final
+COMPLETED_EARLY_COVID19 = "Completed Early: COVID-19"  # Final
 COMPLETED_EARLY_COLD = "Completed Early: Cold"  # Final
-COMPLETED_EARLY_DARKNESS = "Completed Early: Darkness"  # Final
-COMPLETED_EARLY_EMERGENCY = "Completed Early: Emergency"  # Final
 COMPLETED_EARLY_FOG = "Completed Early: Fog"  # Final
 COMPLETED_EARLY_INCLEMENT_WEATHER = "Completed Early: Inclement Weather"  # Final
 COMPLETED_EARLY_LIGHTNING = "Completed Early: Lightning"  # Final
@@ -38,8 +36,7 @@ DELAYED = "Delayed"  # Live
 DELAYED_ABOUT_TO_RESUME = "Delayed: About to Resume"  # Live
 DELAYED_CEREMONY = "Delayed: Ceremony"  # Live
 DELAYED_COLD = "Delayed: Cold"  # Live
-DELAYED_DARKNESS = "Delayed: Darkness"  # Live
-DELAYED_EMERGENCY = "Delayed: Emergency"  # Live
+DELAYED_COVID19 = "Delayed: COVID-19"  # Live
 DELAYED_FOG = "Delayed: Fog"  # Live
 DELAYED_INCLEMENT_WEATHER = "Delayed: Inclement Weather"  # Live
 DELAYED_LIGHTNING = "Delayed: Lightning"  # Live
@@ -50,8 +47,7 @@ DELAYED_SNOW = "Delayed: Snow"  # Live
 DELAYED_START = "Delayed Start"  # Preview
 DELAYED_START_CEREMONY = "Delayed Start: Ceremony"  # Preview
 DELAYED_START_COLD = "Delayed Start: Cold"  # Preview
-DELAYED_START_DARKNESS = "Delayed Start: Darkness"  # Preview
-DELAYED_START_EMERGENCY = "Delayed Start: Emergency"  # Preview
+DELAYED_START_COVID19 = "Delayed Start: COVID-19"  # Preview
 DELAYED_START_FOG = "Delayed Start: Fog"  # Preview
 DELAYED_START_INCLEMENT_WEATHER = "Delayed Start: Inclement Weather"  # Preview
 DELAYED_START_LIGHTNING = "Delayed Start: Lightning"  # Preview
@@ -60,6 +56,7 @@ DELAYED_START_RAIN = "Delayed Start: Rain"  # Preview
 DELAYED_START_SNOW = "Delayed Start: Snow"  # Preview
 DELAYED_START_TRAGEDY = "Delayed Start: Tragedy"  # Preview
 DELAYED_START_VENUE = "Delayed Start: Venue"  # Preview
+DELAYED_START_AIR_QUALITY = "Delayed Start: Air Quality"  # Preview
 DELAYED_START_WET_GROUNDS = "Delayed Start: Wet Grounds"  # Preview
 DELAYED_START_WIND = "Delayed Start: Wind"  # Preview
 DELAYED_TRAGEDY = "Delayed: Tragedy"  # Live
@@ -70,15 +67,15 @@ FINAL = "Final"  # Final
 FINAL_TIED = "Final: Tied"  # Final
 FINAL_TIE_DECISION_BY_TIEBREAKER = "Final: Tie, decision by tiebreaker"  # Final
 FORFEIT = "Forfeit"  # Final
-FORFEIT_DELAY_OF_GAME = "Forfeit: Delay of game"  # Final
-FORFEIT_FAILURE_TO_APPEAR = "Forfeit: Failure to appear"  # Final
-FORFEIT_FAILURE_TO_FIELD_LINEUP = "Forfeit: Failure to field lineup"  # Final
+FORFEIT_DELAY_OF_GAME = "Forfeit: Delay of game "  # Final
+FORFEIT_FAILURE_TO_APPEAR = "Forfeit: Failure to appear "  # Final
+FORFEIT_FAILURE_TO_FIELD_LINEUP = "Forfeit: Failure to field lineup "  # Final
 FORFEIT_FINAL = "Forfeit: Final"  # Final
 FORFEIT_GAME_OVER = "Forfeit: Game Over"  # Final
-FORFEIT_IGNORING_EJECTION = "Forfeit: Ignoring ejection"  # Final
-FORFEIT_INELIGIBLE_PLAYER = "Forfeit: Ineligible player"  # Final
-FORFEIT_REFUSES_TO_PLAY = "Forfeit: Refuses to play"  # Final
-FORFEIT_UNPLAYABLE_FIELD = "Forfeit: Unplayable field"  # Final
+FORFEIT_IGNORING_EJECTION = "Forfeit: Ignoring ejection "  # Final
+FORFEIT_INELIGIBLE_PLAYER = "Forfeit: Ineligible player "  # Final
+FORFEIT_REFUSES_TO_PLAY = "Forfeit: Refuses to play "  # Final
+FORFEIT_UNPLAYABLE_FIELD = "Forfeit: Unplayable field "  # Final
 FORFEIT_WILLFUL_RULE_VIOLATION = "Forfeit: Willful rule violation"  # Final
 GAME_OVER = "Game Over"  # Final
 GAME_OVER_TIED = "Game Over: Tied"  # Final
@@ -108,8 +105,7 @@ MANAGER_CHALLENGE_TOUCHING_A_BASE = "Manager challenge: Touching a base"  # Live
 MANAGER_CHALLENGE_TRAP_PLAY_IN_OUTFIELD = "Manager challenge: Trap play in outfield"  # Live
 POSTPONED = "Postponed"  # Final
 POSTPONED_COLD = "Postponed: Cold"  # Final
-POSTPONED_DARKNESS = "Postponed: Darkness"  # Final
-POSTPONED_EMERGENCY = "Postponed: Emergency"  # Final
+POSTPONED_COVID19 = "Postponed: COVID-19"  # Final
 POSTPONED_FOG = "Postponed: Fog"  # Final
 POSTPONED_INCLEMENT_WEATHER = "Postponed: Inclement Weather"  # Final
 POSTPONED_LIGHTNING = "Postponed: Lightning"  # Final
@@ -127,8 +123,7 @@ SUSPENDED = "Suspended"  # Live
 SUSPENDED_ABOUT_TO_RESUME = "Suspended: About to Resume"  # Live
 SUSPENDED_APPEAL_UPHELD = "Suspended: Appeal Upheld"  # Live
 SUSPENDED_COLD = "Suspended: Cold"  # Live
-SUSPENDED_DARKNESS = "Suspended: Darkness"  # Live
-SUSPENDED_EMERGENCY = "Suspended: Emergency"  # Live
+SUSPENDED_COVID19 = "Suspended: COVID-19"  # Live
 SUSPENDED_FOG = "Suspended: Fog"  # Live
 SUSPENDED_INCLEMENT_WEATHER = "Suspended: Inclement Weather"  # Live
 SUSPENDED_LIGHTNING = "Suspended: Lightning"  # Live
@@ -161,6 +156,7 @@ UMPIRE_REVIEW_TAGUP_PLAY = "Umpire review: Tag-up play"  # Live
 UMPIRE_REVIEW_TIMING_PLAY = "Umpire review: Timing play"  # Live
 UMPIRE_REVIEW_TOUCHING_A_BASE = "Umpire review: Touching a base"  # Live
 UMPIRE_REVIEW_TRAP_PLAY_IN_OUTFIELD = "Umpire review: Trap play in outfield"  # Live
+UMPIRE_REVIEW_SHIFT_VIOLATION = "Umpire review: Def Shift Violation"  # Live
 UNKNOWN = "Unknown"  # Other
 WARMUP = "Warmup"  # Live
 WRITING = "Writing"  # Other
@@ -217,6 +213,7 @@ GAME_STATE_LIVE = [
     UMPIRE_REVIEW_TIMING_PLAY,
     UMPIRE_REVIEW_TOUCHING_A_BASE,
     UMPIRE_REVIEW_TRAP_PLAY_IN_OUTFIELD,
+    UMPIRE_REVIEW_SHIFT_VIOLATION,
 ]
 
 GAME_STATE_PREGAME = [SCHEDULED, PREGAME, WARMUP]
@@ -224,13 +221,12 @@ GAME_STATE_PREGAME = [SCHEDULED, PREGAME, WARMUP]
 GAME_STATE_COMPLETE = [
     COMPLETED_EARLY,
     COMPLETED_EARLY_COLD,
-    COMPLETED_EARLY_DARKNESS,
-    COMPLETED_EARLY_EMERGENCY,
     COMPLETED_EARLY_FOG,
     COMPLETED_EARLY_INCLEMENT_WEATHER,
     COMPLETED_EARLY_LIGHTNING,
     COMPLETED_EARLY_AIR_QUALITY,
     COMPLETED_EARLY_MERCY_RULE,
+    COMPLETED_EARLY_COVID19,
     COMPLETED_EARLY_POWER,
     COMPLETED_EARLY_RAIN,
     COMPLETED_EARLY_SNOW,
@@ -251,8 +247,7 @@ GAME_STATE_FRESH = [IN_PROGRESS, GAME_OVER, GAME_OVER_TIED, GAME_OVER_TIE_DECISI
 GAME_STATE_IRREGULAR = [
     CANCELLED,
     CANCELLED_COLD,
-    CANCELLED_DARKNESS,
-    CANCELLED_EMERGENCY,
+    CANCELLED_COVID19,
     CANCELLED_FOG,
     CANCELLED_INCLEMENT_WEATHER,
     CANCELLED_LIGHTNING,
@@ -268,8 +263,7 @@ GAME_STATE_IRREGULAR = [
     DELAYED_ABOUT_TO_RESUME,
     DELAYED_CEREMONY,
     DELAYED_COLD,
-    DELAYED_DARKNESS,
-    DELAYED_EMERGENCY,
+    DELAYED_COVID19,
     DELAYED_FOG,
     DELAYED_INCLEMENT_WEATHER,
     DELAYED_LIGHTNING,
@@ -280,8 +274,8 @@ GAME_STATE_IRREGULAR = [
     DELAYED_START,
     DELAYED_START_CEREMONY,
     DELAYED_START_COLD,
-    DELAYED_START_DARKNESS,
-    DELAYED_START_EMERGENCY,
+    DELAYED_START_COVID19,
+    DELAYED_START_AIR_QUALITY,
     DELAYED_START_FOG,
     DELAYED_START_INCLEMENT_WEATHER,
     DELAYED_START_LIGHTNING,
@@ -330,8 +324,7 @@ GAME_STATE_IRREGULAR = [
     MANAGER_CHALLENGE_TRAP_PLAY_IN_OUTFIELD,
     POSTPONED,
     POSTPONED_COLD,
-    POSTPONED_DARKNESS,
-    POSTPONED_EMERGENCY,
+    POSTPONED_COVID19,
     POSTPONED_FOG,
     POSTPONED_INCLEMENT_WEATHER,
     POSTPONED_LIGHTNING,
@@ -347,8 +340,7 @@ GAME_STATE_IRREGULAR = [
     SUSPENDED_ABOUT_TO_RESUME,
     SUSPENDED_APPEAL_UPHELD,
     SUSPENDED_COLD,
-    SUSPENDED_DARKNESS,
-    SUSPENDED_EMERGENCY,
+    SUSPENDED_COVID19,
     SUSPENDED_FOG,
     SUSPENDED_INCLEMENT_WEATHER,
     SUSPENDED_LIGHTNING,
@@ -381,6 +373,7 @@ GAME_STATE_IRREGULAR = [
     UMPIRE_REVIEW_TIMING_PLAY,
     UMPIRE_REVIEW_TOUCHING_A_BASE,
     UMPIRE_REVIEW_TRAP_PLAY_IN_OUTFIELD,
+    UMPIRE_REVIEW_SHIFT_VIOLATION,
     WRITING,
     UNKNOWN,
 ]
