@@ -1,6 +1,7 @@
 # mlb-led-scoreboard
 
-![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) [![Join Slack](https://img.shields.io/badge/slack-join-blue.svg)](https://join.slack.com/t/mlb-led-scoreboard/shared_invite/zt-1f6n4axo4-r32OH7dlSAjEjstFV4RDNQ)
+![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) [![Join Discord](https://img.shields.io/badge/discord-join-blue.svg)](https://discord.gg/FdD6ec9fdt)
+ [![Join Slack](https://img.shields.io/badge/slack-join%20(deprecated)-blue.svg)](https://join.slack.com/t/mlb-led-scoreboard/shared_invite/zt-1f6n4axo4-r32OH7dlSAjEjstFV4RDNQ)
 
 <a href="assets/img/header.jpg">
   <img alt="Project header" width="800px" height="auto" src="assets/img/header.jpg">
@@ -247,6 +248,12 @@ A default `config.json.example` file is included for reference. Copy this file t
 "debug"                          Bool    Game and other debug data is written to your console.
 "demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
+
+### Delaying Board Update
+* The "preferred_game_update_delay_in_10s_of_seconds" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
+* You can only delay the board in 10 second increments, so a value of 3 coresponds to 30 seconds, 5 to 50 seconds etc.
+* There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
+* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  If you set the value to 3, it will take 30-40 seconds for the buffer to fill and the baord to delay. 
 
 ### Additional Features
 * Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.

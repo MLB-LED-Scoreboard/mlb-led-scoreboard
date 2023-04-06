@@ -30,3 +30,4 @@ The software develops and releases features with full support for the default la
 A couple of things are not completely implemented or have some implementation details you should understand.
 
 * `bases` currently requires an even `size` value to be rendered correctly
+* Not all options are enabled on all board sizes by default.  For example pitch count and pitch type are not enabled by default on boards smaller than 64x64.
