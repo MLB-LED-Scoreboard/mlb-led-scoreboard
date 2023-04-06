@@ -253,7 +253,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 * The "preferred_game_update_delay_in_10s_of_seconds" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
 * You can only delay the board in 10 second increments, so a value of 3 coresponds to 30 seconds, 5 to 50 seconds etc.
 * There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
-* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  If you set the value to 3, it will take 30-40 seconds for the buffer to fill and the baord to delay. 
+* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  If you set the value to 3, it will take 30-40 seconds for the buffer to fill and the board to delay. 
 
 ### Additional Features
 * Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
