@@ -1,6 +1,5 @@
 # A list of mlb pitch types appearing in statcast
-# https://www.daktronics.com/en-us/support/kb/DD3312647
-# https://developer.sportradar.com/docs/read/baseball/MLB_v7_with_Statcast#frequently-asked-questions
+# from statsapi.meta("pitchTypes")
 # Dont change the index, but feel free to change
 # the descriptions
 
@@ -14,7 +13,6 @@ PITCH_LONG = {
     "FC": "Cutter",
     "FA": "Fastball",
     "FF": "Fastball",  # MLB default is "Four-Seam Fastball"
-    "FL": "Slutter",
     "FO": "Forkball",
     "FS": "Splitter",
     "FT": "2 Seamer",  # MLB default is "Two-Seam Fastball"
@@ -27,7 +25,8 @@ PITCH_LONG = {
     "SC": "Screwball",
     "SI": "Sinker",
     "SL": "Slider",
-    "SU": "Slurve",
+    "ST": "Sweeper",
+    "SV": "Slurve",
     "UN": "Unknown",
 }
 
@@ -41,7 +40,6 @@ PITCH_SHORT = {
     "FC": "FC",
     "FA": "FA",
     "FF": "FF",
-    "FL": "FL",
     "FO": "FO",
     "FS": "FS",
     "FT": "FT",
@@ -54,7 +52,8 @@ PITCH_SHORT = {
     "SC": "SC",
     "SI": "SI",
     "SL": "SL",
-    "SU": "SU",
+    "SV": "SV",
+    "ST": "SW", # MLB default is "ST"
     "UN": "UN",
 }
 

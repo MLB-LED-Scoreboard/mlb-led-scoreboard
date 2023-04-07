@@ -224,7 +224,7 @@ A default `config.json.example` file is included for reference. Copy this file t
   "only_preferred"               Bool    Only rotate through games in your preferred teams.
   "only_live"                    Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
   "rates"                        Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
-                                 Float   (DEPRECATED) A Float can be used to set all screen types to the same rotate rate. 
+                                 Float   (DEPRECATED) A Float can be used to set all screen types to the same rotate rate.
 
   "while_preferred_team_live":           Options for rotating between screens while one of your preferred teams is live
     "enabled"                    Bool    Enable rotation while a preferred team is live.
@@ -243,9 +243,17 @@ A default `config.json.example` file is included for reference. Copy this file t
 "full_team_names"                Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
 "short_team_names_for_runs_hits" Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
+"preferred_game_update_delay_in_10s_of_seconds" Integer Sets how long to wait before updating the preferred game. Must be positive.
+"pregame_weather"                Bool    If enabled, will display the weather for the game's location on the pregame screen.
 "debug"                          Bool    Game and other debug data is written to your console.
 "demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
+
+### Delaying Board Update
+* The "preferred_game_update_delay_in_10s_of_seconds" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
+* You can only delay the board in 10 second increments, so a value of 3 coresponds to 30 seconds, 5 to 50 seconds etc.
+* There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
+* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  If you set the value to 3, it will take 30-40 seconds for the buffer to fill and the board to delay. 
 
 ### Additional Features
 * Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.

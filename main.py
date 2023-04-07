@@ -4,6 +4,15 @@ if sys.version_info <= (3, 5):
     print("Error: Please run with python3")
     sys.exit(1)
 
+import statsapi
+
+statsapi_version = tuple(map(int, statsapi.__version__.split(".")))
+if statsapi_version < (1, 5, 1):
+    print("Error: We require MLB-StatsAPI 1.5.1 or higher. You may need to re-run install.sh")
+    sys.exit(1)
+elif statsapi_version < (1, 6, 1):
+    print("Warning: We recommend MLB-StatsAPI 1.6.1 or higher. You may want to re-run install.sh")
+
 import logging
 import os
 import threading
@@ -39,7 +48,7 @@ def main(matrix, config_base):
     if driver.is_emulated():
         if driver.hardware_load_failed:
             debug.log("rgbmatrix not installed, falling back to emulator!")
-            
+
         debug.log("Using RGBMatrixEmulator version %s", __version__)
     else:
         debug.log("Using rgbmatrix version %s", __version__)
