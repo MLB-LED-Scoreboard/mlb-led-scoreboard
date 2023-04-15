@@ -1,5 +1,6 @@
 import time
 from typing import Callable, NoReturn
+from data.screens import ScreenType
 
 import debug
 from data import Data, status
@@ -13,6 +14,8 @@ from renderers.games import postgame as postgamerender
 from renderers.games import pregame as pregamerender
 from renderers.games import teams
 
+# TODO(BMW) make configurable time?
+STANDINGS_NEWS_SWITCH_TIME = 120
 
 class MainRenderer:
     def __init__(self, matrix, data):
@@ -29,25 +32,39 @@ class MainRenderer:
     def render(self):
         screen = self.data.get_screen_type()
         # display the news ticker
-        if screen == "news":
-            self.__render_offday()
+        if screen == ScreenType.ALWAYS_NEWS:
+            self.__draw_news(permanent_cond)
         # display the standings
-        elif screen == "standings":
-            self.__render_standings()
+        elif screen == ScreenType.ALWAYS_STANDINGS:
+            self.__draw_standings(permanent_cond)
+
+            # Out of season off days don't always return standings so fall back on the offday renderer
+            debug.error("No standings data.  Falling back to news.")
+            self.__render_news()
+        elif screen == ScreenType.LEAGUE_OFFDAY:
+            self.__render_offday(team_offday=False)
+        elif screen == ScreenType.PREFERRED_TEAM_OFFDAY:
+            self.__render_offday(team_offday=True)
         # Playball!
         else:
             self.__render_gameday()
 
-    # Render an offday screen with the weather, clock and news
-    def __render_offday(self) -> NoReturn:
-        self.__draw_news(permanent_cond)
+    def __render_offday(self, team_offday=True) -> NoReturn:
+        if team_offday:
+            news = self.data.config.news_ticker_team_offday
+            standings = self.data.config.standings_team_offday
+        else:
+            news = True
+            standings = self.data.config.standings_mlb_offday
 
-    def __render_standings(self) -> NoReturn:
-        self.__draw_standings(permanent_cond)
-
-        # Out of season off days don't always return standings so fall back on the offday renderer
-        debug.error("No standings data.  Falling back to off day.")
-        self.__render_offday()
+        if news and standings:
+            while True:
+                self.__draw_news(timer_cond(STANDINGS_NEWS_SWITCH_TIME, refresh=self.data.config.scrolling_speed))
+                self.__draw_standings(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
+        elif news:
+            self.__draw_news(permanent_cond)
+        elif teams:
+            self.__draw_standings(permanent_cond)
 
     # Renders a game screen based on it's status
     # May also call draw_offday or draw_standings if there are no games
@@ -56,9 +73,8 @@ class MainRenderer:
         while True:
             if not self.data.schedule.games_live():
                 if self.data.config.news_no_games and self.data.config.standings_no_games:
-                    # TODO(BMW) make configurable time?
-                    self.__draw_news(all_of(timer_cond(30, refresh=refresh_rate), self.no_games_cond))
-                    self.__draw_standings(all_of(timer_cond(30), self.no_games_cond))
+                    self.__draw_news(all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME, refresh=refresh_rate), self.no_games_cond))
+                    self.__draw_standings(all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME), self.no_games_cond))
                     continue
                 elif self.data.config.news_no_games:
                     self.__draw_news(self.no_games_cond)

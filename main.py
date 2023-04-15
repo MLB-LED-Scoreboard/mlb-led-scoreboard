@@ -1,5 +1,7 @@
 import sys
 
+from data.screens import ScreenType
+
 if sys.version_info <= (3, 5):
     print("Error: Please run with python3")
     sys.exit(1)
@@ -73,16 +75,18 @@ def main(matrix, config_base):
     render.start()
 
     screen = data.get_screen_type()
-    if screen == "news":
-        __refresh_offday(render, data)
-    elif screen == "standings":
+    if screen == ScreenType.ALWAYS_NEWS:
+        __refresh_news(render, data)
+    elif screen == ScreenType.ALWAYS_STANDINGS:
         __refresh_standings(render, data)
+    elif screen == ScreenType.LEAGUE_OFFDAY or screen == ScreenType.PREFERRED_TEAM_OFFDAY:
+        __refresh_offday(render, data)
     else:
         __refresh_gameday(render, data)
 
 
-def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the offday information to refresh")
+def __refresh_news(render_thread, data):  # type: (threading.Thread, Data) -> None
+    debug.log("Main has selected the news to refresh")
     while render_thread.is_alive():
         time.sleep(30)
         data.refresh_weather()
@@ -96,11 +100,20 @@ def __refresh_standings(render_thread, data):  # type: (threading.Thread, Data) 
             time.sleep(30)
             data.refresh_standings()
     else:
-        __refresh_offday(render_thread, data)
+        __refresh_news(render_thread, data)
+
+
+def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> None
+    debug.log("Main has selected the offday information to refresh")
+    while render_thread.is_alive():
+        time.sleep(30)
+        data.refresh_standings()
+        data.refresh_weather()
+        data.refresh_news_ticker()
 
 
 def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the game and schedule information to refresh")
+    debug.log("Main has selected the gameday information to refresh")
 
     starttime = time.time()
     promise_game = data.schedule.games_live()
