@@ -108,14 +108,21 @@ def __refresh_games(render_thread, data):  # type: (threading.Thread, Data) -> N
     while render_thread.is_alive():
         time.sleep(0.5)
         data.refresh_schedule()
-        if data.config.standings_no_games:
-            if not data.schedule.games_live():
+        if not data.schedule.games_live():
+            cont = False
+            if data.config.standings_no_games:
                 data.refresh_standings()
+                cont = True
+            if data.config.news_no_games:
+                data.refresh_news_ticker()
+                cont = True
+            if cont:
                 continue
-            # make sure a game is poulated
-            elif not promise_game:
-                promise_game = True
-                data.advance_to_next_game()
+
+        # make sure a game is poulated
+        elif not promise_game:
+            promise_game = True
+            data.advance_to_next_game()
 
         rotate = data.should_rotate_to_next_game()
         if data.schedule.games_live() and not rotate:
