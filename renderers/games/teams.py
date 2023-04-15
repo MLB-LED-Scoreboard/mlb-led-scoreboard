@@ -107,7 +107,10 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
     font = layout.font("teams.name.{}".format(homeaway))
     team_text = "{:3s}".format(team.abbrev.upper())
     if full_team_names:
-        team_text = "{:13s}".format(team.name)
+        truncate_length = 13
+        if layout.state_is_warmup() == False:
+            truncate_length = layout.coords("teams.name.{}".format(homeaway)).get("truncate", 13)
+        team_text = team.name[0:truncate_length]
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
 
