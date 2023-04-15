@@ -36,114 +36,34 @@ class MainRenderer:
             self.__render_standings()
         # Playball!
         else:
-            self.__render_game()
+            self.__render_gameday()
 
     # Render an offday screen with the weather, clock and news
     def __render_offday(self) -> NoReturn:
-        self.__draw_news(permanent_cond())
+        self.__draw_news(permanent_cond)
 
-    def __draw_news(self, cond: Callable[[], bool]):
-        self.data.scrolling_finished = False
-        self.scrolling_text_pos = self.canvas.width
-        while cond():
-            for _ in range(round(1 / self.data.config.scrolling_speed)):
-                color = self.data.config.scoreboard_colors.color("default.background")
-                self.canvas.Fill(color["r"], color["g"], color["b"])
-
-                self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
-                pos = offday.render_offday_screen(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.weather,
-                    self.data.headlines,
-                    self.data.config.time_format,
-                    self.scrolling_text_pos,
-                )
-                # todo make pos something persistent if we want to show news as part of rotation?
-                # not strictly necessary but nice?
-                self.__update_scrolling_text_pos(pos, self.canvas.width)
-                # Show network issues
-                if self.data.network_issues:
-                    network.render_network_error(
-                        self.canvas, self.data.config.layout, self.data.config.scoreboard_colors
-                    )
-                self.canvas = self.matrix.SwapOnVSync(self.canvas)
-                time.sleep(self.data.config.scrolling_speed)
-
-    # Render the standings screen
     def __render_standings(self) -> NoReturn:
-        self.__draw_standings(permanent_cond())
+        self.__draw_standings(permanent_cond)
 
         # Out of season off days don't always return standings so fall back on the offday renderer
         debug.error("No standings data.  Falling back to off day.")
         self.__render_offday()
 
-    def __draw_standings(self, cond: Callable[[], bool]):
-        if not self.data.standings.populated():
-            return
-
-        if self.data.standings.is_postseason() and self.canvas.width <= 32:
-            return
-
-        update = 0
-        while cond():
-            if self.data.standings.is_postseason():
-                standings.render_bracket(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.standings.leagues[self.standings_league],
-                )
-            else:
-                standings.render_standings(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.standings.current_standings(),
-                    self.standings_stat,
-                )
-
-            if self.data.network_issues:
-                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
-
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
-
-            if self.data.standings.is_postseason() and update % 20 == 0:
-                if self.standings_league == "NL":
-                    self.standings_league = "AL"
-                else:
-                    self.standings_league = "NL"
-            elif self.canvas.width == 32 and update % 5 == 0:
-                if self.standings_stat == "w":
-                    self.standings_stat = "l"
-                else:
-                    self.standings_stat = "w"
-                    self.data.standings.advance_to_next_standings()
-            elif self.canvas.width > 32 and update % 10 == 0:
-                self.data.standings.advance_to_next_standings()
-
-            time.sleep(1)
-            update = (update + 1) % 100
-
     # Renders a game screen based on it's status
     # May also call draw_offday or draw_standings if there are no games
-    def __render_game(self) -> NoReturn:
-        # Set the refresh rate
+    def __render_gameday(self) -> NoReturn:
         refresh_rate = self.data.config.scrolling_speed
-
         while True:
             if not self.data.schedule.games_live():
                 if self.data.config.news_no_games and self.data.config.standings_no_games:
-                    # TODO make configurable time?
-                    # also, using all_of here is maybe overkill
-                    self.__draw_news(all_of(timer_cond(120), self.no_games_cond()))
-                    self.__draw_standings(all_of(timer_cond(120), self.no_games_cond()))
+                    # TODO(BMW) make configurable time?
+                    self.__draw_news(all_of(timer_cond(30, refresh=refresh_rate), self.no_games_cond))
+                    self.__draw_standings(all_of(timer_cond(30), self.no_games_cond))
                     continue
                 elif self.data.config.news_no_games:
-                    self.__draw_news(self.no_games_cond())
+                    self.__draw_news(self.no_games_cond)
                 elif self.data.config.standings_no_games:
-                    self.__draw_standings(self.no_games_cond())
+                    self.__draw_standings(self.no_games_cond)
 
             if self.game_changed_time < self.data.game_changed_time:
                 self.scrolling_text_pos = self.canvas.width
@@ -158,16 +78,6 @@ class MainRenderer:
                 self.data.scrolling_finished = True
 
             time.sleep(refresh_rate)
-
-    # TODO: based on the above, we can start to think of a more generalized rotation
-
-    # new config format:
-    # offday: [news, standings]
-    # no_games_live: [news, standings]
-    # rotation: [preferred_teams, news, standings, followed_teams, live_games]
-
-    # requires some coordination for when rotation occurs, data object needs to have a sense of when
-    # we're in a game vs another screen, and for how long.
 
     # Draws the provided game on the canvas
     def __draw_game(self):
@@ -241,12 +151,92 @@ class MainRenderer:
 
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
+    def __draw_news(self, cond: Callable[[], bool]):
+        """
+        Draw the news screen for as long as cond returns True
+        Redraws every `data.config.scrolling_speed` seconds
+        """
+        color = self.data.config.scoreboard_colors.color("default.background")
+        while cond():
+            self.canvas.Fill(color["r"], color["g"], color["b"])
+
+            self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
+            pos = offday.render_offday_screen(
+                self.canvas,
+                self.data.config.layout,
+                self.data.config.scoreboard_colors,
+                self.data.weather,
+                self.data.headlines,
+                self.data.config.time_format,
+                self.scrolling_text_pos,
+            )
+            # todo make scrolling_text_pos something persistent/news-specific
+            # if we want to show news as part of rotation?
+            # not strictly necessary but would be nice, avoids only seeing first headline over and over
+            self.__update_scrolling_text_pos(pos, self.canvas.width)
+            # Show network issues
+            if self.data.network_issues:
+                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
+            self.canvas = self.matrix.SwapOnVSync(self.canvas)
+            time.sleep(self.data.config.scrolling_speed)
+
+    def __draw_standings(self, cond: Callable[[], bool]):
+        """
+        Draw the standings screen for as long as cond returns True
+        Redraws every second
+        """
+        if not self.data.standings.populated():
+            return
+
+        if self.data.standings.is_postseason() and self.canvas.width <= 32:
+            return
+
+        update = 1
+        while cond():
+            if self.data.standings.is_postseason():
+                standings.render_bracket(
+                    self.canvas,
+                    self.data.config.layout,
+                    self.data.config.scoreboard_colors,
+                    self.data.standings.leagues[self.standings_league],
+                )
+            else:
+                standings.render_standings(
+                    self.canvas,
+                    self.data.config.layout,
+                    self.data.config.scoreboard_colors,
+                    self.data.standings.current_standings(),
+                    self.standings_stat,
+                )
+
+            if self.data.network_issues:
+                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
+
+            self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+            if self.data.standings.is_postseason() and update % 20 == 0:
+                if self.standings_league == "NL":
+                    self.standings_league = "AL"
+                else:
+                    self.standings_league = "NL"
+            elif self.canvas.width == 32 and update % 5 == 0:
+                if self.standings_stat == "w":
+                    self.standings_stat = "l"
+                else:
+                    self.standings_stat = "w"
+                    self.data.standings.advance_to_next_standings()
+            elif self.canvas.width > 32 and update % 10 == 0:
+                self.data.standings.advance_to_next_standings()
+
+            time.sleep(1)
+            update = (update + 1) % 100
+
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
         self.scrolling_text_pos = min(scroll_max_x, self.scrolling_text_pos)
 
     def __update_scrolling_text_pos(self, new_pos, end):
-        """Updates the position of the probable starting pitcher text."""
+        """Updates the position of scrolling text"""
         pos_after_scroll = self.scrolling_text_pos - 1
         if pos_after_scroll + new_pos < 0:
             self.data.scrolling_finished = True
@@ -255,30 +245,31 @@ class MainRenderer:
                 return
         self.scrolling_text_pos = pos_after_scroll
 
-    def no_games_cond(self) -> Callable[[], bool]:
-        def cond():
-            return not self.data.schedule.games_live()
-
-        return cond
+    def no_games_cond(self) -> bool:
+        """A condition that is true only while there are no games live"""
+        return not self.data.schedule.games_live()
 
 
-def permanent_cond() -> Callable[[], bool]:
-    return lambda: True
+def permanent_cond() -> bool:
+    """A condition that is always true"""
+    return True
 
 
-def timer_cond(time) -> Callable[[], bool]:
+def timer_cond(seconds, refresh=1) -> Callable[[], bool]:
+    """Create a condition that is true for the specified number of seconds"""
     curr = 0
 
     def cond():
         nonlocal curr
-        curr += 1
+        curr += refresh
 
-        return curr < time
+        return curr < seconds
 
     return cond
 
 
 def all_of(*conds) -> Callable[[], bool]:
+    """Create a condition that is true if all of the given conditions are true"""
     def cond():
         return all(c() for c in conds)
 

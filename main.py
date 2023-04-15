@@ -78,7 +78,7 @@ def main(matrix, config_base):
     elif screen == "standings":
         __refresh_standings(render, data)
     else:
-        __refresh_games(render, data)
+        __refresh_gameday(render, data)
 
 
 def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> None
@@ -99,7 +99,7 @@ def __refresh_standings(render_thread, data):  # type: (threading.Thread, Data) 
         __refresh_offday(render_thread, data)
 
 
-def __refresh_games(render_thread, data):  # type: (threading.Thread, Data) -> None
+def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) -> None
     debug.log("Main has selected the game and schedule information to refresh")
 
     starttime = time.time()
@@ -120,7 +120,7 @@ def __refresh_games(render_thread, data):  # type: (threading.Thread, Data) -> N
             if cont:
                 continue
 
-        # make sure a game is poulated
+        # make sure a game is populated
         elif not promise_game:
             promise_game = True
             data.advance_to_next_game()
