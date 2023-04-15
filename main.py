@@ -115,6 +115,7 @@ def __refresh_games(render_thread, data):  # type: (threading.Thread, Data) -> N
                 cont = True
             if data.config.news_no_games:
                 data.refresh_news_ticker()
+                data.refresh_weather()
                 cont = True
             if cont:
                 continue
