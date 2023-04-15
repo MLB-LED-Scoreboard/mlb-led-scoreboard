@@ -40,9 +40,9 @@ class MainRenderer:
 
     # Render an offday screen with the weather, clock and news
     def __render_offday(self) -> NoReturn:
-        self.__draw_offday(permanent_cond())
+        self.__draw_news(permanent_cond())
 
-    def __draw_offday(self, cond: Callable[[], bool]):
+    def __draw_news(self, cond: Callable[[], bool]):
         self.data.scrolling_finished = False
         self.scrolling_text_pos = self.canvas.width
         while cond():
@@ -137,11 +137,11 @@ class MainRenderer:
                 if self.data.config.news_no_games and self.data.config.standings_no_games:
                     # TODO make configurable time?
                     # also, using all_of here is maybe overkill
-                    self.__draw_offday(all_of(timer_cond(120), self.no_games_cond()))
+                    self.__draw_news(all_of(timer_cond(120), self.no_games_cond()))
                     self.__draw_standings(all_of(timer_cond(120), self.no_games_cond()))
                     continue
                 elif self.data.config.news_no_games:
-                    self.__draw_offday(self.no_games_cond())
+                    self.__draw_news(self.no_games_cond())
                 elif self.data.config.standings_no_games:
                     self.__draw_standings(self.no_games_cond())
 
