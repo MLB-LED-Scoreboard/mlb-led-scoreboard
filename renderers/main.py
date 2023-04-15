@@ -17,6 +17,7 @@ from renderers.games import teams
 # TODO(BMW) make configurable time?
 STANDINGS_NEWS_SWITCH_TIME = 120
 
+
 class MainRenderer:
     def __init__(self, matrix, data):
         self.matrix = matrix
@@ -40,7 +41,7 @@ class MainRenderer:
 
             # Out of season off days don't always return standings so fall back on the offday renderer
             debug.error("No standings data.  Falling back to news.")
-            self.__render_news()
+            self.__draw_news(permanent_cond)
         elif screen == ScreenType.LEAGUE_OFFDAY:
             self.__render_offday(team_offday=False)
         elif screen == ScreenType.PREFERRED_TEAM_OFFDAY:
@@ -63,8 +64,9 @@ class MainRenderer:
                 self.__draw_standings(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
         elif news:
             self.__draw_news(permanent_cond)
-        elif teams:
+        else:
             self.__draw_standings(permanent_cond)
+            self.__draw_news(permanent_cond)  # fallback to news if no standings
 
     # Renders a game screen based on it's status
     # May also call draw_offday or draw_standings if there are no games
@@ -73,7 +75,9 @@ class MainRenderer:
         while True:
             if not self.data.schedule.games_live():
                 if self.data.config.news_no_games and self.data.config.standings_no_games:
-                    self.__draw_news(all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME, refresh=refresh_rate), self.no_games_cond))
+                    self.__draw_news(
+                        all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME, refresh=refresh_rate), self.no_games_cond)
+                    )
                     self.__draw_standings(all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME), self.no_games_cond))
                     continue
                 elif self.data.config.news_no_games:
@@ -286,6 +290,7 @@ def timer_cond(seconds, refresh=1) -> Callable[[], bool]:
 
 def all_of(*conds) -> Callable[[], bool]:
     """Create a condition that is true if all of the given conditions are true"""
+
     def cond():
         return all(c() for c in conds)
 
