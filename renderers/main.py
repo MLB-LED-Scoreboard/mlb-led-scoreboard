@@ -37,11 +37,7 @@ class MainRenderer:
             self.__draw_news(permanent_cond)
         # display the standings
         elif screen == ScreenType.ALWAYS_STANDINGS:
-            self.__draw_standings(permanent_cond)
-
-            # Out of season off days don't always return standings so fall back on the offday renderer
-            debug.error("No standings data.  Falling back to news.")
-            self.__draw_news(permanent_cond)
+            self.__render_standings()
         elif screen == ScreenType.LEAGUE_OFFDAY:
             self.__render_offday(team_offday=False)
         elif screen == ScreenType.PREFERRED_TEAM_OFFDAY:
@@ -65,8 +61,14 @@ class MainRenderer:
         elif news:
             self.__draw_news(permanent_cond)
         else:
-            self.__draw_standings(permanent_cond)
-            self.__draw_news(permanent_cond)  # fallback to news if no standings
+            self.__render_standings()
+
+    def __render_standings(self) -> NoReturn:
+        self.__draw_standings(permanent_cond)
+
+        # Out of season off days don't always return standings so fall back on the news renderer
+        debug.error("No standings data.  Falling back to news.")
+        self.__draw_news(permanent_cond)
 
     # Renders a game screen based on it's status
     # May also call draw_offday or draw_standings if there are no games
