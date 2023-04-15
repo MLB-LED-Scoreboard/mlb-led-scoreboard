@@ -56,7 +56,7 @@ class MainRenderer:
 
         if news and standings:
             while True:
-                self.__draw_news(timer_cond(STANDINGS_NEWS_SWITCH_TIME, refresh=self.data.config.scrolling_speed))
+                self.__draw_news(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
                 self.__draw_standings(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
         elif news:
             self.__draw_news(permanent_cond)
@@ -77,9 +77,7 @@ class MainRenderer:
         while True:
             if not self.data.schedule.games_live():
                 if self.data.config.news_no_games and self.data.config.standings_no_games:
-                    self.__draw_news(
-                        all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME, refresh=refresh_rate), self.no_games_cond)
-                    )
+                    self.__draw_news(all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME), self.no_games_cond))
                     self.__draw_standings(all_of(timer_cond(STANDINGS_NEWS_SWITCH_TIME), self.no_games_cond))
                     continue
                 elif self.data.config.news_no_games:
@@ -176,7 +174,6 @@ class MainRenderer:
     def __draw_news(self, cond: Callable[[], bool]):
         """
         Draw the news screen for as long as cond returns True
-        Redraws every `data.config.scrolling_speed` seconds
         """
         color = self.data.config.scoreboard_colors.color("default.background")
         while cond():
@@ -205,7 +202,6 @@ class MainRenderer:
     def __draw_standings(self, cond: Callable[[], bool]):
         """
         Draw the standings screen for as long as cond returns True
-        Redraws every second
         """
         if not self.data.standings.populated():
             return
@@ -277,15 +273,12 @@ def permanent_cond() -> bool:
     return True
 
 
-def timer_cond(seconds, refresh=1) -> Callable[[], bool]:
+def timer_cond(seconds) -> Callable[[], bool]:
     """Create a condition that is true for the specified number of seconds"""
-    curr = 0
+    end = time.time() + seconds
 
     def cond():
-        nonlocal curr
-        curr += refresh
-
-        return curr < seconds
+        return time.time() < end
 
     return cond
 
