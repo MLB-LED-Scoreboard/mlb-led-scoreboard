@@ -10,5 +10,5 @@ jobs:
       - name: Check branch
         if: github.base_ref == 'master' && github.head_ref != 'dev'
         run: |
-          echo "ERROR: You can only merge to master from dev."
+          echo "ERROR: You can only merge to master from dev. Contributors should point their PRs to the dev branch."
           exit 1
