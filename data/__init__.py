@@ -1,5 +1,5 @@
 import time
-
+from data.screens import ScreenType
 
 import debug
 from data import status
@@ -107,32 +107,29 @@ class Data:
         elif status == UpdateStatus.FAIL:
             self.network_issues = True
 
-    def get_screen_type(self):
+    def get_screen_type(self) -> ScreenType:
         # Always the news
         if self.config.news_ticker_always_display:
-            return "news"
+            return ScreenType.ALWAYS_NEWS
         # Always the standings
-        elif self.config.standings_always_display:
-            return "standings"
-
+        if self.config.standings_always_display:
+            return ScreenType.ALWAYS_STANDINGS
         # Full MLB Offday
-        elif self.schedule.is_offday():
-            if self.config.standings_mlb_offday:
-                return "standings"
-            else:
-                return "news"
+        if self.schedule.is_offday():
+            return ScreenType.LEAGUE_OFFDAY
+
         # Preferred Team Offday
-        elif self.schedule.is_offday_for_preferred_team():
-            if self.config.news_ticker_team_offday:
-                return "news"
-            elif self.config.standings_team_offday:
-                return "standings"
+        if self.schedule.is_offday_for_preferred_team() and (
+            self.config.news_ticker_team_offday or self.config.standings_team_offday
+        ):
+            return ScreenType.PREFERRED_TEAM_OFFDAY
+
         # Playball!
-        else:
-            return "games"
+        return ScreenType.GAMEDAY
 
     def __update_layout_state(self):
         import data.config.layout as layout
+
         self.config.layout.set_state()
         if self.current_game.status() == status.WARMUP:
             self.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)

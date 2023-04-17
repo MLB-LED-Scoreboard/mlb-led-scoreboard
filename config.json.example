@@ -7,6 +7,7 @@
 		"team_offday": true,
 		"always_display": false,
 		"preferred_teams": true,
+		"display_no_games_live": false,
 		"traderumors": true,
 		"mlb_news": true,
 		"countdowns": true,

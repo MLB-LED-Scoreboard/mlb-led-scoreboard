@@ -34,6 +34,7 @@ class Config:
         self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
         self.news_ticker_date = json["news_ticker"]["date"]
         self.news_ticker_date_format = json["news_ticker"]["date_format"]
+        self.news_no_games = json["news_ticker"]["display_no_games_live"]
 
         # Display Standings
         self.standings_team_offday = json["standings"]["team_offday"]

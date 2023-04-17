@@ -62,12 +62,15 @@ class Standings:
                         season_params["date"] = self.date.strftime("%m/%d/%Y")
 
                     divisons_data = statsapi.get("standings", season_params)
-                    self.standings = [Division(division_data) for division_data in divisons_data["records"]]
+                    standings = [Division(division_data) for division_data in divisons_data["records"]]
 
                     if self.wild_cards:
                         season_params["standingsTypes"] = "wildCard"
                         wc_data = statsapi.get("standings", season_params)
-                        self.standings += [Division(data, wc=True) for data in wc_data["records"]]
+                        standings += [Division(data, wc=True) for data in wc_data["records"]]
+
+                    self.standings = standings
+
                 else:
                     postseason_data = statsapi.get(
                         "schedule_postseason_series",
