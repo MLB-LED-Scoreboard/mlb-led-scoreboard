@@ -48,14 +48,16 @@ class Schedule:
                 debug.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
             else:
-                self._games = self.__all_games
+                games = self.__all_games
 
                 if self.config.rotation_only_preferred:
-                    self._games = Schedule.__filter_list_of_games(self.__all_games, self.config.preferred_teams)
+                    games = Schedule.__filter_list_of_games(self.__all_games, self.config.preferred_teams)
                 if self.config.rotation_only_live:
-                    games = [g for g in self._games if status.is_live(g["status"]) or status.is_fresh(g["status"])]
-                    if games:
-                        self._games = games
+                    live_games = [g for g in self._games if status.is_live(g["status"]) or status.is_fresh(g["status"])]
+                    if live_games:
+                        games = live_games
+
+                self._games = games
 
                 return UpdateStatus.SUCCESS
 
