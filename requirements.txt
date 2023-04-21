@@ -2,5 +2,5 @@ feedparser==6.0.10
 MLB_StatsAPI>=1.6.1
 Pillow==9.3.0
 pyowm==3.3.0
-RGBMatrixEmulator>=0.8.2
+RGBMatrixEmulator>=0.8.4
 tzlocal==4.2
