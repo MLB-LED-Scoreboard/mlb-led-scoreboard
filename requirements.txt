@@ -4,3 +4,4 @@ Pillow==9.3.0
 pyowm==3.3.0
 RGBMatrixEmulator>=0.8.4
 tzlocal==4.2
+Bullpen

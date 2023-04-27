@@ -1,4 +1,6 @@
 import sys
+import Bullpen
+import screens
 
 from data.screens import ScreenType
 
@@ -153,7 +155,14 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
 
 
 def __render_main(matrix, data):
-    MainRenderer(matrix, data).render()
+    canvas = matrix.CreateFrameCanvas()
+    manager = Bullpen.Manager(
+        {
+            screens.NewsScreen(matrix, canvas, data): Bullpen.Transition(to=None, on=Bullpen.Condition.NEVER())
+        }
+    )
+
+    manager.perform()
 
 
 if __name__ == "__main__":
