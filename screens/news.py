@@ -68,6 +68,21 @@ class NewsScreen(MLBLEDScoreboardScreen):
             self.__render_weather_text(self.weather.wind_dir_string(), "wind_dir")
             self.__render_weather_text(self.weather.wind_string(), "wind")
 
+    def __render_weather_icon(self):
+        coords = self.data.config.ayout.coords("offday.weather_icon")
+        color = self.data.config.scoreboard_colors.color("offday.weather_icon")
+        resize = coords.get("rescale_icon")
+
+        if resize:
+            weather_icon = weather_icon.resize(
+                (weather_icon.width * resize, weather_icon.height * resize), PIL.Image.NEAREST
+            )
+        for x in range(weather_icon.width):
+            for y in range(weather_icon.height):
+                pixel = weather_icon.getpixel((x, y))
+                if pixel[3] > 0:
+                    self.canvas.SetPixel(coords["x"] + x, coords["y"] + y, color["r"], color["g"], color["b"])
+
     def __render_weather_text(self, text, keyname):
         coords = self.data.config.layout.coords("offday.{}".format(keyname))
         font = self.data.config.layout.font("offday.{}".format(keyname))
