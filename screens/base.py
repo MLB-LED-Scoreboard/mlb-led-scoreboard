@@ -9,10 +9,19 @@ class MLBLEDScoreboardScreen(Bullpen.Action):
         self.data = data
         self.scroll_position = self.canvas.width
 
-        self.on_perform = self.on_render
+        self.on_perform = self._on_render
 
     def on_render(self):
         raise NotImplementedError
+    
+    def _on_render(self):
+        self.canvas.Fill(
+            self.background_color["r"],
+            self.background_color["g"],
+            self.background_color["b"]
+        )
+
+        self.on_render()
     
     def update_scroll_position(self, text_length, end):
         after_scroll = self.scroll_position - 1

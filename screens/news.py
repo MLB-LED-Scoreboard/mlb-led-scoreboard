@@ -17,17 +17,14 @@ class NewsScreen(MLBLEDScoreboardScreen):
 
 
     def on_render(self):
-        self.canvas.Fill(
-            self.background_color["r"],
-            self.background_color["g"],
-            self.background_color["b"]
-        )
-
         self.__render_ticker()
         self.__render_clock()
         self.__render_weather()
 
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
+
+    def ready_to_rotate(self):
+        return self.data.scrolling_finished
 
     def __render_ticker(self):
         remaining_length = scrollingtext.render_text(

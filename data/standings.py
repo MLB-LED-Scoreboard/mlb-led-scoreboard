@@ -103,11 +103,11 @@ class Standings:
     def is_postseason(self):
         return self.date > self.playoffs_start_date
 
-    def __standings_for(self, division_name):
+    def standings_for(self, division_name):
         return next(division for division in self.standings if division.name == division_name)
 
     def current_standings(self):
-        return self.__standings_for(self.preferred_divisions[self.current_division_index])
+        return self.standings_for(self.preferred_divisions[self.current_division_index])
 
     def advance_to_next_standings(self):
         self.current_division_index = self.__next_division_index()
