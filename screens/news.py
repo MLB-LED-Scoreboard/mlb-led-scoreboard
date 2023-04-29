@@ -7,6 +7,7 @@ import PIL, time
 
 class NewsScreen(MLBLEDScoreboardScreen):
 
+    SCROLLABLE = True
 
     class ScrollConfig:
         def __init__(self, coords, color, bgcolor, font):
@@ -20,11 +21,6 @@ class NewsScreen(MLBLEDScoreboardScreen):
         self.__render_ticker()
         self.__render_clock()
         self.__render_weather()
-
-        self.canvas = self.matrix.SwapOnVSync(self.canvas)
-
-    def ready_to_rotate(self):
-        return self.data.scrolling_finished
 
     def __render_ticker(self):
         remaining_length = scrollingtext.render_text(

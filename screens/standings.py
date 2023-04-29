@@ -2,6 +2,8 @@ from screens.base import MLBLEDScoreboardScreen
 from driver import graphics
 from utils import center_text_position
 
+import time
+
 class DivisionStandingsScreen(MLBLEDScoreboardScreen):
 
     class DivisionRequired(Exception):
@@ -13,20 +15,28 @@ class DivisionStandingsScreen(MLBLEDScoreboardScreen):
 
         super().__init__(*args)
 
-        if self.canvas.width > 32:
-            self.subscreen = DivisionStandingsScreen.StaticStandingsSubscreen(self)
-
         self.division = division
+        self.league = self.division[:2].lower()
 
     def on_render(self):
         self.subscreen.on_render()
 
-        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+    def ready_to_rotate(self):
+        return self.subscreen.ready_to_rotate()
+    
+    def on_rotate_to(self):
+        if self.canvas.width > 32:
+            self.subscreen = DivisionStandingsScreen.StaticStandingsSubscreen(self)
+        else:
+            self.subscreen = DivisionStandingsScreen.RotatingStandingsSubscreen(self)
+
+    @property
+    def background_color(self):
+        return self.get_standings_color_node("background")
 
     def get_standings_color_node(self, name):
         try:
-            league = self.data.division_for(self.division).name[:2].lower()
-            return self.data.config.scoreboard_colors.graphics_color(f"standings.{league}.{name}")
+            return self.data.config.scoreboard_colors.graphics_color(f"standings.{self.league}.{name}")
         except Exception:
             return self.data.config.scoreboard_colors.graphics_color(f"standings.{name}")
     
@@ -92,3 +102,97 @@ class DivisionStandingsScreen(MLBLEDScoreboardScreen):
 
                 offset += coords["offset"]
 
+        def ready_to_rotate(self):
+            return True
+
+
+    class RotatingStandingsSubscreen:
+
+        # How long to display wins vs. losses
+        # This is not configurable at the moment, but could be later.
+        ROTATION_RATE_SECONDS = 5
+
+        WINS = "w"
+        LOSSES = "l"
+
+        def __init__(self, parent):
+            self.parent = parent
+            self.stat = self.WINS
+
+            # This subscreen must rotate through both W and L stats
+            self.rotated_at = time.time()
+            self.rotated = False
+
+        def on_render(self):
+            self.try_rotation()
+
+            coords = self.parent.data.config.layout.coords("standings")
+            font   = self.parent.data.config.layout.font("standings")
+
+            divider_color       = self.parent.get_standings_color_node("divider")
+            stat_color          = self.parent.get_standings_color_node("stat")
+            team_stat_color     = self.parent.get_standings_color_node("team.stat")
+            team_name_color     = self.parent.get_standings_color_node("team.name")
+            team_elim_color     = self.parent.get_standings_color_node("team.elim")
+            team_clinched_color = self.parent.get_standings_color_node("team.clinched")
+
+            offset = coords["offset"]
+
+            graphics.DrawLine(
+                self.parent.canvas,
+                0,
+                0,
+                coords["width"],
+                0,
+                divider_color
+            )
+
+            graphics.DrawText(
+                self.parent.canvas,
+                font["font"],
+                coords["stat_title"]["x"],
+                offset,
+                stat_color,
+                self.stat.upper()
+            )
+
+            graphics.DrawLine(
+                self.parent.canvas,
+                coords["divider"]["x"],
+                0,
+                coords["divider"]["x"],
+                coords["height"],
+                divider_color
+            )
+
+            teams = self.parent.data.standings.standings_for(self.parent.division).teams
+
+            for team in teams:
+                graphics.DrawLine(self.parent.canvas, 0, offset, coords["width"], offset, divider_color)
+
+                team_text = "{:3s}".format(team.team_abbrev)
+                stat_text = str(getattr(team, self.stat))
+                color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_name_color)
+                graphics.DrawText(self.parent.canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
+                color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_stat_color)
+                graphics.DrawText(self.parent.canvas, font["font"], coords["team"]["record"]["x"], offset, color, stat_text)
+
+                offset += coords["offset"]
+
+        def ready_to_rotate(self):
+            # The stats have rotated and it's been at least ROTATION_RATE_SECONDS since it rotated
+            return self.rotated and self.rotated_at + self.ROTATION_RATE_SECONDS <= time.time()
+        
+        def try_rotation(self):
+            # This ensures that W / L are rotated evenly -- if wins are displayed, losses also must be.
+            if self.rotated_at + self.ROTATION_RATE_SECONDS <= time.time():
+                self.rotated_at = time.time()
+
+                if self.stat == self.WINS:
+                    self.stat = self.LOSSES
+
+                    self.rotated = True
+                else:
+                    self.stat = self.WINS
+
+                    self.rotated = False
