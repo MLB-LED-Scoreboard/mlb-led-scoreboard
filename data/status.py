@@ -162,15 +162,12 @@ WARMUP = "Warmup"  # Live
 WRITING = "Writing"  # Other
 REVIEW = "Review"  # Not in json
 
-GAME_STATE_INNING_BREAK = [Inning.TOP, Inning.BOTTOM]
+GAME_STATE_INNING_LIVE = [Inning.TOP, Inning.BOTTOM]
 
 GAME_STATE_LIVE = [
     IN_PROGRESS,
     WARMUP,
     INSTANT_REPLAY,
-    GAME_OVER,
-    GAME_OVER_TIE_DECISION_BY_TIEBREAKER,
-    GAME_OVER_TIED,
     MANAGER_CHALLENGE,
     MANAGER_CHALLENGE_CATCHDROP_IN_OUTFIELD,
     MANAGER_CHALLENGE_CLOSE_PLAY_AT_1ST,
@@ -409,4 +406,4 @@ def is_fresh(status):
 
 def is_inning_break(inning_state):
     """Returns whether a game is in an inning break (mid/end). Pass in the inning state."""
-    return inning_state not in GAME_STATE_INNING_BREAK
+    return inning_state not in GAME_STATE_INNING_LIVE
