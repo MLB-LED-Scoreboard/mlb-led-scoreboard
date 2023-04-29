@@ -18,7 +18,6 @@ class Schedule:
         self.date = self.__parse_today()
         self.starttime = time.time()
         self.current_idx = 0
-        self.preferred_over = False
         # all games for the day
         self.__all_games = []
         # the actual (filtered) schedule
@@ -102,7 +101,6 @@ class Schedule:
             not self.config.rotation_preferred_team_live_enabled
             and self.config.rotation_preferred_team_live_mid_inning
             and not self.is_offday_for_preferred_team()
-            and not self.preferred_over
         ):
             game_index = self._game_index_for_preferred_team()
             if game_index >= 0:  # we return -1 if no live games for preferred team
@@ -122,8 +120,7 @@ class Schedule:
                         self.current_idx = game_index
                         debug.log("Moving to preferred game, index: %d", self.current_idx)
                         return preferred_game
-                    if status.is_complete(preferred_game.status()):
-                        self.preferred_over = True
+
 
         self.current_idx = self.__next_game_index()
         return self.__current_game()
