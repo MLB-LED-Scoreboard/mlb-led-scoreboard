@@ -52,8 +52,10 @@ class Schedule:
                 if self.config.rotation_only_preferred:
                     games = Schedule.__filter_list_of_games(self.__all_games, self.config.preferred_teams)
                 if self.config.rotation_only_live:
-                    live_games = [g for g in self._games if status.is_live(g["status"]) or status.is_fresh(g["status"])]
+                    live_games = [g for g in games if status.is_live(g["status"]) or status.is_fresh(g["status"])]
                     if live_games:
+                        # we never have games drop down to [], since we may still be indexing into it
+                        # but this is fine, since self.games_live() is will work even if we don't do this update
                         games = live_games
 
                 self.current_idx %= len(games)
