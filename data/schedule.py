@@ -18,7 +18,6 @@ class Schedule:
         self.date = self.__parse_today()
         self.starttime = time.time()
         self.current_idx = 0
-        self.preferred_over = False
         # all games for the day
         self.__all_games = []
         # the actual (filtered) schedule
@@ -53,10 +52,13 @@ class Schedule:
                 if self.config.rotation_only_preferred:
                     games = Schedule.__filter_list_of_games(self.__all_games, self.config.preferred_teams)
                 if self.config.rotation_only_live:
-                    live_games = [g for g in self._games if status.is_live(g["status"]) or status.is_fresh(g["status"])]
+                    live_games = [g for g in games if status.is_live(g["status"]) or status.is_fresh(g["status"])]
                     if live_games:
+                        # we never have games drop down to [], since we may still be indexing into it
+                        # but this is fine, since self.games_live() is will work even if we don't do this update
                         games = live_games
 
+                self.current_idx %= len(games)
                 self._games = games
 
                 return UpdateStatus.SUCCESS
@@ -101,27 +103,26 @@ class Schedule:
             not self.config.rotation_preferred_team_live_enabled
             and self.config.rotation_preferred_team_live_mid_inning
             and not self.is_offday_for_preferred_team()
-            and not self.preferred_over
         ):
             game_index = self._game_index_for_preferred_team()
-            scheduled_game = self._games[game_index]
-            preferred_game = Game.from_scheduled(scheduled_game, self.config.delay_in_10s_of_seconds)
-            if preferred_game is not None:
-                debug.log(
-                    "Preferred Team's Game Status: %s, %s %d",
-                    preferred_game.status(),
-                    preferred_game.inning_state(),
-                    preferred_game.inning_number(),
-                )
+            if game_index >= 0:  # we return -1 if no live games for preferred team
+                scheduled_game = self._games[game_index]
+                preferred_game = Game.from_scheduled(scheduled_game, self.config.delay_in_10s_of_seconds)
+                if preferred_game is not None:
+                    debug.log(
+                        "Preferred Team's Game Status: %s, %s %d",
+                        preferred_game.status(),
+                        preferred_game.inning_state(),
+                        preferred_game.inning_number(),
+                    )
 
-                if status.is_live(preferred_game.status()) and not status.is_inning_break(
-                    preferred_game.inning_state()
-                ):
-                    self.current_idx = game_index
-                    debug.log("Moving to preferred game, index: %d", self.current_idx)
-                    return preferred_game
-                if status.is_complete(preferred_game.status()):
-                    self.preferred_over = True
+                    if status.is_live(preferred_game.status()) and not status.is_inning_break(
+                        preferred_game.inning_state()
+                    ):
+                        self.current_idx = game_index
+                        debug.log("Moving to preferred game, index: %d", self.current_idx)
+                        return preferred_game
+
 
         self.current_idx = self.__next_game_index()
         return self.__current_game()
@@ -129,13 +130,16 @@ class Schedule:
     def _game_index_for_preferred_team(self):
         if self.config.preferred_teams:
             team_name = data.teams.TEAM_FULL[self.config.preferred_teams[0]]
-            team_index = self.current_idx
-            team_idxs = [i for i, game in enumerate(self._games) if team_name in [game["away_name"], game["home_name"]]]
-            if len(team_idxs) > 0:
-                team_index = next((i for i in team_idxs if status.is_live(self._games[i]["status"])), team_idxs[0],)
-            return team_index
-        else:
-            return self.current_idx
+            return next(
+                (
+                    i
+                    for i, game in enumerate(self._games)
+                    if team_name in [game["away_name"], game["home_name"]] and status.is_live(game["status"])
+                ),
+                -1,  # no live games for preferred team
+            )
+
+        return -1  # no preferred team
 
     def __next_game_index(self):
         counter = self.current_idx + 1
