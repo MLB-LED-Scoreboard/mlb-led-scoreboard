@@ -155,23 +155,9 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
 
 
 def __render_main(matrix, data):
-    canvas = matrix.CreateFrameCanvas()
+    rotator = screens.ScreenRotator(matrix, data)
 
-    news                 = screens.NewsScreen(matrix, canvas, data)
-    nl_central_standings = screens.DivisionStandingsScreen(matrix, canvas, data, division="NL Central")
-    nl_west_standings    = screens.DivisionStandingsScreen(matrix, canvas, data, division="NL West")
-    nl_east_standings    = screens.DivisionStandingsScreen(matrix, canvas, data, division="NL East")
-
-    manager = Bullpen.Manager(
-        {
-            news: Bullpen.Transition(to=nl_central_standings, on=Bullpen.Condition.Timer(10)),
-            nl_central_standings: Bullpen.Transition(to=nl_east_standings, on=Bullpen.Condition.Timer(10)),
-            nl_east_standings: Bullpen.Transition(to=nl_west_standings, on=Bullpen.Condition.Timer(10)),
-            nl_west_standings: Bullpen.Transition(to=news, on=Bullpen.Condition.Timer(10))
-        }
-    )
-
-    manager.perform()
+    rotator.start()
 
 
 if __name__ == "__main__":

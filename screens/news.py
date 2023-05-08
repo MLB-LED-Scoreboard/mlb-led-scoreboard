@@ -7,6 +7,7 @@ import PIL, time
 
 class NewsScreen(MLBLEDScoreboardScreen):
 
+    NAME = "news"
     SCROLLABLE = True
 
     class ScrollConfig:
@@ -61,8 +62,8 @@ class NewsScreen(MLBLEDScoreboardScreen):
             self.__render_weather_text(self.weather.wind_dir_string(), "wind_dir")
             self.__render_weather_text(self.weather.wind_string(), "wind")
 
-    def __render_weather_icon(self):
-        coords = self.data.config.ayout.coords("offday.weather_icon")
+    def __render_weather_icon(self, weather_icon):
+        coords = self.data.config.layout.coords("offday.weather_icon")
         color = self.data.config.scoreboard_colors.color("offday.weather_icon")
         resize = coords.get("rescale_icon")
 
@@ -79,7 +80,7 @@ class NewsScreen(MLBLEDScoreboardScreen):
     def __render_weather_text(self, text, keyname):
         coords = self.data.config.layout.coords("offday.{}".format(keyname))
         font = self.data.config.layout.font("offday.{}".format(keyname))
-        color = self.data.config.scoreboard_colors.color.graphics_color("offday.{}".format(keyname))
+        color = self.data.config.scoreboard_colors.color("offday.{}".format(keyname))
         text_x = center_text_position(text, coords["x"], font["size"]["width"])
 
         graphics.DrawText(self.canvas, font["font"], text_x, coords["y"], color, text)

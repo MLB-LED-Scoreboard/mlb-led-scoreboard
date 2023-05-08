@@ -18,6 +18,10 @@ class DivisionStandingsScreen(MLBLEDScoreboardScreen):
         self.division = division
         self.league = self.division[:2].lower()
 
+    @property
+    def NAME(self):
+        return "_".join(self.division.lower().split(" ")) + "_standings"
+
     def on_render(self):
         self.subscreen.on_render()
 

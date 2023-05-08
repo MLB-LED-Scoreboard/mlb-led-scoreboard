@@ -4,6 +4,7 @@ from driver import graphics
 class MLBLEDScoreboardScreen(Bullpen.Action):
 
     SCROLLABLE = False
+    DEFAULT_REFRESH_RATE = 0.05 # seconds
 
     def __init__(self, matrix, canvas, data):
         self.matrix = matrix
@@ -33,7 +34,6 @@ class MLBLEDScoreboardScreen(Bullpen.Action):
         
         return True
 
-    
     def update_scroll_position(self, text_length, end):
         after_scroll = self.scroll_position - 1
 
