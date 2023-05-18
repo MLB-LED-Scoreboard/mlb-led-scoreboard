@@ -1,12 +1,12 @@
 import json
 import os
-import platform
 import sys
 
 import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
+from data.time import TIME_FORMAT_12H, TIME_FORMAT_24H
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -17,17 +17,6 @@ DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RAT
 DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
-TIME_FORMAT_24H_ALL_PLATFORMS = "%H"
-TIME_FORMAT_12H_NON_WINDOWS   = "%-I"
-TIME_FORMAT_12H_WINDOWS       = "%#I"
-
-TIME_FORMATS_24H = [
-    TIME_FORMAT_24H_ALL_PLATFORMS
-]
-TIME_FORMATS_12H = [
-    TIME_FORMAT_12H_NON_WINDOWS,
-    TIME_FORMAT_12H_WINDOWS
-]
 
 class Config:
     def __init__(self, filename_base, width, height):
@@ -148,13 +137,9 @@ class Config:
 
     def check_time_format(self):
         if self.time_format.lower() == "24h":
-            self.time_format = TIME_FORMAT_24H_ALL_PLATFORMS
+            self.time_format = TIME_FORMAT_24H
         else:
-            # Windows strftime syntax is different than other platforms
-            if platform.system() == "Windows":
-                self.time_format = TIME_FORMAT_12H_WINDOWS
-            else:
-                self.time_format = TIME_FORMAT_12H_NON_WINDOWS
+            self.time_format = TIME_FORMAT_12H
 
     def check_rotate_rates(self):
         if not isinstance(self.rotation_rates, dict):

@@ -4,7 +4,7 @@ import time
 
 import PIL.Image
 
-from data.config import TIME_FORMATS_12H
+from data.time import TIME_FORMAT_12H
 from data.config.color import Color
 from data.config.layout import Layout
 from data.headlines import Headlines
@@ -26,7 +26,7 @@ def render_offday_screen(
 
 def __render_clock(canvas, layout, colors, time_format):
     time_format_str = "{}:%M".format(time_format)
-    if time_format in TIME_FORMATS_12H:
+    if time_format == TIME_FORMAT_12H:
         time_format_str += "%p"
     time_text = time.strftime(time_format_str)
     coords = layout.coords("offday.time")
