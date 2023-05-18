@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 import sys
 
 import debug
@@ -138,7 +139,11 @@ class Config:
         if self.time_format.lower() == "24h":
             self.time_format = "%H"
         else:
-            self.time_format = "%-I"
+            # Windows strftime syntax is different than other platforms
+            if platform.system() == "Windows":
+                self.time_format = "%#I"
+            else:
+                self.time_format = "%-I"
 
     def check_rotate_rates(self):
         if not isinstance(self.rotation_rates, dict):
