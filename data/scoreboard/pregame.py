@@ -1,6 +1,7 @@
 import tzlocal
 
 from data.game import Game
+from data.time import TIME_FORMAT_12H
 
 PITCHER_TBD = "TBD"
 
@@ -45,7 +46,7 @@ class Pregame:
     def __convert_time(self, game_time_utc):
         """Converts MLB's pregame times (UTC) into the local time zone"""
         time_str = "{}:%M".format(self.time_format)
-        if self.time_format == "%-I":
+        if self.time_format == TIME_FORMAT_12H:
             time_str += "%p"
         return game_time_utc.astimezone(tzlocal.get_localzone()).strftime(time_str)
 

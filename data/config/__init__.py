@@ -6,6 +6,7 @@ import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
+from data.time import TIME_FORMAT_12H, TIME_FORMAT_24H
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -136,9 +137,9 @@ class Config:
 
     def check_time_format(self):
         if self.time_format.lower() == "24h":
-            self.time_format = "%H"
+            self.time_format = TIME_FORMAT_24H
         else:
-            self.time_format = "%-I"
+            self.time_format = TIME_FORMAT_12H
 
     def check_rotate_rates(self):
         if not isinstance(self.rotation_rates, dict):
