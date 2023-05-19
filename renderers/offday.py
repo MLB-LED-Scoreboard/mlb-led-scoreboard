@@ -4,7 +4,7 @@ import time
 
 import PIL.Image
 
-from data.time import TIME_FORMAT_12H
+from data.time_formats import TIME_FORMAT_12H
 from data.config.color import Color
 from data.config.layout import Layout
 from data.headlines import Headlines
