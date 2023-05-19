@@ -1,7 +1,7 @@
 import tzlocal
 
 from data.game import Game
-from data.time import TIME_FORMAT_12H
+from data.time_formats import TIME_FORMAT_12H
 
 PITCHER_TBD = "TBD"
 
