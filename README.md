@@ -41,7 +41,7 @@ If you'd like to see support for another set of board dimensions, or have design
   * [Custom Colors](#custom-colors)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
-* [Wiki](#wiki)
+* [Wiki](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki)
 * [Help and Contributing](#help-and-contributing)
   * [Latest Features](#latest-features)
 * [Licensing](#licensing)

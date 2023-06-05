@@ -1,5 +1,5 @@
 SCRIPT_NAME = "MLB LED Scoreboard"
-SCRIPT_VERSION = "6.3.4"
+SCRIPT_VERSION = "6.3.5"
 
 
 if __name__ == "__main__":
