@@ -58,7 +58,9 @@ class Schedule:
                         # but this is fine, since self.games_live() is will work even if we don't do this update
                         games = live_games
 
-                self.current_idx %= len(games)
+                if len(games) > 0:        
+                    self.current_idx %= len(games)
+
                 self._games = games
 
                 return UpdateStatus.SUCCESS
