@@ -292,14 +292,16 @@
       }
     },
     "record": {
-      "_comment": "Offscreen by default.",
+      "enabled": false,
       "away": {
-        "x": -10,
-        "y": -10
+        "font_name": "4x6",
+        "x": 19,
+        "y": 7
       },
       "home": {
-        "x": -10,
-        "y": -10
+        "font_name": "4x6",
+        "x": 19,
+        "y": 17
       }
     },
     "runs": {

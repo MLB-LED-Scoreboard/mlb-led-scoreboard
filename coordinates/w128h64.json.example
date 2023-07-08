@@ -272,14 +272,14 @@
       }
     },
     "record": {
-      "_comment": "Offscreen by default.",
+      "enabled": false,
       "away": {
-        "x": -10,
-        "y": -10
+        "x": 30,
+        "y": 13
       },
       "home": {
-        "x": -10,
-        "y": -10
+        "x": 30,
+        "y": 29
       }
     },
     "runs": {

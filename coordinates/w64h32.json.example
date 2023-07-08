@@ -264,14 +264,14 @@
       }
     },
     "record": {
-      "_comment": "Offscreen by default.",
+      "enabled": false,
       "away": {
-        "x": -10,
-        "y": -10
+        "x": 15,
+        "y": 6
       },
       "home": {
-        "x": -10,
-        "y": -10
+        "x": 15,
+        "y": 13
       }
     },
     "runs": {

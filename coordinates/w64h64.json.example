@@ -247,16 +247,17 @@
         "y": 10
       }
     },
-    ,
     "record": {
-      "_comment": "Offscreen by default.",
+      "enabled": false,
       "away": {
-        "x": -10,
-        "y": -10
+        "font_name": "4x6",
+        "x": 18,
+        "y": 7
       },
       "home": {
-        "x": -10,
-        "y": -10
+        "font_name": "4x6",
+        "x": 18,
+        "y": 17
       }
     },
     "runs": {

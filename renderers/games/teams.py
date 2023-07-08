@@ -116,6 +116,8 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
 def __render_record_text(canvas, layout, colors, team, homeaway, default_colors):
     if "losses" not in team.record or "wins" not in team.record:
         return
+    if not layout.coords("teams.record.enabled"):
+        return
 
     text_color = colors.get("text", default_colors["text"])
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
