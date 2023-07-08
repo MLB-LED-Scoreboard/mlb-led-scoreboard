@@ -15,10 +15,10 @@ class Scoreboard:
 
     def __init__(self, game: Game):
         self.away_team = Team(
-            game.away_abbreviation(), game.away_score(), game.away_name(), game.away_hits(), game.away_errors()
+            game.away_abbreviation(), game.away_score(), game.away_name(), game.away_hits(), game.away_errors(), game.away_record()
         )
         self.home_team = Team(
-            game.home_abbreviation(), game.home_score(), game.home_name(), game.home_hits(), game.home_errors()
+            game.home_abbreviation(), game.home_score(), game.home_name(), game.home_hits(), game.home_errors(), game.home_record()
         )
         self.inning = Inning(game)
         self.bases = Bases(game)

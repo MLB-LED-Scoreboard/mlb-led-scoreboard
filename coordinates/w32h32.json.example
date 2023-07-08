@@ -278,6 +278,17 @@
         "y": 13
       }
     },
+    "record": {
+      "_comment": "Offscreen by default.",
+      "away": {
+        "x": -10,
+        "y": -10
+      },
+      "home": {
+        "x": -10,
+        "y": -10
+      }
+    },
     "runs": {
       "runs_hits_errors": {
         "show": false,
