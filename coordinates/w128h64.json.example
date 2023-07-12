@@ -271,6 +271,17 @@
         "y": 29
       }
     },
+    "record": {
+      "enabled": false,
+      "away": {
+        "x": 30,
+        "y": 13
+      },
+      "home": {
+        "x": 30,
+        "y": 29
+      }
+    },
     "runs": {
       "runs_hits_errors": {
         "show": true,

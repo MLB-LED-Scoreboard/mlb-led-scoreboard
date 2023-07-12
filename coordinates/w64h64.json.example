@@ -247,6 +247,19 @@
         "y": 10
       }
     },
+    "record": {
+      "enabled": false,
+      "away": {
+        "font_name": "4x6",
+        "x": 18,
+        "y": 7
+      },
+      "home": {
+        "font_name": "4x6",
+        "x": 18,
+        "y": 17
+      }
+    },
     "runs": {
       "runs_hits_errors": {
         "show": false,
