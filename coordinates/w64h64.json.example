@@ -139,9 +139,10 @@
       "append_pitcher_name": false
     },
     "loop": 64,
-    "strikeout": {
+    "play_result": {
       "x": 31,
-      "y": 36
+      "y": 36,
+      "desc_length": "Short"
     }
   },
   "pregame": {

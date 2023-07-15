@@ -6,46 +6,49 @@ from data.scoreboard.atbat import AtBat
 from data.scoreboard.bases import Bases
 from data.scoreboard.inning import Inning
 from data.scoreboard.pitches import Pitches
+
 from renderers import scrollingtext
 from renderers.games import nohitter
 
 PLAY_RESULT_UPDATES = ["single", "double", "triple", "walk", "intent_walk", "home_run", "strikeout", "strikeout_looking"]
 
-PLAY_RESULTS = {
-    "single": {
-        "short": "1B", 
-        "long": "Single"
-    },
-    "double": {
-        "short": "2B", 
-        "long": "Double"
-    },
-    "triple": {
-        "short": "3B", 
-        "long": "Triple"
-    },
-    "home_run": {
-        "short": "HR",
-        "long": "Home Run"
-    },
-    "walk": {
-        "short": "BB",
-        "long": "Walk"
-    },
-    "intent_walk": {
-        "short": "IBB",
-        "long": "Int. Walk"
-    },
-    "strikeout": {
-        "short": "K",
-        "long": "K"
-    },
-    "strikeout_looking": {
-        "short": "ꓘ", 
-        "long" : "ꓘ"
-    }
+PLAY_RESULTS ={
+                "single": {
+                    "short": "1B", 
+                    "long": "Single"
+                },
+                "double": {
+                    "short": "2B", 
+                    "long": "Double"
+                },
+                "triple": {
+                    "short": "3B", 
+                    "long": "Triple"
+                },
+                "home_run": {
+                    "short": "HR",
+                    "long": "Home Run"
+                },
+                "walk": {
+                    "short": "BB",
+                    "long": "Walk"
+                },
+                "intent_walk": {
+                    "short": "IBB",
+                    "long": "Int. Walk"
+                },
+                "strikeout": {
+                    "short": "K",
+                    "long": "K"
+                },
+                "strikeout_looking": {
+                    "short": "ꓘ", 
+                    "long" : "ꓘ"
+                }
+            }
+
     
-}
+
 
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
     pos = 0
@@ -56,8 +59,6 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
                 colors,
                 scoreboard.atbat,
                 text_pos,
-                scoreboard.strikeout(),
-                scoreboard.strikeout_looking(),
                 scoreboard.play_result,
                 (animation_time // 6) % 2,
                 scoreboard.pitches
@@ -84,13 +85,12 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, play_result, animation, pitches: Pitches):  
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, animation, pitches: Pitches):  
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, pitches, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count(canvas, layout, colors, pitches)
     if play_result in PLAY_RESULT_UPDATES:
         if animation:
-            if looking: play_result += "_looking"
             __render_play_result(canvas, layout, colors, play_result)
         return plength
     else:
@@ -98,15 +98,11 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, lo
         return max(plength, blength)
 
 def __render_play_result(canvas, layout, colors, play_result):
-    text = ""
-    if layout.width > 64: 
-        text = PLAY_RESULTS[play_result]["long"]
-    else: 
-        text = PLAY_RESULTS[play_result]["short"]
-    print(text)
-    coords = layout.coords("atbat.batter") if layout.width > 64 else layout.coords("atbat.strikeout")
-    color = colors.graphics_color("atbat.strikeout")
-    font = layout.font("atbat.strikeout")
+    
+    coords = layout.coords("atbat.play_result")
+    color = colors.graphics_color("atbat.play_result")
+    font = layout.font("atbat.play_result")
+    text = PLAY_RESULTS[play_result][coords["desc_length"]]
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):
