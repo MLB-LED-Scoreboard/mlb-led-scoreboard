@@ -9,13 +9,12 @@ from data.scoreboard.pitches import Pitches
 from renderers import scrollingtext
 from renderers.games import nohitter
 
-
+PLAY_RESULT_UPDATES = ["single", "double", "triple", "walk", "home_run", "strikeout", "strikeout_looking"]
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
     pos = 0
 
     if scoreboard.inning.state == Inning.TOP or scoreboard.inning.state == Inning.BOTTOM:
-
-        pos = _render_at_bat(
+     pos = _render_at_bat(
             canvas,
             layout,
             colors,
@@ -23,21 +22,24 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
             text_pos,
             scoreboard.strikeout(),
             scoreboard.strikeout_looking(),
+            scoreboard.play_result,
             (animation_time // 6) % 2,
-            scoreboard.pitches,
+            scoreboard.pitches
+            
         )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
-        should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
-        if scoreboard.inning.number > should_display_nohitter:
-            if layout.state_is_nohitter():
-                nohitter.render_nohit_text(canvas, layout, colors)
+    should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
+    if scoreboard.inning.number > should_display_nohitter:
+        if layout.state_is_nohitter():
+            nohitter.render_nohit_text(canvas, layout, colors)
 
         _render_count(canvas, layout, colors, scoreboard.pitches)
         _render_outs(canvas, layout, colors, scoreboard.outs)
         _render_bases(canvas, layout, colors, scoreboard.bases, scoreboard.homerun(), (animation_time % 16) // 5)
 
         _render_inning_display(canvas, layout, colors, scoreboard.inning)
+   
     else:
         _render_inning_break(canvas, layout, colors, scoreboard.inning)
         _render_due_up(canvas, layout, colors, scoreboard.atbat)
@@ -46,18 +48,36 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation, pitches: Pitches):
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, play_result, animation, pitches: Pitches):
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, pitches, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count(canvas, layout, colors, pitches)
-    if strikeout:
-        if animation:
+    if play_result and play_result in PLAY_RESULT_UPDATES:
+        if animation and strikeout:
             __render_strikeout(canvas, layout, colors, looking)
+        else:
+            __render_play_result(canvas, layout, colors, play_result)
         return plength
     else:
         blength = __render_batter_text(canvas, layout, colors, atbat.batter, text_pos)
         return max(plength, blength)
 
+def __render_play_result(canvas, layout, colors, play_result):
+    text = ""
+    if play_result == "single":
+        text = "1B"
+    elif play_result == "double":
+        text = "2B"
+    elif play_result == "triple":
+        text = "3B"
+    elif play_result == "walk":
+        text = "BB"
+    elif play_result == "home_run":
+        text = "HR"
+    coords = layout.coords("atbat.strikeout")
+    color = colors.graphics_color("atbat.strikeout")
+    font = layout.font("atbat.strikeout")
+    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
 
 def __render_strikeout(canvas, layout, colors, looking):
     coords = layout.coords("atbat.strikeout")
@@ -65,7 +85,6 @@ def __render_strikeout(canvas, layout, colors, looking):
     font = layout.font("atbat.strikeout")
     text = "ꓘ" if looking else "K"
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
-
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):
     coords = layout.coords("atbat.batter")

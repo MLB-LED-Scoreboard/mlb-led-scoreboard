@@ -143,6 +143,16 @@
       "x": 15,
       "y": 29,
       "font_name": "5x7"
+    },
+    "hit": {
+      "x": 15,
+      "y": 29,
+      "font_name": "5x7"
+    },
+    "walk": {
+      "x": 15,
+      "y": 29,
+      "font_name": "5x7"
     }
   },
   "batter_count": {
