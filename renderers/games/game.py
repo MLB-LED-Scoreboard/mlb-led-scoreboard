@@ -6,48 +6,10 @@ from data.scoreboard.atbat import AtBat
 from data.scoreboard.bases import Bases
 from data.scoreboard.inning import Inning
 from data.scoreboard.pitches import Pitches
+from data.plays import PLAY_RESULT_UPDATES, PLAY_RESULTS
 
 from renderers import scrollingtext
 from renderers.games import nohitter
-
-PLAY_RESULT_UPDATES = ["single", "double", "triple", "walk", "intent_walk", "home_run", "strikeout", "strikeout_looking"]
-
-PLAY_RESULTS ={
-                "single": {
-                    "short": "1B", 
-                    "long": "Single"
-                },
-                "double": {
-                    "short": "2B", 
-                    "long": "Double"
-                },
-                "triple": {
-                    "short": "3B", 
-                    "long": "Triple"
-                },
-                "home_run": {
-                    "short": "HR",
-                    "long": "Home Run"
-                },
-                "walk": {
-                    "short": "BB",
-                    "long": "Walk"
-                },
-                "intent_walk": {
-                    "short": "IBB",
-                    "long": "Int. Walk"
-                },
-                "strikeout": {
-                    "short": "K",
-                    "long": "K"
-                },
-                "strikeout_looking": {
-                    "short": "ꓘ", 
-                    "long" : "ꓘ"
-                }
-            }
-
-    
 
 
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
@@ -95,6 +57,7 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, 
         return plength
     else:
         blength = __render_batter_text(canvas, layout, colors, atbat.batter, text_pos)
+        print(blength)
         return max(plength, blength)
 
 def __render_play_result(canvas, layout, colors, play_result):
