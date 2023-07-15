@@ -153,7 +153,7 @@ class MainRenderer:
                 self.data.scrolling_finished = True
 
         else:  # draw a live game
-            if scoreboard.homerun() or scoreboard.strikeout() or scoreboard.single() or scoreboard.double() or scoreboard.triple() or scoreboard.walk():
+            if scoreboard.homerun() or scoreboard.strikeout() or scoreboard.hit() or scoreboard.walk():
                 self.animation_time += 1
             else:
                 self.animation_time = 0

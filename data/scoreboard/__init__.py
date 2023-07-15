@@ -42,17 +42,11 @@ class Scoreboard:
     def strikeout_looking(self):
         return self.play_result == "strikeout_looking"
     
-    def single(self):
-        return self.play_result == "single"
-    
-    def double(self):
-        return self.play_result == "double"
-    
-    def triple(self):
-        return self.play_result == "triple"
+    def hit(self):
+        return self.play_result == "single" or self.play_result == "double" or self.play_result == "triple"
     
     def walk(self):
-        return self.play_result == "walk"
+        return self.play_result == "walk" or self.play_result == "intent_walk"
 
     def get_text_for_reason(self):
         if self.note:
