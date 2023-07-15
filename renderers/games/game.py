@@ -57,7 +57,6 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, 
         return plength
     else:
         blength = __render_batter_text(canvas, layout, colors, atbat.batter, text_pos)
-        print(blength)
         return max(plength, blength)
 
 def __render_play_result(canvas, layout, colors, play_result):
