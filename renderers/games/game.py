@@ -9,30 +9,66 @@ from data.scoreboard.pitches import Pitches
 from renderers import scrollingtext
 from renderers.games import nohitter
 
-PLAY_RESULT_UPDATES = ["single", "double", "triple", "walk", "home_run", "strikeout", "strikeout_looking"]
+PLAY_RESULT_UPDATES = ["single", "double", "triple", "walk", "intent_walk", "home_run", "strikeout", "strikeout_looking"]
+
+PLAY_RESULTS = {
+    "single": {
+        "short": "1B", 
+        "long": "Single"
+    },
+    "double": {
+        "short": "2B", 
+        "long": "Double"
+    },
+    "triple": {
+        "short": "3B", 
+        "long": "Triple"
+    },
+    "home_run": {
+        "short": "HR",
+        "long": "Home Run"
+    },
+    "walk": {
+        "short": "BB",
+        "long": "Walk"
+    },
+    "intent_walk": {
+        "short": "IBB",
+        "long": "Int. Walk"
+    },
+    "strikeout": {
+        "short": "K",
+        "long": "K"
+    },
+    "strikeout_looking": {
+        "short": "ꓘ", 
+        "long" : "ꓘ"
+    }
+    
+}
+
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
     pos = 0
-
     if scoreboard.inning.state == Inning.TOP or scoreboard.inning.state == Inning.BOTTOM:
-     pos = _render_at_bat(
-            canvas,
-            layout,
-            colors,
-            scoreboard.atbat,
-            text_pos,
-            scoreboard.strikeout(),
-            scoreboard.strikeout_looking(),
-            scoreboard.play_result,
-            (animation_time // 6) % 2,
-            scoreboard.pitches
-            
-        )
+        pos = _render_at_bat(
+                canvas,
+                layout,
+                colors,
+                scoreboard.atbat,
+                text_pos,
+                scoreboard.strikeout(),
+                scoreboard.strikeout_looking(),
+                scoreboard.play_result,
+                (animation_time // 6) % 2,
+                scoreboard.pitches
+                
+            )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
-    should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
-    if scoreboard.inning.number > should_display_nohitter:
-        if layout.state_is_nohitter():
-            nohitter.render_nohit_text(canvas, layout, colors)
+        should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
+        if scoreboard.inning.number > should_display_nohitter:
+            if layout.state_is_nohitter():
+                nohitter.render_nohit_text(canvas, layout, colors)
 
         _render_count(canvas, layout, colors, scoreboard.pitches)
         _render_outs(canvas, layout, colors, scoreboard.outs)
@@ -48,14 +84,13 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, play_result, animation, pitches: Pitches):
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, play_result, animation, pitches: Pitches):  
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, pitches, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count(canvas, layout, colors, pitches)
-    if play_result and play_result in PLAY_RESULT_UPDATES:
-        if animation and strikeout:
-            __render_strikeout(canvas, layout, colors, looking)
-        else:
+    if play_result in PLAY_RESULT_UPDATES:
+        if animation:
+            if looking: play_result += "_looking"
             __render_play_result(canvas, layout, colors, play_result)
         return plength
     else:
@@ -64,26 +99,14 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, lo
 
 def __render_play_result(canvas, layout, colors, play_result):
     text = ""
-    if play_result == "single":
-        text = "1B"
-    elif play_result == "double":
-        text = "2B"
-    elif play_result == "triple":
-        text = "3B"
-    elif play_result == "walk":
-        text = "BB"
-    elif play_result == "home_run":
-        text = "HR"
-    coords = layout.coords("atbat.strikeout")
+    if layout.width > 64: 
+        text = PLAY_RESULTS[play_result]["long"]
+    else: 
+        text = PLAY_RESULTS[play_result]["short"]
+    print(text)
+    coords = layout.coords("atbat.batter") if layout.width > 64 else layout.coords("atbat.strikeout")
     color = colors.graphics_color("atbat.strikeout")
     font = layout.font("atbat.strikeout")
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
-
-def __render_strikeout(canvas, layout, colors, looking):
-    coords = layout.coords("atbat.strikeout")
-    color = colors.graphics_color("atbat.strikeout")
-    font = layout.font("atbat.strikeout")
-    text = "ꓘ" if looking else "K"
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):
@@ -261,6 +284,7 @@ def __fill_out_circle(canvas, out, color):
 
 # --------------- inning information ---------------
 def _render_inning_break(canvas, layout, colors, inning: Inning):
+    
     text_font = layout.font("inning.break.text")
     num_font = layout.font("inning.break.number")
     text_coords = layout.coords("inning.break.text")
