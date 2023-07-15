@@ -1,7 +1,6 @@
 from driver import graphics
 
 import os.path
-import debug
 
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
