@@ -63,7 +63,10 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, 
 def __render_play_result(canvas, layout, colors, play_result):
     
     coords = layout.coords("atbat.play_result")
-    color = colors.graphics_color("atbat.play_result")
+    if "strikeout" in play_result:
+        color = colors.graphics_color("atbat.strikeout")
+    else: 
+        color = colors.graphics_color("atbat.play_result")
     font = layout.font("atbat.play_result")
     try:
       text = PLAY_RESULTS[play_result][coords["desc_length"]]
