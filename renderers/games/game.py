@@ -61,7 +61,6 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, 
         return max(plength, blength)
 
 def __render_play_result(canvas, layout, colors, play_result):
-    
     coords = layout.coords("atbat.play_result")
     if "strikeout" in play_result:
         color = colors.graphics_color("atbat.strikeout")
@@ -69,7 +68,7 @@ def __render_play_result(canvas, layout, colors, play_result):
         color = colors.graphics_color("atbat.play_result")
     font = layout.font("atbat.play_result")
     try:
-      text = PLAY_RESULTS[play_result][coords["desc_length"]]
+      text = PLAY_RESULTS[play_result][coords["desc_length"].lower()]
     except KeyError:
       return # There's no text or coordinates to render
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
@@ -130,9 +129,9 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
         mph = " "
         if coords["mph"]:
             mph = "mph "
-        if coords["desc_length"] == "Long":
+        if coords["desc_length"].lower() == "long":
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type_long
-        elif coords["desc_length"] == "Short":
+        elif coords["desc_length"].lower() == "short":
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
         else:
             pitch_text = ""
