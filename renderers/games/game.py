@@ -6,26 +6,26 @@ from data.scoreboard.atbat import AtBat
 from data.scoreboard.bases import Bases
 from data.scoreboard.inning import Inning
 from data.scoreboard.pitches import Pitches
+from data.plays import PLAY_RESULTS
+
 from renderers import scrollingtext
 from renderers.games import nohitter
 
 
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
     pos = 0
-
     if scoreboard.inning.state == Inning.TOP or scoreboard.inning.state == Inning.BOTTOM:
-
         pos = _render_at_bat(
-            canvas,
-            layout,
-            colors,
-            scoreboard.atbat,
-            text_pos,
-            scoreboard.strikeout(),
-            scoreboard.strikeout_looking(),
-            (animation_time // 6) % 2,
-            scoreboard.pitches,
-        )
+                canvas,
+                layout,
+                colors,
+                scoreboard.atbat,
+                text_pos,
+                scoreboard.play_result,
+                (animation_time // 6) % 2,
+                scoreboard.pitches
+                
+            )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
         should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
@@ -38,6 +38,7 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
         _render_bases(canvas, layout, colors, scoreboard.bases, scoreboard.homerun(), (animation_time % 16) // 5)
 
         _render_inning_display(canvas, layout, colors, scoreboard.inning)
+   
     else:
         _render_inning_break(canvas, layout, colors, scoreboard.inning)
         _render_due_up(canvas, layout, colors, scoreboard.atbat)
@@ -46,26 +47,32 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
 
 # --------------- at-bat ---------------
-def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, strikeout, looking, animation, pitches: Pitches):
+def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, animation, pitches: Pitches):  
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, pitches, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count(canvas, layout, colors, pitches)
-    if strikeout:
+    results = list(PLAY_RESULTS.keys())
+    if play_result in results:
         if animation:
-            __render_strikeout(canvas, layout, colors, looking)
+            __render_play_result(canvas, layout, colors, play_result)
         return plength
     else:
         blength = __render_batter_text(canvas, layout, colors, atbat.batter, text_pos)
         return max(plength, blength)
 
-
-def __render_strikeout(canvas, layout, colors, looking):
-    coords = layout.coords("atbat.strikeout")
-    color = colors.graphics_color("atbat.strikeout")
-    font = layout.font("atbat.strikeout")
-    text = "ꓘ" if looking else "K"
+def __render_play_result(canvas, layout, colors, play_result):
+    
+    coords = layout.coords("atbat.play_result")
+    if "strikeout" in play_result:
+        color = colors.graphics_color("atbat.strikeout")
+    else: 
+        color = colors.graphics_color("atbat.play_result")
+    font = layout.font("atbat.play_result")
+    try:
+      text = PLAY_RESULTS[play_result][coords["desc_length"]]
+    except KeyError:
+      return # There's no text or coordinates to render
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
-
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):
     coords = layout.coords("atbat.batter")
@@ -242,6 +249,7 @@ def __fill_out_circle(canvas, out, color):
 
 # --------------- inning information ---------------
 def _render_inning_break(canvas, layout, colors, inning: Inning):
+    
     text_font = layout.font("inning.break.text")
     num_font = layout.font("inning.break.number")
     text_coords = layout.coords("inning.break.text")

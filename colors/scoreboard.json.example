@@ -124,10 +124,15 @@
       "g": 255,
       "b": 255
     },
-    "strikeout": {
+    "play_result": {
       "r": 255,
       "g": 235,
       "b": 59
+    }, 
+    "strikeout": {
+      "r": 255,
+      "g": 0,
+      "b": 0
     }
   },
   "batter_count": {

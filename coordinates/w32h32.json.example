@@ -163,9 +163,10 @@
       "append_pitcher_name": false
     },
     "loop": 16,
-    "strikeout": {
+    "play_result": {
       "x": 33,
-      "y": 33
+      "y": 33,
+      "desc_length": "short"
     }
   },
   "batter_count": {
