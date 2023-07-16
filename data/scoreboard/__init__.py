@@ -5,6 +5,8 @@ from data.scoreboard.inning import Inning
 from data.scoreboard.outs import Outs
 from data.scoreboard.pitches import Pitches
 from data.scoreboard.team import Team
+from data import plays
+
 
 
 class Scoreboard:
@@ -43,10 +45,10 @@ class Scoreboard:
         return self.play_result == "strikeout_looking"
     
     def hit(self):
-        return self.play_result == "single" or self.play_result == "double" or self.play_result == "triple"
+        return self.play_result in plays.HITS
     
     def walk(self):
-        return self.play_result == "walk" or self.play_result == "intent_walk"
+        return self.play_result in plays.WALKS
 
     def get_text_for_reason(self):
         if self.note:

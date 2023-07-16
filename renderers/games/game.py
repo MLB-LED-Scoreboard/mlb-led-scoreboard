@@ -6,7 +6,7 @@ from data.scoreboard.atbat import AtBat
 from data.scoreboard.bases import Bases
 from data.scoreboard.inning import Inning
 from data.scoreboard.pitches import Pitches
-from data.plays import PLAY_RESULT_UPDATES, PLAY_RESULTS
+from data.plays import PLAY_RESULTS
 
 from renderers import scrollingtext
 from renderers.games import nohitter
@@ -51,7 +51,8 @@ def _render_at_bat(canvas, layout, colors, atbat: AtBat, text_pos, play_result, 
     plength = __render_pitcher_text(canvas, layout, colors, atbat.pitcher, pitches, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count(canvas, layout, colors, pitches)
-    if play_result in PLAY_RESULT_UPDATES:
+    results = list(PLAY_RESULTS.keys())
+    if play_result in results:
         if animation:
             __render_play_result(canvas, layout, colors, play_result)
         return plength
@@ -64,7 +65,10 @@ def __render_play_result(canvas, layout, colors, play_result):
     coords = layout.coords("atbat.play_result")
     color = colors.graphics_color("atbat.play_result")
     font = layout.font("atbat.play_result")
-    text = PLAY_RESULTS[play_result][coords["desc_length"]]
+    try:
+      text = PLAY_RESULTS[play_result][coords["desc_length"]]
+    except KeyError:
+      return # There's no text or coordinates to render
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):

@@ -1,36 +1,61 @@
-PLAY_RESULT_UPDATES = ["single", "double", "triple", "walk", "intent_walk", "home_run", "strikeout", "strikeout_looking"]
+SINGLE   = "single"
+DOUBLE   = "double"
+TRIPLE   = "triple"
+HOME_RUN = "home_run"
 
-PLAY_RESULTS ={
-                "single": {
-                    "Short": "1B", 
-                    "Long": "Single"
-                },
-                "double": {
-                    "Short": "2B", 
-                    "Long": "Double"
-                },
-                "triple": {
-                    "Short": "3B", 
-                    "Long": "Triple"
-                },
-                "home_run": {
-                    "Short": "HR",
-                    "Long": "Home Run"
-                },
-                "walk": {
-                    "Short": "BB",
-                    "Long": "Walk"
-                },
-                "intent_walk": {
-                    "Short": "IBB",
-                    "Long": "Int. Walk"
-                },
-                "strikeout": {
-                    "Short": "K",
-                    "Long": "K"
-                },
-                "strikeout_looking": {
-                    "Short": "ꓘ", 
-                    "Long" : "ꓘ"
-                }
-            }
+WALK             = "walk"
+INTENTIONAL_WALK = "intent_walk"
+
+STRIKEOUT         = "strikeout"
+STRIKEOUT_LOOKING = "strikeout_looking"
+
+HITS = [
+  SINGLE,
+  DOUBLE,
+  TRIPLE
+]
+
+WALKS = [
+  WALK,
+  INTENTIONAL_WALK
+]
+
+STRIKEOUTS = [
+  STRIKEOUT,
+  STRIKEOUT_LOOKING
+]
+
+PLAY_RESULTS = {
+    SINGLE: {
+    "short": "1B", 
+    "long": "Single"
+  },
+    DOUBLE: {
+    "short": "2B", 
+    "long": "Double"
+  },
+    TRIPLE: {
+    "short": "3B", 
+    "long": "Triple"
+  }, 
+    HOME_RUN: {
+    "short": "HR",
+    "long": "Home Run"
+    },
+    WALK: {
+    "short": "BB",
+    "long": "Walk"
+    },
+    INTENTIONAL_WALK: {
+    "short": "IBB",
+    "long": "Int. Walk"
+    },
+    STRIKEOUT: {
+    "short": "K",
+    "long": "K"
+    },
+    STRIKEOUT_LOOKING: {
+    "short": "ꓘ",
+    "long": "ꓘ"
+    }
+}
