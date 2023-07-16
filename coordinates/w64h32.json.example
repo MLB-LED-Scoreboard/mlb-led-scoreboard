@@ -144,17 +144,8 @@
       "y": 29,
       "font_name": "5x7",
       "desc_length": "Short"
-    },
-    "hit": {
-      "x": 15,
-      "y": 29,
-      "font_name": "5x7"
-    },
-    "walk": {
-      "x": 15,
-      "y": 29,
-      "font_name": "5x7"
     }
+    
   },
   "batter_count": {
     "x": 34,
