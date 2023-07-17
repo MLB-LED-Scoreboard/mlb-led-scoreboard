@@ -135,7 +135,7 @@
       "y": 50,
       "enabled": true,
       "mph": true,
-      "desc_length": "Long"
+      "desc_length": "long"
     },
     "pitch_count": {
       "font_name": "4x6",

@@ -130,7 +130,7 @@
       "y": 50,
       "enabled": false,
       "mph": false,
-      "desc_length": "Short"
+      "desc_length": "short"
     },
     "pitch_count": {
       "x": 1,
