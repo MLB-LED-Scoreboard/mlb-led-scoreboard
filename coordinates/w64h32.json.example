@@ -139,13 +139,21 @@
       "append_pitcher_name": false
     },
     "loop": 36,
+    "strikeout": {
+      "x": 15,
+      "y": 29,
+      "font_name": "5x7",
+      "desc_length": "short",
+      "enabled": true
+    },
     "play_result": {
       "x": 15,
       "y": 29,
       "font_name": "5x7",
-      "desc_length": "short"
+      "desc_length": "short",
+      "enabled": true
     }
-    
+
   },
   "batter_count": {
     "x": 34,
