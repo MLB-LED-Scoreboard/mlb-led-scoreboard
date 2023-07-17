@@ -135,7 +135,7 @@
       "y": 50,
       "enabled": true,
       "mph": true,
-      "desc_length": "Long"
+      "desc_length": "long"
     },
     "pitch_count": {
       "font_name": "4x6",
@@ -145,10 +145,17 @@
       "append_pitcher_name": false
     },
     "loop": 68,
+    "strikeout": {
+      "x": 16,
+      "y": 60,
+      "desc_length": "long",
+      "enabled": true
+    },
     "play_result": {
       "x": 16,
       "y": 60,
-      "desc_length": "Long"
+      "desc_length": "long",
+      "enabled": true
     }
   },
   "batter_count": {

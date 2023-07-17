@@ -183,10 +183,17 @@
       "append_pitcher_name": false
     },
     "loop": 64,
+    "strikeout": {
+      "x": 60,
+      "y": 30,
+      "desc_length": "short",
+      "enabled": true
+    },
     "play_result": {
       "x": 60,
       "y": 30,
-      "desc_length": "short"
+      "desc_length": "short",
+      "enabled": true
     }
   },
   "pregame": {
