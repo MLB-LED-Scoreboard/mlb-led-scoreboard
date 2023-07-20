@@ -261,8 +261,8 @@ A default `config.json.example` file is included for reference. Copy this file t
 
 * Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the `short` and `long` pitch description can be changed in data/pitches.py
 
-* Previous Play Data - Data for the previous play can be shown on the game screen. See the [coordinates readme file](/coordinates/README.md) for details. Long and short play descriptions can be changed in data/plays.py **NOTE** Because play result data is ephemeral, not every play result will be displayed. Situations like a mound visit, injury, or other timeout immediately following a play often cause the play result to be immediately replaced on the MLB API. 
-
+* Previous Play Data - Data for the previous play can be shown on the game screen. See the [coordinates readme file](/coordinates/README.md) for details. Long and short play descriptions can be changed in data/plays.py
+  * **NOTE:** Because play result data is ephemeral, not every play result will be displayed. Situations like a mound visit, injury, or other timeout immediately following a play often cause the play result to be immediately replaced on the MLB API. 
 
 ### Flags
 
