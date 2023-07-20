@@ -153,7 +153,7 @@
       "y": 50,
       "enabled": false,
       "mph": false,
-      "desc_length": "Short"
+      "desc_length": "short"
     },
     "pitch_count": {
       "font_name": "4x6",
@@ -165,7 +165,15 @@
     "loop": 16,
     "strikeout": {
       "x": 33,
-      "y": 33
+      "y": 33,
+      "desc_length": "short",
+      "enabled": false
+    },
+    "play_result": {
+      "x": 33,
+      "y": 33,
+      "desc_length": "short",
+      "enabled": false
     }
   },
   "batter_count": {

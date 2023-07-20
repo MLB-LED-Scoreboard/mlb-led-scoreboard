@@ -173,7 +173,7 @@
       "y": 50,
       "enabled": false,
       "mph": false,
-      "desc_length": "Short"
+      "desc_length": "short"
     },
     "pitch_count": {
       "font_name": "4x6",
@@ -184,8 +184,16 @@
     },
     "loop": 64,
     "strikeout": {
-      "x": 84,
-      "y": 30
+      "x": 60,
+      "y": 30,
+      "desc_length": "short",
+      "enabled": true
+    },
+    "play_result": {
+      "x": 60,
+      "y": 30,
+      "desc_length": "short",
+      "enabled": true
     }
   },
   "pregame": {
