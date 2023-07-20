@@ -23,6 +23,10 @@ The layout can have a couple of different states where things are rendered diffe
 * `mph` (true/false) When rendering pitch speed add mph after (99 mph)
 * `desc_length` (short/long) The short or long pitch type description, you can change both the short and long description to your liking in data/pitches as long as you do not change the index value.
 
+## Play Result
+* `enabled` (true/false) turn feature on/off
+* `desc_length` (short/long) The short or long play result description. You can change both the short and long description to your liking in data/plays. 
+
 ## Updates
 The software develops and releases features with full support for the default layouts, so custom layouts may look unsatisfactory if you update to later versions of the scoreboard. If you as a user decide to create a custom layout file, you are responsible for tweaking the coordinates to your liking with each update.
 
