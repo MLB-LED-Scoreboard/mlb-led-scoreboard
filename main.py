@@ -35,6 +35,32 @@ from version import SCRIPT_NAME, SCRIPT_VERSION
 
 
 def main(matrix, config_base):
+    matrix.fps = 0
+
+    def SwapOnVSync(fn):
+        from driver import graphics
+
+        font = graphics.Font()
+        font.LoadFont("assets/fonts/patched/4x6.bdf")
+
+        def instrumented_fn(canvas):
+            frame_start = time.time()
+
+            for y in range(7):
+                graphics.DrawLine(canvas, 0, y, 20, y, graphics.Color(0, 0, 0))
+            graphics.DrawText(canvas, font, 0, 6, graphics.Color(255, 255, 255), str(round(matrix.fps, 2)))
+
+            result = fn(canvas)
+
+            frame_end = time.time()
+
+            matrix.fps = 60 / ((frame_end - frame_start) * 1000)
+
+            return result
+        
+        return instrumented_fn
+
+    matrix.SwapOnVSync = SwapOnVSync(matrix.SwapOnVSync)
 
     # Read scoreboard options from config.json if it exists
     config = Config(config_base, matrix.width, matrix.height)
