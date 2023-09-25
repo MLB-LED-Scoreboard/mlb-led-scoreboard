@@ -54,7 +54,7 @@ def main(matrix, config_base):
 
             frame_end = time.time()
 
-            matrix.fps = 60 / ((frame_end - frame_start) * 1000)
+            matrix.fps = 1 / (frame_end - frame_start)
 
             return result
         
