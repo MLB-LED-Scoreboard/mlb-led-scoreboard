@@ -232,11 +232,12 @@ class MainRenderer:
 
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
-            if self.data.standings.is_postseason() and update % 20 == 0:
-                if self.standings_league == "NL":
-                    self.standings_league = "AL"
-                else:
-                    self.standings_league = "NL"
+            if self.data.standings.is_postseason():
+                if update % 20 == 0:
+                    if self.standings_league == "NL":
+                        self.standings_league = "AL"
+                    else:
+                        self.standings_league = "NL"
             elif self.canvas.width == 32 and update % 5 == 0:
                 if self.standings_stat == "w":
                     self.standings_stat = "l"
