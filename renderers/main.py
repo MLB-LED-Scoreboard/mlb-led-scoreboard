@@ -233,7 +233,7 @@ class MainRenderer:
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
             if self.data.standings.is_postseason():
-                if  update % 20 == 0:
+                if update % 20 == 0:
                     if self.standings_league == "NL":
                         self.standings_league = "AL"
                     else:
