@@ -1,6 +1,17 @@
 feedparser==6.0.10
 MLB_StatsAPI>=1.6.1
-Pillow==9.3.0
+# PIL is affected by CVE-2023-4863
+#   https://nvd.nist.gov/vuln/detail/CVE-2023-4863
+# 
+# The vulnerability is patched in Pillow >= 10.0.1. This version does not support Python 3.7 due to this version being end-of-life.
+# Python 3.7.3 is the default Python version for Raspbian / Raspberry Pi OS, and upgrading Python versions is difficult for non-technical users.
+#
+# Therefore, addressing the CVE at this time would be a breaking change for most users without an easy upgrade path to Python 3.8+.
+# 
+# Dependabot PR:
+#   https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/pull/502
+#
+# Pillow==9.3.1
 pyowm==3.3.0
 RGBMatrixEmulator>=0.8.4
 tzlocal==4.2
