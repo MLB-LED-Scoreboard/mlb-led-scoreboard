@@ -2,7 +2,13 @@ from driver import graphics
 
 import time
 
-import PIL.Image
+try:
+    from PIL import Image
+
+    PIL_LOADED = True
+except:
+    
+    PIL_LOADED = False
 
 from data.time_formats import TIME_FORMAT_12H
 from data.config.color import Color
@@ -38,9 +44,10 @@ def __render_clock(canvas, layout, colors, time_format):
 
 def __render_weather(canvas, layout, colors, weather):
     if weather.available():
-        image_file = weather.icon_filename()
-        weather_icon = PIL.Image.open(image_file)
-        __render_weather_icon(canvas, layout, colors, weather_icon)
+        if PIL_LOADED:
+            image_file = weather.icon_filename()
+            weather_icon = Image.open(image_file)
+            __render_weather_icon(canvas, layout, colors, weather_icon)
         __render_weather_text(canvas, layout, colors, weather.conditions, "conditions")
         __render_weather_text(canvas, layout, colors, weather.temperature_string(), "temperature")
         __render_weather_text(canvas, layout, colors, weather.wind_speed_string(), "wind_speed")
