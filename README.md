@@ -118,6 +118,9 @@ cd mlb-led-scoreboard/
 sudo ./install.sh
 ```
 
+This will create a Python Virtual Environment and install all of the required dependencies. The
+virtual environment will be located at `mlb-led-scoreboard/venv/`.
+
 This will install the rgbmatrix binaries, which we get from [another open source library](https://github.com/hzeller/rpi-rgb-led-matrix/tree/master/bindings/python#building). It controls the actual rendering of the scoreboard onto the LEDs. If you're curious, you can read through their documentation on how all of the lower level stuff works.
 
 It will also install the following python libraries that are required for certain parts of the scoreboard to function.
@@ -144,7 +147,7 @@ Additional flags are available for customizing your install:
 -c, --skip-config  Skips default config overwrite without prompting.
 
 -a, --skip-all     Performs all above skips.
-
+--no-venv          Do not create a virtual environment for the dependencies.
 --emulator-only    Do not install dependencies under sudo. Skips building matrix dependencies.
 
 -h, --help         Displays help
@@ -167,11 +170,14 @@ The latest version of the software is available [here](https://github.com/MLB-LE
 Make sure your Raspberry Pi's timezone is configured to your local time zone. They'll often have London time on them by default. You can change the timezone of your raspberry pi by running `sudo raspi-config`.
 
 ## Usage
-`sudo python3 main.py` Running as root is 100% an absolute must, or the matrix won't render.
+The installation script adds a line to the top of `main.py` to automatically pick up the virtual environment.
+This means re-activating the environment (`source ./venv/bin/activate`) is not a requirement.
+
+`sudo ./main.py` Running as root is 100% an absolute must, or the matrix won't render.
 
 **Adafruit HAT/Bonnet users: You must supply a command line flag:**
 
-`sudo python3 main.py --led-gpio-mapping="adafruit-hat"`
+`sudo ./main.py --led-gpio-mapping="adafruit-hat"`
 
 See the Flags section below for more flags you can optionally provide.
 
@@ -180,13 +186,13 @@ See the Flags section below for more flags you can optionally provide.
 The scoreboard can run on other platforms by means of software emulation via `RGBMatrixEmulator`. When running via the emulator, you do not need to prepend your startup commands with `sudo`:
 
 ```sh
-python3 main.py
+./main.py
 ```
 
 You can also force the scoreboard into emulation mode by using the `--emulated` flag:
 
 ```sh
-python3 main.py --emulated
+./main.py --emulated
 ```
 
 When running in emulation mode, you can continue to use your existing command line flags as normal.
@@ -262,7 +268,7 @@ A default `config.json.example` file is included for reference. Copy this file t
 * Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the `short` and `long` pitch description can be changed in data/pitches.py
 
 * Previous Play Data - Data for the previous play can be shown on the game screen. See the [coordinates readme file](/coordinates/README.md) for details. Long and short play descriptions can be changed in data/plays.py
-  * **NOTE:** Because play result data is ephemeral, not every play result will be displayed. Situations like a mound visit, injury, or other timeout immediately following a play often cause the play result to be immediately replaced on the MLB API. 
+  * **NOTE:** Because play result data is ephemeral, not every play result will be displayed. Situations like a mound visit, injury, or other timeout immediately following a play often cause the play result to be immediately replaced on the MLB API.
 
 ### Flags
 
