@@ -108,6 +108,10 @@ if [ "$SKIP_VENV" = false ]; then
             sed  -i "1i #\!$(which python3)" main.py
         fi
         chmod +x main.py
+
+        if ! grep -q "noshebang" ./.git/config; then
+            cat .git-config-template >> .git/config
+        fi
     fi
 fi
 PYTHON=$(which python3)

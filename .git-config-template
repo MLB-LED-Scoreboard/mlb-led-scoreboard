@@ -1,0 +1,4 @@
+[filter "noshebang"]
+    clean = grep -v '.!/.*python3'
+    smudge = cat
+    required
