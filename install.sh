@@ -11,7 +11,7 @@ usage() {
         -p, --skip-python:  Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
 
         -a, --skip-all:     Skip all dependencies and config installation (equivalent to -c -p -m).
-
+        --no-venv           Do not create a virtual environment for the dependencies.
         --emulator-only:    Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
 
 USAGE
@@ -22,6 +22,7 @@ SKIP_PYTHON=false
 SKIP_CONFIG=false
 SKIP_MATRIX=false
 NO_SUDO=false
+SKIP_VENV=false
 
 for arg in "$@"; do
     case $arg in
@@ -41,12 +42,17 @@ for arg in "$@"; do
         SKIP_CONFIG=true
         SKIP_MATRIX=true
         SKIP_PYTHON=true
+        SKIP_VENV=true
         shift # Remove -a / --skip-all from `$@`
         ;;
     --emulator-only)
         SKIP_MATRIX=true
         NO_SUDO=true
         shift # remove --emulator-only from `$@`
+        ;;
+    --no-venv)
+        SKIP_VENV=true
+        shift # remove --no-venv from `$@`
         ;;
     -h | --help)
         usage # run usage function on help
@@ -69,6 +75,7 @@ if [ "$SKIP_PYTHON" = false ]; then
         python3-pip \
         python3-pillow \
         python3-tk \
+        python3-venv \
         libxml2-dev \
         libxslt-dev \
         libsdl2-mixer-2.0-0 \
@@ -84,10 +91,35 @@ echo "  Installing dependencies..."
 echo "------------------------------------"
 echo
 
+if [ "$SKIP_VENV" = false ]; then
+    echo "Creating virtual environment..."
+    if [ "$NO_SUDO" = false ]; then
+        sudo python3 -m venv ./venv
+    else
+        python3 -m venv ./venv
+    fi
+    source ./venv/bin/activate
+
+
+    if ! grep -q "#\!/" main.py; then
+        if [ "$NO_SUDO" = false ]; then
+            sed  -i "1i #\!/usr/bin/sudo $(which python3)" main.py
+        else
+            sed  -i "1i #\!$(which python3)" main.py
+        fi
+        chmod +x main.py
+
+        if ! grep -q "noshebang" ./.git/config; then
+            cat .git-config-template >> .git/config
+        fi
+    fi
+fi
+PYTHON=$(which python3)
+
 if [ "$NO_SUDO" = false ]; then
-    sudo python3 -m pip install -r requirements.txt
+    sudo "$PYTHON" -m pip install -r requirements.txt
 else
-    python3 -m pip install -r requirements.txt
+    "$PYTHON" -m pip install -r requirements.txt
 fi
 
 if [ "$SKIP_MATRIX" = false ]; then
@@ -97,8 +129,8 @@ if [ "$SKIP_MATRIX" = false ]; then
     git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
     cd matrix
     git pull
-    make build-python PYTHON=$(which python3)
-    sudo make install-python PYTHON=$(which python3)
+    make build-python PYTHON="$PYTHON"
+    sudo make install-python PYTHON="$PYTHON"
 
     cd ../..
 fi
@@ -123,7 +155,7 @@ else
     echo "  update them with the latest options at this time."
     echo
     echo "  This operation is automatic and will ensure you have up-to-date configuration."
-    echo 
+    echo
     echo "  This action will NOT override any custom configuration you already have unless"
     echo "  the option has been obsoleted and is no longer in use."
     echo "==================================================================================="
