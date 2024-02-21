@@ -1,7 +1,7 @@
 # mlb-led-scoreboard
 
 ![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) [![Join Discord](https://img.shields.io/badge/discord-join-blue.svg)](https://discord.gg/FdD6ec9fdt)
- [![Join Slack](https://img.shields.io/badge/slack-join%20(deprecated)-blue.svg)](https://join.slack.com/t/mlb-led-scoreboard/shared_invite/zt-1f6n4axo4-r32OH7dlSAjEjstFV4RDNQ)
+
 
 <a href="assets/img/header.jpg">
   <img alt="Project header" width="800px" height="auto" src="assets/img/header.jpg">
