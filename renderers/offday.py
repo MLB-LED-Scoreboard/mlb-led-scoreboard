@@ -70,7 +70,7 @@ def __render_weather_icon(canvas, layout, colors, weather_icon):
 
     if resize:
         weather_icon = weather_icon.resize(
-            (weather_icon.width * resize, weather_icon.height * resize), PIL.Image.NEAREST
+            (weather_icon.width * resize, weather_icon.height * resize), Image.NEAREST
         )
     for x in range(weather_icon.width):
         for y in range(weather_icon.height):
