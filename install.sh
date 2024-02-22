@@ -124,6 +124,7 @@ fi
 
 if [ "$SKIP_MATRIX" = false ]; then
     echo "Running rgbmatrix installation..."
+    sudo apt-get install -y make
     mkdir submodules
     cd submodules
     git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
