@@ -126,6 +126,9 @@ def args():
         help="Force using emulator mode over default matrix display.",
         const=True
     )
+    parser.add_argument(
+        "--drop-privileges", action="store_false", help="Force the matrix driver to drop root privileges after setup."
+    )
     return parser.parse_args()
 
 
@@ -148,6 +151,7 @@ def led_matrix_options(args):
     options.scan_mode = args.led_scan_mode
     options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
     options.led_rgb_sequence = args.led_rgb_sequence
+    options.drop_privileges = args.drop_privileges
 
     try:
         options.pixel_mapper_config = args.led_pixel_mapper
