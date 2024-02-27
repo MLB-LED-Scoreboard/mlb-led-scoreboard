@@ -127,7 +127,7 @@ def args():
         const=True
     )
     parser.add_argument(
-        "--drop-privileges", action="store_false", help="Force the matrix driver to drop root privileges after setup."
+        "--drop-privileges", action="store_true", help="Force the matrix driver to drop root privileges after setup."
     )
     return parser.parse_args()
 
