@@ -102,7 +102,9 @@ if [ "$SKIP_VENV" = false ]; then
 
 
     if ! grep -q "#\!/" main.py; then
-        if [ "$NO_SUDO" = false ]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' '1i\'$'\n''#!'"$(which python3)"$'\n' main.py
+        elif [ "$NO_SUDO" = false ]; then
             sed  -i "1i #\!/usr/bin/sudo $(which python3)" main.py
         else
             sed  -i "1i #\!$(which python3)" main.py
