@@ -21,21 +21,7 @@ import os
 import threading
 import time
 
-# TODO: This code addresses CVE-2023-4863 in Pillow < 10.0.1, which requires Python 3.8+
-#   See requirements.txt for rationale.
-try:
-    from PIL import Image
-
-    pil_version = tuple(map(int, Image.__version__.split(".")))
-    if pil_version < (10, 0, 1):
-        debug.warning(f"Attempted to load an insecure PIL version ({Image.__version__}). We require PIL 10.0.1 or higher.")
-
-        raise ModuleNotFoundError
-
-    PIL_LOADED = True
-except:
-    debug.warning("PIL failed to load -- images will not be displayed.")
-    PIL_LOADED = False
+from PIL import Image
 
 # Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
@@ -74,7 +60,7 @@ def main(matrix, config_base):
 
     # MLB image disabled when using renderer, for now.
     # see: https://github.com/ty-porter/RGBMatrixEmulator/issues/9#issuecomment-922869679
-    if os.path.exists(logo_path) and driver.is_hardware() and PIL_LOADED:
+    if os.path.exists(logo_path) and driver.is_hardware():
         logo = Image.open(logo_path)
         matrix.SetImage(logo.convert("RGB"))
         logo.close()
