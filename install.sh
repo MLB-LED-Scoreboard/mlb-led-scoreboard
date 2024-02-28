@@ -100,19 +100,21 @@ if [ "$SKIP_VENV" = false ]; then
     fi
     source ./venv/bin/activate
 
-
     if ! grep -q "#\!/" main.py; then
         if [[ "$OSTYPE" == "darwin"* ]]; then
             sed -i '' '1i\'$'\n''#!'"$(which python3)"$'\n' main.py
         elif [ "$NO_SUDO" = false ]; then
-            sed  -i "1i #\!/usr/bin/sudo $(which python3)" main.py
+            sed -i "1i #\!/usr/bin/sudo $(which python3)" main.py
         else
-            sed  -i "1i #\!$(which python3)" main.py
+            sed -i "1i #\!$(which python3)" main.py
         fi
         chmod +x main.py
 
         if ! grep -q "noshebang" ./.git/config; then
+            # Add template to .git/config, and trigger the filter by adding the file.
+            # After that, the shebang should be ignored.
             cat .git-config-template >> .git/config
+            git add main.py
         fi
     fi
 fi
