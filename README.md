@@ -295,6 +295,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-pwm-dither-bits     Time dithering of lower bits (Default: 0)
 --config                  Specify a configuration file name other, omitting json xtn (Default: config)
 --emulated                Force the scoreboard to run in software emulation mode.
+--drop-privileges         Force the matrix driver to drop root privileges after setup. (Default: true)
 ```
 
 ## Personalization
