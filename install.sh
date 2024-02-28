@@ -110,12 +110,13 @@ if [ "$SKIP_VENV" = false ]; then
         fi
         chmod +x main.py
 
+        # Add template to .git/config (if it doesn't already exist), and trigger the filter by adding the file.
+        # After that, the shebang should be ignored.
         if ! grep -q "noshebang" ./.git/config; then
-            # Add template to .git/config, and trigger the filter by adding the file.
-            # After that, the shebang should be ignored.
             cat .git-config-template >> .git/config
-            git add main.py
         fi
+
+        git add main.py
     fi
 fi
 PYTHON=$(which python3)
