@@ -83,7 +83,8 @@ class NewsScreen(MLBLEDScoreboardScreen):
         color = self.data.config.scoreboard_colors.color("offday.{}".format(keyname))
         text_x = center_text_position(text, coords["x"], font["size"]["width"])
 
-        graphics.DrawText(self.canvas, font["font"], text_x, coords["y"], color, text)
+        color_tuple = (color["r"], color["g"], color["b"])
+        graphics.DrawText(self.canvas, font["font"], text_x, coords["y"], color_tuple, text)
 
     @property
     def weather(self):
