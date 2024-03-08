@@ -135,7 +135,7 @@
       "y": 50,
       "enabled": true,
       "mph": true,
-      "desc_length": "Long"
+      "desc_length": "long"
     },
     "pitch_count": {
       "font_name": "4x6",
@@ -146,8 +146,16 @@
     },
     "loop": 68,
     "strikeout": {
-      "x": 32,
-      "y": 60
+      "x": 16,
+      "y": 60,
+      "desc_length": "long",
+      "enabled": true
+    },
+    "play_result": {
+      "x": 16,
+      "y": 60,
+      "desc_length": "long",
+      "enabled": true
     }
   },
   "batter_count": {
@@ -268,6 +276,17 @@
       "home": {
         "font_name": "9x18B",
         "x": 4,
+        "y": 29
+      }
+    },
+    "record": {
+      "enabled": false,
+      "away": {
+        "x": 30,
+        "y": 13
+      },
+      "home": {
+        "x": 30,
         "y": 29
       }
     },

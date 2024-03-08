@@ -10,7 +10,7 @@ from data.delay_buffer import CircularQueue
 
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
-    + "reason,probablePitchers,teams,home,away,abbreviation,teamName,players,id,boxscoreName,fullName,liveData,plays,"
+    + "reason,probablePitchers,teams,home,away,abbreviation,teamName,record,wins,losses,players,id,boxscoreName,fullName,liveData,plays,"
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
@@ -88,6 +88,12 @@ class Game:
 
     def home_abbreviation(self):
         return self._current_data["gameData"]["teams"]["home"]["abbreviation"]
+    
+    def home_record(self):
+        return self._current_data["gameData"]["teams"]["home"]["record"] or {}
+    
+    def away_record(self):
+        return self._current_data["gameData"]["teams"]["away"]["record"] or {}
 
     def pregame_weather(self):
         try:

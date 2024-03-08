@@ -36,14 +36,17 @@ class Layout:
 
     def coords(self, keypath):
         try:
-            d = self.__find_at_keypath(keypath)
+            coord_dict = self.__find_at_keypath(keypath)
         except KeyError as e:
             raise e
 
-        if self.state in AVAILABLE_OPTIONAL_KEYS:
-            if self.state in d:
-                return d[self.state]
-        return d
+        if not isinstance(coord_dict, dict) or not self.state in AVAILABLE_OPTIONAL_KEYS:
+            return coord_dict
+
+        if self.state in coord_dict:
+            return coord_dict[self.state]
+
+        return coord_dict
 
     def set_state(self, new_state=None):
         if new_state in AVAILABLE_OPTIONAL_KEYS:

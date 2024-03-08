@@ -153,7 +153,7 @@ class MainRenderer:
                 self.data.scrolling_finished = True
 
         else:  # draw a live game
-            if scoreboard.homerun() or scoreboard.strikeout():
+            if scoreboard.homerun() or scoreboard.strikeout() or scoreboard.hit() or scoreboard.walk():
                 self.animation_time += 1
             else:
                 self.animation_time = 0
@@ -232,11 +232,12 @@ class MainRenderer:
 
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
-            if self.data.standings.is_postseason() and update % 20 == 0:
-                if self.standings_league == "NL":
-                    self.standings_league = "AL"
-                else:
-                    self.standings_league = "NL"
+            if self.data.standings.is_postseason():
+                if update % 20 == 0:
+                    if self.standings_league == "NL":
+                        self.standings_league = "AL"
+                    else:
+                        self.standings_league = "NL"
             elif self.canvas.width == 32 and update % 5 == 0:
                 if self.standings_stat == "w":
                     self.standings_stat = "l"

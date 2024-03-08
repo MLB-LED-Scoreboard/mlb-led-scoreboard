@@ -1,7 +1,7 @@
 # mlb-led-scoreboard
 
 ![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) [![Join Discord](https://img.shields.io/badge/discord-join-blue.svg)](https://discord.gg/FdD6ec9fdt)
- [![Join Slack](https://img.shields.io/badge/slack-join%20(deprecated)-blue.svg)](https://join.slack.com/t/mlb-led-scoreboard/shared_invite/zt-1f6n4axo4-r32OH7dlSAjEjstFV4RDNQ)
+
 
 <a href="assets/img/header.jpg">
   <img alt="Project header" width="800px" height="auto" src="assets/img/header.jpg">
@@ -41,7 +41,7 @@ If you'd like to see support for another set of board dimensions, or have design
   * [Custom Colors](#custom-colors)
 * [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
-* [Wiki](#wiki)
+* [Wiki](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki)
 * [Help and Contributing](#help-and-contributing)
   * [Latest Features](#latest-features)
 * [Licensing](#licensing)
@@ -259,7 +259,10 @@ A default `config.json.example` file is included for reference. Copy this file t
 ### Additional Features
 * Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
 
-* Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the Short and Long pitch description can be changed in data/pitches.py
+* Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the `short` and `long` pitch description can be changed in data/pitches.py
+
+* Previous Play Data - Data for the previous play can be shown on the game screen. See the [coordinates readme file](/coordinates/README.md) for details. Long and short play descriptions can be changed in data/plays.py
+  * **NOTE:** Because play result data is ephemeral, not every play result will be displayed. Situations like a mound visit, injury, or other timeout immediately following a play often cause the play result to be immediately replaced on the MLB API. 
 
 ### Flags
 

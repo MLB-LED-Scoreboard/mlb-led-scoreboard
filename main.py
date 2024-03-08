@@ -3,33 +3,47 @@ import Bullpen
 import screens
 
 from data.screens import ScreenType
+import debug
 
 if sys.version_info <= (3, 5):
-    print("Error: Please run with python3")
+    debug.error("Please run with python3")
     sys.exit(1)
 
 import statsapi
 
 statsapi_version = tuple(map(int, statsapi.__version__.split(".")))
 if statsapi_version < (1, 5, 1):
-    print("Error: We require MLB-StatsAPI 1.5.1 or higher. You may need to re-run install.sh")
+    debug.error("We require MLB-StatsAPI 1.5.1 or higher. You may need to re-run install.sh")
     sys.exit(1)
 elif statsapi_version < (1, 6, 1):
-    print("Warning: We recommend MLB-StatsAPI 1.6.1 or higher. You may want to re-run install.sh")
+    debug.warning("We recommend MLB-StatsAPI 1.6.1 or higher. You may want to re-run install.sh")
 
 import logging
 import os
 import threading
 import time
 
-from PIL import Image
+# TODO: This code addresses CVE-2023-4863 in Pillow < 10.0.1, which requires Python 3.8+
+#   See requirements.txt for rationale.
+try:
+    from PIL import Image
+
+    pil_version = tuple(map(int, Image.__version__.split(".")))
+    if pil_version < (10, 0, 1):
+        debug.warning(f"Attempted to load an insecure PIL version ({Image.__version__}). We require PIL 10.0.1 or higher.")
+
+        raise ModuleNotFoundError
+
+    PIL_LOADED = True
+except:
+    debug.warning("PIL failed to load -- images will not be displayed.")
+    PIL_LOADED = False
 
 # Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
 from driver import RGBMatrix, __version__
 from utils import args, led_matrix_options
 
-import debug
 from data import Data
 from data.config import Config
 from renderers.main import MainRenderer
@@ -58,12 +72,12 @@ def main(matrix, config_base):
         debug.log("Using rgbmatrix version %s", __version__)
 
     # Draw startup screen
-    logo = "assets/mlb-w" + str(matrix.width) + "h" + str(matrix.height) + ".png"
+    logo_path = os.path.abspath("./assets/mlb-w" + str(matrix.width) + "h" + str(matrix.height) + ".png")
 
     # MLB image disabled when using renderer, for now.
     # see: https://github.com/ty-porter/RGBMatrixEmulator/issues/9#issuecomment-922869679
-    if os.path.exists(logo) and driver.is_hardware():
-        logo = Image.open(logo)
+    if os.path.exists(logo_path) and driver.is_hardware() and PIL_LOADED:
+        logo = Image.open(logo_path)
         matrix.SetImage(logo.convert("RGB"))
         logo.close()
 

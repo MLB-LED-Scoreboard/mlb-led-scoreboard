@@ -58,6 +58,9 @@ def render_team_banner(
     __render_team_text(canvas, layout, away_colors, away_team, "away", use_full_team_names, default_colors)
     __render_team_text(canvas, layout, home_colors, home_team, "home", use_full_team_names, default_colors)
 
+    __render_record_text(canvas, layout, away_colors, away_team, "away", default_colors)
+    __render_record_text(canvas, layout, home_colors, home_team, "home", default_colors)
+
     if show_score:
         # Number of characters in each score.
         score_spacing = {
@@ -109,6 +112,19 @@ def __render_team_text(canvas, layout, colors, team, homeaway, full_team_names, 
     if full_team_names:
         team_text = "{:13s}".format(team.name)
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
+
+def __render_record_text(canvas, layout, colors, team, homeaway, default_colors):
+    if "losses" not in team.record or "wins" not in team.record:
+        return
+    if not layout.coords("teams.record").get("enabled", False):
+        return
+
+    text_color = colors.get("text", default_colors["text"])
+    text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
+    coords = layout.coords("teams.record.{}".format(homeaway))
+    font = layout.font("teams.record.{}".format(homeaway))
+    record_text = "({}-{})".format(team.record["wins"], team.record["losses"])
+    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, record_text)
 
 
 def __render_score_component(canvas, layout, colors, homeaway, default_colors, coords, component_val, width_chars):

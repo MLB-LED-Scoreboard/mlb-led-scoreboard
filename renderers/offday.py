@@ -2,8 +2,15 @@ from driver import graphics
 
 import time
 
-import PIL.Image
+try:
+    from PIL import Image
 
+    PIL_LOADED = True
+except:
+    
+    PIL_LOADED = False
+
+from data.time_formats import TIME_FORMAT_12H
 from data.config.color import Color
 from data.config.layout import Layout
 from data.headlines import Headlines
@@ -25,7 +32,7 @@ def render_offday_screen(
 
 def __render_clock(canvas, layout, colors, time_format):
     time_format_str = "{}:%M".format(time_format)
-    if time_format == "%I":
+    if time_format == TIME_FORMAT_12H:
         time_format_str += "%p"
     time_text = time.strftime(time_format_str)
     coords = layout.coords("offday.time")
@@ -37,9 +44,10 @@ def __render_clock(canvas, layout, colors, time_format):
 
 def __render_weather(canvas, layout, colors, weather):
     if weather.available():
-        image_file = weather.icon_filename()
-        weather_icon = PIL.Image.open(image_file)
-        __render_weather_icon(canvas, layout, colors, weather_icon)
+        if PIL_LOADED:
+            image_file = weather.icon_filename()
+            weather_icon = Image.open(image_file)
+            __render_weather_icon(canvas, layout, colors, weather_icon)
         __render_weather_text(canvas, layout, colors, weather.conditions, "conditions")
         __render_weather_text(canvas, layout, colors, weather.temperature_string(), "temperature")
         __render_weather_text(canvas, layout, colors, weather.wind_speed_string(), "wind_speed")
@@ -62,7 +70,7 @@ def __render_weather_icon(canvas, layout, colors, weather_icon):
 
     if resize:
         weather_icon = weather_icon.resize(
-            (weather_icon.width * resize, weather_icon.height * resize), PIL.Image.NEAREST
+            (weather_icon.width * resize, weather_icon.height * resize), Image.NEAREST
         )
     for x in range(weather_icon.width):
         for y in range(weather_icon.height):
