@@ -139,6 +139,19 @@ if [ "$SKIP_MATRIX" = false ]; then
     sudo make install-python PYTHON="$PYTHON"
 
     cd ../..
+
+    echo "------------------------------------"
+    echo "  Checking for snd_bcm2835"
+    echo "------------------------------------"
+    if [ -f /etc/modprobe.d/blacklist-rgbmatrix.conf ]; then
+        echo "Sound Blacklist File not found, Creating."
+        echo "blacklist snd_bcm2835" | sudo tee /etc/modprobe.d/blacklist-rgbmatrix.conf
+        sudo modprobe -r snd_bcm2835
+        sudo depmod -a
+    else
+        echo "Sound Blacklist File found, skipping creation."
+    fi
+
 fi
 
 if [ "$SKIP_CONFIG" = true ]; then
