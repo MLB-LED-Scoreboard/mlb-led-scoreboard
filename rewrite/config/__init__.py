@@ -1,7 +1,7 @@
 from utils.font import FontCache
 
-class Config:
 
+class Config:
     def __init__(self):
         self.font_cache = FontCache()
 

@@ -1,7 +1,7 @@
 from data.schedule import Schedule
 
-class Data:
 
+class Data:
     def __init__(self, screen_manager):
         self.screen_manager = screen_manager
 

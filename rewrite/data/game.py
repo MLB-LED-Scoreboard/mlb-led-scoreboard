@@ -1,7 +1,7 @@
 from data.status import Status
 
-class Game:
 
+class Game:
     @staticmethod
     def from_schedule(game_data):
         game = Game(game_data)

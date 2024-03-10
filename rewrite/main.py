@@ -26,7 +26,7 @@ elif statsapi_version < (1, 6, 1):
 
 
 def main(matrix):
-    #TODO: Configure matrix dimensions
+    # TODO: Configure matrix dimensions
     ScoreboardLogger.info(f"{SCRIPT_NAME} - v#{SCRIPT_VERSION} (32x32)")
 
     canvas = matrix.CreateFrameCanvas()
@@ -35,11 +35,7 @@ def main(matrix):
     config = Config()
     screen_manager = ScreenManager(matrix, canvas, config, screen_queue)
 
-    render_thread = threading.Thread(
-        target=screen_manager.start,
-        name="render_thread",
-        daemon=True
-    )
+    render_thread = threading.Thread(target=screen_manager.start, name="render_thread", daemon=True)
 
     render_thread.start()
 

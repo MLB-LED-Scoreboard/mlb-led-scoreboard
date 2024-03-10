@@ -7,7 +7,6 @@ from screens.base import ScreenBase
 
 
 class GameScreen(ScreenBase):
-
     MAX_DURATION_SECONDS = 3
 
     def render(self):

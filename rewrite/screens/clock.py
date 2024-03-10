@@ -7,7 +7,6 @@ from screens.base import ScreenBase
 
 
 class ClockScreen(ScreenBase):
-
     MAX_DURATION_SECONDS = 3
 
     def render(self):

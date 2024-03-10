@@ -3,6 +3,7 @@ import sys
 from utils import args
 from driver.mode import DriverMode
 
+
 class DriverWrapper:
     def __init__(self):
         self.hardware_load_failed = False
@@ -13,10 +14,9 @@ class DriverWrapper:
         else:
             self.set_mode(DriverMode.HARDWARE)
 
-
     @property
     def __name__(self):
-        return 'driver'
+        return "driver"
 
     def is_hardware(self):
         return self.mode == DriverMode.HARDWARE
@@ -47,4 +47,4 @@ class DriverWrapper:
         return getattr(self.driver, name)
 
 
-sys.modules['driver'] = DriverWrapper()
+sys.modules["driver"] = DriverWrapper()

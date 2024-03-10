@@ -2,6 +2,7 @@ import argparse
 
 from utils import logger as ScoreboardLogger
 
+
 def args():
     parser = argparse.ArgumentParser()
 
@@ -101,7 +102,11 @@ def args():
         type=int,
     )
     parser.add_argument(
-        "--led-pwm-dither-bits", action="store", help="Time dithering of lower bits (Default: 0)", default=0, type=int,
+        "--led-pwm-dither-bits",
+        action="store",
+        help="Time dithering of lower bits (Default: 0)",
+        default=0,
+        type=int,
     )
     parser.add_argument(
         "--config",
@@ -111,10 +116,7 @@ def args():
         type=str,
     )
     parser.add_argument(
-        "--emulated",
-        action="store_const",
-        help="Force using emulator mode over default matrix display.",
-        const=True
+        "--emulated", action="store_const", help="Force using emulator mode over default matrix display.", const=True
     )
     return parser.parse_args()
 

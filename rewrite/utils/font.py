@@ -2,8 +2,8 @@ import os
 
 from driver import graphics
 
-class FontCache:
 
+class FontCache:
     FONT_PATHS = ["../assets/fonts/patched", "../submodules/matrix/fonts"]
 
     def __init__(self):

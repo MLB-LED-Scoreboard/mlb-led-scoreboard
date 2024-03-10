@@ -7,7 +7,6 @@ from screens.base import ScreenBase
 
 
 class WeatherScreen(ScreenBase):
-
     MAX_DURATION_SECONDS = 3
 
     def __init__(self, *args):

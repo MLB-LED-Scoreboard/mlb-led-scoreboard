@@ -10,5 +10,6 @@ class Status(Enum):
 def ok(status):
     return status in [Status.SUCCESS, Status.DEFERRED]
 
+
 def fail(status):
     return status in [Status.FAIL]
