@@ -10,18 +10,13 @@ class WeatherScreen(ScreenBase):
 
     MAX_DURATION_SECONDS = 3
 
-    def __init__(self, manager):
-        super(self.__class__, self).__init__(manager)
+    def __init__(self, *args):
+        super(self.__class__, self).__init__(*args)
 
     def render(self):
         weather_text = "It's weathery"
 
-        font_paths = ["../assets/fonts/patched", "../submodules/matrix/fonts"]
-        for font_path in font_paths:
-            path = f"{font_path}/4x6.bdf"
-            if os.path.isfile(path):
-                font = graphics.Font()
-                font.LoadFont(path)
+        font = self.config.font("4x6")
 
         graphics.DrawText(self.canvas, font, 0, 10, (255, 255, 255), weather_text)
 

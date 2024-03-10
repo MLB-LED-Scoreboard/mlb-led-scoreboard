@@ -11,6 +11,8 @@ from screens.screen_manager import ScreenManager
 
 from data import Data
 
+from config import Config
+
 import driver
 from driver import RGBMatrix, __version__
 
@@ -30,7 +32,8 @@ def main(matrix):
     canvas = matrix.CreateFrameCanvas()
     screen_queue = PriorityQueue(10)
 
-    screen_manager = ScreenManager(matrix, canvas, screen_queue)
+    config = Config()
+    screen_manager = ScreenManager(matrix, canvas, config, screen_queue)
 
     render_thread = threading.Thread(
         target=screen_manager.start,
@@ -40,7 +43,8 @@ def main(matrix):
 
     render_thread.start()
 
-    Data(screen_manager)
+    data = Data(screen_manager)
+    screen_manager.connect_datasource(data)
 
     while render_thread.is_alive():
         pass

@@ -22,6 +22,16 @@ class ScreenBase():
     def render(self):
         raise NotImplementedError("Subclasses must implement render()")
     
+    def ready_to_transition(self):
+        '''
+        Returns True if the screen is ready to transition away.
+
+        Subclasses should implement this method if they desire different behavior.
+
+        NOTE: If this value always returns False, no screen transitions will happen!
+        '''
+        return True
+    
     @track_duration
     def _render(self):
         self.render()
@@ -33,3 +43,11 @@ class ScreenBase():
     @property
     def canvas(self):
         return self.manager.canvas
+
+    @property
+    def data(self):
+        return self.manager.data
+    
+    @property
+    def config(self):
+        return self.manager.config
