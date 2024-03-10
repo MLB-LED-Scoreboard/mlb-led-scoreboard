@@ -151,7 +151,21 @@ if [ "$SKIP_MATRIX" = false ]; then
     else
         echo "Sound Blacklist File found, skipping creation."
     fi
-
+    echo "------------------------------------"
+    echo "  Checking for isolcpus=3"
+    echo "------------------------------------"
+    if grep -q isolcpus=3 "/boot/cmdline.txt" || grep -q isolcpus=3 "/boot/firmware/cmdline.txt" 2>/dev/null;  then
+        echo "isolcpus=3 found in cmdline.txt"
+    else
+        read -d . VERSION < /etc/debian_version
+        if [ "$VERSION" -lt "12" ]; then
+            echo "adding isolcpus=3 to /boot/cmdline.txt"
+            sudo sed -i '$ s/$/ isolcpus=3/' /boot/cmdline.txt
+        else
+            echo "adding isolcpus=3 to /boot/firmware/cmdline.txt"
+            sudo sed -i '$ s/$/ isolcpus=3/' /boot/firmware/cmdline.txt
+        fi
+    fi
 fi
 
 if [ "$SKIP_CONFIG" = true ]; then
