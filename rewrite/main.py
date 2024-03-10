@@ -30,14 +30,17 @@ def main(matrix):
     canvas = matrix.CreateFrameCanvas()
     screen_queue = PriorityQueue(10)
 
+    screen_manager = ScreenManager(matrix, canvas, screen_queue)
+
     render_thread = threading.Thread(
-        target=ScreenManager.start,
-        args=[matrix, canvas, screen_queue],
+        target=screen_manager.start,
         name="render_thread",
         daemon=True
     )
 
     render_thread.start()
+
+    Data(screen_manager)
 
     while render_thread.is_alive():
         pass

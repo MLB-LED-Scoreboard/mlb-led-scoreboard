@@ -6,7 +6,7 @@ class Game:
     def from_schedule(game_data):
         game = Game(game_data)
 
-        if game.update(True) == Status.SUCCESS:
+        if game.update() == Status.SUCCESS:
             return game
 
         return None
@@ -16,3 +16,5 @@ class Game:
 
         self.id = data["game_id"]
 
+    def update(self):
+        return Status.SUCCESS

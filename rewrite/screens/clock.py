@@ -10,8 +10,8 @@ class ClockScreen(ScreenBase):
 
     MAX_DURATION_SECONDS = 3
 
-    def __init__(self, *args):
-        ScreenBase.__init__(self, *args)
+    def __init__(self, manager):
+        super(self.__class__, self).__init__(manager)
 
     def render(self):
         time_format_str = "%H:%M%p"
@@ -27,4 +27,4 @@ class ClockScreen(ScreenBase):
         graphics.DrawText(self.canvas, font, 5, 5, (255, 255, 255), time_text)
 
         if self.duration > self.MAX_DURATION_SECONDS * 1000:
-            self.request_next_screen(Screen.WEATHER)
+            self.manager.request_next_screen(Screen.WEATHER)

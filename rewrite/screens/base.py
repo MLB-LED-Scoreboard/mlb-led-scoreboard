@@ -3,13 +3,10 @@ from datetime import datetime as dt
 class ScreenBase():
 
     def __init__(self, manager):
-        self._manager = manager
+        self.manager = manager
 
         self.start_time = None
         self.duration = 0
-
-    def request_next_screen(self, screen):
-        self._manager.queue.put(screen)
     
     def track_duration(fn):
         def wrapper(self, *args, **kwargs):
@@ -31,8 +28,8 @@ class ScreenBase():
     
     @property
     def matrix(self):
-        return self._manager.matrix
+        return self.manager.matrix
 
     @property
     def canvas(self):
-        return self._manager.canvas
+        return self.manager.canvas
