@@ -6,7 +6,9 @@ from screens import Screen
 from screens.static import StaticScreen
 from screens.clock import ClockScreen
 from screens.weather import WeatherScreen
-from screens.game import GameScreen
+from screens.games.pregame import PregameScreen
+from screens.games.live_game import LiveGameScreen
+from screens.games.postgame import PostGameScreen
 
 
 class ScreenManager:
@@ -14,7 +16,9 @@ class ScreenManager:
         Screen.STATIC: StaticScreen,
         Screen.CLOCK: ClockScreen,
         Screen.WEATHER: WeatherScreen,
-        Screen.GAME: GameScreen,
+        Screen.PREGAME: PregameScreen,
+        Screen.LIVE_GAME: LiveGameScreen,
+        Screen.POSTGAME: PostGameScreen,
     }
 
     def __init__(self, matrix, canvas, config, queue):
@@ -34,8 +38,8 @@ class ScreenManager:
 
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
-    def request_next_screen(self, screen, *args):
-        request = ScreenRequest(screen, self, *args)
+    def request_next_screen(self, screen, **kwargs):
+        request = ScreenRequest(screen, self, **kwargs)
 
         self.queue.put(request)
 
@@ -52,7 +56,7 @@ class ScreenManager:
 
             return False
 
-        screen_class = self.SCREENS.get(request.type, None)
+        screen_class = ScreenManager.SCREENS.get(request.type, None)
 
         if not screen_class:
             ScoreboardLogger.warning(
@@ -62,7 +66,7 @@ class ScreenManager:
             return False
 
         try:
-            screen = screen_class(request.manager, *request.args)
+            screen = screen_class(request.manager, **request.kwargs)
         except Exception as exception:
             ScoreboardLogger.exception(exception)
             ScoreboardLogger.exception("Screen manager failed to process screen transition!")

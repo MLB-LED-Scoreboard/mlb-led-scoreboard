@@ -9,12 +9,14 @@ class StaticScreen(ScreenBase):
 
     """
     This screen is used to display a static image on startup before real data is loaded.
+
+    Outside data sources must request a transition to move away from this screen.
     """
 
     MIN_DURATION_SECONDS = 3
 
-    def __init__(self, *args):
-        super(self.__class__, self).__init__(*args)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         dimensions = self.manager.config.dimensions
         logo_path = os.path.abspath(
@@ -31,4 +33,4 @@ class StaticScreen(ScreenBase):
         """
         If the static load screen is displayed, then leave it on screen for a few seconds to avoid flashing.
         """
-        return self.duration >= self.MIN_DURATION_SECONDS * 1000
+        return self.duration >= StaticScreen.MIN_DURATION_SECONDS * 1000

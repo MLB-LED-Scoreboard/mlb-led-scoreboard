@@ -7,5 +7,5 @@ class Data:
 
         self.schedule = Schedule(self)
 
-    def request_next_screen(self, screen):
-        self.screen_manager.request_next_screen(screen)
+    def request_next_screen(self, screen, **kwargs):
+        self.screen_manager.request_next_screen(screen, **kwargs)

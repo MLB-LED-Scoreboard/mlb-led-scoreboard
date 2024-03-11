@@ -2,7 +2,7 @@ from datetime import datetime as dt
 
 
 class ScreenBase:
-    def __init__(self, manager):
+    def __init__(self, manager, **_kwargs):
         self.manager = manager
 
         self.start_time = None
@@ -51,3 +51,7 @@ class ScreenBase:
     @property
     def config(self):
         return self.manager.config
+
+    @property
+    def layout(self):
+        return self.config.layout

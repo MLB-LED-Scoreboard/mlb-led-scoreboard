@@ -1,8 +1,10 @@
-import datetime, statsapi, time
+import statsapi, time
+
+from datetime import datetime as dt
 
 from utils import logger as ScoreboardLogger
 
-from data.status import Status
+from data.update_status import UpdateStatus
 from data.game import Game
 
 from screens import Screen
@@ -24,21 +26,38 @@ class Schedule:
     def update(self):
         self.last_update = time.time()
 
-        ScoreboardLogger.log(f"Updating schedule for {datetime.datetime.today()}")
+        ScoreboardLogger.log(f"Updating schedule for {dt.today()}")
 
         try:
-            self.__fetch_updated_schedule(datetime.datetime.today())
+            self.__fetch_updated_schedule(dt.today())
         except Exception as exception:
             ScoreboardLogger.exception("Networking error while refreshing schedule!")
             ScoreboardLogger.exception(exception)
 
-            return Status.FAIL
+            return UpdateStatus.FAIL
 
-        self.data.request_next_screen(Screen.GAME)
+        # TODO: Filter to target game
+        game = self.games[0]
 
-        return Status.SUCCESS
+        self.__request_transition_to_game(game)
+
+        return UpdateStatus.SUCCESS
 
     def __fetch_updated_schedule(self, date):
         self._games = statsapi.schedule(date.strftime("%Y-%m-%d"))
 
         self.games = [Game.from_schedule(game) for game in self._games]
+
+    def __request_transition_to_game(self, game):
+        next_screen = None
+
+        if game.is_complete():
+            next_screen = Screen.POSTGAME
+        elif game.is_pregame():
+            next_screen = Screen.PREGAME
+        elif game.is_live():
+            next_screen = Screen.LIVE_GAME
+
+        if next_screen is not None:
+            game.update(True)
+            self.data.request_next_screen(next_screen, game=game)

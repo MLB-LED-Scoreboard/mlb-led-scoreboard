@@ -13,9 +13,9 @@ class ClockScreen(ScreenBase):
         time_format_str = "%H:%M%p"
         time_text = time.strftime(time_format_str)
 
-        font = self.config.layout.font("4x6")
+        font, font_size = self.config.layout.font("4x6")
 
         graphics.DrawText(self.canvas, font, 5, 5, (255, 255, 255), time_text)
 
-        if self.duration > self.MAX_DURATION_SECONDS * 1000:
+        if self.duration > ClockScreen.MAX_DURATION_SECONDS * 1000:
             self.manager.request_next_screen(Screen.WEATHER)

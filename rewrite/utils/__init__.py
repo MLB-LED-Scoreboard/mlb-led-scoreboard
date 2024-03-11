@@ -201,3 +201,12 @@ def deep_update(reference, overrides):
             reference[key] = overrides[key]
 
     return reference
+
+
+def value_at_keypath(current, keypath):
+    keys = keypath.split(".")
+
+    for key in keys:
+        current = current.get(key, {})
+
+    return current
