@@ -15,7 +15,7 @@ class WeatherScreen(ScreenBase):
     def render(self):
         weather_text = "It's weathery"
 
-        font = self.config.font("4x6")
+        font = self.config.layout.font("4x6")
 
         graphics.DrawText(self.canvas, font, 0, 10, (255, 255, 255), weather_text)
 

@@ -25,14 +25,14 @@ elif statsapi_version < (1, 6, 1):
     ScoreboardLogger.warning("We recommend MLB-StatsAPI 1.6.1 or higher. You may want to re-run install.sh")
 
 
-def main(matrix):
-    # TODO: Configure matrix dimensions
-    ScoreboardLogger.info(f"{SCRIPT_NAME} - v#{SCRIPT_VERSION} (32x32)")
+def main(matrix, config_path):
+    config = Config(config_path, matrix.width, matrix.height)
+
+    ScoreboardLogger.info(f"{SCRIPT_NAME} - v#{SCRIPT_VERSION} ({matrix.width}x{matrix.height})")
 
     canvas = matrix.CreateFrameCanvas()
     screen_queue = PriorityQueue(10)
 
-    config = Config()
     screen_manager = ScreenManager(matrix, canvas, config, screen_queue)
 
     render_thread = threading.Thread(target=screen_manager.start, name="render_thread", daemon=True)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     matrix = RGBMatrix(options=matrix_options)
 
     try:
-        main(matrix)
+        main(matrix, command_line_args.config)
     except:
         ScoreboardLogger.exception("Untrapped error in main!")
         sys.exit(1)

@@ -1,6 +1,8 @@
-import argparse
+import argparse, os, json
 
 from utils import logger as ScoreboardLogger
+
+from collections.abc import Mapping
 
 
 def args():
@@ -169,3 +171,33 @@ def led_matrix_options(args):
         options.disable_hardware_pulsing = True
 
     return options
+
+
+def read_json(path):
+    """
+    Read a file expected to contain valid JSON to dict.
+
+    If the file is not present returns an empty dict.
+    """
+    j = {}
+    if os.path.isfile(path):
+        j = json.load(open(path))
+    else:
+        ScoreboardLogger.info(f"Could not find json file {path}. Skipping.")
+    return j
+
+
+def deep_update(reference, overrides):
+    """
+    Performs a deep merge of two dicts.
+
+    If the key is not present in the reference, the override is ignored.
+    """
+    for key, value in list(overrides.items()):
+        if isinstance(value, Mapping) and value:
+            returned = deep_update(reference.get(key, {}), value)
+            reference[key] = returned
+        else:
+            reference[key] = overrides[key]
+
+    return reference

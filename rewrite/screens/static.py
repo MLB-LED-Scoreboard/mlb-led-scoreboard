@@ -13,13 +13,15 @@ class StaticScreen(ScreenBase):
 
     MIN_DURATION_SECONDS = 3
 
-    # TODO: Pull this from config.
-    LOGO_PATH = os.path.abspath(os.path.join(__file__, "./../../assets/logo/mlb-w32h32.png"))
-
     def __init__(self, *args):
         super(self.__class__, self).__init__(*args)
 
-        with Image.open(self.LOGO_PATH) as logo:
+        dimensions = self.manager.config.dimensions
+        logo_path = os.path.abspath(
+            os.path.join(__file__, f"./../../assets/logo/mlb-w{dimensions[0]}h{dimensions[1]}.png")
+        )
+
+        with Image.open(logo_path) as logo:
             self.manager.matrix.SetImage(logo.convert("RGB"))
 
     def render(self):

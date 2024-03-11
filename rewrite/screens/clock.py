@@ -13,7 +13,7 @@ class ClockScreen(ScreenBase):
         time_format_str = "%H:%M%p"
         time_text = time.strftime(time_format_str)
 
-        font = self.config.font("4x6")
+        font = self.config.layout.font("4x6")
 
         graphics.DrawText(self.canvas, font, 5, 5, (255, 255, 255), time_text)
 
