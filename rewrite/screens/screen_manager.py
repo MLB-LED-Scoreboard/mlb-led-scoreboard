@@ -8,7 +8,7 @@ from screens.clock import ClockScreen
 from screens.weather import WeatherScreen
 from screens.games.pregame import PregameScreen
 from screens.games.live_game import LiveGameScreen
-from screens.games.postgame import PostGameScreen
+from screens.games.postgame import PostgameScreen
 
 
 class ScreenManager:
@@ -18,7 +18,7 @@ class ScreenManager:
         Screen.WEATHER: WeatherScreen,
         Screen.PREGAME: PregameScreen,
         Screen.LIVE_GAME: LiveGameScreen,
-        Screen.POSTGAME: PostGameScreen,
+        Screen.POSTGAME: PostgameScreen,
     }
 
     def __init__(self, matrix, canvas, config, queue):

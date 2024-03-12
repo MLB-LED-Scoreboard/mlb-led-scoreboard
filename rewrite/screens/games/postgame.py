@@ -1,40 +1,61 @@
-import os, time
-
 from driver import graphics
 
 from screens.games.base import GameScreen
 
+from presenters.postgame import PostgamePresenter
 
-class PostGameScreen(GameScreen):
+from utils.text import ScrollingText, CenteredText
+
+
+class PostgameScreen(GameScreen):
     MAX_DURATION_SECONDS = 5
 
     def render(self):
-        game_text = "It's a post-game!"
+        presenter = self.create_cached_object("postgame_presenter", PostgamePresenter, self.game)
 
-        font, font_size = self.config.layout.font("4x6")
+        self.__render_final_inning(presenter)
+        self.__render_decision_scroll(presenter)
 
-        graphics.DrawText(self.canvas, font, 0, 10, (255, 255, 255), game_text)
+    def __render_final_inning(self, presenter):
+        text = "FINAL"
+        color = self.colors.graphics_color("final.inning")
+        coords = self.layout.coords("final.inning")
+        font, font_size = self.layout.font_for("final.inning")
 
-    def _render_decision_scroll(self):
-        coords = self.manager.layout.coords("final.scrolling_text")
-        font, font_size = self.manager.layout.font("final.scrolling_text")
+        # TODO: No concept of a "scoreboard" yet
+        # if scoreboard.inning.number != NORMAL_GAME_LENGTH:
+        #     text += " " + str(scoreboard.inning.number)
 
-        # color = colors.graphics_color("final.scrolling_text")
-        # bgcolor = colors.graphics_color("default.background")
+        center_text = self.create_cached_object(
+            "postgame_center_text", CenteredText, self.canvas, coords.x, coords.y, font, font_size, color, text
+        )
+        center_text.render_text()
 
-        color = (255, 255, 255)
-        bgcolor = (0, 0, 0)
+        # TODO: Handle no-hitters
+        # if layout.state_is_nohitter():
+        #     nohit_text = nohitter._get_nohitter_text(layout)
+        #     nohit_coords = layout.coords("final.nohit_text")
+        #     nohit_color = colors.graphics_color("final.nohit_text")
+        #     nohit_font = layout.font("final.nohit_text")
+        #     graphics.DrawText(canvas, nohit_font["font"], nohit_coords["x"], nohit_coords["y"], nohit_color, nohit_text)
 
-        scroll_text = "W: {} {}-{} L: {} {}-{}".format(
-            self.game.winning_pitcher,
-            self.game.winning_pitcher_wins,
-            self.game.winning_pitcher_losses,
-            self.game.losing_pitcher,
-            self.game.losing_pitcher_wins,
-            self.game.losing_pitcher_losses,
+    def __render_decision_scroll(self, presenter):
+        coords = self.layout.coords("final.scrolling_text")
+        font, font_size = self.layout.font_for("final.scrolling_text")
+
+        color = self.colors.graphics_color("final.scrolling_text")
+        bgcolor = self.colors.graphics_color("default.background")
+
+        text = "W: {} {}-{} L: {} {}-{}".format(
+            presenter.winning_pitcher,
+            presenter.winning_pitcher_wins,
+            presenter.winning_pitcher_losses,
+            presenter.losing_pitcher,
+            presenter.losing_pitcher_wins,
+            presenter.losing_pitcher_losses,
         )
 
-        if False and self.game.save_pitcher:
+        if presenter.save_pitcher:
             scroll_text += " SV: {} ({})".format(self.game.save_pitcher, self.game.save_pitcher_saves)
 
         # TODO: Playoffs
@@ -44,3 +65,19 @@ class PostGameScreen(GameScreen):
         # return scrollingtext.render_text(
         #     canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, scroll_text, text_pos
         # )
+
+        scroller = self.create_cached_object(
+            "postgame_scroller",
+            ScrollingText,
+            self.canvas,
+            coords.x,
+            coords.y,
+            coords.width,
+            coords.width,
+            font,
+            font_size,
+            color,
+            bgcolor,
+            text,
+        )
+        scroller.render_text()

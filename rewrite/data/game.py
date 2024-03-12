@@ -117,3 +117,39 @@ class Game:
         time_utc = self.data["gameData"]["datetime"]["dateTime"]
 
         return dt.fromisoformat(time_utc.replace("Z", "+00:00"))
+
+    def home_score(self):
+        return self.data["liveData"]["linescore"]["teams"]["home"].get("runs", 0)
+
+    def away_score(self):
+        return self.data["liveData"]["linescore"]["teams"]["away"].get("runs", 0)
+
+    def home_hits(self):
+        return self.data["liveData"]["linescore"]["teams"]["home"].get("hits", 0)
+
+    def away_hits(self):
+        return self.data["liveData"]["linescore"]["teams"]["away"].get("hits", 0)
+
+    def home_errors(self):
+        return self.data["liveData"]["linescore"]["teams"]["home"].get("errors", 0)
+
+    def away_errors(self):
+        return self.data["liveData"]["linescore"]["teams"]["away"].get("errors", 0)
+
+    def winning_team(self):
+        if self.status == GameState.FINAL:
+            if self.home_score() > self.away_score():
+                return "home"
+            if self.home_score() < self.away_score():
+                return "away"
+
+        return None
+
+    def losing_team(self):
+        opposite = {"home": "away", "away": "home"}
+
+        return opposite.get(self.winning_team(), None)
+
+    def series_status(self):
+        # TODO: Reimplement series status
+        return "0-0"

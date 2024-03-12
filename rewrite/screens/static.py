@@ -27,6 +27,7 @@ class StaticScreen(ScreenBase):
             self.manager.matrix.SetImage(logo.convert("RGB"))
 
     def render(self):
+        # TODO: Clearing screen resets this image
         pass
 
     def ready_to_transition(self):

@@ -1,7 +1,7 @@
 import os, sys
 
 from utils import logger as ScoreboardLogger
-from utils import deep_update, read_json
+from utils import value_at_keypath, deep_update, read_json
 
 
 class Colors:
@@ -9,6 +9,8 @@ class Colors:
 
     TEAM_COLORS_REFERENCE_FILENAME = "teams.json.example"
     SCOREBOARD_COLORS_REFERENCE_FILENAME = "scoreboard.json.example"
+
+    DEFAULT_COLOR = (0, 0, 0)
 
     def __init__(self):
         self._team_json = self.__fetch_colors(Colors.TEAM_COLORS_REFERENCE_FILENAME)
@@ -31,3 +33,17 @@ class Colors:
             return colors
 
         return reference_colors
+
+    def team_graphics_color(self, keypath):
+        return self.__fetch_color(self._team_json, keypath)
+
+    def graphics_color(self, keypath):
+        return self.__fetch_color(self._scoreboard_json, keypath)
+
+    def __fetch_color(self, config, keypath):
+        color = value_at_keypath(config, keypath)
+
+        if color:
+            return (color["r"], color["g"], color["b"])
+
+        return Colors.DEFAULT_COLOR
