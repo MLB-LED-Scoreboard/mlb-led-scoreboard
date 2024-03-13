@@ -32,6 +32,9 @@ class TeamBanner:
 
         DrawRect(self.canvas, coords.x, coords.y, coords.width, coords.height, self.accent_color)
 
+    def __render_score(self):
+        pass
+
     def __render_team_name(self):
         keypath = f"teams.name.{self.kind}"
 

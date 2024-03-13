@@ -50,7 +50,9 @@ class ScreenBase:
 
     @track_duration
     def _render(self):
-        self.canvas.Fill(*self.background_color)
+        # TODO: Fix this, static screen is overwritten by background fill
+        if not self.__class__.__name__ == "StaticScreen":
+            self.canvas.Fill(*self.background_color)
         self.render()
 
     @property

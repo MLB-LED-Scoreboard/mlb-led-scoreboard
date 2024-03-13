@@ -85,3 +85,7 @@ class PostgameScreen(GameScreen):
             text,
         )
         scroller.render_text()
+
+        # TODO: This can be better, but for now this screen is done when the text is gone.
+        if scroller.finished:
+            self.data.schedule.request_next_game()

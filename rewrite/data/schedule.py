@@ -21,6 +21,8 @@ class Schedule:
         # Cached request from statsapi
         self._games = []
 
+        self.game = None
+
         self.update()
 
     def update(self):
@@ -37,11 +39,16 @@ class Schedule:
             return UpdateStatus.FAIL
 
         # TODO: Filter to target game
-        game = self.games[0]
+        self.game = self.games[0]
 
-        self.__request_transition_to_game(game)
+        self.__request_transition_to_game(self.game)
 
         return UpdateStatus.SUCCESS
+
+    def request_next_game(self):
+        self.game = self.games[self.__next_game_index()]
+
+        self.__request_transition_to_game(self.game)
 
     def __fetch_updated_schedule(self, date):
         # self._games = statsapi.schedule(date.strftime("%Y-%m-%d"))
@@ -62,3 +69,11 @@ class Schedule:
         if next_screen is not None:
             game.update(True)
             self.data.request_next_screen(next_screen, game=game)
+
+    def __next_game_index(self):
+        if len(self.games) > 0 and self.game in self.games:
+            i = self.games.index(self.game)
+
+            return (i + 1) % len(self.games)
+
+        return 0
