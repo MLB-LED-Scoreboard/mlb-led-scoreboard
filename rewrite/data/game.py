@@ -6,6 +6,7 @@ from data.update_status import UpdateStatus
 from data import status as GameState
 
 from utils import logger as ScoreboardLogger
+from utils import value_at_keypath
 
 
 class Game:
@@ -114,27 +115,9 @@ class Game:
         return inning_state not in GameState.GAME_STATE_INNING_LIVE
 
     def datetime(self):
-        time_utc = self.data["gameData"]["datetime"]["dateTime"]
+        time_utc = value_at_keypath(self.data, "gameData.datetime.dateTime")
 
         return dt.fromisoformat(time_utc.replace("Z", "+00:00"))
-
-    def home_score(self):
-        return self.data["liveData"]["linescore"]["teams"]["home"].get("runs", 0)
-
-    def away_score(self):
-        return self.data["liveData"]["linescore"]["teams"]["away"].get("runs", 0)
-
-    def home_hits(self):
-        return self.data["liveData"]["linescore"]["teams"]["home"].get("hits", 0)
-
-    def away_hits(self):
-        return self.data["liveData"]["linescore"]["teams"]["away"].get("hits", 0)
-
-    def home_errors(self):
-        return self.data["liveData"]["linescore"]["teams"]["home"].get("errors", 0)
-
-    def away_errors(self):
-        return self.data["liveData"]["linescore"]["teams"]["away"].get("errors", 0)
 
     def winning_team(self):
         if self.status == GameState.FINAL:
@@ -150,6 +133,95 @@ class Game:
 
         return opposite.get(self.winning_team(), None)
 
+    def decision_pitcher_id(self, decision):
+        return value_at_keypath(self.data, f"liveData.decisions.{decision}").get("id", None)
+
+    def full_name(self, player):
+        ID = Game.format_id(player)
+
+        return value_at_keypath(self.data, f"gameData.players.{ID}").get("fullName", "")
+
+    def pitcher_stat(self, player, stat, team=None):
+        ID = Game.format_id(player)
+
+        keypath = lambda team, ID: value_at_keypath(
+            self.data, f"liveData.boxscore.teams.{team}.players.{ID}.seasonStats"
+        )
+
+        if team is not None:
+            stats = keypath(team, ID).get("pitching", {})
+        else:
+            stats = keypath(team, ID).get("pitching", None) or keypath(team, ID).get("pitching", {})
+
+        return stats[stat]
+
     def series_status(self):
         # TODO: Reimplement series status
         return "0-0"
+
+    @staticmethod
+    def format_id(ID):
+        if "ID" in str(ID):
+            return ID
+
+        return "ID" + str(ID)
+
+    """
+    Home / Away data accessors.
+
+    TODO: Make this dynamic somehow?
+    """
+
+    def home_hits(self):
+        return self.__hits("home")
+
+    def away_hits(self):
+        return self.__hits("away")
+
+    def __hits(self, variant):
+        return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("hits", 0)
+
+    def home_errors(self):
+        return self.__errors("home")
+
+    def away_errors(self):
+        return self.__errors("away")
+
+    def __errors(self, variant):
+        return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("errors", 0)
+
+    def home_score(self):
+        return self.__score("home")
+
+    def away_score(self):
+        return self.__score("away")
+
+    def __score(self, variant):
+        return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("runs", 0)
+
+    def home_name(self):
+        return self.__name("home")
+
+    def away_name(self):
+        return self.__name("away")
+
+    def __name(self, variant):
+        return value_at_keypath(self.data, f"gameData.teams.{variant}").get("teamName", "")
+
+    def home_abbreviation(self):
+        return self.__abbreviation("home")
+
+    def away_abbreviation(self):
+        return self.__abbreviation("away")
+
+    def __abbreviation(self, variant):
+        return value_at_keypath(self.data, f"gameData.teams.{variant}").get("abbreviation", "")
+
+    def home_record(self):
+        return self.__record("home")
+
+    def away_record(self):
+        return self.__record("away")
+
+    def __record(self, variant):
+        return value_at_keypath(self.data, f"gameData.teams.{variant}.record")

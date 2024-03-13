@@ -16,6 +16,10 @@ class PostgameScreen(GameScreen):
         self.__render_final_inning(presenter)
         self.__render_decision_scroll(presenter)
 
+        # Overlay banners
+        self.away_team_banner.render()
+        self.home_team_banner.render()
+
     def __render_final_inning(self, presenter):
         text = "FINAL"
         color = self.colors.graphics_color("final.inning")
@@ -56,7 +60,7 @@ class PostgameScreen(GameScreen):
         )
 
         if presenter.save_pitcher:
-            scroll_text += " SV: {} ({})".format(self.game.save_pitcher, self.game.save_pitcher_saves)
+            text += " SV: {} ({})".format(presenter.save_pitcher, presenter.save_pitcher_saves)
 
         # TODO: Playoffs
         # if is_playoffs:

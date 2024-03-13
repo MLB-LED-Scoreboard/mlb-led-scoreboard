@@ -44,7 +44,8 @@ class Schedule:
         return UpdateStatus.SUCCESS
 
     def __fetch_updated_schedule(self, date):
-        self._games = statsapi.schedule(date.strftime("%Y-%m-%d"))
+        # self._games = statsapi.schedule(date.strftime("%Y-%m-%d"))
+        self._games = statsapi.schedule(date.strftime("2024-03-12"))
 
         self.games = [Game.from_schedule(game) for game in self._games]
 

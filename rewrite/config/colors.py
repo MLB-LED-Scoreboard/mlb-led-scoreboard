@@ -34,16 +34,19 @@ class Colors:
 
         return reference_colors
 
-    def team_graphics_color(self, keypath):
-        return self.__fetch_color(self._team_json, keypath)
+    def team_graphics_color(self, keypath, default=True):
+        return self.__fetch_color(self._team_json, keypath, default)
 
-    def graphics_color(self, keypath):
-        return self.__fetch_color(self._scoreboard_json, keypath)
+    def graphics_color(self, keypath, default=True):
+        return self.__fetch_color(self._scoreboard_json, keypath, default)
 
-    def __fetch_color(self, config, keypath):
+    def __fetch_color(self, config, keypath, default):
         color = value_at_keypath(config, keypath)
 
         if color:
             return (color["r"], color["g"], color["b"])
 
-        return Colors.DEFAULT_COLOR
+        if default:
+            return Colors.DEFAULT_COLOR
+
+        return None
