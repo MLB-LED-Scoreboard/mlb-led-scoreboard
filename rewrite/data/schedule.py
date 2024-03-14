@@ -38,8 +38,7 @@ class Schedule:
 
             return UpdateStatus.FAIL
 
-        # TODO: Filter to target game
-        self.game = self.games[0]
+        self.game = self.games[self.__next_game_index()]
 
         self.__request_transition_to_game(self.game)
 
@@ -71,6 +70,7 @@ class Schedule:
             self.data.request_next_screen(next_screen, game=game)
 
     def __next_game_index(self):
+        # TODO: Some sort of intelligent decisioning here beyond i + 1.
         if len(self.games) > 0 and self.game in self.games:
             i = self.games.index(self.game)
 

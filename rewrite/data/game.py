@@ -4,6 +4,7 @@ from datetime import datetime as dt
 
 from data.update_status import UpdateStatus
 from data import status as GameState
+from data.team import TeamType
 
 from utils import logger as ScoreboardLogger
 from utils import value_at_keypath
@@ -122,14 +123,14 @@ class Game:
     def winning_team(self):
         if self.status == GameState.FINAL:
             if self.home_score() > self.away_score():
-                return "home"
+                return TeamType.HOME
             if self.home_score() < self.away_score():
-                return "away"
+                return TeamType.AWAY
 
         return None
 
     def losing_team(self):
-        opposite = {"home": "away", "away": "home"}
+        opposite = {TeamType.HOME: TeamType.AWAY, TeamType.AWAY: TeamType.HOME}
 
         return opposite.get(self.winning_team(), None)
 
@@ -172,56 +173,65 @@ class Game:
     TODO: Make this dynamic somehow?
     """
 
+    def home_runs(self):
+        return self.__runs(TeamType.HOME)
+
+    def away_runs(self):
+        return self.__runs(TeamType.AWAY)
+
+    def __runs(self, variant):
+        return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("runs", 0)
+
     def home_hits(self):
-        return self.__hits("home")
+        return self.__hits(TeamType.HOME)
 
     def away_hits(self):
-        return self.__hits("away")
+        return self.__hits(TeamType.AWAY)
 
     def __hits(self, variant):
         return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("hits", 0)
 
     def home_errors(self):
-        return self.__errors("home")
+        return self.__errors(TeamType.HOME)
 
     def away_errors(self):
-        return self.__errors("away")
+        return self.__errors(TeamType.AWAY)
 
     def __errors(self, variant):
         return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("errors", 0)
 
     def home_score(self):
-        return self.__score("home")
+        return self.__score(TeamType.HOME)
 
     def away_score(self):
-        return self.__score("away")
+        return self.__score(TeamType.AWAY)
 
     def __score(self, variant):
         return value_at_keypath(self.data, f"liveData.linescore.teams.{variant}").get("runs", 0)
 
     def home_name(self):
-        return self.__name("home")
+        return self.__name(TeamType.HOME)
 
     def away_name(self):
-        return self.__name("away")
+        return self.__name(TeamType.AWAY)
 
     def __name(self, variant):
         return value_at_keypath(self.data, f"gameData.teams.{variant}").get("teamName", "")
 
     def home_abbreviation(self):
-        return self.__abbreviation("home")
+        return self.__abbreviation(TeamType.HOME)
 
     def away_abbreviation(self):
-        return self.__abbreviation("away")
+        return self.__abbreviation(TeamType.AWAY)
 
     def __abbreviation(self, variant):
         return value_at_keypath(self.data, f"gameData.teams.{variant}").get("abbreviation", "")
 
     def home_record(self):
-        return self.__record("home")
+        return self.__record(TeamType.HOME)
 
     def away_record(self):
-        return self.__record("away")
+        return self.__record(TeamType.AWAY)
 
     def __record(self, variant):
         return value_at_keypath(self.data, f"gameData.teams.{variant}.record")
