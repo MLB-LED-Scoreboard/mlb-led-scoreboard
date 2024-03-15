@@ -92,6 +92,10 @@ class Game:
         """Returns whether the game is in a pregame state"""
         return self.status in GameState.GAME_STATE_PREGAME
 
+    def is_warmup(self):
+        """Returns whether the game is in a warmup state"""
+        return self.status == GameState.WARMUP
+
     def is_complete(self):
         """Returns whether the game has been completed"""
         return self.status in GameState.GAME_STATE_COMPLETE
@@ -133,6 +137,9 @@ class Game:
         opposite = {TeamType.HOME: TeamType.AWAY, TeamType.AWAY: TeamType.HOME}
 
         return opposite.get(self.winning_team(), None)
+
+    def probable_pitcher_id(self, team):
+        return value_at_keypath(self.data, f"gameData.probablePitchers.{team}").get("id", None)
 
     def decision_pitcher_id(self, decision):
         return value_at_keypath(self.data, f"liveData.decisions.{decision}").get("id", None)

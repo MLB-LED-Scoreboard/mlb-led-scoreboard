@@ -11,7 +11,7 @@ class PostgameScreen(GameScreen):
     MAX_DURATION_SECONDS = 5
 
     def render(self):
-        presenter = self.create_cached_object("postgame_presenter", PostgamePresenter, self.game)
+        presenter = self.create_cached_object("postgame_presenter", PostgamePresenter, self.game, self.config)
 
         self.__render_final_inning(presenter)
         self.__render_decision_scroll(presenter)
@@ -31,7 +31,7 @@ class PostgameScreen(GameScreen):
         #     text += " " + str(scoreboard.inning.number)
 
         center_text = self.create_cached_object(
-            "postgame_center_text", CenteredText, self.canvas, coords.x, coords.y, font, font_size, color, text
+            "postgame_final", CenteredText, self.canvas, coords.x, coords.y, font, font_size, color, text
         )
         center_text.render_text()
 

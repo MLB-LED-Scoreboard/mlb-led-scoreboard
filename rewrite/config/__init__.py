@@ -1,4 +1,4 @@
-import logging
+import logging, platform
 
 from datetime import datetime, timedelta
 
@@ -11,7 +11,11 @@ from utils import deep_update, read_json
 
 class Config:
     REFERENCE_FILENAME = "config.json.example"
+
     DATE_FORMAT = "%Y-%m-%d"
+
+    TIME_FORMAT_24H = "%H"
+    TIME_FORMAT_12H = "%#I" if platform.system() == "Windows" else "%-I"
 
     def __init__(self, config_filename, width, height):
         self.width = width
@@ -27,6 +31,7 @@ class Config:
         self.colors = Colors()
 
         self.__set_end_of_day()
+        self.__set_time_format()
 
     def today(self):
         if self.demo_date:
@@ -96,7 +101,20 @@ class Config:
             hours, minutes = [int(part) for part in self.end_of_day.split(":")]
         except:
             hours, minutes = 0, 0
-            ScoreboardLogger.warning(f"Expected 24 hour time for end_of_day in format '12:34'. Received {self.end_of_day}. Defaulting to '00:00'.")
+            ScoreboardLogger.warning(
+                f"Expected 24 hour time for end_of_day in format '12:34'. Received {self.end_of_day}. Defaulting to '00:00'."
+            )
 
         self.eod_hours = hours
         self.eod_minutes = minutes
+
+    def __set_time_format(self):
+        if self.time_format == "24h":
+            self.time_format = Config.TIME_FORMAT_24H
+        elif self.time_format == "12h":
+            self.time_format = Config.TIME_FORMAT_12H
+        else:
+            ScoreboardLogger.warning(
+                f"Expected to be one of ('12h', '24h'). Received {self.time_format}. Defaulting to '12h'."
+            )
+            self.time_format = Config.TIME_FORMAT_24H

@@ -28,7 +28,9 @@ class TeamBanner:
         self.__render_background()
         self.__render_accents()
         self.__render_team_name()
-        self.__render_scoreline()
+
+        if not self.game.is_pregame():
+            self.__render_scoreline()
 
     def __render_background(self):
         coords = self.layout.coords(f"teams.background.{self.kind}")

@@ -1,7 +1,10 @@
 class PostgamePresenter:
     PITCHER_UNKNOWN = "Unknown"
 
-    def __init__(self, game):
+    def __init__(self, game, config):
+        self.game = game
+        self.config = config
+
         winner_side = game.winning_team()
 
         # Defaults

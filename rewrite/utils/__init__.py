@@ -1,4 +1,4 @@
-import argparse, os, json
+import argparse, json, os
 
 from utils import logger as ScoreboardLogger
 
