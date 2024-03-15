@@ -1,5 +1,7 @@
 import logging
 
+from datetime import datetime, timedelta
+
 from config.layout import Layout
 from config.colors import Colors
 
@@ -9,6 +11,7 @@ from utils import deep_update, read_json
 
 class Config:
     REFERENCE_FILENAME = "config.json.example"
+    DATE_FORMAT = "%Y-%m-%d"
 
     def __init__(self, config_filename, width, height):
         self.width = width
@@ -22,6 +25,14 @@ class Config:
 
         self.layout = Layout(width, height)
         self.colors = Colors()
+
+        self.__set_end_of_day()
+
+    def today(self):
+        if self.demo_date:
+            return datetime.strptime(self.demo_date, Config.DATE_FORMAT)
+
+        return datetime.today() - timedelta(hours=self.eod_hours, minutes=self.eod_minutes)
 
     def __fetch_config(self, name):
         """
@@ -79,3 +90,13 @@ class Config:
             logger.setLevel(logging.DEBUG)
         else:
             logger.setLevel(logging.WARNING)
+
+    def __set_end_of_day(self):
+        try:
+            hours, minutes = [int(part) for part in self.end_of_day.split(":")]
+        except:
+            hours, minutes = 0, 0
+            ScoreboardLogger.warning(f"Expected 24 hour time for end_of_day in format '12:34'. Received {self.end_of_day}. Defaulting to '00:00'.")
+
+        self.eod_hours = hours
+        self.eod_minutes = minutes

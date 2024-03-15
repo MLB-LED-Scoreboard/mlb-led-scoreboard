@@ -1,7 +1,5 @@
 import statsapi, time
 
-from datetime import datetime as dt
-
 from utils import logger as ScoreboardLogger
 
 from data.update_status import UpdateStatus
@@ -28,10 +26,10 @@ class Schedule:
     def update(self):
         self.last_update = time.time()
 
-        ScoreboardLogger.log(f"Updating schedule for {dt.today()}")
+        ScoreboardLogger.log(f"Updating schedule for {self.data.config.today()}")
 
         try:
-            self.__fetch_updated_schedule(dt.today())
+            self.__fetch_updated_schedule(self.data.config.today())
         except Exception as exception:
             ScoreboardLogger.exception("Networking error while refreshing schedule!")
             ScoreboardLogger.exception(exception)
@@ -50,8 +48,7 @@ class Schedule:
         self.__request_transition_to_game(self.game)
 
     def __fetch_updated_schedule(self, date):
-        # self._games = statsapi.schedule(date.strftime("%Y-%m-%d"))
-        self._games = statsapi.schedule(date.strftime("2024-03-12"))
+        self._games = statsapi.schedule(date.strftime("%Y-%m-%d"))
 
         self.games = [Game.from_schedule(game) for game in self._games]
 
