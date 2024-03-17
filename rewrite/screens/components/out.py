@@ -1,5 +1,3 @@
-from driver import graphics
-
 from utils.graphics import DrawRect
 
 class Out:
@@ -17,15 +15,17 @@ class Out:
             self.__render_outline(coords, color)
             
 
+    # TODO: The size coordinates for these boxes are off-by-one because they fail to account for endpoints.
+    #       i.e. `size` config of 2 renders a 3x3 box instead of 2x2 because endpoints for graphics.DrawLine are inclusive.
     def __render_outline(self, coords, color):
         x, y, size = coords.x, coords.y, coords.size
 
-        DrawRect(self.canvas, x, y, size, size, color, filled=False)
+        DrawRect(self.canvas, x, y, size + 1, size + 1, color, filled=False)
 
     def __render_out(self, coords, color):
         x, y, size = coords.x, coords.y, coords.size
 
-        DrawRect(self.canvas, x, y, size, size, color, filled=True)
+        DrawRect(self.canvas, x, y, size + 1, size + 1, color, filled=True)
 
     @property
     def game(self):
