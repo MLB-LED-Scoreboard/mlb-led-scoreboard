@@ -53,18 +53,43 @@ class PregamePresenter:
             return PregamePresenter.TBD
 
     def pregame_info(self):
-        text = self.away_starter + " vs " + self.home_starter
+        parts = [
+            self.__pitcher_matchup(),
+            self.__broadcasts(),
+            self.__weather(),
+            self.__playoff_series_status()
+        ]
 
-        # TODO: Add weather, broadcasts, playoffs
-        # if pregame.national_broadcasts:
-        #     pitchers_text += " TV: " + ", ".join(pregame.national_broadcasts)
-        # if pregame_weather and pregame.pregame_weather:
-        #     pitchers_text += " Weather: " + pregame.pregame_weather
+        return " ".join(filter(None, parts))
+    
+    def __pitcher_matchup(self):
+        return self.away_starter + " vs " + self.home_starter
+    
+    def __broadcasts(self):
+        broadcasts = self.game.broadcasts()
 
-        # if is_playoffs:
-        #     pitchers_text += "   " + pregame.series_status
+        if len(broadcasts) > 0:
+            return "TV: " + ", ".join(broadcasts)
+        
+        return None
+    
+    def __weather(self):
+        if not self.config.pregame_weather:
+            return None
 
-        return text
+        weather = self.game.pregame_weather()
+
+        try:
+            return f"{weather['condition']} and {weather['temp']}\N{DEGREE SIGN} wind {weather['wind']}"
+        except KeyError:
+            return None
+        
+    def __playoff_series_status(self):
+        # TODO: Re-add series status
+        return None
+
+        # if self.game.is_playoff:
+        #   return self.game.series_status
 
     def __str__(self):
         s = "<{} {}> {} @ {}; {}; {} vs {}; Forecast: {}; TV: {}".format(
@@ -74,10 +99,7 @@ class PregamePresenter:
             self.home_team,
             self.start_time,
             self.away_starter,
-            self.home_starter
-            # TODO: re-add broadcasts
-            # ,
-            # self.pregame_weather,
-            # self.national_broadcasts,
+            self.home_starter,
+            self.pregame_info()
         )
         return s

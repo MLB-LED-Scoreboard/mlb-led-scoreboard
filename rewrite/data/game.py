@@ -34,6 +34,7 @@ class Game:
         return None
 
     def __init__(self, data):
+        # TODO: May need to consider renaming this from data, as it collides with our Data object
         self.data = data
 
         self.id = data["game_id"]
@@ -162,6 +163,12 @@ class Game:
             stats = keypath(team, ID).get("pitching", None) or keypath(team, ID).get("pitching", {})
 
         return stats[stat]
+    
+    def pregame_weather(self):
+        return value_at_keypath(self.data, "gameData.weather")
+
+    def broadcasts(self):
+        return self.data.get("national_broadcasts", [])
 
     def series_status(self):
         # TODO: Reimplement series status
