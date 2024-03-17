@@ -36,7 +36,12 @@ class Schedule:
 
             return UpdateStatus.FAIL
 
-        self.game = self.games[self.__next_game_index()]
+        # TODO: remove debug
+        # self.game = self.games[self.__next_game_index()]
+        for game in self.games:
+            if game.is_live():
+                self.game = game
+                break
 
         self.__request_transition_to_game(self.game)
 

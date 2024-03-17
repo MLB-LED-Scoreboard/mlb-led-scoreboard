@@ -5,9 +5,10 @@ from datetime import datetime as dt
 from data.update_status import UpdateStatus
 from data import status as GameState
 from data.team import TeamType
+from data.pitches import Pitches
 
 from utils import logger as ScoreboardLogger
-from utils import value_at_keypath
+from utils import format_id, value_at_keypath
 
 
 class Game:
@@ -146,12 +147,12 @@ class Game:
         return value_at_keypath(self.data, f"liveData.decisions.{decision}").get("id", None)
 
     def full_name(self, player):
-        ID = Game.format_id(player)
+        ID = format_id(player)
 
         return value_at_keypath(self.data, f"gameData.players.{ID}").get("fullName", "")
 
     def pitcher_stat(self, player, stat, team=None):
-        ID = Game.format_id(player)
+        ID = format_id(player)
 
         keypath = lambda team, ID: value_at_keypath(
             self.data, f"liveData.boxscore.teams.{team}.players.{ID}.seasonStats"
@@ -163,6 +164,20 @@ class Game:
             stats = keypath(team, ID).get("pitching", None) or keypath(team, ID).get("pitching", {})
 
         return stats[stat]
+    
+    def man_on(self, base_number):
+        base = { 1: "first", 2: "second", 3: "third" }.get(base_number, None)
+
+        if not base:
+            return None
+        
+        return value_at_keypath(self.data, f"liveData.linescore.offense.{base}").get("id", None)
+    
+    def pitches(self):
+        return Pitches(self)
+    
+    def outs(self):
+        return value_at_keypath(self.data, "liveData.linescore").get("outs", 0)
 
     def pregame_weather(self):
         return value_at_keypath(self.data, "gameData.weather")
@@ -173,13 +188,6 @@ class Game:
     def series_status(self):
         # TODO: Reimplement series status
         return "0-0"
-
-    @staticmethod
-    def format_id(ID):
-        if "ID" in str(ID):
-            return ID
-
-        return "ID" + str(ID)
 
     """
     Home / Away data accessors.
