@@ -1,5 +1,5 @@
 import tzlocal
-
+import debug
 from data.game import Game
 from data.time_formats import TIME_FORMAT_12H
 
@@ -20,26 +20,30 @@ class Pregame:
 
         self.status = game.status()
 
+        self.away_starter = PITCHER_TBD
         away_id = game.probable_pitcher_id("away")
         if away_id is not None:
-            name = game.full_name(away_id)
-            wins = game.pitcher_stat(away_id, "wins", "away")
-            losses = game.pitcher_stat(away_id, "losses", "away")
-            era = game.pitcher_stat(away_id, "era", "away")
-            self.away_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
-        else:
-            self.away_starter = PITCHER_TBD
+            try:
+                name = game.full_name(away_id)
+                wins = game.pitcher_stat(away_id, "wins", "away")
+                losses = game.pitcher_stat(away_id, "losses", "away")
+                era = game.pitcher_stat(away_id, "era", "away")
+                self.away_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
+            except:
+                debug.exception("Error getting away starter stats")
 
+        self.home_starter = PITCHER_TBD
         home_id = game.probable_pitcher_id("home")
         if home_id is not None:
-            name = game.full_name(home_id)
-            wins = game.pitcher_stat(home_id, "wins", "home")
-            losses = game.pitcher_stat(home_id, "losses", "home")
-            era = game.pitcher_stat(home_id, "era", "home")
-            self.home_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
-        else:
-            self.home_starter = PITCHER_TBD
-
+            try:
+                name = game.full_name(home_id)
+                wins = game.pitcher_stat(home_id, "wins", "home")
+                losses = game.pitcher_stat(home_id, "losses", "home")
+                era = game.pitcher_stat(home_id, "era", "home")
+                self.home_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
+            except:
+                debug.exception("Error getting away starter stats")
+                
         self.national_broadcasts = game.broadcasts()
         self.series_status = game.series_status()
 
