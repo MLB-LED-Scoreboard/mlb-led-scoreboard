@@ -163,7 +163,7 @@ class Game:
             stats = keypath(team, ID).get("pitching", None) or keypath(team, ID).get("pitching", {})
 
         return stats[stat]
-    
+
     def pregame_weather(self):
         return value_at_keypath(self.data, "gameData.weather")
 

@@ -53,26 +53,21 @@ class PregamePresenter:
             return PregamePresenter.TBD
 
     def pregame_info(self):
-        parts = [
-            self.__pitcher_matchup(),
-            self.__broadcasts(),
-            self.__weather(),
-            self.__playoff_series_status()
-        ]
+        parts = [self.__pitcher_matchup(), self.__broadcasts(), self.__weather(), self.__playoff_series_status()]
 
         return " ".join(filter(None, parts))
-    
+
     def __pitcher_matchup(self):
         return self.away_starter + " vs " + self.home_starter
-    
+
     def __broadcasts(self):
         broadcasts = self.game.broadcasts()
 
         if len(broadcasts) > 0:
             return "TV: " + ", ".join(broadcasts)
-        
+
         return None
-    
+
     def __weather(self):
         if not self.config.pregame_weather:
             return None
@@ -83,7 +78,7 @@ class PregamePresenter:
             return f"{weather['condition']} and {weather['temp']}\N{DEGREE SIGN} wind {weather['wind']}"
         except KeyError:
             return None
-        
+
     def __playoff_series_status(self):
         # TODO: Re-add series status
         return None
@@ -100,6 +95,6 @@ class PregamePresenter:
             self.start_time,
             self.away_starter,
             self.home_starter,
-            self.pregame_info()
+            self.pregame_info(),
         )
         return s
