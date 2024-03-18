@@ -1,4 +1,6 @@
 import sys
+import Bullpen
+import screens
 
 from data.screens import ScreenType
 import debug
@@ -153,7 +155,9 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
 
 
 def __render_main(matrix, data):
-    MainRenderer(matrix, data).render()
+    rotator = screens.ScreenRotator(matrix, data)
+
+    rotator.start()
 
 
 if __name__ == "__main__":
