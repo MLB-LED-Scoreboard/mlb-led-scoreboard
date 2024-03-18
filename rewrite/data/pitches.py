@@ -1,3 +1,5 @@
+from data.team import TeamType
+
 from utils import format_id, value_at_keypath
 
 class Pitches:
@@ -98,21 +100,19 @@ class Pitches:
             return None
     
     def current_pitcher_pitch_count(self):
-        # TODO: Clean this up
-        try:
-            pitcher_id = self.game.data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+        pitcher_id = value_at_keypath(self.game.data, "liveData.linescore.defense.pitcher").get("id", None)
 
-            # TODO: ID formatting probably doesn't belong on Game object if it's being used here
-            ID = format_id(pitcher_id)
-            try:
-                return self.game.data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["stats"]["pitching"][
-                    "numberOfPitches"
-                ]
-            except:
-                return self.game.data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["stats"]["pitching"][
-                    "numberOfPitches"
-                ]
-        except:
+        if pitcher_id is None:
+            return 0
+
+        ID = format_id(pitcher_id)
+
+        for team in [TeamType.HOME, TeamType.AWAY]:
+            pitches = value_at_keypath(self.game.data, f"liveData.boxscore.teams.{team}.players.{ID}.stats.pitching").get("numberOfPitches", 0)
+
+            if pitches > 0:
+                return pitches
+
             return 0
     
     def __fetch_count_part(self, part):

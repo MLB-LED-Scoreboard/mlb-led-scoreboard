@@ -173,6 +173,28 @@ class Game:
         
         return value_at_keypath(self.data, f"liveData.linescore.offense.{base}").get("id", None)
     
+    def batter(self):
+        return self.__fetch_player("offense", "batter")
+
+    def in_hole(self):
+        return self.__fetch_player("offense", "inHole")
+
+    def on_deck(self):
+        return self.__fetch_player("offense", "onDeck")
+
+    def pitcher(self):
+        return self.__fetch_player("defense", "pitcher")
+        
+    def boxscore_name(self, ID):
+        ID = format_id(ID)
+
+        return value_at_keypath(self.data, f"gameData.players.{ID}.boxscoreName")
+        
+    def __fetch_player(self, team, position):
+        ID = value_at_keypath(self.data, f"liveData.linescore.{team}.{position}").get("id", None)
+
+        return self.boxscore_name(ID)
+    
     def pitches(self):
         return Pitches(self)
     

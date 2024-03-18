@@ -77,7 +77,6 @@ class PostgameScreen(GameScreen):
             coords.x,
             coords.y,
             coords.width,
-            coords.width,
             font,
             font_size,
             color,

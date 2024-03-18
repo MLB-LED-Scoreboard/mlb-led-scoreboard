@@ -2,6 +2,8 @@ from driver import graphics
 
 from dataclasses import dataclass
 
+from utils.graphics import DrawRect
+
 
 @dataclass
 class TextPosition:
@@ -10,12 +12,16 @@ class TextPosition:
 
 
 class ScrollingText:
-    def __init__(self, canvas, x, y, width, start_x, font, font_size, text_color, bg_color, text, center=True):
+    def __init__(self, canvas, x, y, width, font, font_size, text_color, bg_color, text, start_x = None, center=True):
         # Matrix
         self.canvas = canvas
 
         # Start X and Y
+        if start_x is None:
+            start_x = x + width
+
         self.end_position = TextPosition(x=x, y=y)
+        self.start_position = TextPosition(x=start_x, y=y)
 
         # Font options
         self.font = font
@@ -34,19 +40,18 @@ class ScrollingText:
         # Current position
         self.position = TextPosition(x=start_x, y=y)
         self.finished = False
-
-    def __should_scroll(self):
-        return len(self.text) * self.font_size[0] > self.width
+        self.static = len(self.text) * self.font_size[0] <= self.width
 
     def render_text(self):
-        if self.finished:
-            return
-
-        if self.__should_scroll():
-            self.__render_scroll_text()
-        else:
+        if self.static:
             self.__render_static_text(self.center)
             self.finished = True
+        else:
+            if not self.finished:
+                self.__render_scroll_text()
+
+        # Render the background color over excess text
+        self.__apply_mask()
 
     def __render_scroll_text(self):
         # This is done so that we don't need to draw a huge bar to the left of the text.
@@ -79,6 +84,7 @@ class ScrollingText:
     def __render_static_text(self, center):
         if center:
             if self._centered_text is None:
+                # BUG: This does not correctly calculate the center position
                 self._centered_text = CenteredText(
                     self.canvas,
                     self.position.x,
@@ -92,7 +98,7 @@ class ScrollingText:
 
             self._centered_text.render_text()
         else:
-            graphics.DrawText(self.canvas, self.font, self.position.x, self.position.y, self.text_color, self.text)
+            graphics.DrawText(self.canvas, self.font, self.end_position.x, self.end_position.y, self.text_color, self.text)
 
     def __truncate_text(self, text, font_w, font_h):
         text = self.text
@@ -115,6 +121,31 @@ class ScrollingText:
             return
 
         self.position.x = next_x
+
+    def __apply_mask(self):
+        '''
+        Applies a mask to the matrix such that text is only visible if it is within the window configured by the scroller. 
+        '''
+
+        # Left side
+        DrawRect(
+            self.canvas, 
+            0,
+            self.end_position.y - self.font_size[1], 
+            self.end_position.x - 1, 
+            self.font_size[1] + 1,
+            self.bg_color
+        )
+
+        # Right side
+        DrawRect(
+            self.canvas, 
+            self.start_position.x + 1, 
+            self.start_position.y - self.font_size[1], 
+            self.canvas.width - self.start_position.x + 1, 
+            self.font_size[1] + 1,
+            self.bg_color
+        )
 
 
 class CenteredText:
