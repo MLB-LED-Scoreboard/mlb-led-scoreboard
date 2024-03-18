@@ -211,6 +211,7 @@ def value_at_keypath(current, keypath):
 
     return current
 
+
 def format_id(ID):
     if "ID" in str(ID):
         return ID

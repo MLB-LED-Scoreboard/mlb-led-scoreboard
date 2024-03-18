@@ -7,17 +7,14 @@ from presenters.live_game import LiveGamePresenter
 
 from utils.text import ScrollingText
 
+
 class LiveGameScreen(GameScreen):
     MAX_DURATION_SECONDS = 5
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.bases = [
-            Base(1, self),
-            Base(2, self),
-            Base(3, self)
-        ]
+        self.bases = [Base(1, self), Base(2, self), Base(3, self)]
 
         self.outs = [
             Out(1, self),
@@ -52,7 +49,7 @@ class LiveGameScreen(GameScreen):
         font, font_size = self.layout.font_for("batter_count")
         coords = self.layout.coords("batter_count")
         color = self.colors.graphics_color("batter_count")
-        
+
         graphics.DrawText(self.canvas, font, coords.x, coords.y, color, text)
 
     def __render_at_bat(self, presenter):
@@ -85,7 +82,7 @@ class LiveGameScreen(GameScreen):
             color,
             bgcolor,
             text,
-            center=False
+            center=False,
         )
         scroller.render_text()
 
@@ -135,7 +132,7 @@ class LiveGameScreen(GameScreen):
             color,
             bgcolor,
             self.game.batter(),
-            center=False
+            center=False,
         )
         scroller.render_text()
 

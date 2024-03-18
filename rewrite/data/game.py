@@ -164,15 +164,15 @@ class Game:
             stats = keypath(team, ID).get("pitching", None) or keypath(team, ID).get("pitching", {})
 
         return stats[stat]
-    
+
     def man_on(self, base_number):
-        base = { 1: "first", 2: "second", 3: "third" }.get(base_number, None)
+        base = {1: "first", 2: "second", 3: "third"}.get(base_number, None)
 
         if not base:
             return None
-        
+
         return value_at_keypath(self.data, f"liveData.linescore.offense.{base}").get("id", None)
-    
+
     def batter(self):
         return self.__fetch_player("offense", "batter")
 
@@ -184,20 +184,20 @@ class Game:
 
     def pitcher(self):
         return self.__fetch_player("defense", "pitcher")
-        
+
     def boxscore_name(self, ID):
         ID = format_id(ID)
 
         return value_at_keypath(self.data, f"gameData.players.{ID}.boxscoreName")
-        
+
     def __fetch_player(self, team, position):
         ID = value_at_keypath(self.data, f"liveData.linescore.{team}.{position}").get("id", None)
 
         return self.boxscore_name(ID)
-    
+
     def pitches(self):
         return Pitches(self)
-    
+
     def outs(self):
         return value_at_keypath(self.data, "liveData.linescore").get("outs", 0)
 

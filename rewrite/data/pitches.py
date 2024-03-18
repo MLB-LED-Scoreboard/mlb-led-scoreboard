@@ -2,8 +2,8 @@ from data.team import TeamType
 
 from utils import format_id, value_at_keypath
 
-class Pitches:
 
+class Pitches:
     # A list of mlb pitch types appearing in statcast
     # from statsapi.meta("pitchTypes")
     # Dont change the index, but feel free to change
@@ -59,7 +59,7 @@ class Pitches:
         "SI": "SI",
         "SL": "SL",
         "SV": "SV",
-        "ST": "SW", # MLB default is "ST"
+        "ST": "SW",  # MLB default is "ST"
         "UN": "UN",
     }
 
@@ -98,7 +98,7 @@ class Pitches:
                 )
         except:
             return None
-    
+
     def current_pitcher_pitch_count(self):
         pitcher_id = value_at_keypath(self.game.data, "liveData.linescore.defense.pitcher").get("id", None)
 
@@ -108,13 +108,15 @@ class Pitches:
         ID = format_id(pitcher_id)
 
         for team in [TeamType.HOME, TeamType.AWAY]:
-            pitches = value_at_keypath(self.game.data, f"liveData.boxscore.teams.{team}.players.{ID}.stats.pitching").get("numberOfPitches", 0)
+            pitches = value_at_keypath(
+                self.game.data, f"liveData.boxscore.teams.{team}.players.{ID}.stats.pitching"
+            ).get("numberOfPitches", 0)
 
             if pitches > 0:
                 return pitches
 
             return 0
-    
+
     def __fetch_count_part(self, part):
         return value_at_keypath(self.game.data, "liveData.linescore").get(part, 0)
 

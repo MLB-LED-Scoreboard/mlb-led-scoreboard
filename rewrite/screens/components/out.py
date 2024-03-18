@@ -1,5 +1,6 @@
 from utils.graphics import DrawRect
 
+
 class Out:
     def __init__(self, number, screen):
         self.number = number
@@ -13,7 +14,6 @@ class Out:
             self.__render_out(coords, color)
         else:
             self.__render_outline(coords, color)
-            
 
     # TODO: The size coordinates for these boxes are off-by-one because they fail to account for endpoints.
     #       i.e. `size` config of 2 renders a 3x3 box instead of 2x2 because endpoints for graphics.DrawLine are inclusive.

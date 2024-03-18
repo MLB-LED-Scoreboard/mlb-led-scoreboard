@@ -11,6 +11,7 @@ def DrawRect(canvas, x, y, width, height, color, filled=True):
     else:
         _DrawUnfilledRect(canvas, x, y, width, height, color)
 
+
 def _DrawFilledRect(canvas, x, y, width, height, color):
     """
     Draws a rectangle on screen with (X, Y) given as screen coordinates where (0, 0) is top left.
@@ -24,6 +25,7 @@ def _DrawFilledRect(canvas, x, y, width, height, color):
         for offset in range(0, width + 1):
             graphics.DrawLine(canvas, x + offset, y, x + offset, y + height, color)
 
+
 def _DrawUnfilledRect(canvas, x, y, width, height, color):
     # Top horizontal
     graphics.DrawLine(canvas, x, y, x + width, y, color)
@@ -33,4 +35,3 @@ def _DrawUnfilledRect(canvas, x, y, width, height, color):
     graphics.DrawLine(canvas, x, y, x, y + height, color)
     # Right vertical
     graphics.DrawLine(canvas, x + width, y, x + width, y + height, color)
-   

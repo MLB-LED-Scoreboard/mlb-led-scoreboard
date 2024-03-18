@@ -12,7 +12,7 @@ class TextPosition:
 
 
 class ScrollingText:
-    def __init__(self, canvas, x, y, width, font, font_size, text_color, bg_color, text, start_x = None, center=True):
+    def __init__(self, canvas, x, y, width, font, font_size, text_color, bg_color, text, start_x=None, center=True):
         # Matrix
         self.canvas = canvas
 
@@ -98,7 +98,9 @@ class ScrollingText:
 
             self._centered_text.render_text()
         else:
-            graphics.DrawText(self.canvas, self.font, self.end_position.x, self.end_position.y, self.text_color, self.text)
+            graphics.DrawText(
+                self.canvas, self.font, self.end_position.x, self.end_position.y, self.text_color, self.text
+            )
 
     def __truncate_text(self, text, font_w, font_h):
         text = self.text
@@ -123,28 +125,28 @@ class ScrollingText:
         self.position.x = next_x
 
     def __apply_mask(self):
-        '''
-        Applies a mask to the matrix such that text is only visible if it is within the window configured by the scroller. 
-        '''
+        """
+        Applies a mask to the matrix such that text is only visible if it is within the window configured by the scroller.
+        """
 
         # Left side
         DrawRect(
-            self.canvas, 
+            self.canvas,
             0,
-            self.end_position.y - self.font_size[1], 
-            self.end_position.x - 1, 
+            self.end_position.y - self.font_size[1],
+            self.end_position.x - 1,
             self.font_size[1] + 1,
-            self.bg_color
+            self.bg_color,
         )
 
         # Right side
         DrawRect(
-            self.canvas, 
-            self.start_position.x + 1, 
-            self.start_position.y - self.font_size[1], 
-            self.canvas.width - self.start_position.x + 1, 
+            self.canvas,
+            self.start_position.x + 1,
+            self.start_position.y - self.font_size[1],
+            self.canvas.width - self.start_position.x + 1,
             self.font_size[1] + 1,
-            self.bg_color
+            self.bg_color,
         )
 
 

@@ -5,7 +5,7 @@ class LiveGamePresenter:
 
     def count_text(self):
         return "{}-{}".format(self.game.pitches().balls, self.game.pitches().strikes)
-    
+
     def pitcher_text(self):
         pitcher = self.game.pitcher()
         pitch_count = self.config.layout.coords("atbat.pitch_count")
@@ -30,5 +30,5 @@ class LiveGamePresenter:
                 pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
             else:
                 pitch_text = ""
-        
+
             return pitch_text

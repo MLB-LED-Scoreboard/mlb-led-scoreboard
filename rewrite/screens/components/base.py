@@ -1,5 +1,6 @@
 from driver import graphics
 
+
 class Base:
     def __init__(self, number, screen):
         self.number = number
@@ -24,12 +25,14 @@ class Base:
         graphics.DrawLine(self.canvas, x + half, y + size, x, y + half, color)
         graphics.DrawLine(self.canvas, x + half, y + size, x + size, y + half, color)
 
-    def __render_runner(self, coords, color):       
+    def __render_runner(self, coords, color):
         x, y = coords.x, coords.y
         size = coords.size
         half = abs(size // 2)
         for offset in range(1, half + 1):
-            graphics.DrawLine(self.canvas, x + half - offset, y + size - offset, x + half + offset, y + size - offset, color)
+            graphics.DrawLine(
+                self.canvas, x + half - offset, y + size - offset, x + half + offset, y + size - offset, color
+            )
             graphics.DrawLine(self.canvas, x + half - offset, y + offset, x + half + offset, y + offset, color)
 
     @property
