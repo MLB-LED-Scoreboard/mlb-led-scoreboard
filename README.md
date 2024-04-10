@@ -9,6 +9,9 @@
 </a>
 
 ---------------
+> [!IMPORTANT]  
+> If you are upgrading from v7 to v8, please be sure to read the [Usage](#usage) section, as the startup commands have changed!
+---------------
 
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
 
