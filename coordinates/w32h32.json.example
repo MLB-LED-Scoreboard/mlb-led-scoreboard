@@ -288,6 +288,7 @@
     },
     "record": {
       "enabled": false,
+      "position": "absolute",
       "away": {
         "x": 4,
         "y": 6
