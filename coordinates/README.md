@@ -6,6 +6,11 @@ You can edit these coordinates to display parts of the scoreboard in any way you
 ## Example
 If you have a 64x32 board, copy `w64h32.json.example` to a new file called `w64h32.json`, then edit the coordinates in that file as you see fit. Your customized coordinates will always take precedence.
 
+>!WARNING
+> **DO NOT** remove `.example` files! **Copy** the files instead.
+>
+> These are checked by the software to determine which matrix dimensions are supported. If you remove the file, the scoreboard may fail to start.
+
 ## Fonts
 Any scoreboard element that prints text can accept a `"font_name"` attribute. Supported fonts need to be named with `<width>x<height>.bdf` (or `<width>x<height>B.bdf` for bold fonts). The font loader will search `assets/` first for the specified font and then it will fall back to searching `matrix/fonts/` if one was not found.
 
@@ -19,13 +24,18 @@ The layout can have a couple of different states where things are rendered diffe
   * `spacing` is the number of pixels between the runs/hits and hits/errors.
 
 ## Pitch Data
-* `enabled` (true/false) turn feature on/off
+* `enabled` (true/false) Turn feature on/off
 * `mph` (true/false) When rendering pitch speed add mph after (99 mph)
 * `desc_length` (short/long) The short or long pitch type description, you can change both the short and long description to your liking in data/pitches as long as you do not change the index value.
 
 ## Play Result
-* `enabled` (true/false) turn feature on/off
-* `desc_length` (short/long) The short or long play result description. You can change both the short and long description to your liking in data/plays. 
+* `enabled` (true/false) Turn feature on/off
+* `desc_length` (short/long) The short or long play result description.
+
+## Team Records During Games
+Team records can be displayed on the team banner during most game states, such as pregame, live, and postgame.
+* `enabled` (true/false) Turn feature on/off
+* `position` (absolute/relative) Defines origin of the text. When `absolute`, the origin is always `(0, 0)`. When `relative`, the origin is relative to the end of the team name in the banner.
 
 ## Updates
 The software develops and releases features with full support for the default layouts, so custom layouts may look unsatisfactory if you update to later versions of the scoreboard. If you as a user decide to create a custom layout file, you are responsible for tweaking the coordinates to your liking with each update.
@@ -34,5 +44,5 @@ The software develops and releases features with full support for the default la
 A couple of things are not completely implemented or have some implementation details you should understand.
 
 * `bases` currently requires an even `size` value to be rendered correctly
-* Not all options are enabled on all board sizes by default.  For example pitch count and pitch type are not enabled by default on boards smaller than 64x64. Options are "disabled" by forcing them to render outside the board, by setting X and Y coordinates less than 0 or greater than the height or width of the board.
+* Not all options are enabled on all board sizes by default. For example pitch count and pitch type are not enabled by default on boards smaller than 64x64. Options are "disabled" by forcing them to render outside the board, by setting X and Y coordinates less than 0 or greater than the height or width of the board.
 
