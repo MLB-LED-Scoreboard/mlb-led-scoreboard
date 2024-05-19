@@ -257,6 +257,7 @@
     },
     "record": {
       "enabled": false,
+      "position": "absolute",
       "away": {
         "font_name": "4x6",
         "x": 18,
