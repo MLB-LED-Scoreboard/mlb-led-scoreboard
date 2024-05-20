@@ -1,4 +1,4 @@
-from driver import graphics
+from RGBMatrixDriver import graphics
 from utils import center_text_position
 
 NETWORK_ERROR_TEXT = "!"

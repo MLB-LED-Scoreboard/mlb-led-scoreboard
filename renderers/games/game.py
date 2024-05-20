@@ -1,4 +1,4 @@
-from driver import graphics
+from RGBMatrixDriver import graphics
 from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard import Scoreboard

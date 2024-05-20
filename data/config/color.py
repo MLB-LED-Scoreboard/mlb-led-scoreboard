@@ -1,4 +1,4 @@
-from driver import graphics
+from RGBMatrixDriver import graphics
 
 
 class Color:

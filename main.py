@@ -23,10 +23,9 @@ import time
 
 from PIL import Image
 
-# Important! Import the driver first to initialize it, then import submodules as needed.
-import driver
-from driver import RGBMatrix, __version__
-from utils import args, led_matrix_options
+import RGBMatrixDriver
+from RGBMatrixDriver import RGBMatrix, prefilled_matrix_options, __version__
+from utils import scoreboard_args
 
 from data import Data
 from data.config import Config
@@ -47,8 +46,8 @@ def main(matrix, config_base):
     # Print some basic info on startup
     debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
 
-    if driver.is_emulated():
-        if driver.hardware_load_failed:
+    if RGBMatrixDriver.is_emulated():
+        if RGBMatrixDriver.hardware_load_failed:
             debug.log("rgbmatrix not installed, falling back to emulator!")
 
         debug.log("Using RGBMatrixEmulator version %s", __version__)
@@ -60,7 +59,7 @@ def main(matrix, config_base):
 
     # MLB image disabled when using renderer, for now.
     # see: https://github.com/ty-porter/RGBMatrixEmulator/issues/9#issuecomment-922869679
-    if os.path.exists(logo_path) and driver.is_hardware():
+    if os.path.exists(logo_path) and RGBMatrixDriver.is_hardware():
         logo = Image.open(logo_path)
         matrix.SetImage(logo.convert("RGB"))
         logo.close()
@@ -158,11 +157,10 @@ def __render_main(matrix, data):
 
 if __name__ == "__main__":
     # Check for led configuration arguments
-    command_line_args = args()
-    matrixOptions = led_matrix_options(command_line_args)
+    command_line_args = scoreboard_args()
 
     # Initialize the matrix
-    matrix = RGBMatrix(options=matrixOptions)
+    matrix = RGBMatrix(options=prefilled_matrix_options(command_line_args))
     try:
         config, _ = os.path.splitext(command_line_args.config)
         main(matrix, config)
