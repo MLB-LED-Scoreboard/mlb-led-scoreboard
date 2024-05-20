@@ -296,9 +296,9 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 --led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
 --led-pwm-dither-bits     Time dithering of lower bits (Default: 0)
+--led-drop-privileges     Force the matrix driver to drop root privileges after setup. (Default: true)
 --config                  Specify a configuration file name other, omitting json xtn (Default: config)
 --emulated                Force the scoreboard to run in software emulation mode.
---drop-privileges         Force the matrix driver to drop root privileges after setup. (Default: true)
 ```
 
 ## Personalization
