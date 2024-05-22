@@ -40,8 +40,10 @@ def main(matrix, config_base):
     logger = logging.getLogger("mlbled")
     if config.debug:
         logger.setLevel(logging.DEBUG)
+        RGBMatrixDriver.logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.WARNING)
+        RGBMatrixDriver.logger.setLevel(logging.INFO)
 
     # Print some basic info on startup
     debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)

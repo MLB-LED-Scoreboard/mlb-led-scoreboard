@@ -14,7 +14,7 @@ def split_string(string, num_chars):
     return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]  # noqa: E203
 
 def scoreboard_args():
-    sb_parser = argparse.ArgumentParser(add_help=False)
+    sb_parser = RGBMatrixArguments()
     sb_parser.add_argument(
         "--config",
         action="store",
@@ -23,7 +23,7 @@ def scoreboard_args():
         type=str,
     )
 
-    return RGBMatrixArguments(parents=[sb_parser]).parse_args()
+    return sb_parser.parse_args()
 
 def deep_update(source, overrides):
     """Update a nested dictionary or similar mapping.
