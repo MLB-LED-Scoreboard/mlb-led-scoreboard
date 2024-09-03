@@ -5,6 +5,7 @@ from typing import Optional
 import statsapi
 
 import debug
+from data import teams
 from data.update import UpdateStatus
 from data.delay_buffer import CircularQueue
 
@@ -84,14 +85,14 @@ class Game:
         return (len(self._data_wait_queue) - 1) * GAME_UPDATE_RATE
 
     def home_name(self):
-        return self._current_data["gameData"]["teams"]["home"]["teamName"]
+        return teams.TEAM_ID_NAME[self._current_data["gameData"]["teams"]["home"]["id"]]
 
     def home_abbreviation(self):
-        return self._current_data["gameData"]["teams"]["home"]["abbreviation"]
-    
+        return teams.TEAM_ID_ABBR[self._current_data["gameData"]["teams"]["home"]["id"]]
+
     def home_record(self):
         return self._current_data["gameData"]["teams"]["home"]["record"] or {}
-    
+
     def away_record(self):
         return self._current_data["gameData"]["teams"]["away"]["record"] or {}
 
@@ -111,10 +112,10 @@ class Game:
             return wx
 
     def away_name(self):
-        return self._current_data["gameData"]["teams"]["away"]["teamName"]
+        return teams.TEAM_ID_NAME[self._current_data["gameData"]["teams"]["away"]["id"]]
 
     def away_abbreviation(self):
-        return self._current_data["gameData"]["teams"]["away"]["abbreviation"]
+        return teams.TEAM_ID_ABBR[self._current_data["gameData"]["teams"]["away"]["id"]]
 
     def status(self):
         return self._status["detailedState"]
