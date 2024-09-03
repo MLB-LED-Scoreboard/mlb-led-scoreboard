@@ -19,10 +19,14 @@ class TestStoredDataUpToDate(unittest.TestCase):
     def test_teams_complete(self):
         teams = statsapi.get("teams", {"sportIds": 1})["teams"]
 
-        abbr_to_full = {t["teamName"]: t["name"] for t in teams}
-        self.assertEqual(abbr_to_full, data.teams.TEAM_FULL)
-        full_to_abbr = {t["name"]: t["abbreviation"] for t in teams}
-        self.assertEqual(full_to_abbr, data.teams.TEAM_ABBR_LN)
+        id_to_abbr = {t["id"]: t["abbreviation"] for t in teams}
+        self.assertEqual(id_to_abbr, data.teams.TEAM_ID_ABBR)
+
+        id_to_name = {t["id"]: t["teamName"] for t in teams}
+        self.assertEqual(id_to_name, data.teams.TEAM_ID_NAME)
+
+        name_to_id = {t["teamName"]: t["id"] for t in teams}
+        self.assertEqual(name_to_id, data.teams.TEAM_NAME_ID)
 
     def test_pitches_complete(self):
         pitches = set(p["code"] for p in statsapi.meta("pitchTypes"))
