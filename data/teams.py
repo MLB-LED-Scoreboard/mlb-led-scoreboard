@@ -6,7 +6,7 @@
 # TEAM_ABBR_LN = {t['name']:t['abbreviation'] for t in teams}
 
 TEAM_FULL = {
-    "Athletics": "Oakland Athletics",
+    "Athletics": "Athletics",
     "Pirates": "Pittsburgh Pirates",
     "Padres": "San Diego Padres",
     "Mariners": "Seattle Mariners",
@@ -39,7 +39,7 @@ TEAM_FULL = {
 }
 
 TEAM_ABBR_LN = {
-    "Oakland Athletics": "OAK",
+    "Athletics": "ATH",
     "Pittsburgh Pirates": "PIT",
     "San Diego Padres": "SD",
     "Seattle Mariners": "SEA",
