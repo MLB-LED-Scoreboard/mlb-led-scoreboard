@@ -135,26 +135,29 @@ It will also install the following python libraries that are required for certai
 * [MLB-StatsAPI](https://pypi.org/project/MLB-StatsAPI/): The main library that fetches and parses all of the actual MLB data being displayed
 * [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator): The emulation library for the matrix display. Useful for running on MacOS or Linux, or for development.
 
+#### Customizing the Installation
+
+Additional flags are available for customizing your install:
+
+```
+-a, --skip-all          Skip all dependencies and config installation (equivalent to -c -p -m).
+-c, --skip-config       Skip updating JSON configuration files.
+-m, --skip-matrix       Skip building matrix driver dependency. Video display will default to emulator mode.
+-p, --skip-python       Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
+
+-v, --no-venv           Do not create a virtual environment for the dependencies.
+-e, --emulator-only     Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
+-d, --driver            Specify a branch name or commit SHA for the rpi-rgb-led-matrix library. (Optional. Defaults may change.)
+
+-h, --help              Display this help message
+```
+
 #### Installation on Non-Raspberry Pi Hardware
 
 The installation script is designed for physical hardware. When attempting to install it on other platforms, you should not use `sudo` to install the dependencies. In addition, you can pass the `--emulator-only` argument to skip installation steps that aren't required.
 
 ```
 sh install.sh --emulator-only
-```
-
-Additional flags are available for customizing your install:
-
-```
--p, --skip-python  Skips Python 3 installation. You will need to install it via your platform's appropriate package manager.
--m, --skip-matrix  Skips RPI-specific matrix driver installation and build.
--c, --skip-config  Skips default config overwrite without prompting.
-
--a, --skip-all     Performs all above skips.
---no-venv          Do not create a virtual environment for the dependencies.
---emulator-only    Do not install dependencies under sudo. Skips building matrix dependencies.
-
--h, --help         Displays help
 ```
 
 #### Updating
