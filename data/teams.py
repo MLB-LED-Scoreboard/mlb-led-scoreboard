@@ -7,7 +7,7 @@
 
 # Can be customized, but will require changing in colors/teams.json as well
 TEAM_ID_ABBR = {
-    133: "OAK",
+    133: "ATH",
     134: "PIT",
     135: "SD",
     136: "SEA",

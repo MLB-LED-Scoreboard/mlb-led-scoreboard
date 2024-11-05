@@ -1,58 +1,65 @@
 #!/bin/bash
 
-usage() {
-    cat <<USAGE
-
-    Usage: $0 [-a] [-c] [-m] [-p]
-
-    Options:
-        -c, --skip-config:  Skip updating JSON configuration files.
-        -m, --skip-matrix:  Skip building matrix driver dependency. Video display will default to emulator mode.
-        -p, --skip-python:  Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
-
-        -a, --skip-all:     Skip all dependencies and config installation (equivalent to -c -p -m).
-        --no-venv           Do not create a virtual environment for the dependencies.
-        --emulator-only:    Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
-
-USAGE
-    exit 1
-}
-
 SKIP_PYTHON=false
 SKIP_CONFIG=false
 SKIP_MATRIX=false
 NO_SUDO=false
 SKIP_VENV=false
+DRIVER_SHA=14ab2ff
 
-for arg in "$@"; do
-    case $arg in
+usage() {
+    cat <<USAGE
+
+    Usage: $0 [-acmpve] [-d / --driver string]
+
+    Options:
+        -a, --skip-all          Skip all dependencies and config installation (equivalent to -c -p -m).
+        -c, --skip-config       Skip updating JSON configuration files.
+        -m, --skip-matrix       Skip building matrix driver dependency. Video display will default to emulator mode.
+        -p, --skip-python       Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
+
+        -v, --no-venv           Do not create a virtual environment for the dependencies.
+        -e, --emulator-only     Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
+        -d, --driver            Specify a branch name or commit SHA for the rpi-rgb-led-matrix library. (Defaults to "$DRIVER_SHA")
+
+        -h, --help              Display this help message
+USAGE
+    exit 1
+}
+
+while [ $# -gt 0 ]; do
+    case "$1" in
     -p | --skip-python)
         SKIP_PYTHON=true
-        shift # Remove -p / --skip-python from `$@`
+        shift
         ;;
     -c | --skip-config)
         SKIP_CONFIG=true
-        shift # Remove -c / --skip-config from `$@`
+        shift
         ;;
     -m | --skip-matrix)
         SKIP_MATRIX=true
-        shift # Remove -m / --skip-matrix from `$@`
+        shift
         ;;
     -a | --skip-all)
         SKIP_CONFIG=true
         SKIP_MATRIX=true
         SKIP_PYTHON=true
         SKIP_VENV=true
-        shift # Remove -a / --skip-all from `$@`
+        shift
         ;;
-    --emulator-only)
+    -e | --emulator-only)
         SKIP_MATRIX=true
         NO_SUDO=true
-        shift # remove --emulator-only from `$@`
+        shift
         ;;
-    --no-venv)
+    -v | --no-venv)
         SKIP_VENV=true
-        shift # remove --no-venv from `$@`
+        shift
+        ;;
+    -d | --driver)
+        DRIVER="$2"
+        shift 2
         ;;
     -h | --help)
         usage # run usage function on help
@@ -134,6 +141,8 @@ if [ "$SKIP_MATRIX" = false ]; then
     cd submodules
     git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
     cd matrix
+    # Checkout the branch or commit specified for rpi-rgb-led-matrix
+    git checkout $DRIVER_SHA
     git pull
     make build-python PYTHON="$PYTHON"
     sudo make install-python PYTHON="$PYTHON"

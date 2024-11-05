@@ -82,10 +82,7 @@ class Schedule:
             return True
 
     def is_offday(self):
-        if self.config.standings_no_games:
-            return not len(self.__all_games)  # care about all MLB
-        else:  # only care if we can't rotate a game
-            return not len(self._games)
+        return not len(self.__all_games)  # care about all MLB
 
     def games_live(self):
         return any(status.is_fresh(g["status"]) or (status.is_live(g["status"])) for g in self._games)
