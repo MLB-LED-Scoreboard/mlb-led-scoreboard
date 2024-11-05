@@ -11,7 +11,7 @@ STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
 
 API_FIELDS = (
-    "records,standingsType,teamRecords,team,abbreviation,division,league,nameShort,gamesBack,wildCardGamesBack,"
+    "records,standingsType,teamRecords,team,id,abbreviation,division,league,nameShort,gamesBack,wildCardGamesBack,"
     "wildCardEliminationNumber,clinched,wins,losses"
 )
 
@@ -131,7 +131,7 @@ class Division:
 
 class Team:
     def __init__(self, data, wc):
-        self.team_abbrev = data["team"]["abbreviation"]
+        self.team_abbrev = teams.TEAM_ID_ABBR[data["team"]["id"]]
         self.w = data["wins"]
         self.l = data["losses"]  # noqa: E741
         if wc:
@@ -183,9 +183,9 @@ class League:
         else:
             champ = "TBD"
         if game["teams"]["home"].get("isWinner"):
-            champ = League.get_abbr(game["teams"]["home"]["team"]["name"])
+            champ = get_abbr(game["teams"]["home"]["team"]["id"])
         elif game["teams"]["away"].get("isWinner"):
-            champ = League.get_abbr(game["teams"]["away"]["team"]["name"])
+            champ = get_abbr(game["teams"]["away"]["team"]["id"])
         return champ
 
     @staticmethod
@@ -196,11 +196,11 @@ class League:
             if s["series"]["id"] == ID
         )
         higher, lower = (
-            series["games"][0]["teams"]["home"]["team"]["name"],
-            series["games"][0]["teams"]["away"]["team"]["name"],
+            series["games"][0]["teams"]["home"]["team"]["id"],
+            series["games"][0]["teams"]["away"]["team"]["id"],
         )
 
-        return (League.get_abbr(higher), League.get_abbr(lower))
+        return (get_abbr(higher), get_abbr(lower))
 
     def __str__(self):
         return f"""{self.wc5} ---|
@@ -214,6 +214,5 @@ class League:
         """
 
 
-    @staticmethod
-    def get_abbr(name, default="TBD"):
-        return f"{teams.TEAM_ABBR_LN.get(name, default):>3}"
+def get_abbr(id, default="TBD"):
+    return f"{teams.TEAM_ID_ABBR.get(id, default):>3}"
