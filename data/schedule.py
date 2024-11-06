@@ -58,7 +58,7 @@ class Schedule:
                         # but this is fine, since self.games_live() is will work even if we don't do this update
                         games = live_games
 
-                if len(games) > 0:        
+                if len(games) > 0:
                     self.current_idx %= len(games)
 
                 self._games = games
@@ -75,17 +75,14 @@ class Schedule:
     def is_offday_for_preferred_team(self):
         if self.config.preferred_teams:
             return not any(
-                data.teams.TEAM_FULL[self.config.preferred_teams[0]] in [game["away_name"], game["home_name"]]
+                data.teams.TEAM_NAME_ID[self.config.preferred_teams[0]] in [game["away_id"], game["home_id"]]
                 for game in self.__all_games  # only care if preferred team is actually in list
             )
         else:
             return True
 
     def is_offday(self):
-        if self.config.standings_no_games:
-            return not len(self.__all_games)  # care about all MLB
-        else:  # only care if we can't rotate a game
-            return not len(self._games)
+        return not len(self.__all_games)  # care about all MLB
 
     def games_live(self):
         return any(status.is_fresh(g["status"]) or (status.is_live(g["status"])) for g in self._games)
@@ -131,12 +128,12 @@ class Schedule:
 
     def _game_index_for_preferred_team(self):
         if self.config.preferred_teams:
-            team_name = data.teams.TEAM_FULL[self.config.preferred_teams[0]]
+            team_id = data.teams.TEAM_NAME_ID[self.config.preferred_teams[0]]
             return next(
                 (
                     i
                     for i, game in enumerate(self._games)
-                    if team_name in [game["away_name"], game["home_name"]] and status.is_live(game["status"])
+                    if team_id in [game["away_id"], game["home_id"]] and status.is_live(game["status"])
                 ),
                 -1,  # no live games for preferred team
             )
@@ -158,5 +155,5 @@ class Schedule:
 
     @staticmethod
     def __filter_list_of_games(games, filter_teams):
-        teams = [data.teams.TEAM_FULL[t] for t in filter_teams]
-        return list(game for game in games if set([game["away_name"], game["home_name"]]).intersection(set(teams)))
+        teams = set(data.teams.TEAM_NAME_ID[t] for t in filter_teams)
+        return list(game for game in games if set([game["away_id"], game["home_id"]]).intersection(teams))
