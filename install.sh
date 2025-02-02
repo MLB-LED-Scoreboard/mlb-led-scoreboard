@@ -129,7 +129,7 @@ fi
 
 if [ "$SKIP_MATRIX" = false ]; then
     echo "Running rgbmatrix installation..."
-    sudo apt-get install -y make
+    sudo apt-get install -y make gcc g++
     mkdir submodules
     cd submodules
     git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
@@ -143,7 +143,7 @@ if [ "$SKIP_MATRIX" = false ]; then
     echo "------------------------------------"
     echo "  Checking for snd_bcm2835"
     echo "------------------------------------"
-    if [ -f /etc/modprobe.d/blacklist-rgbmatrix.conf ]; then
+    if [ ! -f /etc/modprobe.d/blacklist-rgbmatrix.conf ]; then
         echo "Sound Blacklist File not found, Creating."
         echo "blacklist snd_bcm2835" | sudo tee /etc/modprobe.d/blacklist-rgbmatrix.conf
         sudo modprobe -r snd_bcm2835
