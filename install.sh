@@ -5,7 +5,7 @@ SKIP_CONFIG=false
 SKIP_MATRIX=false
 NO_SUDO=false
 SKIP_VENV=false
-DRIVER_SHA=14ab2ff
+DRIVER_SHA=master
 
 usage() {
     cat <<USAGE
