@@ -1,7 +1,8 @@
 feedparser==6.0.10
+legacy-cgi # Required by feedparser on Python 3.13
 MLB_StatsAPI>=1.6.1
 Pillow>=10.0.1
 pyowm==3.3.0
 RGBMatrixEmulator>=0.8.4
-setuptools
+setuptools # Required by pyowm on Python 3.12
 tzlocal==4.2
