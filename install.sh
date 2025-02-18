@@ -83,6 +83,7 @@ if [ "$SKIP_PYTHON" = false ]; then
         python3-pillow \
         python3-tk \
         python3-venv \
+        cython3 \
         libxml2-dev \
         libxslt-dev \
         libsdl2-mixer-2.0-0 \
@@ -144,7 +145,7 @@ if [ "$SKIP_MATRIX" = false ]; then
     # Checkout the branch or commit specified for rpi-rgb-led-matrix
     git checkout $DRIVER_SHA
     git pull
-    make build-python PYTHON="$PYTHON"
+    make build-python PYTHON="$PYTHON" CYTHON=cython
     sudo make install-python PYTHON="$PYTHON"
 
     cd ../..
