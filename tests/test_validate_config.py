@@ -397,7 +397,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 
     self.assertRegex(
       format_change(change, color=TermColor.RED),
-      re.compile(f'\\033\[{TermColor.RED}.+\\033\[0m')
+      re.compile(fr'\033\[{TermColor.RED}.+\033\[0m')
     )
 
 
