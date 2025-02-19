@@ -1,5 +1,4 @@
-feedparser==6.0.10
-legacy-cgi; python_version >= "3.13"
+feedparser>=6.0.11
 MLB_StatsAPI>=1.6.1
 Pillow>=10.0.1
 pyowm==3.3.0
