@@ -75,7 +75,7 @@ class Schedule:
     def is_offday_for_preferred_team(self):
         if self.config.preferred_teams:
             return not any(
-                data.teams.TEAM_NAME_ID[self.config.preferred_teams[0]] in [game["away_id"], game["home_id"]]
+                data.teams.get_team_id(self.config.preferred_teams[0]) in [game["away_id"], game["home_id"]]
                 for game in self.__all_games  # only care if preferred team is actually in list
             )
         else:
@@ -128,7 +128,7 @@ class Schedule:
 
     def _game_index_for_preferred_team(self):
         if self.config.preferred_teams:
-            team_id = data.teams.TEAM_NAME_ID[self.config.preferred_teams[0]]
+            team_id = data.teams.get_team_id(self.config.preferred_teams[0])
             return next(
                 (
                     i
@@ -155,5 +155,5 @@ class Schedule:
 
     @staticmethod
     def __filter_list_of_games(games, filter_teams):
-        teams = set(data.teams.TEAM_NAME_ID[t] for t in filter_teams)
+        teams = set(data.teams.get_team_id(t) for t in filter_teams)
         return list(game for game in games if set([game["away_id"], game["home_id"]]).intersection(teams))

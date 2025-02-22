@@ -85,10 +85,16 @@ class Game:
         return (len(self._data_wait_queue) - 1) * GAME_UPDATE_RATE
 
     def home_name(self):
-        return teams.TEAM_ID_NAME[self._current_data["gameData"]["teams"]["home"]["id"]]
+        return teams.TEAM_ID_NAME.get(
+            self._current_data["gameData"]["teams"]["home"]["id"],
+            self._current_data["gameData"]["teams"]["home"]["teamName"],
+        )
 
     def home_abbreviation(self):
-        return teams.TEAM_ID_ABBR[self._current_data["gameData"]["teams"]["home"]["id"]]
+        return teams.TEAM_ID_ABBR.get(
+            self._current_data["gameData"]["teams"]["home"]["id"],
+            self._current_data["gameData"]["teams"]["home"]["abbreviation"],
+        )
 
     def home_record(self):
         return self._current_data["gameData"]["teams"]["home"]["record"] or {}
@@ -112,10 +118,16 @@ class Game:
             return wx
 
     def away_name(self):
-        return teams.TEAM_ID_NAME[self._current_data["gameData"]["teams"]["away"]["id"]]
+        return teams.TEAM_ID_NAME.get(
+            self._current_data["gameData"]["teams"]["away"]["id"],
+            self._current_data["gameData"]["teams"]["away"]["teamName"],
+        )
 
     def away_abbreviation(self):
-        return teams.TEAM_ID_ABBR[self._current_data["gameData"]["teams"]["away"]["id"]]
+        return teams.TEAM_ID_ABBR.get(
+            self._current_data["gameData"]["teams"]["away"]["id"],
+            self._current_data["gameData"]["teams"]["away"]["abbreviation"],
+        )
 
     def status(self):
         return self._status["detailedState"]
