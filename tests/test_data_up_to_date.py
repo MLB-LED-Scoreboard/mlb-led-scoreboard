@@ -26,7 +26,10 @@ class TestStoredDataUpToDate(unittest.TestCase):
         self.assertEqual(id_to_name, data.teams.TEAM_ID_NAME)
 
         name_to_id = {t["teamName"]: t["id"] for t in teams}
-        self.assertEqual(name_to_id, data.teams.TEAM_NAME_ID)
+        self.assertEqual(name_to_id, data.teams._TEAM_NAME_ID)
+
+    def test_team_handles_unknown(self):
+        self.assertRaisesRegex(ValueError, "Unknown team name: Atsros", data.teams.get_team_id, "Atsros")
 
     def test_pitches_complete(self):
         pitches = set(p["code"] for p in statsapi.meta("pitchTypes"))

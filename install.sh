@@ -5,7 +5,7 @@ SKIP_CONFIG=false
 SKIP_MATRIX=false
 NO_SUDO=false
 SKIP_VENV=false
-DRIVER_SHA=14ab2ff
+DRIVER_SHA=master
 
 usage() {
     cat <<USAGE
@@ -83,6 +83,7 @@ if [ "$SKIP_PYTHON" = false ]; then
         python3-pillow \
         python3-tk \
         python3-venv \
+        cython3 \
         libxml2-dev \
         libxslt-dev \
         libsdl2-mixer-2.0-0 \
@@ -136,7 +137,7 @@ fi
 
 if [ "$SKIP_MATRIX" = false ]; then
     echo "Running rgbmatrix installation..."
-    sudo apt-get install -y make
+    sudo apt-get install -y make gcc g++
     mkdir submodules
     cd submodules
     git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
@@ -144,7 +145,7 @@ if [ "$SKIP_MATRIX" = false ]; then
     # Checkout the branch or commit specified for rpi-rgb-led-matrix
     git checkout $DRIVER_SHA
     git pull
-    make build-python PYTHON="$PYTHON"
+    make build-python PYTHON="$PYTHON" CYTHON=cython3
     sudo make install-python PYTHON="$PYTHON"
 
     cd ../..
@@ -152,7 +153,7 @@ if [ "$SKIP_MATRIX" = false ]; then
     echo "------------------------------------"
     echo "  Checking for snd_bcm2835"
     echo "------------------------------------"
-    if [ -f /etc/modprobe.d/blacklist-rgbmatrix.conf ]; then
+    if [ ! -f /etc/modprobe.d/blacklist-rgbmatrix.conf ]; then
         echo "Sound Blacklist File not found, Creating."
         echo "blacklist snd_bcm2835" | sudo tee /etc/modprobe.d/blacklist-rgbmatrix.conf
         sudo modprobe -r snd_bcm2835

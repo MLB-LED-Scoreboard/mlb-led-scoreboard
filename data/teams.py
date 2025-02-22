@@ -75,7 +75,7 @@ TEAM_ID_NAME = {
 
 
 # Can be customized, but names in the config.json file must match
-TEAM_NAME_ID = {
+_TEAM_NAME_ID = {
     "Athletics": 133,
     "Pirates": 134,
     "Padres": 135,
@@ -107,3 +107,11 @@ TEAM_NAME_ID = {
     "Nationals": 120,
     "Mets": 121,
 }
+
+def get_team_id(team_name):
+    try:
+        return _TEAM_NAME_ID[team_name]
+    except KeyError:
+        # this function is only ever given user's config as input
+        # so we provide a more exact error message
+        raise ValueError(f"Unknown team name: {team_name}")
