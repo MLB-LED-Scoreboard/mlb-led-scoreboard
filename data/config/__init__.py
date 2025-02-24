@@ -2,6 +2,8 @@ import json
 import os
 import sys
 
+from datetime import datetime, timedelta
+
 import debug
 from data import status
 from data.config.color import Color
@@ -203,6 +205,18 @@ class Config:
         if status.is_complete(game_status):
             rotate_rate = self.rotation_rates_final
         return rotate_rate
+
+    def parse_today(self):
+        if self.demo_date:
+            today = datetime.strptime(self.demo_date, "%Y-%m-%d")
+        else:
+            today = datetime.today()
+            end_of_day = datetime.strptime(self.end_of_day, "%H:%M").replace(
+                year=today.year, month=today.month, day=today.day
+            )
+            if end_of_day > datetime.now():
+                today -= timedelta(days=1)
+        return today.date()
 
     def read_json(self, path):
         """
