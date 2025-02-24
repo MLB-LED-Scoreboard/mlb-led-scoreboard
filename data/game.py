@@ -47,12 +47,12 @@ class Game:
         self._series_status = series_status
         self._status = {}
 
-    def update(self, force=False) -> UpdateStatus:
+    def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():
             self.starttime = time.time()
             try:
                 debug.log("Fetching data for game %s", str(self.game_id))
-                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS})
+                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params)
                 # we add a delay to avoid spoilers. During construction, this will still yield live data, but then
                 # it will recycle that data until the queue is full.
                 self._data_wait_queue.push(live_data)

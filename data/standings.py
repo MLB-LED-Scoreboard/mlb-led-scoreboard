@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import statsapi
 
@@ -19,7 +19,7 @@ API_FIELDS = (
 class Standings:
     def __init__(self, config, playoffs_start_date: datetime):
         self.config = config
-        self.date = self.__parse_today()
+        self.date = self.config.parse_today()
         self.playoffs_start_date = playoffs_start_date.date()
         self.starttime = time.time()
         self.preferred_divisions = config.preferred_divisions
@@ -31,21 +31,10 @@ class Standings:
 
         self.update(True)
 
-    def __parse_today(self):
-        if self.config.demo_date:
-            today = datetime.strptime(self.config.demo_date, "%Y-%m-%d")
-        else:
-            today = datetime.today()
-            end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(
-                year=today.year, month=today.month, day=today.day
-            )
-            if end_of_day > datetime.now():
-                today -= timedelta(days=1)
-        return today.date()
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            self.date = self.__parse_today()
+            self.date = self.config.parse_today()
             debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
