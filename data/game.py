@@ -20,7 +20,7 @@ API_FIELDS = (
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
 
-GAME_UPDATE_RATE = 10
+GAME_UPDATE_RATE = 7
 
 
 class Game:
@@ -46,6 +46,7 @@ class Game:
         self._broadcasts = broadcasts
         self._series_status = series_status
         self._status = {}
+        print(self.game_id)
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
@@ -327,6 +328,105 @@ class Game:
             in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
         ):
             result += "_looking"
+        elif result == "field_out" and (
+            "flies"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_fly"
+        elif result == "field_out" and (
+            "grounds"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_ground"
+        elif result == "field_out" and (
+            "lines"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_line"
+        elif result == "field_out" and (
+            "pop"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_pop"
+        elif result == "field_out" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+
+        if result == "field_out_fly" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "field_out_ground" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "field_out_line" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "field_out_pop" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+
+        if result == "sacrifice_fly" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "sacrifice_bunt" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+
+        if result == "single" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "double" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "triple" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "walk" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+        elif result == "hit_by_pitch" and (
+            "scores"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        ):
+            result += "_rbi"
+
+        if result == "home_run" and (
+            "2"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("rbi", "")
+        ):
+            result += "_2"
+        elif result == "home_run" and (
+            "3"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("rbi", "")
+        ):
+            result += "_3"
+        elif result == "home_run" and (
+            "4"
+            in self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("rbi", "")
+        ):
+            result += "_4"
         return result
 
     def __should_update(self):
