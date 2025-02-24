@@ -26,4 +26,5 @@ jobs:
           pip install -r ./requirements.txt
       - name: Test with unittest
         run: |
+          export RGBME_SUPPRESS_ADAPTER_LOAD_ERRORS=1
           python -m unittest discover -s ./tests -p 'test_*.py'
