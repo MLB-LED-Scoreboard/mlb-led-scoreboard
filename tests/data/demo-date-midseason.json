@@ -1,0 +1,11 @@
+{
+    "preferred": {
+        "teams": [
+            "Nationals",
+            "Angels",
+            "Brewers"
+        ],
+		"divisions": ["NL East", "NL Wild Card"]
+    },
+    "demo_date": "2019-08-17"
+}

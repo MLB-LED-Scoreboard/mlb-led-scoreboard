@@ -8,7 +8,7 @@ class DriverWrapper:
         self.hardware_load_failed = False
         self.mode = None
 
-        if args().emulated:
+        if 'unittest' in sys.modules or args().emulated:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)
         else:
             self.set_mode(DriverMode.HARDWARE)
