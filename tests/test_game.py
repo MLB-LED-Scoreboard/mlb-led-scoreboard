@@ -89,3 +89,50 @@ class TestGame(unittest.TestCase):
         self.assertTrue(game.man_on('first'))
         self.assertEqual(game.last_pitch(), (88.6, 'FC', 'Cutter'))
         self.assertEqual(game.current_pitcher_pitch_count(), 12)
+
+
+    def test_special_status_game(self):
+        # https://www.mlb.com/news/tigers-nearly-combine-for-no-hitter-against-orioles
+        game_data = {
+            "game_id": 746423,
+            "game_date": "2024-09-13",
+            }
+        game = data.game.Game.from_scheduled(game_data, delay=0)
+        self.assertIsNotNone(game)
+        # fifth inning -- too early!
+        self.assertEqual(game.update(force=True, testing_params={"timecode": "20240913_234825"}), UpdateStatus.SUCCESS)
+        self.assertEqual(game.inning_number(), 5)
+        self.assertFalse(game.is_perfect_game())
+
+        # pitch before walking Adley Rutschman
+        self.assertEqual(game.update(force=True, testing_params={"timecode": "20240914_002424"}), UpdateStatus.SUCCESS)
+        self.assertEqual(game.inning_number(), 8)
+        self.assertTrue(game.is_perfect_game())
+
+        self.assertEqual(game.update(force=True, testing_params={"timecode": "20240914_002452"}), UpdateStatus.SUCCESS)
+        self.assertFalse(game.is_perfect_game())
+        self.assertTrue(game.is_no_hitter())
+        self.assertEqual(game.current_play_result(), "walk")
+        self.assertTrue(game.man_on('first'))
+
+        # giving up a triple to Gunnar Henderson
+        self.assertEqual(game.update(force=True, testing_params={"timecode": "20240914_005908"}), UpdateStatus.SUCCESS)
+        self.assertFalse(game.is_perfect_game())
+        self.assertFalse(game.is_no_hitter())
+        self.assertEqual(game.current_play_result(), "triple")
+        self.assertEqual(game.inning_number(), 9)
+        self.assertEqual(game.outs(), 2)
+
+    # NOTE: it seems like the more detailed reasons may not be stored in the historical data
+
+    def test_weather_delays(self):
+        # https://www.northjersey.com/story/sports/mlb/2024/06/26/mets-yankees-subway-series-game-delayed-weather-new-york-postponed/74226587007/
+        game_data = {
+            'game_id': 745808,
+            'game_date': "2024-06-26",
+        }
+        game = data.game.Game.from_scheduled(game_data, delay=0)
+        self.assertIsNotNone(game)
+        self.assertEqual(game.update(force=True, testing_params={"timecode": "20240627_004712"}), UpdateStatus.SUCCESS)
+
+        self.assertEqual(game.status(), "Delayed")
