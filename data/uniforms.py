@@ -17,11 +17,9 @@ class Uniforms:
         self.away_special = None
         try:
             data = statsapi.get("game_uniforms", {"gamePks": game_id, "fields": API_FIELDS})["uniforms"][0]
-            print(data)
             for (uniform, special_check) in SPECIAL_UNIFORMS.items():
                 if not self.home_special and any(special_check(asset['uniformAssetText']) for asset in data["home"]["uniformAssets"]):
                     self.home_special = uniform
-                    print(uniform)
                 if not self.away_special and any(special_check(asset['uniformAssetText']) for asset in data["away"]["uniformAssets"]):
                     self.away_special = uniform
 
