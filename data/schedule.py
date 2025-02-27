@@ -1,5 +1,4 @@
 import time
-from datetime import datetime, timedelta
 
 import statsapi
 
@@ -15,7 +14,7 @@ GAMES_REFRESH_RATE = 6 * 60
 class Schedule:
     def __init__(self, config):
         self.config = config
-        self.date = self.__parse_today()
+        self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
         # all games for the day
@@ -24,21 +23,9 @@ class Schedule:
         self._games = []
         self.update(True)
 
-    def __parse_today(self):
-        if self.config.demo_date:
-            today = datetime.strptime(self.config.demo_date, "%Y-%m-%d")
-        else:
-            today = datetime.today()
-            end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(
-                year=today.year, month=today.month, day=today.day
-            )
-            if end_of_day > datetime.now():
-                today -= timedelta(days=1)
-        return today
-
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            self.date = self.__parse_today()
+            self.date = self.config.parse_today()
             debug.log("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:

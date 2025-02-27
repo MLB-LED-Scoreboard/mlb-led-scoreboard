@@ -22,7 +22,7 @@ class MainRenderer:
     def __init__(self, matrix, data):
         self.matrix = matrix
         self.data: Data = data
-        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date
+        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.game_changed_time = time.time()
