@@ -17,10 +17,10 @@ class Scoreboard:
 
     def __init__(self, game: Game):
         self.away_team = Team(
-            game.away_abbreviation(), game.away_score(), game.away_name(), game.away_hits(), game.away_errors(), game.away_record()
+            game.away_abbreviation(), game.away_score(), game.away_name(), game.away_hits(), game.away_errors(), game.away_record(), game.away_special_uniforms()
         )
         self.home_team = Team(
-            game.home_abbreviation(), game.home_score(), game.home_name(), game.home_hits(), game.home_errors(), game.home_record()
+            game.home_abbreviation(), game.home_score(), game.home_name(), game.home_hits(), game.home_errors(), game.home_record(), game.home_special_uniforms()
         )
         self.inning = Inning(game)
         self.bases = Bases(game)
@@ -43,10 +43,10 @@ class Scoreboard:
 
     def strikeout_looking(self):
         return self.play_result == "strikeout_looking"
-    
+
     def hit(self):
         return self.play_result in plays.HITS
-    
+
     def walk(self):
         return self.play_result in plays.WALKS
 
