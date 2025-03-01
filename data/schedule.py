@@ -84,7 +84,8 @@ class Schedule:
 
     def next_game(self):
         # We only need to check the preferred team's game status if we're
-        # rotating during mid-innings
+        # rotating during mid-innings because, otherwise, we would never
+        # have rotated off of it up in data
         if (
             not self.config.rotation_preferred_team_live_enabled
             and self.config.rotation_preferred_team_live_mid_inning
@@ -114,18 +115,19 @@ class Schedule:
         return self.__current_game()
 
     def _game_index_for_preferred_team(self):
-        if self.config.preferred_teams:
-            team_id = data.teams.get_team_id(self.config.preferred_teams[0])
-            return next(
-                (
-                    i
-                    for i, game in enumerate(self._games)
-                    if team_id in [game["away_id"], game["home_id"]] and status.is_live(game["status"])
-                ),
-                -1,  # no live games for preferred team
-            )
+        if not self.config.preferred_teams:
+            return -1  # no preferred team
 
-        return -1  # no preferred team
+        team_id = data.teams.get_team_id(self.config.preferred_teams[0])
+        return next(
+            (
+                i
+                for i, game in enumerate(self._games)
+                if team_id in (game["away_id"], game["home_id"])
+            ),
+            -1, # no preferred team game
+        )
+
 
     def __next_game_index(self):
         counter = self.current_idx + 1

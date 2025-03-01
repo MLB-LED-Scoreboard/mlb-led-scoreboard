@@ -116,7 +116,6 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
     debug.log("Main has selected the gameday information to refresh")
 
     starttime = time.time()
-    promise_game = data.schedule.games_live()
 
     while render_thread.is_alive():
         time.sleep(0.5)
@@ -133,23 +132,21 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
             if cont:
                 continue
 
-        # make sure a game is populated
-        elif not promise_game:
-            promise_game = True
+        elif data.current_game is None:
+            # make sure a game is populated
             data.advance_to_next_game()
 
-        rotate = data.should_rotate_to_next_game()
-        if data.schedule.games_live() and not rotate:
+        if data.should_rotate_to_next_game():
+            if data.scrolling_finished:
+                time_delta = time.time() - starttime
+                rotate_rate = data.config.rotate_rate_for_status(data.current_game.status())
+                if time_delta >= rotate_rate:
+                    starttime = time.time()
+                    data.advance_to_next_game()
+        else:
             data.refresh_game()
 
-        endtime = time.time()
-        time_delta = endtime - starttime
-        rotate_rate = data.config.rotate_rate_for_status(data.current_game.status())
 
-        if time_delta >= rotate_rate and data.scrolling_finished:
-            starttime = time.time()
-            if rotate:
-                data.advance_to_next_game()
 
 
 def __render_main(matrix, data):
