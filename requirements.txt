@@ -5,3 +5,4 @@ pyowm==3.3.0
 RGBMatrixEmulator>=0.8.4
 setuptools; python_version >= "3.12"
 tzlocal==4.2
+bdfparser

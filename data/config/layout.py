@@ -2,8 +2,13 @@ from driver import graphics
 
 import os.path
 
+import bdfparser
+
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
+
+DIR_FONT_PATCHED = "assets/fonts/patched"
+DIR_FONT_DRIVER = "submodules/matrix/fonts"
 
 LAYOUT_STATE_WARMUP = "warmup"
 LAYOUT_STATE_NOHIT = "nohit"
@@ -21,11 +26,24 @@ class Layout:
         self.default_font_name = self.coords("defaults.font_name")
 
         self.font_cache = {}
-        default_font = self.__load_font(self.default_font_name)
-        self.font_cache = {self.default_font_name: default_font}
+        
+        # Cache the default font to start
+        self.__get_font_object(self.default_font_name)
 
-    # Returns a dictionary with "font" and "size"
     def font(self, keypath):
+        '''
+        Returns a dictionary with font properties. The font object resides under the "font" key.
+
+        {
+            "font": any,
+            "path": str,
+            "bdf_headers": dict[str, any],
+            "properties": {
+                "width": int,
+                "height": int
+            }
+        }
+        '''
         d = self.coords(keypath)
         try:
             return self.__get_font_object(d[FONTNAME_KEY])
@@ -67,26 +85,36 @@ class Layout:
             rv = rv[key]
         return rv
 
-    def __load_font(self, font_name):
+    def __get_font_object(self, font_name):
         if font_name in self.font_cache:
             return self.font_cache[font_name]
 
-        font_paths = ["assets/fonts/patched", "submodules/matrix/fonts"]
+        font_paths = [DIR_FONT_PATCHED, DIR_FONT_DRIVER]
         for font_path in font_paths:
-            path = f"{font_path}/{font_name}.bdf"
-            if os.path.isfile(path):
+            abs_path = os.path.abspath(
+                os.path.join(
+                    __file__, "../../..", f"{font_path}/{font_name}.bdf"
+                )
+            )
+
+            if os.path.isfile(abs_path):
                 font = graphics.Font()
-                font.LoadFont(path)
-                self.font_cache[font_name] = font
-                return font
+                font.LoadFont(abs_path)
 
-    def __parse_font_size(self, font_name):
-        if font_name[-1] == "B":
-            font_name = font_name[:-1]
-        dimensions = font_name.split("x")
-        return {"width": int(dimensions[0]), "height": int(dimensions[1])}
+                self.font_cache[font_name] = {
+                    "font": font,
+                    "path": abs_path,
+                } | self.__get_font_bdf_properties(abs_path)
 
-    def __get_font_object(self, font_name):
-        f = self.__load_font(font_name)
-        s = self.__parse_font_size(font_name)
-        return {"font": f, "size": s}
+                return self.font_cache[font_name]
+            
+    def __get_font_bdf_properties(self, path):
+        bdf = bdfparser.Font(path)
+
+        return {
+            "bdf_headers": bdf.headers,
+            "size": {
+                "width": bdf.headers["fbbx"],
+                "height": bdf.headers["fbby"]
+            }
+        }
