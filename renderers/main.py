@@ -22,7 +22,7 @@ class MainRenderer:
     def __init__(self, matrix, data):
         self.matrix = matrix
         self.data: Data = data
-        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date
+        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.game_changed_time = time.time()
@@ -87,15 +87,11 @@ class MainRenderer:
 
             if self.game_changed_time < self.data.game_changed_time:
                 self.scrolling_text_pos = self.canvas.width
-                self.data.scrolling_finished = False
+                self.data.scrolling_finished = not self.data.config.rotation_scroll_until_finished
                 self.game_changed_time = time.time()
 
             # Draw the current game
             self.__draw_game()
-
-            # Check if we need to scroll until it's finished
-            if not self.data.config.rotation_scroll_until_finished:
-                self.data.scrolling_finished = True
 
             time.sleep(refresh_rate)
 

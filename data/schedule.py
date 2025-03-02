@@ -1,5 +1,4 @@
 import time
-from datetime import datetime, timedelta
 
 import statsapi
 
@@ -15,7 +14,7 @@ GAMES_REFRESH_RATE = 6 * 60
 class Schedule:
     def __init__(self, config):
         self.config = config
-        self.date = self.__parse_today()
+        self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
         # all games for the day
@@ -24,21 +23,9 @@ class Schedule:
         self._games = []
         self.update(True)
 
-    def __parse_today(self):
-        if self.config.demo_date:
-            today = datetime.strptime(self.config.demo_date, "%Y-%m-%d")
-        else:
-            today = datetime.today()
-            end_of_day = datetime.strptime(self.config.end_of_day, "%H:%M").replace(
-                year=today.year, month=today.month, day=today.day
-            )
-            if end_of_day > datetime.now():
-                today -= timedelta(days=1)
-        return today
-
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            self.date = self.__parse_today()
+            self.date = self.config.parse_today()
             debug.log("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
@@ -97,7 +84,8 @@ class Schedule:
 
     def next_game(self):
         # We only need to check the preferred team's game status if we're
-        # rotating during mid-innings
+        # rotating during mid-innings because, otherwise, we would never
+        # have rotated off of it up in data
         if (
             not self.config.rotation_preferred_team_live_enabled
             and self.config.rotation_preferred_team_live_mid_inning
@@ -127,18 +115,19 @@ class Schedule:
         return self.__current_game()
 
     def _game_index_for_preferred_team(self):
-        if self.config.preferred_teams:
-            team_id = data.teams.get_team_id(self.config.preferred_teams[0])
-            return next(
-                (
-                    i
-                    for i, game in enumerate(self._games)
-                    if team_id in [game["away_id"], game["home_id"]] and status.is_live(game["status"])
-                ),
-                -1,  # no live games for preferred team
-            )
+        if not self.config.preferred_teams:
+            return -1  # no preferred team
 
-        return -1  # no preferred team
+        team_id = data.teams.get_team_id(self.config.preferred_teams[0])
+        return next(
+            (
+                i
+                for i, game in enumerate(self._games)
+                if team_id in (game["away_id"], game["home_id"])
+            ),
+            -1, # no preferred team game
+        )
+
 
     def __next_game_index(self):
         counter = self.current_idx + 1
