@@ -6,30 +6,42 @@ from utils import center_text_position
 def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_pos, center=True):
     if __text_should_scroll(text, font, width):
 
-        # this is done so that we don't need to draw a huge bar to the left of the text
-        # used primarily in the 128x32 layout
-        # see similar work done here https://github.com/ty-porter/RGBMatrixEmulator/pull/3
         w = font["size"]["width"]
         total_width = w * len(text)
-        h = font["size"]["height"]
 
-        trimmed = text
-        # Offscreen to the left, adjust by first character width
-        if scroll_pos - x < 0:
-            adjustment = abs(scroll_pos - x) // w
-            trimmed = text[adjustment:]
-            if adjustment:
-                scroll_pos += w * adjustment
+        # if the text is long enough to scroll, we can trim it to only the visible
+        # part plus one letter on either side to minimize drawing
+        left = None
+        right = None
 
-        if len(trimmed) == 0:
+        empty_space_at_start = scroll_pos - x
+
+        # Offscreen to the left
+        if empty_space_at_start < 0:
+            left = abs(empty_space_at_start) // w
+
+        # Offscreen to the right
+        visible_width = total_width + empty_space_at_start
+        if visible_width > width + w:
+            right =  -((visible_width - width) // w)
+
+        # Trim the text to only the visible part
+        text = text[left:right]
+
+        if len(text) == 0:
             return 0
 
-        graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, trimmed)
+        # if we trimmed to the left, we need to adjust the scroll position accordingly
+        if left:
+            scroll_pos += w * left
 
-        for xi in range(x - w , x):
-            graphics.DrawLine(canvas, xi, y + 1, xi, y + 1 - h, bg_color)
-        for xi in range(x + width, canvas.width):
-            graphics.DrawLine(canvas, xi, y + 1, xi, y + 1 - h, bg_color)
+        graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, text)
+
+        # draw one-letter boxes to left and right to hide previous and next letters
+        h = font["size"]["height"]
+        for xi in range(0, w):
+            graphics.DrawLine(canvas, x - xi, y + 1, x - xi, y + 1 - h, bg_color)
+            graphics.DrawLine(canvas, x + width + xi, y + 1, x + width + xi, y + 1 - h, bg_color)
 
         return total_width
     else:
