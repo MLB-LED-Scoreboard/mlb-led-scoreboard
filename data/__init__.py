@@ -23,11 +23,10 @@ class Data:
         self.schedule: Schedule = Schedule(config)
         # NB: Can return none, but shouldn't matter?
         self.current_game: Game = self.schedule.get_preferred_game()
-        if self.current_game is not None:
-            self.print_game_data_debug()
 
         self.game_changed_time = time.time()
         if self.current_game is not None:
+            self.print_game_data_debug()
             self.__update_layout_state()
 
         # Weather info
@@ -46,25 +45,28 @@ class Data:
         self.scrolling_finished: bool = False
 
     def should_rotate_to_next_game(self):
-        game = self.current_game
         if not self.config.rotation_enabled:
+            # never rotate
             return False
 
-        stay_on_preferred_team = self.config.preferred_teams and not self.config.rotation_preferred_team_live_enabled
-        if not stay_on_preferred_team:
+        if self.config.rotation_preferred_team_live_enabled or not self.config.preferred_teams:
+            # if there's no preferred team, or if we rotate during their games, always rotate
             return True
 
-        if self.schedule.num_games() < 2:
-            if self.config.rotation_only_live and self.schedule.games_live():
-                # don't want to get stuck on an dead game
-                return not status.is_live(game.status())
-            return False
+        game = self.current_game
 
-        if game.features_team(self.config.preferred_teams[0]) and status.is_live(game.status()):
-            if self.config.rotation_preferred_team_live_mid_inning and status.is_inning_break(game.inning_state()):
-                return True
-            return False
+        if status.is_live(game.status()):
+            if self.schedule.num_games() <= 1:
+                # don't rotate if this is the only game
+                return False
 
+            # if we're here, it means we should pause on the preferred team's games
+            if game.features_team(self.config.preferred_teams[0]):
+                # unless we're allowed to rotate during mid-inning breaks
+                return self.config.rotation_preferred_team_live_mid_inning and status.is_inning_break(game.inning_state())
+
+        # if our current game isn't live, we might as well try to rotate.
+        # this should help most issues with games getting stuck
         return True
 
     def refresh_game(self):
@@ -76,18 +78,26 @@ class Data:
         elif status == UpdateStatus.FAIL:
             self.network_issues = True
 
+
     def advance_to_next_game(self):
         game = self.schedule.next_game()
-        if game is not None:
-            if game.game_id != self.current_game.game_id:
-                self.game_changed_time = time.time()
+        if game is None:
+            self.network_issues = True
+            return
+
+        if game.game_id != self.current_game.game_id:
             self.current_game = game
+            self.game_changed_time = time.time()
             self.__update_layout_state()
             self.print_game_data_debug()
             self.network_issues = False
 
-        else:
-            self.network_issues = True
+        elif self.current_game is not None:
+            # prefer to update the existing game rather than
+            # rotating if its the same game.
+            # this helps with e.g. the delay logic
+            debug.log("Rotating to the same game, refreshing instead")
+            self.refresh_game()
 
     def refresh_standings(self):
         self.__process_network_status(self.standings.update())
