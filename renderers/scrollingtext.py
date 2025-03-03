@@ -38,10 +38,13 @@ def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_po
         graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, text)
 
         # draw one-letter boxes to left and right to hide previous and next letters
-        h = font["size"]["height"]
+        top = y + 1
+        bottom = top - font["size"]["height"]
         for xi in range(0, w):
-            graphics.DrawLine(canvas, x - xi, y + 1, x - xi, y + 1 - h, bg_color)
-            graphics.DrawLine(canvas, x + width + xi, y + 1, x + width + xi, y + 1 - h, bg_color)
+            left = x - xi - 1
+            graphics.DrawLine(canvas, left, top, left, bottom, bg_color)
+            right = x + width + xi
+            graphics.DrawLine(canvas, right, top, right, bottom, bg_color)
 
         return total_width
     else:
