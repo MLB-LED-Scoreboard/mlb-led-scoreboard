@@ -40,7 +40,7 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
 
     else:
         _render_inning_break(canvas, layout, colors, scoreboard.inning)
-        _render_due_up(canvas, layout, colors, scoreboard.atbat)
+        pos = _render_due_up(canvas, layout, colors, scoreboard.atbat, text_pos)
 
     return pos
 
@@ -273,7 +273,19 @@ def _render_inning_break(canvas, layout, colors, inning: Inning):
     graphics.DrawText(canvas, num_font["font"], num_coords["x"], num_coords["y"], color, num)
 
 
-def _render_due_up(canvas, layout, colors, atbat: AtBat):
+def _render_due_up(canvas, layout, colors, atbat: AtBat, text_pos):
+    batter_font = layout.font("inning.break.due_up.leadoff")
+    batter_color = colors.graphics_color("inning.break.due_up_names")
+
+    leadoff = layout.coords("inning.break.due_up.leadoff")
+    on_deck = layout.coords("inning.break.due_up.on_deck")
+    in_hole = layout.coords("inning.break.due_up.in_hole")
+    background = colors.graphics_color("default.background")
+
+    p1 = scrollingtext.render_text(canvas, leadoff["x"], leadoff["y"], leadoff["width"], batter_font, batter_color, background, atbat.batter, text_pos, center=False)
+    p2 = scrollingtext.render_text(canvas, on_deck["x"], on_deck["y"], on_deck["width"], batter_font, batter_color, background, atbat.onDeck, text_pos, center=False)
+    p3 = scrollingtext.render_text(canvas, in_hole["x"], in_hole["y"], in_hole["width"], batter_font, batter_color, background, atbat.inHole, text_pos, center=False)
+
     due_font = layout.font("inning.break.due_up.due")
     due_color = colors.graphics_color("inning.break.due_up")
 
@@ -293,15 +305,7 @@ def _render_due_up(canvas, layout, colors, atbat: AtBat):
             colors.graphics_color("inning.break.due_up_divider"),
         )
 
-    batter_font = layout.font("inning.break.due_up.leadoff")
-    batter_color = colors.graphics_color("inning.break.due_up_names")
-
-    leadoff = layout.coords("inning.break.due_up.leadoff")
-    on_deck = layout.coords("inning.break.due_up.on_deck")
-    in_hole = layout.coords("inning.break.due_up.in_hole")
-    graphics.DrawText(canvas, batter_font["font"], leadoff["x"], leadoff["y"], batter_color, atbat.batter)
-    graphics.DrawText(canvas, batter_font["font"], on_deck["x"], on_deck["y"], batter_color, atbat.onDeck)
-    graphics.DrawText(canvas, batter_font["font"], in_hole["x"], in_hole["y"], batter_color, atbat.inHole)
+    return max(p1, p2, p3)
 
 
 def _render_inning_display(canvas, layout, colors, inning: Inning):
