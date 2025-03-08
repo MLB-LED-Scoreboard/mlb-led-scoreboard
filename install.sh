@@ -1,16 +1,22 @@
 #!/bin/bash
 
+# Redirect output to a logfile
+exec > >(tee -a logs/mlbled.log) 2>&1
+
 SKIP_PYTHON=false
 SKIP_CONFIG=false
 SKIP_MATRIX=false
 NO_SUDO=false
 SKIP_VENV=false
 DRIVER_SHA=master
+FORCE=false
 
 usage() {
     cat <<USAGE
-
-    Usage: $0 [-acmpve] [-d / --driver string]
+    Usage: ./install.sh [-a | --skip-all] [-c | --skip-config] [-m | --skip-matrix] 
+                        [-p | --skip-python] [-v | --no-venv] [-e | --emulator-only] 
+                        [-d <branch_or_commit> | --driver <branch_or_commit>] 
+                        [-f | --force] [-h | --help]
 
     Options:
         -a, --skip-all          Skip all dependencies and config installation (equivalent to -c -p -m).
@@ -21,6 +27,8 @@ usage() {
         -v, --no-venv           Do not create a virtual environment for the dependencies.
         -e, --emulator-only     Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
         -d, --driver            Specify a branch name or commit SHA for the rpi-rgb-led-matrix library. (Defaults to "$DRIVER_SHA")
+
+        -f, --force             Try to skip most errors and force install. May be able to recover from previous installer errors.
 
         -h, --help              Display this help message
 USAGE
@@ -61,6 +69,10 @@ while [ $# -gt 0 ]; do
         DRIVER="$2"
         shift 2
         ;;
+    -f | --force)
+        FORCE=true
+        shift
+        ;;
     -h | --help)
         usage # run usage function on help
         ;;
@@ -69,6 +81,10 @@ while [ $# -gt 0 ]; do
         ;;
     esac
 done
+
+if [ "$FORCE" = false ]; then
+    set -euo pipefail
+fi
 
 if [ "$SKIP_PYTHON" = false ]; then
     echo
