@@ -149,6 +149,8 @@ Additional flags are available for customizing your install:
 -e, --emulator-only     Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
 -d, --driver            Specify a branch name or commit SHA for the rpi-rgb-led-matrix library. (Optional. Defaults may change.)
 
+-f, --force             Try to skip most errors and force install. May be able to recover from previous installer errors.
+
 -h, --help              Display this help message
 ```
 
