@@ -103,16 +103,6 @@ class MainRenderer:
         scoreboard = Scoreboard(game)
         layout = self.data.config.layout
         colors = self.data.config.scoreboard_colors
-        teams.render_team_banner(
-            self.canvas,
-            layout,
-            self.data.config.team_colors,
-            scoreboard.home_team,
-            scoreboard.away_team,
-            self.data.config.full_team_names,
-            self.data.config.short_team_names_for_runs_hits,
-            show_score=not status.is_pregame(game.status()),
-        )
 
         if status.is_pregame(game.status()):  # Draw the pregame information
             self.__max_scroll_x(layout.coords("pregame.scrolling_text"))
@@ -160,6 +150,18 @@ class MainRenderer:
                 self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time
             )
             self.__update_scrolling_text_pos(pos, loop_point)
+
+        # draw last so it is always on top
+        teams.render_team_banner(
+            self.canvas,
+            layout,
+            self.data.config.team_colors,
+            scoreboard.home_team,
+            scoreboard.away_team,
+            self.data.config.full_team_names,
+            self.data.config.short_team_names_for_runs_hits,
+            show_score=not status.is_pregame(game.status()),
+        )
 
         # Show network issues
         if self.data.network_issues:
