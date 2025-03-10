@@ -10,6 +10,7 @@ import unittest
 import unittest.mock
 import data.game
 import data.config
+import data.uniforms
 from data.update import UpdateStatus
 
 
@@ -99,6 +100,10 @@ class TestGame(unittest.TestCase):
             }
         game = data.game.Game.from_scheduled(game_data, delay=0)
         self.assertIsNotNone(game)
+        # DET was wearing city connects
+        self.assertEqual(game.home_special_uniforms(), data.uniforms.CITY_CONNECT)
+        self.assertIsNone(game.away_special_uniforms())
+
         # fifth inning -- too early!
         self.assertEqual(game.update(force=True, testing_params={"timecode": "20240913_234825"}), UpdateStatus.SUCCESS)
         self.assertEqual(game.inning_number(), 5)

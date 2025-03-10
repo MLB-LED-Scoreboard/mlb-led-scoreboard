@@ -8,6 +8,7 @@ import debug
 from data import teams
 from data.update import UpdateStatus
 from data.delay_buffer import CircularQueue
+from data.uniforms import Uniforms
 
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
@@ -15,7 +16,7 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind,metaData,timeStamp"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -46,6 +47,7 @@ class Game:
         self._broadcasts = broadcasts
         self._series_status = series_status
         self._status = {}
+        self._uniform_data = Uniforms(game_id)
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():
@@ -98,6 +100,12 @@ class Game:
 
     def home_record(self):
         return self._current_data["gameData"]["teams"]["home"]["record"] or {}
+
+    def home_special_uniforms(self):
+        return self._uniform_data.home_special_uniform()
+
+    def away_special_uniforms(self):
+        return self._uniform_data.away_special_uniform()
 
     def away_record(self):
         return self._current_data["gameData"]["teams"]["away"]["record"] or {}
