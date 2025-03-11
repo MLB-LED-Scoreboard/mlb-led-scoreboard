@@ -154,9 +154,15 @@ fi
 if [ "$SKIP_MATRIX" = false ]; then
     echo "Running rgbmatrix installation..."
     sudo apt-get install -y make gcc g++
-    mkdir submodules
+    mkdir submodules -p
     cd submodules
-    git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
+
+    if [ -d matrix ]; then
+        echo "'matrix' directory already exists. Assuming rpi-rgb-led-matrix is already installed."
+    else
+        git clone https://github.com/hzeller/rpi-rgb-led-matrix.git matrix
+    fi
+
     cd matrix
     # Checkout the branch or commit specified for rpi-rgb-led-matrix
     git checkout $DRIVER_SHA
