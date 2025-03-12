@@ -165,6 +165,7 @@ if [ "$SKIP_MATRIX" = false ]; then
 
     cd matrix
     # Checkout the branch or commit specified for rpi-rgb-led-matrix
+    git fetch
     git checkout $DRIVER_SHA
     git pull
     make build-python PYTHON="$PYTHON" CYTHON=cython3
