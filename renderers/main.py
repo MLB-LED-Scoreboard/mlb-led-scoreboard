@@ -144,7 +144,11 @@ class MainRenderer:
             else:
                 self.animation_time = 0
 
-            loop_point = self.data.config.layout.coords("atbat")["loop"]
+            if status.is_inning_break(scoreboard.inning.state):
+                loop_point = self.data.config.layout.coords("inning.break.due_up")["loop"]
+            else:
+                loop_point = self.data.config.layout.coords("atbat")["loop"]
+
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             pos = gamerender.render_live_game(
                 self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time

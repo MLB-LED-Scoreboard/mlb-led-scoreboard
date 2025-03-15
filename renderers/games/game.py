@@ -1,3 +1,4 @@
+from data import status
 from driver import graphics
 from data.config.color import Color
 from data.config.layout import Layout
@@ -14,7 +15,7 @@ from renderers.games import nohitter
 
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
     pos = 0
-    if scoreboard.inning.state == Inning.TOP or scoreboard.inning.state == Inning.BOTTOM:
+    if not status.is_inning_break(scoreboard.inning.state):
         pos = _render_at_bat(
                 canvas,
                 layout,
