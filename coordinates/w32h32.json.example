@@ -59,6 +59,7 @@
           "y_start": 33,
           "y_end": 33
         },
+        "loop": 33,
         "leadoff": {
           "x": 33,
           "y": 33,
