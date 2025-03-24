@@ -60,6 +60,7 @@
           "y_start": 32,
           "y_end": 64
         },
+        "loop": 192,
         "leadoff": {
           "font_name": "7x13",
           "x": 64,

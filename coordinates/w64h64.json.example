@@ -56,6 +56,7 @@
         "divider": {
           "draw": false
         },
+        "loop": 64,
         "leadoff": {
           "x": 2,
           "y": 45,
