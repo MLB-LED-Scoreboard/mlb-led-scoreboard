@@ -19,6 +19,7 @@ The layout can have a couple of different states where things are rendered diffe
 * `warmup` will	only render on the `pregame` screen and appears when a game enters the `Warmup` status. This usually happens 15-20 minutes before a game begins.
 * `nohit` and `perfect_game` will only render on the live game screen and appears when a game returns that it is currently a no hitter or perfect game and the `innings_until_display` of `nohitter` has passed.
 * The `line_score` section configures the line score (RHE) on the game screen.
+  * Runs are always displayed.
   * `show_hits_and_errors` toggles displaying hits and errors.
   * `compress_digits` will reduce the space between digits when the number of runs or hits is > 9.
   * `spacing` is the number of pixels between the runs/hits and hits/errors.
