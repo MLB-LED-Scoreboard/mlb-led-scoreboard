@@ -66,8 +66,6 @@ class Config:
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.full_team_names = json["full_team_names"]
-        self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
         self.delay_in_10s_of_seconds = json["preferred_game_update_delay_in_10s_of_seconds"]
 
         self.debug = json["debug"]

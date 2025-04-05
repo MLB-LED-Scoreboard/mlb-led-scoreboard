@@ -60,9 +60,9 @@ def can_use_full_team_names(layout, teams):
         return False
 
     # Setting for abbreviating if a line score contains more than 3 total digits (i.e. R, H, or E >= 10)
-    if name_coords.get("shorten_on_high_score_line", False):
+    if name_coords.get("shorten_on_high_line_score", False):
 
-        # For each team, check digits for each line score item
+        # For each team, check digits for each line score item. Disable full names if any exceed a single digit.
         # A 10 error game would be rough, but the edge case is covered...
         for team in teams:
             if team.runs > 9 or team.hits > 9 or team.errors > 9:
