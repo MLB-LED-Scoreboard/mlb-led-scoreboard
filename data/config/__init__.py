@@ -144,18 +144,6 @@ class Config:
             self.time_format = TIME_FORMAT_12H
 
     def check_rotate_rates(self):
-        if not isinstance(self.rotation_rates, dict):
-            try:
-                rate = float(self.rotation_rates)
-                self.rotation_rates = {"live": rate, "final": rate, "pregame": rate}
-
-                debug.warning("(DEPRECATION) Config option rotation->rates no longer supports single Float values!")
-                debug.warning("              Re-run the install/update script to convert to the new format")
-                debug.warning("              Example: sudo sh ./install.sh")
-            except:
-                debug.warning("rotation_rates should be a Dict. Using default value. {}".format(DEFAULT_ROTATE_RATES))
-                self.rotation_rates = DEFAULT_ROTATE_RATES
-
         for key, value in list(self.rotation_rates.items()):
             try:
                 # Try and cast whatever the user passed into a float
