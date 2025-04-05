@@ -257,19 +257,19 @@ A default `config.json.example` file is included for reference. Copy this file t
 "time_format"                    String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                     String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
 "scrolling_speed"                Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
-"update_delay_seconds" Integer Sets how long to wait before updating the preferred game. Must be positive.
+"update_delay_seconds"           Integer Sets how long to wait before updating the preferred game. Must be positive. Update delays are rounded DOWN to the nearest 10 seconds.
 "debug"                          Bool    Game and other debug data is written to your console.
 "demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Delaying Board Update
-* The "update_delay_seconds" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
-* You can only delay the board in 10 second increments, so a value of 3 coresponds to 30 seconds, 5 to 50 seconds etc.
-* There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
-* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  If you set the value to 3, it will take 30-40 seconds for the buffer to fill and the board to delay.
+
+The `update_delay_seconds` setting will delay the update of your LED board to allow you to synchronize with the boroadcast feed. You can only delay updates in 10 second increments. If your preferred delay is not a multiple of 10, it will be rounded down to the nearest 10 seconds. For example, an `update_delay_seconds` value of 35 will be rounded down to 30.
+
+Please note, that if restarting the scoreboard with a delay, the scoreboard will "stall" while waiting to fill its delay buffer. For instance, if you set the value to 30, it will take between 30-40 seconds for the delay buffer to fill and fresh data to display.
 
 ### Additional Features
-* Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
+* Line score (RHE) - Runs are always shown on the games screen, but you can enable or adjust spacing of the line score display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
 
 * Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the `short` and `long` pitch description can be changed in data/pitches.py
 
@@ -305,6 +305,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 
 ## Personalization
 If you're feeling adventurous (and we highly encourage it!), the sections below outline how you can truly personalize your scoreboard and make it your own!
+
 ### Custom Board Layout
 You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `coordinates/` directory for more information.
 

@@ -11,6 +11,7 @@ from data.config.layout import Layout
 from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
 from utils import deep_update
 
+GAME_UPDATE_RATE = 10
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
@@ -66,7 +67,7 @@ class Config:
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.delay_in_10s_of_seconds = json["update_delay_seconds"]
+        self.delay_in_10s_of_seconds = json.get("update_delay_seconds", 0) // GAME_UPDATE_RATE
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
