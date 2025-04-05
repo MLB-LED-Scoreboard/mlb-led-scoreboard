@@ -18,20 +18,13 @@ def render_team_banner(
     accent_coords["home"] = layout.coords("teams.accent.home")
 
     for team in ["away", "home"]:
-        color = home_colors['home'] if team == "home" else away_colors['home']
-        for x in range(bg_coords[team]["width"]):
-            for y in range(bg_coords[team]["height"]):
-                x_offset = bg_coords[team]["x"]
-                y_offset = bg_coords[team]["y"]
-                canvas.SetPixel(x + x_offset, y + y_offset, color["r"], color["g"], color["b"])
+        # Background
+        bg_color = home_colors['home'] if team == "home" else away_colors['home']
+        __draw_filled_box(canvas, bg_coords[team], bg_color)
 
-    for team in ["away", "home"]:
-        color = home_colors['accent'] if team == "home" else away_colors['accent']
-        for x in range(accent_coords[team]["width"]):
-            for y in range(accent_coords[team]["height"]):
-                x_offset = accent_coords[team]["x"]
-                y_offset = accent_coords[team]["y"]
-                canvas.SetPixel(x + x_offset, y + y_offset, color["r"], color["g"], color["b"])
+        # Accent
+        accent_color = home_colors['accent'] if team == "home" else away_colors['accent']
+        __draw_filled_box(canvas, accent_coords[team], accent_color)
 
     use_full_team_names = can_use_full_team_names(
         canvas, full_team_names, short_team_names_for_runs_hits, [home_team, away_team]
@@ -138,3 +131,13 @@ def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacin
             canvas, layout, text_color, homeaway, coords, team.hits, score_spacing["hits"]
         )
     __render_score_component(canvas, layout, text_color, homeaway, coords, team.runs, score_spacing["runs"])
+
+def __draw_filled_box(canvas, coords, color):
+        c = (color["r"], color["g"], color["b"])
+
+        x = coords["x"]
+        y = coords["y"]
+        w = coords["width"]
+
+        for h in range(coords["height"]):
+            graphics.DrawLine(canvas, x, y + h, x + w, y + h, c)
