@@ -240,7 +240,6 @@ A default `config.json.example` file is included for reference. Copy this file t
   "only_preferred"               Bool    Only rotate through games in your preferred teams.
   "only_live"                    Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
   "rates"                        Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
-                                 Float   (DEPRECATED) A Float can be used to set all screen types to the same rotate rate.
 
   "while_preferred_team_live":           Options for rotating between screens while one of your preferred teams is live
     "enabled"                    Bool    Enable rotation while a preferred team is live.
