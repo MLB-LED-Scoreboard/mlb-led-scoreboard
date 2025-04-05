@@ -252,14 +252,12 @@ A default `config.json.example` file is included for reference. Copy this file t
                                          Check out the OpenWeather documentation (https://openweathermap.org/current#name) for more info.
                                          Ex: `"Chicago,il,us"`
   "metric_units"                 Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
+  "pregame"                      Bool    If enabled, will display the weather for the game's location on the pregame screen.
 
 "time_format"                    String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                     String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
-"full_team_names"                Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
-"short_team_names_for_runs_hits" Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
 "update_delay_seconds" Integer Sets how long to wait before updating the preferred game. Must be positive.
-"pregame_weather"                Bool    If enabled, will display the weather for the game's location on the pregame screen.
 "debug"                          Bool    Game and other debug data is written to your console.
 "demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
