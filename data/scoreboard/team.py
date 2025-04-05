@@ -18,7 +18,7 @@ class Team:
 
         The result is guaranteed to have the 'home', 'accent', and 'text' keys.
         Any missing data is filled in with the default colors.
-        If the team has a special uniform, the colors for that uniform are substuted
+        If the team has a special uniform, the colors for that uniform are substituted
         """
         default_colors = team_colors.color("default")
         try:
