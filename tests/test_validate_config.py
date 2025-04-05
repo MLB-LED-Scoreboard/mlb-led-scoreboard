@@ -279,59 +279,6 @@ class TestValidateConfigMethods(unittest.TestCase):
       }
     )
 
-  def test_convert_rotation_rates_with_numeric(self):
-    config = { "rotation": { "rates": 15.0 } }
-    expected = {
-      "rotation": {
-        "rates": {
-          "live": 15.0,
-          "final": 15.0,
-          "pregame": 15.0
-        }
-      }
-    }
-
-    (changed, result) = convert_rotation_rates(config)
-
-    self.assertTrue(changed)
-    self.assertEqual(expected, result)
-
-  def test_convert_rotation_rates_with_dict(self):
-    config = {
-      "rotation": {
-        "rates": {
-          "live": 15.0,
-          "final": 15.0,
-          "pregame": 15.0
-        }
-      }
-    }
-
-    (changed, result) = convert_rotation_rates(config)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-
-  def test_convert_rotation_rates_with_empty_dict(self):
-    config = {}
-
-    (changed, result) = convert_rotation_rates(config)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-
-  def test_convert_rotation_rates_with_dict_without_nested_rates(self):
-    config = {
-      "rotation": {
-        "rates": {}
-      }
-    }
-
-    (changed, result) = convert_rotation_rates(config)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-
   def test_format_change(self):
     change = { "some": { "arbitrary": "change" } }
 
@@ -427,7 +374,6 @@ class TestPerformValidation(unittest.TestCase):
 f'''
 Fetching custom config files...
   - Found custom configuration at {self.config_fixture_path}!
-    (DEPRECATION WARNING) Config option rotation->rates no longer supports single Float values! Converting this value now...
     Adding missing keys and deleting unused configuration options...
       Additions
         - "test_config": {{
