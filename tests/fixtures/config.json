@@ -29,7 +29,11 @@
     "scroll_until_finished": true,
     "only_preferred": false,
     "only_live": true,
-    "rates": 20.0,
+    "rates": {
+      "live": 20.0,
+      "final": 20.0,
+      "pregame": 20.0
+    },
     "while_preferred_team_live": {
       "enabled": true,
       "during_inning_breaks": true
