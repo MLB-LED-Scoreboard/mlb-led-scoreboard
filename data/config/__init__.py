@@ -66,7 +66,7 @@ class Config:
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.delay_in_10s_of_seconds = json["preferred_game_update_delay_in_10s_of_seconds"]
+        self.delay_in_10s_of_seconds = json["update_delay_seconds"]
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -114,12 +114,12 @@ class Config:
     def check_delay(self):
         if self.delay_in_10s_of_seconds < 0:
             debug.warning(
-                "preferred_game_update_delay_in_10s_of_seconds should be a positive integer. Using default value of 0"
+                "update_delay_seconds should be a positive integer. Using default value of 0"
             )
             self.delay_in_10s_of_seconds = 0
         if self.delay_in_10s_of_seconds != int(self.delay_in_10s_of_seconds):
             debug.warning(
-                "preferred_game_update_delay_in_10s_of_seconds should be an integer."
+                "update_delay_seconds should be an integer."
                 f" Truncating to {int(self.delay_in_10s_of_seconds)}"
             )
             self.delay_in_10s_of_seconds = int(self.delay_in_10s_of_seconds)

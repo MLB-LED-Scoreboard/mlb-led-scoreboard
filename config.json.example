@@ -43,7 +43,7 @@
 	},
 	"time_format": "12h",
 	"end_of_day": "00:00",
-	"preferred_game_update_delay_in_10s_of_seconds": 0,
+	"update_delay_seconds": 0,
 	"scrolling_speed": 2,
 	"debug": false,
 	"demo_date": false
