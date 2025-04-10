@@ -133,7 +133,7 @@ def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacin
     __render_score_component(canvas, layout, text_color, homeaway, coords, team.runs, score_spacing["runs"])
 
 def __draw_filled_box(canvas, coords, color):
-        c = (color["r"], color["g"], color["b"])
+        c = graphics.Color(color["r"], color["g"], color["b"])
 
         x = coords["x"]
         y = coords["y"]
