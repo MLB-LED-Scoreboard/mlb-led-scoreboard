@@ -24,7 +24,7 @@ class Team:
         try:
             colors = team_colors.color(self.abbrev.lower())
             if self.special_uniform is not None and self.special_uniform in colors:
-                colors |= colors[self.special_uniform]
+                colors = colors | colors[self.special_uniform]
             return default_colors | colors
 
         except KeyError:
