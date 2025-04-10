@@ -281,6 +281,8 @@
       }
     },
     "name": {
+      "full": false,
+      "shorten_on_high_line_score": true,
       "away": {
         "x": 3,
         "y": 6
@@ -302,12 +304,10 @@
         "y": 13
       }
     },
-    "runs": {
-      "runs_hits_errors": {
-        "show": false,
-        "compress_digits": true,
-        "spacing": 2
-      },
+    "line_score": {
+      "show_hits_and_errors": false,
+      "compress_digits": true,
+      "spacing": 2,
       "away": {
         "x": 31,
         "y": 6
