@@ -75,6 +75,7 @@ class Game:
                     except:
                         debug.error("Failed to get game status from schedule")
 
+                self._uniform_data.update()
                 return UpdateStatus.SUCCESS
             except:
                 debug.exception("Networking Error while refreshing the current game data.")
