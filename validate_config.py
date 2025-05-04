@@ -80,7 +80,7 @@ def generate_change(origin, key, path):
 
   return change  
 
-def upsert_config(config, schema, ignored_keys=None, result=None, changeset=None, path=None):
+def upsert_config(config, schema, options={}, result=None, changeset=None, path=None):
   '''
   Recursively updates deeply nested configuration against a given schema.
   At each level, the keys in the configuration are compared against the schema.
@@ -102,6 +102,8 @@ def upsert_config(config, schema, ignored_keys=None, result=None, changeset=None
 
   dirty = False
 
+  ignored_keys = options.get("ignored_keys", [])
+
   for kind in [config, schema]:
     for key in kind.keys():
       if ignored_keys and key in ignored_keys:
@@ -112,7 +114,7 @@ def upsert_config(config, schema, ignored_keys=None, result=None, changeset=None
           path = copy.deepcopy(path)
           path.append(key)
 
-          (possibly_dirty, result, _) = upsert_config(config[key], schema[key], ignored_keys, result, changeset, path)
+          (possibly_dirty, result, _) = upsert_config(config[key], schema[key], options, result, changeset, path)
           
           path.pop()
 
@@ -206,7 +208,7 @@ def perform_validation(root_dir=ROOT_DIR):
 
     should_overrwrite_config = False
 
-    (changed, result, changes) = upsert_config(config, schema, options["ignored_keys"])
+    (changed, result, changes) = upsert_config(config, schema, options)
 
     should_overrwrite_config = should_overrwrite_config or changed
 

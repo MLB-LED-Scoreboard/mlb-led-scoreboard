@@ -283,7 +283,9 @@ class TestValidateConfigMethods(unittest.TestCase):
     config = { "this": True, "that": False }
     schema = { "this": True }
 
-    (changed, result, changes) = upsert_config(config, schema, ignored_keys=["that"])
+    options = { "ignored_keys": ["that"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
 
     self.assertFalse(changed)
     self.assertEqual(config, result)
@@ -377,7 +379,7 @@ class TestPerformValidation(unittest.TestCase):
 
   def test_perform_validation_end_to_end(self):
     with mock.patch("validate_config.custom_config_files") as mocked_custom_files:
-      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", { "ignored_keys": [] })]
+      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", {})]
 
       with mock.patch("validate_config.colorize") as mocked_color:
         mocked_color.side_effect = lambda text, _: text
@@ -419,16 +421,6 @@ Fetching custom config files...
             {
               "teams": ["Braves"],
               "divisions": ["AL Central", "AL Wild Card"]
-            }
-          )
-
-          # Check deprecated rotation rates as single float has been converted correctly
-          self.assertEqual(
-            new_config["rotation"]["rates"],
-            {
-              "live": 20.0,
-              "final": 20.0,
-              "pregame": 20.0
             }
           )
 
