@@ -377,7 +377,7 @@ class TestPerformValidation(unittest.TestCase):
 
   def test_perform_validation_end_to_end(self):
     with mock.patch("validate_config.custom_config_files") as mocked_custom_files:
-      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json")]
+      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", { "ignored_keys": [] })]
 
       with mock.patch("validate_config.colorize") as mocked_color:
         mocked_color.side_effect = lambda text, _: text
@@ -402,7 +402,6 @@ Fetching custom config files...
       Finished updating {self.config_fixture_path}!
 '''.lstrip("\n")
 
-          self.maxDiff = 9999
           self.assertEqual(
             mocked_stdout.getvalue(),
             expected_output
