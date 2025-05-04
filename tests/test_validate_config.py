@@ -81,9 +81,9 @@ class TestValidateConfigMethods(unittest.TestCase):
         self.assertEqual(
           custom_config_files(),
           [
-            (ROOT_DIR, "config.json"),
-            (COORDINATES_DIR, "config.json"),
-            (COLORS_DIR, "config.json")
+            (ROOT_DIR, "config.json", { "ignored_keys": [] }),
+            (COORDINATES_DIR, "config.json", { "ignored_keys": ["font_name"] }),
+            (COLORS_DIR, "config.json", { "ignored_keys": [] })
           ]
         )
 
@@ -268,6 +268,22 @@ class TestValidateConfigMethods(unittest.TestCase):
     schema = { "this": { "is true": False } }
 
     (changed, result, changes) = upsert_config(config, schema)
+
+    self.assertFalse(changed)
+    self.assertEqual(config, result)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": []
+      }
+    )
+
+  def test_upsert_config_with_ignored_keys(self):
+    config = { "this": True, "that": False }
+    schema = { "this": True }
+
+    (changed, result, changes) = upsert_config(config, schema, ignored_keys=["that"])
 
     self.assertFalse(changed)
     self.assertEqual(config, result)

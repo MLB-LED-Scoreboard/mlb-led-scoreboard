@@ -4,6 +4,20 @@ ROOT_DIR        = "."
 COORDINATES_DIR = os.path.join(ROOT_DIR, "coordinates")
 COLORS_DIR      = os.path.join(ROOT_DIR, "colors")
 
+VALIDATIONS = {
+  ROOT_DIR: {
+    "ignored_keys": [],
+  },
+  COORDINATES_DIR: {
+    "ignored_keys": [
+      "font_name"
+    ],
+  },
+  COLORS_DIR: {
+    "ignored_keys": []
+  }
+}
+
 
 class TermColor:
   RED     = 31
@@ -66,7 +80,7 @@ def generate_change(origin, key, path):
 
   return change  
 
-def upsert_config(config, schema, result=None, changeset=None, path=None):
+def upsert_config(config, schema, ignored_keys=None, result=None, changeset=None, path=None):
   '''
   Recursively updates deeply nested configuration against a given schema.
   At each level, the keys in the configuration are compared against the schema.
@@ -90,12 +104,15 @@ def upsert_config(config, schema, result=None, changeset=None, path=None):
 
   for kind in [config, schema]:
     for key in kind.keys():
+      if ignored_keys and key in ignored_keys:
+        continue
+
       if key in config and key in schema and key in result:
         if isinstance(result[key], dict):
           path = copy.deepcopy(path)
           path.append(key)
 
-          (possibly_dirty, result, _) = upsert_config(config[key], schema[key], result, changeset, path)
+          (possibly_dirty, result, _) = upsert_config(config[key], schema[key], ignored_keys, result, changeset, path)
           
           path.pop()
 
@@ -128,12 +145,12 @@ def custom_config_files():
   '''
   files = []
 
-  for directory in [ROOT_DIR, COORDINATES_DIR, COLORS_DIR]:
+  for directory, options in VALIDATIONS.items():
     for file in os.listdir(directory):
       if file.endswith(".json"):
         expected_schema_path = os.path.join(directory, file + ".example")
         if os.path.isfile(expected_schema_path):
-          files.append((directory, file))
+          files.append((directory, file, options))
 
   return files
 
@@ -178,7 +195,7 @@ def perform_validation(root_dir=ROOT_DIR):
 
   print("Fetching custom config files...")
 
-  for directory, file in custom_config_files():
+  for directory, file, options in custom_config_files():
     print(indent_string(f"- Found custom configuration at {os.path.join(directory, file)}!", indent))
 
     with open(os.path.join(directory, file)) as config_file:
@@ -189,7 +206,7 @@ def perform_validation(root_dir=ROOT_DIR):
 
     should_overrwrite_config = False
 
-    (changed, result, changes) = upsert_config(config, schema)
+    (changed, result, changes) = upsert_config(config, schema, options["ignored_keys"])
 
     should_overrwrite_config = should_overrwrite_config or changed
 

@@ -18,8 +18,8 @@ class Uniforms:
         try:
             data = statsapi.get("game_uniforms", {"gamePks": game_id, "fields": API_FIELDS})["uniforms"][0]
             for (uniform, special_check) in SPECIAL_UNIFORMS.items():
-                home_uniforms = data.get("home", {}).get("uniforms", [])
-                away_uniforms = data.get("away", {}).get("uniforms", [])
+                home_uniforms = data.get("home", {}).get("uniformAssets", [])
+                away_uniforms = data.get("away", {}).get("uniformAssets", [])
 
                 if not self.home_special and any(special_check(asset['uniformAssetText']) for asset in home_uniforms):
                     self.home_special = uniform
