@@ -111,7 +111,7 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
 
   for kind in [config, schema]:
     for key in kind.keys():
-      if ignored_keys and key in ignored_keys:
+      if ignored_keys and key in ignored_keys and kind == config:
         continue
 
       if key in config and key in schema and key in result:
@@ -238,9 +238,40 @@ def perform_validation(root_dir=ROOT_DIR):
             print(format_change(change, indent, num_indents=4, color=color))
 
     if should_overrwrite_config:
-      with open(os.path.join(directory, file), "w") as config_file:
+      config_path = os.path.join(directory, file)
+
+      print(
+        colorize(
+          indent_string(f"- Creating a backup of {config_path}", indent, 4),
+          TermColor.YELLOW
+        )
+      )
+
+      with open(os.path.join(directory, file + ".bak"), "w") as config_file:
+        json.dump(config, config_file, indent=indent)
+
+      print(
+        colorize(
+          indent_string(f"- Backup located at {config_path}.bak", indent, 4),
+          TermColor.YELLOW
+        )
+      )
+      print(
+        colorize(
+          indent_string(f"- Updating {config_path}...", indent, 4),
+          TermColor.YELLOW
+        )
+      )
+
+      with open(config_path, "w") as config_file:
         json.dump(result, config_file, indent=indent)
-      print(indent_string(f"Finished updating {os.path.join(directory, file)}!", indent, 3))
+
+      print(
+        colorize(
+          indent_string(f"Finished updating {config_path}!", indent, 3),
+          TermColor.GREEN
+        )
+      )
     else:
       print(
         colorize(

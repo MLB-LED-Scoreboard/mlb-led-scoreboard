@@ -79,12 +79,21 @@ class TestValidateConfigMethods(unittest.TestCase):
       with mock.patch("os.path.isfile") as mocked_isfile:
         mocked_isfile.side_effect = lambda file: "config.example.json" in file
 
+        COORDINATES_IGNORED_KEYS = [
+          "font_name",
+          "no_hitter",
+          "perfect_game",
+          "warmup"
+        ]
+        COLORS_IGNORED_KEYS = [
+          "city_connect"
+        ]
         self.assertEqual(
           custom_config_files(),
           [
             (ROOT_DIR, "config.json", { "ignored_keys": [] }),
-            (COORDINATES_DIR, "config.json", { "ignored_keys": ["font_name"] }),
-            (COLORS_DIR, "config.json", { "ignored_keys": [] })
+            (COORDINATES_DIR, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS }),
+            (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS })
           ]
         )
 
@@ -280,7 +289,10 @@ class TestValidateConfigMethods(unittest.TestCase):
       }
     )
 
-  def test_upsert_config_with_ignored_keys(self):
+  def test_upsert_config_with_ignored_keys_in_config(self):
+    '''
+    Keys that are extra in the config but not in the schema are ignored if they are in the ignored_keys list.
+    '''
     config = { "this": True, "that": False }
     schema = { "this": True }
 
@@ -294,6 +306,99 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
+        "delete": []
+      }
+    )
+
+  def test_upsert_config_with_ignored_keys_with_subkeys_in_config(self):
+    '''
+    Keys in the ignore list ignore all subkeys.
+    '''
+    config = { "this": True, "that": { "those": False } }
+    schema = { "this": True }
+
+    options = { "ignored_keys": ["that"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertFalse(changed)
+    self.assertEqual(config, result)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": []
+      }
+    )
+
+  def test_upsert_config_with_ignored_keys_as_extra_subkey_in_config(self):
+    '''
+    Keys in the ignore list as a subkey are not ignored.
+    '''
+    config = { "this": True, "those": { "that": False } }
+    schema = { "this": True }
+
+    options = { "ignored_keys": ["that"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [
+          { "those": { "that": False } }
+        ]
+      }
+    )
+
+  def test_upsert_config_with_ignored_keys_in_schema(self):
+    '''
+    Keys that are extra in the schema but not in the config are ALWAYS placed in the add changeset.
+    '''
+    config = { "this": True }
+    schema = { "this": True, "that": False }
+
+    options = { "ignored_keys": ["that"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [
+          { "that": False }
+        ],
+        "delete": []
+      }
+    )
+
+  def test_upsert_config_with_ignored_keys_with_subkeys_in_schema(self):
+    '''
+    Keys in the ignore list still add all subkeys.
+    '''
+    config = { "this": True }
+    schema = { "this": True, "that": { "those": False } }
+
+    options = { "ignored_keys": ["that"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [
+          { "that": { "those": False } }
+        ],
         "delete": []
       }
     )
@@ -402,9 +507,14 @@ Fetching custom config files...
         - "test_config": {{
             "deprecated_option": null
           }}
+        - Creating a backup of {self.config_fixture_path}
+        - Backup located at {self.config_fixture_path}.bak
+        - Updating {self.config_fixture_path}...
       Finished updating {self.config_fixture_path}!
 '''.lstrip("\n")
 
+          # Remove the maxDiff limit to see the full output in case of failure
+          self.maxDiff = None
           self.assertEqual(
             mocked_stdout.getvalue(),
             expected_output
