@@ -70,13 +70,14 @@ class TestValidateConfigMethods(unittest.TestCase):
     with mock.patch("os.listdir") as mocked_listdir:
       files = [
         "config.json",
-        "config.json.example",
+        "config.example.json",
         "config_INVALID.json"
       ]
       mocked_listdir.return_value = files
 
+      # Checking whether a schema exists for the custom config
       with mock.patch("os.path.isfile") as mocked_isfile:
-        mocked_isfile.side_effect = lambda file: "config.json" in file
+        mocked_isfile.side_effect = lambda file: "config.example.json" in file
 
         self.assertEqual(
           custom_config_files(),

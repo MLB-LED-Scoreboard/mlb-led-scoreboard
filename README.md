@@ -165,7 +165,7 @@ sh install.sh --emulator-only
 #### Updating
 * Run `git pull` in your mlb-led-scoreboard folder to fetch the latest changes. A lot of the time, this will be enough, but if something seems broken:
     * **Re-run the install file**. Run `sudo ./install.sh` again. Any additional dependencies that were added with the update will be installed this way. If you are moving to a new major release version, answer "Y" to have it make you a new config file.
-    * **Check your custom layout/color files if you made any**. There's a good chance some new keys were added to the layout and color files. These changes should just merge right in with the customized .json file you have but you might want to look at the new .json.example files and see if there's anything new you want to customize.
+    * **Check your custom layout/color files if you made any**. There's a good chance some new keys were added to the layout and color files. These changes should just merge right in with the customized .json file you have but you might want to look at the new .example.json files and see if there's anything new you want to customize.
 
 That should be it! Your latest version should now be working with whatever new fangled features were just added.
 
@@ -210,7 +210,7 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 
 ### Configuration
 
-A default `config.json.example` file is included for reference. Copy this file to `config.json` and modify the values as needed.
+A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
 ```
 "preferred":                             Options for team and division preference

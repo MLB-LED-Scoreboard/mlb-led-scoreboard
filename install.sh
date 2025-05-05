@@ -209,7 +209,7 @@ if [ "$SKIP_CONFIG" = true ]; then
     echo
 else
     if [ ! -f "./config.json" ]; then
-        cp config.json.example config.json
+        cp config.example.json config.json
         chmod 777 config.json
     fi
 
