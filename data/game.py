@@ -9,6 +9,7 @@ from data import teams
 from data.update import UpdateStatus
 from data.delay_buffer import CircularQueue
 from data.uniforms import Uniforms
+from data.config import GAME_UPDATE_RATE
 
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
@@ -20,8 +21,6 @@ API_FIELDS = (
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
-
-GAME_UPDATE_RATE = 10
 
 
 class Game:

@@ -11,6 +11,7 @@ from data.config.layout import Layout
 from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
 from utils import deep_update
 
+GAME_UPDATE_RATE = 10
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
@@ -61,14 +62,12 @@ class Config:
         self.weather_apikey = json["weather"]["apikey"]
         self.weather_location = json["weather"]["location"]
         self.weather_metric_units = json["weather"]["metric_units"]
+        self.pregame_weather = json["weather"]["pregame"]
 
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.full_team_names = json["full_team_names"]
-        self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
-        self.pregame_weather = json["pregame_weather"]
-        self.delay_in_10s_of_seconds = json["preferred_game_update_delay_in_10s_of_seconds"]
+        self.delay_in_10s_of_seconds = json.get("update_delay_seconds", 0) // GAME_UPDATE_RATE
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -116,12 +115,12 @@ class Config:
     def check_delay(self):
         if self.delay_in_10s_of_seconds < 0:
             debug.warning(
-                "preferred_game_update_delay_in_10s_of_seconds should be a positive integer. Using default value of 0"
+                "update_delay_seconds should be a positive integer. Using default value of 0"
             )
             self.delay_in_10s_of_seconds = 0
         if self.delay_in_10s_of_seconds != int(self.delay_in_10s_of_seconds):
             debug.warning(
-                "preferred_game_update_delay_in_10s_of_seconds should be an integer."
+                "update_delay_seconds should be an integer."
                 f" Truncating to {int(self.delay_in_10s_of_seconds)}"
             )
             self.delay_in_10s_of_seconds = int(self.delay_in_10s_of_seconds)
