@@ -10,11 +10,16 @@ VALIDATIONS = {
   },
   COORDINATES_DIR: {
     "ignored_keys": [
-      "font_name"
+      "font_name",
+      "no_hitter",
+      "perfect_game",
+      "warmup"
     ],
   },
   COLORS_DIR: {
-    "ignored_keys": []
+    "ignored_keys": [
+      "city_connect"
+    ]
   }
 }
 
