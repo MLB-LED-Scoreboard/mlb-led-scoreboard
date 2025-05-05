@@ -354,7 +354,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 
   def test_upsert_config_with_ignored_keys_as_extra_subkey_in_config(self):
     '''
-    Keys in the ignore list as a subkey are not ignored.
+    Keys in the ignore list as a subkey of a deletable key are not ignored.
     '''
     config = { "this": True, "those": { "that": False } }
     schema = { "this": True }
