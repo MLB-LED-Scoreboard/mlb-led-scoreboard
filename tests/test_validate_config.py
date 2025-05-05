@@ -1,4 +1,5 @@
 import io, re, unittest
+from collections import namedtuple
 from unittest import mock
 
 from validate_config import *
@@ -13,6 +14,35 @@ class TestValidateConfigMethods(unittest.TestCase):
       colorize(text, color_code),
       f"\033[{color_code}m{text}\033[0m"
     )
+
+  def test_indent_string(self):
+    text = "OUTPUT"
+
+    self.assertEqual(indent_string(text, 1, " "), " OUTPUT")
+    self.assertEqual(indent_string(text, 2, " "), "  OUTPUT")
+    self.assertEqual(indent_string(text, 5, " "), "     OUTPUT")
+    self.assertEqual(indent_string(text, 1, "-"), "-OUTPUT")
+    self.assertEqual(indent_string(text, 3, "-"), "---OUTPUT")
+    self.assertEqual(indent_string(text, 0),      "OUTPUT")
+    self.assertEqual(indent_string(text, 1),      "  OUTPUT")
+    self.assertEqual(indent_string(text, 5),      "          OUTPUT")
+
+  def test_output(self):
+    OutputTest = namedtuple("OutputTest", ["text", "options", "expected"])
+
+    tests = [
+      OutputTest("OUTPUT", {}, "OUTPUT\n"),
+      OutputTest("OUTPUT", { "indent": 1 }, "  OUTPUT\n"),
+      OutputTest("OUTPUT", { "color": TermColor.RED }, "\033[31mOUTPUT\033[0m\n"),
+      OutputTest("OUTPUT", { "indent": 2, "color": TermColor.GREEN }, "    \033[32mOUTPUT\033[0m\n"),
+      OutputTest("OUTPUT", { "indent": 0, "color": TermColor.YELLOW }, "\033[33mOUTPUT\033[0m\n"),
+    ]
+
+    for test in tests:
+      with mock.patch('sys.stdout', new=io.StringIO()) as mocked_stdout:
+        output(test.text, **test.options)
+
+        self.assertEqual(mocked_stdout.getvalue(), test.expected)
 
   def test_deep_pop_with_simple_pop(self):
     d = { "simple": "dict" }
@@ -96,15 +126,6 @@ class TestValidateConfigMethods(unittest.TestCase):
             (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS })
           ]
         )
-
-  def test_indent_string(self):
-    text = "OUTPUT"
-
-    self.assertEqual(indent_string(text, " "), " OUTPUT")
-    self.assertEqual(indent_string(text, "  "), "  OUTPUT")
-    self.assertEqual(indent_string(text, " ", 5), "     OUTPUT")
-    self.assertEqual(indent_string(text, "-"), "-OUTPUT")
-    self.assertEqual(indent_string(text, "-", 3), "---OUTPUT")
 
   def test_upsert_config_with_no_diff(self):
     config = { "some": { "dict": { "with": { "deeply": { "nested": "keys" } } } } }
@@ -443,7 +464,7 @@ class TestValidateConfigMethods(unittest.TestCase):
     change = { "some": { "arbitrary": "change" } }
 
     self.assertEqual(
-      format_change(change, num_indents=2),
+      format_change(change, indents=2),
 '''
     - "some": {
         "arbitrary": "change"
@@ -492,7 +513,7 @@ class TestPerformValidation(unittest.TestCase):
 
         with mock.patch('sys.stdout', new=io.StringIO()) as mocked_stdout:
 
-          perform_validation(root_dir=os.path.join("tests", "fixtures"))
+          perform_validation()
 
           expected_output = \
 f'''
