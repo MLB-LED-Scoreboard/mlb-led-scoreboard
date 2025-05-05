@@ -23,6 +23,9 @@ VALIDATIONS = {
   }
 }
 
+INDENT_SIZE = 2
+INDENT = " " * INDENT_SIZE
+
 
 class TermColor:
   RED     = 31
@@ -34,10 +37,28 @@ class TermColor:
 
 
 def colorize(text, color_code):
+  '''
+  Adds ANSI color codes to a string for terminal output.
+  '''
   if color_code:
     return f"\033[{color_code}m{text}\033[0m"
   else:
     return text
+  
+def indent_string(string, amt=1, indent=INDENT):
+  '''
+  Indents a string a specified number of times.
+  '''
+  return (indent * amt) + string
+
+def output(string, indent=0, color=None):
+  '''
+  Outputs a string with the given INDENT and color.
+  '''
+  if color:
+    string = colorize(string, color)
+
+  print(indent_string(string, indent))
 
 def deep_pop(dictionary, key, path=[]):
   '''
@@ -165,13 +186,7 @@ def custom_config_files():
 
   return files
 
-def indent_string(string, indent, num_indents=1):
-  '''
-  Indents a string a specified number of times.
-  '''
-  return (indent * num_indents) + string
-
-def format_change(change, indent="  ", num_indents=0, delimiter="-", color=None):
+def format_change(change, indent=INDENT, indents=0, delimiter="-", color=None):
   '''
   Formats a change (dict) with the given indent as JSON.
   
@@ -185,11 +200,11 @@ def format_change(change, indent="  ", num_indents=0, delimiter="-", color=None)
   for line_no, line in enumerate(change_string.split("\n")[1:]):
     if line_no == 0:
       # Indent the string with the delimiter, after slicing off all the extra whitespace at the beginning.
-      line = indent_string(delimiter + " " + line[whitespace_size:], indent, num_indents)
+      line = indent_string(delimiter + " " + line[whitespace_size:], indents, indent)
     else:
       # Indent the string with the delimiter, after slicing off all the extra whitespace at the beginning.
       # This also accounts for the whitespace taken up by the delimiter + 1 extra space, and adds a newline.
-      line = "\n" + indent_string(space + line[whitespace_size:], indent, num_indents)
+      line = "\n" + indent_string(space + line[whitespace_size:], indents, indent)
 
     if color:
       line = colorize(line, color)
@@ -198,16 +213,15 @@ def format_change(change, indent="  ", num_indents=0, delimiter="-", color=None)
 
   return output.strip("\n")
 
-def perform_validation(root_dir=ROOT_DIR):
+def perform_validation():
   '''
   Performs configuration validation and upserting, printing status along the way.
   '''
-  indent = "  "
 
-  print("Fetching custom config files...")
+  output("Fetching custom config files...")
 
   for directory, file, options in custom_config_files():
-    print(indent_string(f"- Found custom configuration at {os.path.join(directory, file)}!", indent))
+    output(f"- Found custom configuration at {os.path.join(directory, file)}!", indent=1)
 
     with open(os.path.join(directory, file)) as config_file:
       config = json.load(config_file)
@@ -223,7 +237,7 @@ def perform_validation(root_dir=ROOT_DIR):
     should_overrwrite_config = should_overrwrite_config or changed
 
     if changed:
-      print(indent_string("Adding missing keys and deleting unused configuration options...", indent, 2))
+      output("Adding missing keys and deleting unused configuration options...", indent=2)
 
       change_options = [
         ("add", "Additions", TermColor.GREEN),
@@ -232,53 +246,28 @@ def perform_validation(root_dir=ROOT_DIR):
 
       for change_type, preamble, color in change_options:
         if len(changes[change_type]) > 0:
-          print(indent_string(preamble, indent, 3))
+          output(preamble, indent=3)
 
           for change in changes[change_type]:
-            print(format_change(change, indent, num_indents=4, color=color))
+            output(format_change(change, indents=4, color=color))
 
     if should_overrwrite_config:
       config_path = os.path.join(directory, file)
 
-      print(
-        colorize(
-          indent_string(f"- Creating a backup of {config_path}", indent, 4),
-          TermColor.YELLOW
-        )
-      )
+      output(f"- Creating a backup of {config_path}", indent=4, color=TermColor.YELLOW)
 
       with open(os.path.join(directory, file + ".bak"), "w") as config_file:
-        json.dump(config, config_file, indent=indent)
+        json.dump(config, config_file, indent=INDENT)
 
-      print(
-        colorize(
-          indent_string(f"- Backup located at {config_path}.bak", indent, 4),
-          TermColor.YELLOW
-        )
-      )
-      print(
-        colorize(
-          indent_string(f"- Updating {config_path}...", indent, 4),
-          TermColor.YELLOW
-        )
-      )
+      output(f"- Backup located at {config_path}.bak", indent=4, color=TermColor.YELLOW)
+      output(f"- Updating {config_path}...", indent=4, color=TermColor.YELLOW)
 
       with open(config_path, "w") as config_file:
-        json.dump(result, config_file, indent=indent)
+        json.dump(result, config_file, indent=INDENT)
 
-      print(
-        colorize(
-          indent_string(f"Finished updating {config_path}!", indent, 3),
-          TermColor.GREEN
-        )
-      )
+      output(f"Finished updating {config_path}!", indent=3, color=TermColor.GREEN),
     else:
-      print(
-        colorize(
-          indent_string("Configuration is up-to-date.", indent, 3),
-          TermColor.GREEN
-        )
-      )
+      output("Configuration is up-to-date.", indent=3, color=TermColor.GREEN)
 
 if __name__ == "__main__":
   perform_validation()
