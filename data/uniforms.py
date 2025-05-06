@@ -39,12 +39,15 @@ class Uniforms:
         try:
             data = statsapi.get("game_uniforms", {"gamePks": self.game_id, "fields": API_FIELDS})["uniforms"][0]
             for uniform, special_check in SPECIAL_UNIFORMS.items():
+                home_uniforms = data.get("home", {}).get("uniformAssets", [])
+                away_uniforms = data.get("away", {}).get("uniformAssets", [])
+
                 if not self.home_special and any(
-                    special_check(asset["uniformAssetText"]) for asset in data["home"]["uniformAssets"]
+                    special_check(asset["uniformAssetText"]) for asset in home_uniforms
                 ):
                     self.home_special = uniform
                 if not self.away_special and any(
-                    special_check(asset["uniformAssetText"]) for asset in data["away"]["uniformAssets"]
+                    special_check(asset["uniformAssetText"]) for asset in away_uniforms
                 ):
                     self.away_special = uniform
         except Exception:
