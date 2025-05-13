@@ -104,6 +104,9 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Ignore backups
+*.bak
+
 # Ignore our customized config.json
 /config*.json
 emulator_config.json
@@ -113,6 +116,10 @@ coordinates/*.json
 
 # Ignore any customized color configs
 colors/*.json
+
+# Do not ignore example configs or test fixtures
+!*example.json
+!/tests/fixtures/*.json
 
 #
 submodules/
