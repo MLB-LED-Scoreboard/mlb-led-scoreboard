@@ -10,8 +10,6 @@ class Color:
 
     def graphics_color(self, keypath):
         color = self.color(keypath)
-        if not color:
-            color = self.color("default.text")
         return graphics.Color(color["r"], color["g"], color["b"])
 
     def __find_at_keypath(self, keypath):
