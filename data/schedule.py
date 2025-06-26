@@ -94,7 +94,7 @@ class Schedule:
             game_index = self._game_index_for_preferred_team()
             if game_index >= 0:  # we return -1 if no live games for preferred team
                 scheduled_game = self._games[game_index]
-                preferred_game = Game.from_scheduled(scheduled_game, self.config.delay_in_10s_of_seconds)
+                preferred_game = Game.from_scheduled(scheduled_game, self.config.game_delay_multiplier)
                 if preferred_game is not None:
                     debug.log(
                         "Preferred Team's Game Status: %s, %s %d",
@@ -139,7 +139,7 @@ class Schedule:
     def __current_game(self):
         if self._games:
             scheduled_game = self._games[self.current_idx]
-            return Game.from_scheduled(scheduled_game, self.config.delay_in_10s_of_seconds)
+            return Game.from_scheduled(scheduled_game, self.config.game_delay_multiplier)
         return None
 
     @staticmethod

@@ -68,7 +68,7 @@ class Config:
         self.full_team_names = json["full_team_names"]
         self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
         self.pregame_weather = json["pregame_weather"]
-        self.delay_in_10s_of_seconds = json["preferred_game_update_delay_in_10s_of_seconds"]
+        self.game_delay_multiplier = json["game_delay_multiplier"]
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -114,17 +114,17 @@ class Config:
             self.preferred_teams = [team]
 
     def check_delay(self):
-        if self.delay_in_10s_of_seconds < 0:
+        if self.game_delay_multiplier < 0:
             debug.warning(
-                "preferred_game_update_delay_in_10s_of_seconds should be a positive integer. Using default value of 0"
+                "game_delay_multiplier should be a positive integer. Using default value of 0"
             )
-            self.delay_in_10s_of_seconds = 0
-        if self.delay_in_10s_of_seconds != int(self.delay_in_10s_of_seconds):
+            self.game_delay_multiplier = 0
+        if self.game_delay_multiplier != int(self.game_delay_multiplier):
             debug.warning(
-                "preferred_game_update_delay_in_10s_of_seconds should be an integer."
-                f" Truncating to {int(self.delay_in_10s_of_seconds)}"
+                "game_delay_multiplier should be an integer."
+                f" Truncating to {int(self.game_delay_multiplier)}"
             )
-            self.delay_in_10s_of_seconds = int(self.delay_in_10s_of_seconds)
+            self.game_delay_multiplier = int(self.game_delay_multiplier)
 
     def check_preferred_divisions(self):
         if not isinstance(self.preferred_divisions, str) and not isinstance(self.preferred_divisions, list):
