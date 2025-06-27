@@ -24,9 +24,6 @@ SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,r
 
 GAME_UPDATE_RATE = 10
 
-debug.log("API HEADERS game.py line 26 %s", str(data.headers.API_HEADERS))
-                
-
 class Game:
     @staticmethod
     def from_scheduled(game_data, delay) -> Optional["Game"]:
