@@ -45,7 +45,7 @@ class Game:
         self._current_data = {}
         self._broadcasts = broadcasts
         self._series_status = series_status
-        self.api_refresh_rate = api_refresh_rate
+        self._api_refresh_rate = api_refresh_rate
         self._status = {}
 
     def update(self, force=False) -> UpdateStatus:
