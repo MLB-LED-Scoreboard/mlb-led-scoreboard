@@ -38,7 +38,7 @@ class Uniforms:
             return
 
         try:
-            data_u = statsapi.get("game_uniforms", {"gamePks": self.game_id, "fields": API_FIELDS}, data.headers.API_HEADERS)["uniforms"][0]
+            data_u = statsapi.get("game_uniforms", {"gamePks": self.game_id, "fields": API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS})["uniforms"][0]
             for uniform, special_check in SPECIAL_UNIFORMS.items():
                 home_uniforms = data_u.get("home", {}).get("uniformAssets", [])
                 away_uniforms = data_u.get("away", {}).get("uniformAssets", [])

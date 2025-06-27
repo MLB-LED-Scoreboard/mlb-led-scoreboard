@@ -3,7 +3,7 @@ import statsapi
 import data.status
 import data.teams
 import data.pitches
-
+import data.headers
 
 class TestStoredDataUpToDate(unittest.TestCase):
     def test_status_complete(self):
@@ -17,7 +17,7 @@ class TestStoredDataUpToDate(unittest.TestCase):
         self.assertSetEqual(official_statuses, our_statuses)
 
     def test_teams_complete(self):
-        teams = statsapi.get("teams", {"sportIds": 1})["teams"]
+        teams = statsapi.get("teams", {"sportIds": 1}, request_kwargs={"headers": data.headers.API_HEADERS})["teams"]
 
         id_to_abbr = {t["id"]: t["abbreviation"] for t in teams}
         self.assertEqual(id_to_abbr, data.teams.TEAM_ID_ABBR)

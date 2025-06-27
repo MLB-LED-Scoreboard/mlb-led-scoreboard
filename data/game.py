@@ -54,9 +54,7 @@ class Game:
             self.starttime = time.time()
             try:
                 debug.log("Fetching data for game %s", str(self.game_id))
-                ########### need brians help with re-injecting the testing_params ###########
-                # live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params )
-                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS}, data.headers.API_HEADERS)
+                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS} | testing_params)
                 # we add a delay to avoid spoilers. During construction, this will still yield live data, but then
                 # it will recycle that data until the queue is full.
                 self._data_wait_queue.push(live_data)
@@ -67,7 +65,7 @@ class Game:
                     debug.log("Getting game status from schedule for game with strange date!")
                     try:
                         scheduled = statsapi.get(
-                            "schedule", {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS}, data.headers.API_HEADERS
+                            "schedule", {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS}
                         )
                         self._status = next(
                             g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date

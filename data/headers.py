@@ -5,10 +5,7 @@
 #             rpi's >=3 or emulator.
 
 
-API_HEADERS = """request_kwargs=
-{"headers": 
-    {
-        'Accept-Encoding': 'gzip',
-        'User-Agent': 'MLB-LED-Scoreboard',
-    }
-}"""
+API_HEADERS = {
+    'Accept-Encoding': 'gzip',
+    'User-Agent': 'MLB-LED-Scoreboard',
+}
