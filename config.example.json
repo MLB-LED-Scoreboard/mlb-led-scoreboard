@@ -45,6 +45,7 @@
 	"full_team_names": true,
 	"short_team_names_for_runs_hits": true,
 	"preferred_game_update_delay_in_10s_of_seconds": 0,
+	"api_refresh_rate" : 5,
 	"pregame_weather": true,
 	"scrolling_speed": 2,
 	"debug": false,
