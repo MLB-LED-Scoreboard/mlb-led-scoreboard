@@ -497,6 +497,54 @@ class TestValidateConfigMethods(unittest.TestCase):
       }
     )
 
+  def test_upsert_config_with_renamed_keys_not_in_config(self):
+    '''
+    Keys in the rename list that are not present in the config are added.
+    '''
+    config = {}
+    schema = { "that": False }
+
+    options = { "renamed_keys": { "this": "that" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [
+          { "that": False }
+        ],
+        "delete": [],
+        "rename": []
+      }
+    )
+
+  def test_upsert_config_with_renamed_keys_not_in_schema(self):
+    '''
+    Keys in the rename list that are not present in the schema are deleted.
+    '''
+    config = { "this": False }
+    schema = {}
+
+    options = { "renamed_keys": { "this": "that" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [
+          { "this": False }
+        ],
+        "rename": []
+      }
+    )
+
   def test_format_change(self):
     change = { "some": { "arbitrary": "change" } }
 

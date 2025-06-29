@@ -173,19 +173,32 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
 
         continue
 
-      rename = renamed_keys["from"].get(key, None)
-      if key in config and rename:
-        deletion = generate_change(config, key, path)
-        addition = copy.deepcopy(deletion)
-        addition = deep_pop(addition, key, path=path)
-        addition = deep_set(addition, rename, config[key], path)
+      # Check for renamed keys. This works from both schema and config.
+      # If the we're traversing the schema, the target (rename_to) is the current key,
+      # otherwise check if it exists in the rename mapping
+      #
+      # Then follow the same procedure for the source (rename_from) for config.
+      renamed_from = renamed_keys["to"].get(key, None) if kind == schema else key
+      renamed_to = renamed_keys["from"].get(key, None) if kind == config else key
 
-        change = (deletion, addition)
-        if change not in changeset["rename"]:
-          changeset["rename"].append(change)
-          result = deep_pop(result, key, path=path)
-          result = deep_set(result, rename, config[key], path=path)
-          dirty = True
+      # It is a valid rename if both the renamed_from and renamed_to are present in the config and schema.
+      rename = renamed_from in config and renamed_to in schema
+
+      if rename:
+        # Only do this from one side. Otherwise, it will get picked up as a delete-then-add from the other side.
+        if kind == config:
+          deletion = generate_change(config, renamed_from, path)
+          addition = copy.deepcopy(deletion)
+          addition = deep_pop(addition, renamed_from, path=path)
+          addition = deep_set(addition, renamed_to, config[renamed_from], path)
+
+          change = (deletion, addition)
+
+          if change not in changeset["rename"]:
+            changeset["rename"].append(change)
+            result = deep_pop(result, renamed_from, path=path)
+            result = deep_set(result, renamed_to, config[renamed_from], path=path)
+            dirty = True
 
         continue
 
@@ -197,8 +210,7 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
           result = deep_pop(result, key, path=path)
           dirty = True
 
-      rename = renamed_keys["to"].get(key, None)
-      if key in schema and key not in config and not rename:
+      if key in schema and key not in config:
         change = generate_change(schema, key, path)
 
         if change not in changeset["add"]:
@@ -248,6 +260,8 @@ def format_change(change, indent=INDENT, indents=0, delimiter="-", color=None):
       # This also accounts for the whitespace taken up by the delimiter + 1 extra space, and adds a newline.
       line = "\n" + indent_string(space + line[whitespace_size:], indents, indent)
 
+    line = line.rstrip()
+
     if color:
       line = colorize(line, color)
 
@@ -255,11 +269,21 @@ def format_change(change, indent=INDENT, indents=0, delimiter="-", color=None):
 
   return output.strip("\n")
 
+def format_rename_change(change, **kwargs):
+  '''
+  Formats a rename change, which is a tuple of two changes (from, to) with the given indent.
+  '''
+  change_from = format_change(change[0], **kwargs)
+  change_to   = format_change(change[1], **(kwargs | { "delimiter": " " }))
+
+  change_message = kwargs.get("indent", INDENT) * (kwargs.get("indents", 0) + 2) + "renamed to"
+
+  return "\n".join([change_from, change_message, change_to])
+
 def perform_validation():
   '''
   Performs configuration validation and upserting, printing status along the way.
   '''
-
   output("Fetching custom config files...")
 
   for directory, file, options in custom_config_files():
@@ -284,7 +308,7 @@ def perform_validation():
       change_options = [
         ("add", "Additions", TermColor.GREEN),
         ("delete", "Deletions (these options are no longer used)", TermColor.RED),
-        ("rename", "Renames (these options have been renamed)", TermColor.MAGENTA),
+        ("rename", "Renames", TermColor.MAGENTA),
       ]
 
       for change_type, preamble, color in change_options:
@@ -292,7 +316,10 @@ def perform_validation():
           output(preamble, indent=3)
 
           for change in changes[change_type]:
-            output(format_change(change, indents=4, color=color))
+            if change_type in ["add", "delete"]:
+              output(format_change(change, indents=4, color=color))
+            if change_type == "rename":
+              output(format_rename_change(change, indents=4, color=color))
 
     if should_overrwrite_config:
       config_path = os.path.join(directory, file)
