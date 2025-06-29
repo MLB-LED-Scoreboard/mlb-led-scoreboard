@@ -36,12 +36,6 @@ from version import SCRIPT_NAME, SCRIPT_VERSION
 
 def main(matrix, config_base):
 
-    # Uncomment the below to get debug information on headers and requests
-    # from http.client import HTTPConnection
-    # HTTPConnection.debuglevel = 1
-    # import logging
-    # logging.basicConfig(level=logging.DEBUG)
-
     # Read scoreboard options from config.json if it exists
     config = Config(config_base, matrix.width, matrix.height)
     logger = logging.getLogger("mlbled")
@@ -49,6 +43,8 @@ def main(matrix, config_base):
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.WARNING)
+
+    statsapi.logger = logger
 
     # Print some basic info on startup
     debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
