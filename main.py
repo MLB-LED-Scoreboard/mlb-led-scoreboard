@@ -38,12 +38,14 @@ def main(matrix, config_base):
 
     # Read scoreboard options from config.json if it exists
     config = Config(config_base, matrix.width, matrix.height)
+    # Set the scoreboard logger
     logger = logging.getLogger("mlbled")
     if config.debug:
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.WARNING)
 
+    # Assign the scoreboard logger to statsapi
     statsapi.logger = logger
 
     # Print some basic info on startup
