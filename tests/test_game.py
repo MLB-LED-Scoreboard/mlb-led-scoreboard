@@ -23,7 +23,7 @@ class TestGame(unittest.TestCase):
     }
 
     def test_game(self):
-        game = data.game.Game.from_scheduled(self.game_data, delay=0)
+        game = data.game.Game.from_scheduled(self.game_data, delay=0, api_refresh_rate=10)
         self.assertIsNotNone(game)
         self.assertEqual(game.home_name(), "Nationals")
         self.assertEqual(game.home_abbreviation(), "WSH")
@@ -58,7 +58,7 @@ class TestGame(unittest.TestCase):
     def test_game_in_middle(self):
         # uses some timestamps to test specific points in the game and our delay logic
 
-        game = data.game.Game.from_scheduled(self.game_data, delay=1)
+        game = data.game.Game.from_scheduled(self.game_data, delay=1, api_refresh_rate=10)
         self.assertIsNotNone(game)
         self.assertEqual(game.current_delay(), 0)
 
@@ -98,7 +98,7 @@ class TestGame(unittest.TestCase):
             "game_id": 746423,
             "game_date": "2024-09-13",
             }
-        game = data.game.Game.from_scheduled(game_data, delay=0)
+        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10)
         self.assertIsNotNone(game)
         # DET was wearing city connects
         self.assertEqual(game.home_special_uniforms(), data.uniforms.CITY_CONNECT)
@@ -136,7 +136,7 @@ class TestGame(unittest.TestCase):
             'game_id': 745808,
             'game_date': "2024-06-26",
         }
-        game = data.game.Game.from_scheduled(game_data, delay=0)
+        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10)
         self.assertIsNotNone(game)
         self.assertEqual(game.update(force=True, testing_params={"timecode": "20240627_004712"}), UpdateStatus.SUCCESS)
 
