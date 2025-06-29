@@ -185,20 +185,18 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
       rename = renamed_from in config and renamed_to in schema
 
       if rename:
-        # Only do this from one side. Otherwise, it will get picked up as a delete-then-add from the other side.
-        if kind == config:
-          deletion = generate_change(config, renamed_from, path)
-          addition = copy.deepcopy(deletion)
-          addition = deep_pop(addition, renamed_from, path=path)
-          addition = deep_set(addition, renamed_to, config[renamed_from], path)
+        deletion = generate_change(config, renamed_from, path)
+        addition = copy.deepcopy(deletion)
+        addition = deep_pop(addition, renamed_from, path=path)
+        addition = deep_set(addition, renamed_to, config[renamed_from], path)
 
-          change = (deletion, addition)
+        change = (deletion, addition)
 
-          if change not in changeset["rename"]:
-            changeset["rename"].append(change)
-            result = deep_pop(result, renamed_from, path=path)
-            result = deep_set(result, renamed_to, config[renamed_from], path=path)
-            dirty = True
+        if change not in changeset["rename"]:
+          changeset["rename"].append(change)
+          result = deep_pop(result, renamed_from, path=path)
+          result = deep_set(result, renamed_to, config[renamed_from], path=path)
+          dirty = True
 
         continue
 
