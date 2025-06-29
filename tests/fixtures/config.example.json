@@ -61,6 +61,7 @@
     "cheats": {
       "enabled": []
     },
-    "easter_eggs": true
+    "easter_eggs": true,
+    "new_key": "This is the new key that replaces old_key"
   }
 }

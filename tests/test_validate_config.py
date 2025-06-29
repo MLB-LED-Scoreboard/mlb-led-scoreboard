@@ -616,30 +616,41 @@ class TestValidateConfigMethods(unittest.TestCase):
 
 class TestPerformValidation(unittest.TestCase):
 
-  def setUp(self):
-    self.config_fixture_path = os.path.join("tests", "fixtures", "config.json")
-    with open(self.config_fixture_path) as config_file:
-      self.config = json.load(config_file)
+    def setUp(self):
+        self.config_fixture_path = os.path.join("tests", "fixtures", "config.json")
+        with open(self.config_fixture_path) as config_file:
+            self.original_config = json.load(config_file)
 
-  def tearDown(self):
-    with open(self.config_fixture_path, "w") as config_file:
-      self.config = json.dump(self.config, config_file, indent="  ")
+    def tearDown(self):
+        with open(self.config_fixture_path, "w") as config_file:
+            json.dump(self.original_config, config_file, indent=2)
 
-  def test_perform_validation_end_to_end(self):
-    with mock.patch("validate_config.custom_config_files") as mocked_custom_files:
-      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", {})]
+    @mock.patch("validate_config.custom_config_files")
+    @mock.patch("validate_config.colorize")
+    def test_perform_validation_end_to_end(self, mock_colorize, mock_custom_files):
+        options = {
+          "ignored_keys": ["ignored_key"],
+          "renamed_keys": { "old_key": "new_key" }
+        }
+        mock_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", options)]
+        mock_colorize.side_effect = lambda text, _: text  # Strip coloring
 
-      with mock.patch("validate_config.colorize") as mocked_color:
-        mocked_color.side_effect = lambda text, _: text
+        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            perform_validation()
 
-        with mock.patch('sys.stdout', new=io.StringIO()) as mocked_stdout:
+            expected_output = self._get_expected_output()
+            self.maxDiff = None
+            self.assertEqual(mock_stdout.getvalue(), expected_output)
 
-          perform_validation()
+        with open(self.config_fixture_path) as config_file:
+            updated_config = json.load(config_file)
+            self._assert_config_changes(updated_config)
 
-          expected_output = \
-f'''
+    def _get_expected_output(self):
+        path = self.config_fixture_path
+        return f'''
 Fetching custom config files...
-  - Found custom configuration at {self.config_fixture_path}!
+  - Found custom configuration at {path}!
     Adding missing keys and deleting unused configuration options...
       Additions
         - "test_config": {{
@@ -649,33 +660,38 @@ Fetching custom config files...
         - "test_config": {{
             "deprecated_option": null
           }}
-        - Creating a backup of {self.config_fixture_path}
-        - Backup located at {self.config_fixture_path}.bak
-        - Updating {self.config_fixture_path}...
-      Finished updating {self.config_fixture_path}!
+      Renames
+        - "test_config": {{
+            "old_key": "This key should be renamed to new_key"
+          }}
+            renamed to
+          "test_config": {{
+            "new_key": "This key should be renamed to new_key"
+          }}
+        - Creating a backup of {path}
+        - Backup located at {path}.bak
+        - Updating {path}...
+      Finished updating {path}!
 '''.lstrip("\n")
 
-          # Remove the maxDiff limit to see the full output in case of failure
-          self.maxDiff = None
-          self.assertEqual(
-            mocked_stdout.getvalue(),
-            expected_output
-          )
-
-        with open(self.config_fixture_path) as config_file:
-          new_config = json.load(config_file)
-          # Spot check an insertion
-          self.assertTrue(new_config["test_config"]["easter_eggs"])
-          # Spot check a deletion
-          self.assertFalse("deprecated_option" in new_config["test_config"])
-          # Make sure we haven't killed an overwritten option
-          self.assertEqual(
-            new_config["preferred"],
+    def _assert_config_changes(self, config):
+        ### Spot checks: ###
+        # 1. Check an insertion
+        self.assertTrue(config["test_config"]["easter_eggs"])
+        # 2. Check a deletion
+        self.assertNotIn("deprecated_option", config["test_config"])
+        # 3. Check that values are not overwritten
+        self.assertEqual(
+            config["preferred"],
             {
-              "teams": ["Braves"],
-              "divisions": ["AL Central", "AL Wild Card"]
+                "teams": ["Braves"],
+                "divisions": ["AL Central", "AL Wild Card"]
             }
-          )
+        )
+        # 4. Check that an ignored key is still present
+        self.assertIn("ignored_key", config["test_config"])
+        # 5. Check that a renamed key is correctly renamed
+        self.assertEqual(config["test_config"]["new_key"], "This key should be renamed to new_key")
 
 
 if __name__ == "__main__":
