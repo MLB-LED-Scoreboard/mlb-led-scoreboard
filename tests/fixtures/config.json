@@ -47,6 +47,7 @@
   "time_format": "24h",
   "end_of_day": "20:00",
   "full_team_names": true,
+  "preferred_game_update_delay_in_10s_of_seconds": 1,
   "short_team_names_for_runs_hits": false,
   "pregame_weather": true,
   "scrolling_speed": 1,

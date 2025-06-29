@@ -7,6 +7,9 @@ COLORS_DIR      = os.path.join(ROOT_DIR, "colors")
 VALIDATIONS = {
   ROOT_DIR: {
     "ignored_keys": [],
+    "renamed_keys": {
+      "preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier",
+    },
   },
   COORDINATES_DIR: {
     "ignored_keys": [
@@ -15,11 +18,13 @@ VALIDATIONS = {
       "perfect_game",
       "warmup"
     ],
+    "renamed_keys": {},
   },
   COLORS_DIR: {
     "ignored_keys": [
       "city_connect"
-    ]
+    ],
+    "renamed_keys": {},
   }
 }
 
@@ -104,7 +109,25 @@ def generate_change(origin, key, path):
 
   temp[key] = origin[key]
 
-  return change  
+  return change
+
+def reversible(d):
+  '''
+  Simple reversible dict. Returns a dict with "from" and "to" mappings.
+
+  Input:                Output:
+  {                     {
+    "a": "b",             "from": { "a": "b", "c": "d" },
+    "c": "d"              "to":   { "b": "a", "d": "c" }
+  }                     }
+  '''
+  o = { "from": {}, "to": {} }
+
+  for k, v in d.items():
+    o["from"][k] = v
+    o["to"][v] = k
+  
+  return o
 
 def upsert_config(config, schema, options={}, result=None, changeset=None, path=None):
   '''
@@ -123,12 +146,13 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
   '''
   if result is None:
     result = copy.deepcopy(config)
-    changeset = { "add": [], "delete": [] }
+    changeset = { "add": [], "delete": [], "rename": [] }
     path = []
 
   dirty = False
 
   ignored_keys = options.get("ignored_keys", [])
+  renamed_keys = reversible(options.get("renamed_keys", {}))
 
   for kind in [config, schema]:
     for key in kind.keys():
@@ -149,6 +173,22 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
 
         continue
 
+      rename = renamed_keys["from"].get(key, None)
+      if key in config and rename:
+        deletion = generate_change(config, key, path)
+        addition = copy.deepcopy(deletion)
+        addition = deep_pop(addition, key, path=path)
+        addition = deep_set(addition, rename, config[key], path)
+
+        change = (deletion, addition)
+        if change not in changeset["rename"]:
+          changeset["rename"].append(change)
+          result = deep_pop(result, key, path=path)
+          result = deep_set(result, rename, config[key], path=path)
+          dirty = True
+
+        continue
+
       if key in config and key not in schema:
         change = generate_change(config, key, path)
 
@@ -156,7 +196,9 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
           changeset["delete"].append(change)
           result = deep_pop(result, key, path=path)
           dirty = True
-      if key in schema and key not in config:
+
+      rename = renamed_keys["to"].get(key, None)
+      if key in schema and key not in config and not rename:
         change = generate_change(schema, key, path)
 
         if change not in changeset["add"]:
@@ -241,7 +283,8 @@ def perform_validation():
 
       change_options = [
         ("add", "Additions", TermColor.GREEN),
-        ("delete", "Deletions (these options are no longer used):", TermColor.RED)
+        ("delete", "Deletions (these options are no longer used)", TermColor.RED),
+        ("rename", "Renames (these options have been renamed)", TermColor.MAGENTA),
       ]
 
       for change_type, preamble, color in change_options:

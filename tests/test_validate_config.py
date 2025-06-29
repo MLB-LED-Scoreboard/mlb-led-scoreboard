@@ -97,6 +97,9 @@ class TestValidateConfigMethods(unittest.TestCase):
     )
 
   def test_custom_config_files(self):
+    # Remove the maxDiff limit to see the full output in case of failure
+    self.maxDiff = None
+
     with mock.patch("os.listdir") as mocked_listdir:
       files = [
         "config.json",
@@ -121,9 +124,9 @@ class TestValidateConfigMethods(unittest.TestCase):
         self.assertEqual(
           custom_config_files(),
           [
-            (ROOT_DIR, "config.json", { "ignored_keys": [] }),
-            (COORDINATES_DIR, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS }),
-            (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS })
+            (ROOT_DIR, "config.json", { "ignored_keys": [], "renamed_keys": {"preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier"} }),
+            (COORDINATES_DIR, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {} }),
+            (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {} }),
           ]
         )
 
@@ -135,7 +138,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 
     self.assertFalse(changed)
     self.assertEqual(config, result)
-    self.assertEqual(changes, { "add": [], "delete": [] })
+    self.assertEqual(changes, { "add": [], "delete": [], "rename": [] })
 
   def test_upsert_config_with_simple_addition(self):
     config = {}
@@ -152,7 +155,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "should": "be added" }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
   
@@ -171,7 +175,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [],
         "delete": [
           { "should": "be deleted" }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -192,7 +197,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         ],
         "delete": [
           { "needs to be": "deleted" }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -213,7 +219,8 @@ class TestValidateConfigMethods(unittest.TestCase):
             "already": { "but": "not this one" }
           }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -234,7 +241,8 @@ class TestValidateConfigMethods(unittest.TestCase):
           {
             "already": { "and": "an extra" }
           }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -253,7 +261,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "should": { "be": "added" } }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -274,7 +283,8 @@ class TestValidateConfigMethods(unittest.TestCase):
           {
             "should": { "be": "deleted" }
           }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -290,7 +300,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -306,7 +317,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -327,7 +339,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -348,7 +361,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -372,7 +386,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [],
         "delete": [
           { "those": { "that": False } }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -396,7 +411,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "that": False }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -420,7 +436,64 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "that": { "those": False } }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
+      }
+    )
+
+  def test_upsert_config_with_renamed_keys_in_config(self):
+    '''
+    Keys in the rename list are renamed instead of added or deleted and preserve their values.
+    '''
+    config = { "this": True }
+    schema = { "that": False }
+
+    options = { "renamed_keys": { "this": "that" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, { "that": True })
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [],
+        "rename": [
+          (
+            { "this": True },
+            { "that": True }
+          )
+        ]
+      }
+    )
+
+  def test_upsert_config_with_nested_renamed_keys_in_config(self):
+    '''
+    Keys in the rename list are renamed instead of added or deleted and preserve their values.
+    '''
+    config = { "this": { "that": True } }
+    schema = { "this": { "those": False } }
+
+    options = { "renamed_keys": { "that": "those" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, { "this": { "those": True } })
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [],
+        "rename": [
+          (
+            { "this": { "that": True } },
+            { "this": { "those": True } }
+          )
+        ]
       }
     )
 
@@ -524,7 +597,7 @@ Fetching custom config files...
         - "test_config": {{
             "easter_eggs": true
           }}
-      Deletions (these options are no longer used):
+      Deletions (these options are no longer used)
         - "test_config": {{
             "deprecated_option": null
           }}
