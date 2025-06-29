@@ -290,6 +290,7 @@ A default `config.example.json` file is included for reference. Copy this file t
 "short_team_names_for_runs_hits" Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
 "preferred_game_update_delay_in_10s_of_seconds" Integer Sets how long to wait before updating the preferred game. Must be positive.
+"api_refresh_rate"               Integer >= 3.  Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
 "pregame_weather"                Bool    If enabled, will display the weather for the game's location on the pregame screen.
 "debug"                          Bool    Game and other debug data is written to your console.
 "demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
