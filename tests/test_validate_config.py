@@ -695,8 +695,8 @@ Fetching custom config files...
         self.assertEqual(
             config["preferred"],
             {
-                "teams": ["Braves"],
-                "divisions": ["AL Central", "AL Wild Card"]
+              "teams": ["Braves"],
+              "divisions": ["AL Central", "AL Wild Card"]
             }
         )
         # 4. Check that an ignored key is still present
