@@ -613,6 +613,17 @@ class TestValidateConfigMethods(unittest.TestCase):
       re.compile(fr'\033\[{TermColor.RED}.+\033\[0m')
     )
 
+  def test_renamed_keys_present_in_schema(self):
+    for directory, validation in VALIDATIONS.items():
+      self.assertIn("renamed_keys", validation, f"{directory} does not have 'renamed_keys' defined.")
+      renames = validation["renamed_keys"].values()
+
+      for file in os.listdir(directory):
+        if file.endswith(".example.json"):
+          with open(os.path.join(directory, file)) as config_file:
+            config = json.load(config_file)
+            for rename in renames:
+              self.assertIn(rename, config, f"{os.path.join(directory, file)} does not contain renamed key '{rename}'.")
 
 class TestPerformValidation(unittest.TestCase):
 
