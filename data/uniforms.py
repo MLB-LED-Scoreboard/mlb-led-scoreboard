@@ -2,6 +2,7 @@ import time
 import statsapi
 
 import debug
+import data.headers
 
 API_FIELDS = "uniforms,home,away,uniformAssets,uniformAssetText"
 
@@ -37,10 +38,10 @@ class Uniforms:
             return
 
         try:
-            data = statsapi.get("game_uniforms", {"gamePks": self.game_id, "fields": API_FIELDS})["uniforms"][0]
+            data_u = statsapi.get("game_uniforms", {"gamePks": self.game_id, "fields": API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS})["uniforms"][0]
             for uniform, special_check in SPECIAL_UNIFORMS.items():
-                home_uniforms = data.get("home", {}).get("uniformAssets", [])
-                away_uniforms = data.get("away", {}).get("uniformAssets", [])
+                home_uniforms = data_u.get("home", {}).get("uniformAssets", [])
+                away_uniforms = data_u.get("away", {}).get("uniformAssets", [])
 
                 if not self.home_special and any(
                     special_check(asset["uniformAssetText"]) for asset in home_uniforms
