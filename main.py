@@ -3,8 +3,8 @@ import sys
 from data.screens import ScreenType
 import debug
 
-if sys.version_info <= (3, 5):
-    debug.error("Please run with python3")
+if sys.version_info < (3, 9):
+    debug.error("Please run with Python >= 3.9")
     sys.exit(1)
 
 import statsapi

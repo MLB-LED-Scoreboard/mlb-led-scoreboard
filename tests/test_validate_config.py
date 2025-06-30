@@ -97,6 +97,9 @@ class TestValidateConfigMethods(unittest.TestCase):
     )
 
   def test_custom_config_files(self):
+    # Remove the maxDiff limit to see the full output in case of failure
+    self.maxDiff = None
+
     with mock.patch("os.listdir") as mocked_listdir:
       files = [
         "config.json",
@@ -121,9 +124,9 @@ class TestValidateConfigMethods(unittest.TestCase):
         self.assertEqual(
           custom_config_files(),
           [
-            (ROOT_DIR, "config.json", { "ignored_keys": [] }),
-            (COORDINATES_DIR, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS }),
-            (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS })
+            (ROOT_DIR, "config.json", { "ignored_keys": [], "renamed_keys": {"preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier"} }),
+            (COORDINATES_DIR, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {} }),
+            (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {} }),
           ]
         )
 
@@ -135,7 +138,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 
     self.assertFalse(changed)
     self.assertEqual(config, result)
-    self.assertEqual(changes, { "add": [], "delete": [] })
+    self.assertEqual(changes, { "add": [], "delete": [], "rename": [] })
 
   def test_upsert_config_with_simple_addition(self):
     config = {}
@@ -152,7 +155,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "should": "be added" }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
   
@@ -171,7 +175,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [],
         "delete": [
           { "should": "be deleted" }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -192,7 +197,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         ],
         "delete": [
           { "needs to be": "deleted" }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -213,7 +219,8 @@ class TestValidateConfigMethods(unittest.TestCase):
             "already": { "but": "not this one" }
           }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -234,7 +241,8 @@ class TestValidateConfigMethods(unittest.TestCase):
           {
             "already": { "and": "an extra" }
           }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -253,7 +261,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "should": { "be": "added" } }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -274,7 +283,8 @@ class TestValidateConfigMethods(unittest.TestCase):
           {
             "should": { "be": "deleted" }
           }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -290,7 +300,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -306,7 +317,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -327,7 +339,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -348,7 +361,8 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -372,7 +386,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [],
         "delete": [
           { "those": { "that": False } }
-        ]
+        ],
+        "rename": []
       }
     )
 
@@ -396,7 +411,8 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "that": False }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
       }
     )
 
@@ -420,7 +436,112 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "that": { "those": False } }
         ],
-        "delete": []
+        "delete": [],
+        "rename": []
+      }
+    )
+
+  def test_upsert_config_with_renamed_keys_in_config(self):
+    '''
+    Keys in the rename list are renamed instead of added or deleted and preserve their values.
+    '''
+    config = { "this": True }
+    schema = { "that": False }
+
+    options = { "renamed_keys": { "this": "that" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, { "that": True })
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [],
+        "rename": [
+          (
+            { "this": True },
+            { "that": True }
+          )
+        ]
+      }
+    )
+
+  def test_upsert_config_with_nested_renamed_keys_in_config(self):
+    '''
+    Keys in the rename list are renamed instead of added or deleted and preserve their values.
+    '''
+    config = { "this": { "that": True } }
+    schema = { "this": { "those": False } }
+
+    options = { "renamed_keys": { "that": "those" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertNotEqual(config, result)
+    self.assertEqual(result, { "this": { "those": True } })
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [],
+        "rename": [
+          (
+            { "this": { "that": True } },
+            { "this": { "those": True } }
+          )
+        ]
+      }
+    )
+
+  def test_upsert_config_with_renamed_keys_not_in_config(self):
+    '''
+    Keys in the rename list that are not present in the config are added.
+    '''
+    config = {}
+    schema = { "that": False }
+
+    options = { "renamed_keys": { "this": "that" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [
+          { "that": False }
+        ],
+        "delete": [],
+        "rename": []
+      }
+    )
+
+  def test_upsert_config_with_renamed_keys_not_in_schema(self):
+    '''
+    Keys in the rename list that are not present in the schema are deleted.
+    '''
+    config = { "this": False }
+    schema = {}
+
+    options = { "renamed_keys": { "this": "that" } }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertEqual(result, schema)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
+        "delete": [
+          { "this": False }
+        ],
+        "rename": []
       }
     )
 
@@ -492,69 +613,96 @@ class TestValidateConfigMethods(unittest.TestCase):
       re.compile(fr'\033\[{TermColor.RED}.+\033\[0m')
     )
 
+  def test_renamed_keys_present_in_schema(self):
+    for directory, validation in VALIDATIONS.items():
+      self.assertIn("renamed_keys", validation, f"{directory} does not have 'renamed_keys' defined.")
+      renames = validation["renamed_keys"].values()
+
+      for file in os.listdir(directory):
+        if file.endswith(".example.json"):
+          with open(os.path.join(directory, file)) as config_file:
+            config = json.load(config_file)
+            for rename in renames:
+              self.assertIn(rename, config, f"{os.path.join(directory, file)} does not contain renamed key '{rename}'.")
 
 class TestPerformValidation(unittest.TestCase):
 
-  def setUp(self):
-    self.config_fixture_path = os.path.join("tests", "fixtures", "config.json")
-    with open(self.config_fixture_path) as config_file:
-      self.config = json.load(config_file)
+    def setUp(self):
+        self.config_fixture_path = os.path.join("tests", "fixtures", "config.json")
+        with open(self.config_fixture_path) as config_file:
+            self.original_config = json.load(config_file)
 
-  def tearDown(self):
-    with open(self.config_fixture_path, "w") as config_file:
-      self.config = json.dump(self.config, config_file, indent="  ")
+    def tearDown(self):
+        with open(self.config_fixture_path, "w") as config_file:
+            json.dump(self.original_config, config_file, indent=2)
 
-  def test_perform_validation_end_to_end(self):
-    with mock.patch("validate_config.custom_config_files") as mocked_custom_files:
-      mocked_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", {})]
+    @mock.patch("validate_config.custom_config_files")
+    @mock.patch("validate_config.colorize")
+    def test_perform_validation_end_to_end(self, mock_colorize, mock_custom_files):
+        options = {
+          "ignored_keys": ["ignored_key"],
+          "renamed_keys": { "old_key": "new_key" }
+        }
+        mock_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", options)]
+        mock_colorize.side_effect = lambda text, _: text  # Strip coloring
 
-      with mock.patch("validate_config.colorize") as mocked_color:
-        mocked_color.side_effect = lambda text, _: text
+        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            perform_validation()
 
-        with mock.patch('sys.stdout', new=io.StringIO()) as mocked_stdout:
+            expected_output = self._get_expected_output()
+            self.maxDiff = None
+            self.assertEqual(mock_stdout.getvalue(), expected_output)
 
-          perform_validation()
+        with open(self.config_fixture_path) as config_file:
+            updated_config = json.load(config_file)
+            self._assert_config_changes(updated_config)
 
-          expected_output = \
-f'''
+    def _get_expected_output(self):
+        path = self.config_fixture_path
+        return f'''
 Fetching custom config files...
-  - Found custom configuration at {self.config_fixture_path}!
+  - Found custom configuration at {path}!
     Adding missing keys and deleting unused configuration options...
       Additions
         - "test_config": {{
             "easter_eggs": true
           }}
-      Deletions (these options are no longer used):
+      Deletions (these options are no longer used)
         - "test_config": {{
             "deprecated_option": null
           }}
-        - Creating a backup of {self.config_fixture_path}
-        - Backup located at {self.config_fixture_path}.bak
-        - Updating {self.config_fixture_path}...
-      Finished updating {self.config_fixture_path}!
+      Renames
+        - "test_config": {{
+            "old_key": "This key should be renamed to new_key"
+          }}
+            renamed to
+          "test_config": {{
+            "new_key": "This key should be renamed to new_key"
+          }}
+        - Creating a backup of {path}
+        - Backup located at {path}.bak
+        - Updating {path}...
+      Finished updating {path}!
 '''.lstrip("\n")
 
-          # Remove the maxDiff limit to see the full output in case of failure
-          self.maxDiff = None
-          self.assertEqual(
-            mocked_stdout.getvalue(),
-            expected_output
-          )
-
-        with open(self.config_fixture_path) as config_file:
-          new_config = json.load(config_file)
-          # Spot check an insertion
-          self.assertTrue(new_config["test_config"]["easter_eggs"])
-          # Spot check a deletion
-          self.assertFalse("deprecated_option" in new_config["test_config"])
-          # Make sure we haven't killed an overwritten option
-          self.assertEqual(
-            new_config["preferred"],
+    def _assert_config_changes(self, config):
+        ### Spot checks: ###
+        # 1. Check an insertion
+        self.assertTrue(config["test_config"]["easter_eggs"])
+        # 2. Check a deletion
+        self.assertNotIn("deprecated_option", config["test_config"])
+        # 3. Check that values are not overwritten
+        self.assertEqual(
+            config["preferred"],
             {
               "teams": ["Braves"],
               "divisions": ["AL Central", "AL Wild Card"]
             }
-          )
+        )
+        # 4. Check that an ignored key is still present
+        self.assertIn("ignored_key", config["test_config"])
+        # 5. Check that a renamed key is correctly renamed
+        self.assertEqual(config["test_config"]["new_key"], "This key should be renamed to new_key")
 
 
 if __name__ == "__main__":
