@@ -1,19 +1,18 @@
 from datetime import datetime, timedelta
 
 import statsapi
-
 import debug
-
+import data.headers
 
 class Dates:
     def __init__(self, year: int):
         try:
-            data = statsapi.get("season", {"sportId": 1, "seasonId": year})
-            self.__parse_important_dates(data["seasons"][0], year)
+            data_d = statsapi.get("season", {"sportId": 1, "seasonId": year}, request_kwargs={"headers": data.headers.API_HEADERS})
+            self.__parse_important_dates(data_d["seasons"][0], year)
             now = datetime.now()
             if year == now.year and self.season_ends_date < now:
-                data = statsapi.get("season", {"sportId": 1, "seasonId": year + 1})
-                self.__parse_important_dates(data["seasons"][0], year + 1)
+                data_d = statsapi.get("season", {"sportId": 1, "seasonId": year + 1}, request_kwargs={"headers": data.headers.API_HEADERS})
+                self.__parse_important_dates(data_d["seasons"][0], year + 1)
         except:
             debug.exception("Failed to refresh important dates")
             self.playoffs_start_date = datetime(3000, 10, 1)

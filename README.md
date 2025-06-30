@@ -244,62 +244,65 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
 ```
-"preferred":                             Options for team and division preference
-  "teams"                        Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                    Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
+"preferred":                              Options for team and division preference
+  "teams"                         Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
+  "divisions"                     Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
 
-"news_ticker":                           Options for displaying a nice clock/weather/news ticker screen
-  "always_display"               Bool    Display the news ticker screen at all times. Supercedes the standings setting.
-  "team_offday"                  Bool    Display the news ticker when your prefered team is on an offday.
-  "preferred_teams"              Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
-  "display_no_games_live"        Bool    Display news and weather when none of your games are currently live.
-  "traderumors"                  Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
-  "mlb_news"                     Bool    Include MLB's frontpage news.
-  "countdowns"                   Bool    Include various countdowns in the ticker.
-  "date"                         Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
-  "date_format"                  String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
+"news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
+  "always_display"                Bool    Display the news ticker screen at all times. Supercedes the standings setting.
+  "team_offday"                   Bool    Display the news ticker when your prefered team is on an offday.
+  "preferred_teams"               Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
+  "display_no_games_live"         Bool    Display news and weather when none of your games are currently live.
+  "traderumors"                   Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
+  "mlb_news"                      Bool    Include MLB's frontpage news.
+  "countdowns"                    Bool    Include various countdowns in the ticker.
+  "date"                          Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
+  "date_format"                   String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
 
-"standings":                             Options for displaying standings for a division
-  "always_display"               Bool    Display standings for your preferred divisions.
-  "mlb_offday"                   Bool    Display standings for your preferred divisions when there are no games on the current day.
-  "team_offday"                  Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
-  "display_no_games_live"        Bool    Display standings when none of your games are currently live.
+"standings":                              Options for displaying standings for a division
+  "always_display"                Bool    Display standings for your preferred divisions.
+  "mlb_offday"                    Bool    Display standings for your preferred divisions when there are no games on the current day.
+  "team_offday"                   Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
+  "display_no_games_live"         Bool    Display standings when none of your games are currently live.
 
-"rotation":                              Options for rotation through the day's games
-  "enabled"                      Bool    Rotate through each game of the day according to the configured `rates`.
-  "scroll_until_finished"        Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"               Bool    Only rotate through games in your preferred teams.
-  "only_live"                    Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
-  "rates"                        Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
+"rotation":                               Options for rotation through the day's games
+  "enabled"                       Bool    Rotate through each game of the day according to the configured `rates`.
+  "scroll_until_finished"         Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
+  "only_preferred"                Bool    Only rotate through games in your preferred teams.
+  "only_live"                     Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
+  "rates"                         Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
 
-  "while_preferred_team_live":           Options for rotating between screens while one of your preferred teams is live
-    "enabled"                    Bool    Enable rotation while a preferred team is live.
-    "during_inning_breaks"       Bool    Enable rotation while a preferred team is live during an inning break.
+  "while_preferred_team_live":            Options for rotating between screens while one of your preferred teams is live
+    "enabled"                     Bool    Enable rotation while a preferred team is live.
+    "during_inning_breaks"        Bool    Enable rotation while a preferred team is live during an inning break.
 
-"weather":                               Options for retrieving the weather
-  "apikey"                       String  An API key is required to use the weather service.
-                                         You can get one for free at Open Weather Map (https://home.openweathermap.org/users/sign_up).
-  "location"                     String  The `{city name},{state code},{country code}` according to ISO-3166 standards (https://www.iso.org/obp/ui/#search).
-                                         Check out the OpenWeather documentation (https://openweathermap.org/current#name) for more info.
-                                         Ex: `"Chicago,il,us"`
-  "metric_units"                 Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
+"weather":                                Options for retrieving the weather
+  "apikey"                        String  An API key is required to use the weather service.
+                                          You can get one for free at Open Weather Map (https://home.openweathermap.org/users/sign_up).
+  "location"                      String  The `{city name},{state code},{country code}` according to ISO-3166 standards (https://www.iso.org/obp/ui/#search).
+                                          Check out the OpenWeather documentation (https://openweathermap.org/current#name) for more info.
+                                          Ex: `"Chicago,il,us"`
+  "metric_units"                  Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
 
-"time_format"                    String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
-"end_of_day"                     String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
-"full_team_names"                Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
-"short_team_names_for_runs_hits" Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
-"scrolling_speed"                Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
-"preferred_game_update_delay_in_10s_of_seconds" Integer Sets how long to wait before updating the preferred game. Must be positive.
-"pregame_weather"                Bool    If enabled, will display the weather for the game's location on the pregame screen.
-"debug"                          Bool    Game and other debug data is written to your console.
-"demo_date"                      String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
+"time_format"                     String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
+"end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
+"full_team_names"                 Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
+"short_team_names_for_runs_hits"  Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
+"scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
+"preferred_game_delay_multiplier" Integer This value multiplied by api_refresh_rate determines the preferred team update delay in seconds. Must be 0 or greater.
+"api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
+"pregame_weather"                 Bool    If enabled, will display the weather for the game's location on the pregame screen.
+"debug"                           Bool    Game and other debug data is written to your console.
+"demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Delaying Board Update
-* The "preferred_game_update_delay_in_10s_of_seconds" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
-* You can only delay the board in 10 second increments, so a value of 3 coresponds to 30 seconds, 5 to 50 seconds etc.
+* The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
+* This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with 
+* api_refresh_rate=5 will delay the updated 10 seconds.
 * There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
-* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  If you set the value to 3, it will take 30-40 seconds for the buffer to fill and the board to delay.
+* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  
+* If you set the * preferred_game_delay_multiplier=10 with api_refresh_rate=3, it will take 30-40 seconds for the buffer to fill and the board to delay.
 
 ### Additional Features
 * Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.

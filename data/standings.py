@@ -6,6 +6,7 @@ import statsapi
 import debug
 from data import teams
 from data.update import UpdateStatus
+import data.headers
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
@@ -50,12 +51,12 @@ class Standings:
                     if self.date != datetime.today().date():
                         season_params["date"] = self.date.strftime("%m/%d/%Y")
 
-                    divisons_data = statsapi.get("standings", season_params)
+                    divisons_data = statsapi.get("standings", season_params, request_kwargs={"headers": data.headers.API_HEADERS})
                     standings = [Division(division_data) for division_data in divisons_data["records"]]
 
                     if self.wild_cards:
                         season_params["standingsTypes"] = "wildCard"
-                        wc_data = statsapi.get("standings", season_params)
+                        wc_data = statsapi.get("standings", season_params, request_kwargs={"headers": data.headers.API_HEADERS})
                         standings += [Division(data, wc=True) for data in wc_data["records"]]
 
                     self.standings = standings
@@ -68,6 +69,7 @@ class Standings:
                             "hydrate": "league,team",
                             "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
                         },
+                        request_kwargs={"headers": data.headers.API_HEADERS}
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")
                     self.leagues["NL"] = League(postseason_data, "NL")

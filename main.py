@@ -3,8 +3,8 @@ import sys
 from data.screens import ScreenType
 import debug
 
-if sys.version_info <= (3, 5):
-    debug.error("Please run with python3")
+if sys.version_info < (3, 9):
+    debug.error("Please run with Python >= 3.9")
     sys.exit(1)
 
 import statsapi
@@ -38,11 +38,15 @@ def main(matrix, config_base):
 
     # Read scoreboard options from config.json if it exists
     config = Config(config_base, matrix.width, matrix.height)
+    # Set the scoreboard logger
     logger = logging.getLogger("mlbled")
     if config.debug:
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.WARNING)
+
+    # Assign the scoreboard logger to statsapi
+    statsapi.logger = logger
 
     # Print some basic info on startup
     debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)

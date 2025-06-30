@@ -9,6 +9,7 @@ from data import teams
 from data.update import UpdateStatus
 from data.delay_buffer import CircularQueue
 from data.uniforms import Uniforms
+import data.headers
 
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
@@ -23,29 +24,30 @@ SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,r
 
 GAME_UPDATE_RATE = 10
 
-
 class Game:
     @staticmethod
-    def from_scheduled(game_data, delay) -> Optional["Game"]:
+    def from_scheduled(game_data, delay, api_refresh_rate) -> Optional["Game"]:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
             game_data.get("national_broadcasts") or [],
             game_data.get("series_status") or "",
             delay,
+            api_refresh_rate,
         )
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts, series_status, delay_in_10s_of_seconds):
+    def __init__(self, game_id, date, broadcasts, series_status, preferred_game_delay_multiplier, api_refresh_rate):
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
-        self._data_wait_queue = CircularQueue(delay_in_10s_of_seconds + 1)
+        self._data_wait_queue = CircularQueue(preferred_game_delay_multiplier + 1)
         self._current_data = {}
         self._broadcasts = broadcasts
         self._series_status = series_status
+        self._api_refresh_rate = api_refresh_rate
         self._status = {}
         self._uniform_data = Uniforms(game_id)
 
@@ -54,7 +56,7 @@ class Game:
             self.starttime = time.time()
             try:
                 debug.log("Fetching data for game %s", str(self.game_id))
-                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params)
+                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params, request_kwargs={"headers": data.headers.API_HEADERS} )
                 # we add a delay to avoid spoilers. During construction, this will still yield live data, but then
                 # it will recycle that data until the queue is full.
                 self._data_wait_queue.push(live_data)
@@ -65,7 +67,7 @@ class Game:
                     debug.log("Getting game status from schedule for game with strange date!")
                     try:
                         scheduled = statsapi.get(
-                            "schedule", {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS}
+                            "schedule", {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS}
                         )
                         self._status = next(
                             g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date
@@ -85,7 +87,7 @@ class Game:
         return datetime.fromisoformat(time.replace("Z", "+00:00"))
 
     def current_delay(self):
-        return (len(self._data_wait_queue) - 1) * GAME_UPDATE_RATE
+        return (len(self._data_wait_queue) - 1) * self._api_refresh_rate
 
     def home_name(self):
         return teams.TEAM_ID_NAME.get(
@@ -341,7 +343,7 @@ class Game:
     def __should_update(self):
         endtime = time.time()
         time_delta = endtime - self.starttime
-        return time_delta >= GAME_UPDATE_RATE
+        return time_delta >= self._api_refresh_rate
 
     @staticmethod
     def _format_id(player):

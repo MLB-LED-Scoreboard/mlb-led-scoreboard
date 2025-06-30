@@ -62,6 +62,8 @@
         "Astros"
       ]
     },
-    "deprecated_option": null
+    "deprecated_option": null,
+    "ignored_key": "This key should not be removed",
+    "old_key": "This key should be renamed to new_key"
   }
 }
