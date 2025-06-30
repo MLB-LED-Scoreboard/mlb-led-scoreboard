@@ -289,7 +289,7 @@ A default `config.example.json` file is included for reference. Copy this file t
 "full_team_names"                 Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
 "short_team_names_for_runs_hits"  Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
-"preferred_game_delay_multiplier" Integer Must be positive. This value x api_refresh_rate determines the Preferred team update delay in seconds
+"preferred_game_delay_multiplier" Integer This value multiplied by api_refresh_rate determines the preferred team update delay in seconds. Must be 0 or greater.
 "api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
 "pregame_weather"                 Bool    If enabled, will display the weather for the game's location on the pregame screen.
 "debug"                           Bool    Game and other debug data is written to your console.
