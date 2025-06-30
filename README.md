@@ -298,8 +298,7 @@ A default `config.example.json` file is included for reference. Copy this file t
 
 ### Delaying Board Update
 * The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
-* This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with 
-* api_refresh_rate=5 will delay the updated 10 seconds.
+* This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with api_refresh_rate=5 will delay the game updates by 10 seconds.
 * There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
 * Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  
 * If you set the * preferred_game_delay_multiplier=10 with api_refresh_rate=3, it will take 30-40 seconds for the buffer to fill and the board to delay.
