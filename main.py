@@ -10,11 +10,9 @@ if sys.version_info < (3, 9):
 import statsapi
 
 statsapi_version = tuple(map(int, statsapi.__version__.split(".")))
-if statsapi_version < (1, 5, 1):
-    debug.error("We require MLB-StatsAPI 1.5.1 or higher. You may need to re-run install.sh")
+if statsapi_version < (1, 9, 0):
+    debug.error("We require MLB-StatsAPI 1.9.0 or higher. You may need to re-run install.sh")
     sys.exit(1)
-elif statsapi_version < (1, 6, 1):
-    debug.warning("We recommend MLB-StatsAPI 1.6.1 or higher. You may want to re-run install.sh")
 
 import logging
 import os
