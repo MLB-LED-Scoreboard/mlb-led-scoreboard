@@ -365,15 +365,11 @@ The scoreboard updates frequently, but it cannot retrieve information that MLB h
 ## Help and Contributing
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
-### Updating Dependencies
+### Run Unit Tests
 
-Dependencies requirements are managed using `pipreqs`. If you are adding or making a change to a dependency (such as updating its version), make sure to update the requirements file with `pipreqs`:
-
+PRs require passing unit tests in order to merge. You can run tests from the project root as follows:
 ```sh
-# If not already installed
-pip3 install pipreqs
-
-pipreqs . --force
+python -m unittest
 ```
 
 ## Licensing
