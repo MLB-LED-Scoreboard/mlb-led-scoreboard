@@ -1,3 +1,8 @@
+# NOTE:
+#   Modifying abbreviations for teams might require you to update or create colors/teams.json.
+#   Each abbreviation in the teams list needs to have a corresponding entry in colors/teams.json
+#   in order to render colors correctly.
+
 # These are special teams in the league and not present in the api/v1/teams endpoint.
 _SPECIAL_TEAMS = {
     159: { "abbr": "AL",  "name": "American League All-Stars" },
@@ -5,6 +10,8 @@ _SPECIAL_TEAMS = {
 }
 
 # Run this file to retreive the latest team data from the MLB API.
+#   From project root:
+#       python data/teams.py
 _TEAMS = _SPECIAL_TEAMS | {
     108: { "abbr": "LAA", "name": "Angels" },
     109: { "abbr": "AZ",  "name": "D-backs" },
