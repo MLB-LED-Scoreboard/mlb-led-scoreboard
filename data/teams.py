@@ -1,112 +1,54 @@
-# the following were created like so
-# import statsapi
-# _teams = statsapi.get('teams', {'sportIds':1})['teams']
-# TEAM_ID_ABBR = {t["id"]: t["abbreviation"] for t in _teams}
-# TEAM_ID_NAME = {t["id"]: t["teamName"] for t in _teams}
-# TEAM_NAME_ID = {t["teamName"]: t["id"] for t in _teams}
+# NOTE:
+#   Modifying abbreviations for teams might require you to update or create colors/teams.json.
+#   Each abbreviation in the teams list needs to have a corresponding entry in colors/teams.json
+#   in order to render colors correctly.
 
-# Can be customized, but will require changing in colors/teams.json as well
-TEAM_ID_ABBR = {
-    133: "ATH",
-    134: "PIT",
-    135: "SD",
-    136: "SEA",
-    137: "SF",
-    138: "STL",
-    139: "TB",
-    140: "TEX",
-    141: "TOR",
-    142: "MIN",
-    143: "PHI",
-    144: "ATL",
-    145: "CWS",
-    146: "MIA",
-    147: "NYY",
-    158: "MIL",
-    108: "LAA",
-    109: "AZ",
-    110: "BAL",
-    111: "BOS",
-    112: "CHC",
-    113: "CIN",
-    114: "CLE",
-    115: "COL",
-    116: "DET",
-    117: "HOU",
-    118: "KC",
-    119: "LAD",
-    120: "WSH",
-    121: "NYM",
+# These are special teams in the league and not present in the api/v1/teams endpoint.
+_SPECIAL_TEAMS = {
+    159: { "abbr": "AL",  "name": "American League All-Stars" },
+    160: { "abbr": "NL",  "name": "National League All-Stars" },
 }
 
-# Can be customized
-TEAM_ID_NAME = {
-    133: "Athletics",
-    134: "Pirates",
-    135: "Padres",
-    136: "Mariners",
-    137: "Giants",
-    138: "Cardinals",
-    139: "Rays",
-    140: "Rangers",
-    141: "Blue Jays",
-    142: "Twins",
-    143: "Phillies",
-    144: "Braves",
-    145: "White Sox",
-    146: "Marlins",
-    147: "Yankees",
-    158: "Brewers",
-    108: "Angels",
-    109: "D-backs",
-    110: "Orioles",
-    111: "Red Sox",
-    112: "Cubs",
-    113: "Reds",
-    114: "Guardians",
-    115: "Rockies",
-    116: "Tigers",
-    117: "Astros",
-    118: "Royals",
-    119: "Dodgers",
-    120: "Nationals",
-    121: "Mets",
+# Run this file to retreive the latest team data from the MLB API.
+#   From project root:
+#       python data/teams.py
+_TEAMS = _SPECIAL_TEAMS | {
+    108: { "abbr": "LAA", "name": "Angels" },
+    109: { "abbr": "AZ",  "name": "D-backs" },
+    110: { "abbr": "BAL", "name": "Orioles" },
+    111: { "abbr": "BOS", "name": "Red Sox" },
+    112: { "abbr": "CHC", "name": "Cubs" },
+    113: { "abbr": "CIN", "name": "Reds" },
+    114: { "abbr": "CLE", "name": "Guardians" },
+    115: { "abbr": "COL", "name": "Rockies" },
+    116: { "abbr": "DET", "name": "Tigers" },
+    117: { "abbr": "HOU", "name": "Astros" },
+    118: { "abbr": "KC",  "name": "Royals" },
+    119: { "abbr": "LAD", "name": "Dodgers" },
+    120: { "abbr": "WSH", "name": "Nationals" },
+    121: { "abbr": "NYM", "name": "Mets" },
+    133: { "abbr": "ATH", "name": "Athletics" },
+    134: { "abbr": "PIT", "name": "Pirates" },
+    135: { "abbr": "SD",  "name": "Padres" },
+    136: { "abbr": "SEA", "name": "Mariners" },
+    137: { "abbr": "SF",  "name": "Giants" },
+    138: { "abbr": "STL", "name": "Cardinals" },
+    139: { "abbr": "TB",  "name": "Rays" },
+    140: { "abbr": "TEX", "name": "Rangers" },
+    141: { "abbr": "TOR", "name": "Blue Jays" },
+    142: { "abbr": "MIN", "name": "Twins" },
+    143: { "abbr": "PHI", "name": "Phillies" },
+    144: { "abbr": "ATL", "name": "Braves" },
+    145: { "abbr": "CWS", "name": "White Sox" },
+    146: { "abbr": "MIA", "name": "Marlins" },
+    147: { "abbr": "NYY", "name": "Yankees" },
+    158: { "abbr": "MIL", "name": "Brewers" },
 }
 
-
-# Can be customized, but names in the config.json file must match
-_TEAM_NAME_ID = {
-    "Athletics": 133,
-    "Pirates": 134,
-    "Padres": 135,
-    "Mariners": 136,
-    "Giants": 137,
-    "Cardinals": 138,
-    "Rays": 139,
-    "Rangers": 140,
-    "Blue Jays": 141,
-    "Twins": 142,
-    "Phillies": 143,
-    "Braves": 144,
-    "White Sox": 145,
-    "Marlins": 146,
-    "Yankees": 147,
-    "Brewers": 158,
-    "Angels": 108,
-    "D-backs": 109,
-    "Orioles": 110,
-    "Red Sox": 111,
-    "Cubs": 112,
-    "Reds": 113,
-    "Guardians": 114,
-    "Rockies": 115,
-    "Tigers": 116,
-    "Astros": 117,
-    "Royals": 118,
-    "Dodgers": 119,
-    "Nationals": 120,
-    "Mets": 121,
-}
+# Convenience dictionaries for quick lookups
+TEAM_ID_ABBR  = { ID: t["abbr"] for ID, t in _TEAMS.items() }
+TEAM_ID_NAME  = { ID: t["name"] for ID, t in _TEAMS.items() }
+_TEAM_NAME_ID = { t["name"]: ID for ID, t in _TEAMS.items() }
 
 def get_team_id(team_name):
     try:
@@ -115,3 +57,31 @@ def get_team_id(team_name):
         # this function is only ever given user's config as input
         # so we provide a more exact error message
         raise ValueError(f"Unknown team name: {team_name}")
+    
+def _fetch_team_data():
+    import json, os, statsapi
+
+    SPORT_ID = "1"
+    _teams = statsapi.get("teams", { "sportId": SPORT_ID })["teams"]
+    _teams.sort(key=lambda t: t["id"])
+
+    teams = {}
+
+    for team in _teams:
+        teams[team["id"]] = {
+            "abbr": team["abbreviation"],
+            "name": team["name"],
+        }
+
+    log_path = os.path.join(os.path.dirname(__file__), "..", "logs", "teams.log")
+    norm_path = os.path.normpath(log_path)
+
+    with open(norm_path, "w") as f:
+        json.dump(teams, f, indent=4)
+    
+    print(f"Team data written to {norm_path}")
+
+    return teams
+
+if __name__ == "__main__":
+    _fetch_team_data()

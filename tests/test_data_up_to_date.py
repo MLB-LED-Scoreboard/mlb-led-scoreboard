@@ -19,13 +19,17 @@ class TestStoredDataUpToDate(unittest.TestCase):
     def test_teams_complete(self):
         teams = statsapi.get("teams", {"sportIds": 1}, request_kwargs={"headers": data.headers.API_HEADERS})["teams"]
 
-        id_to_abbr = {t["id"]: t["abbreviation"] for t in teams}
+        # Merge in the special teams that are not in the API response
+        id_to_abbr = {t["id"]: t["abbreviation"] for t in teams} | \
+            {ID: t["abbr"] for ID, t in data.teams._SPECIAL_TEAMS.items()}
         self.assertEqual(id_to_abbr, data.teams.TEAM_ID_ABBR)
 
-        id_to_name = {t["id"]: t["teamName"] for t in teams}
+        id_to_name = {t["id"]: t["teamName"] for t in teams} | \
+            {ID: t["name"] for ID, t in data.teams._SPECIAL_TEAMS.items()}
         self.assertEqual(id_to_name, data.teams.TEAM_ID_NAME)
 
-        name_to_id = {t["teamName"]: t["id"] for t in teams}
+        name_to_id = {t["teamName"]: t["id"] for t in teams} | \
+            {t["name"]: ID for ID, t in data.teams._SPECIAL_TEAMS.items()}
         self.assertEqual(name_to_id, data.teams._TEAM_NAME_ID)
 
     def test_team_handles_unknown(self):
