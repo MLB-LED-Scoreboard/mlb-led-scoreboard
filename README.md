@@ -283,28 +283,27 @@ A default `config.example.json` file is included for reference. Copy this file t
                                           Check out the OpenWeather documentation (https://openweathermap.org/current#name) for more info.
                                           Ex: `"Chicago,il,us"`
   "metric_units"                  Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
+  "pregame"                       Bool    If enabled, will display the weather for the game's location on the pregame screen.
 
 "time_format"                     String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
-"full_team_names"                 Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
-"short_team_names_for_runs_hits"  Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
 "preferred_game_delay_multiplier" Integer This value multiplied by api_refresh_rate determines the preferred team update delay in seconds. Must be 0 or greater.
 "api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
-"pregame_weather"                 Bool    If enabled, will display the weather for the game's location on the pregame screen.
 "debug"                           Bool    Game and other debug data is written to your console.
 "demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
 ### Delaying Board Update
-* The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
+
+* The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the broadcast feed.
 * This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with api_refresh_rate=5 will delay the game updates by 10 seconds.
 * There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
 * Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  
 * If you set the * preferred_game_delay_multiplier=10 with api_refresh_rate=3, it will take 30-40 seconds for the buffer to fill and the board to delay.
 
 ### Additional Features
-* Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
+* Line score (RHE) - Runs are always shown on the games screen, but you can enable or adjust spacing of the line score display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
 
 * Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the `short` and `long` pitch description can be changed in data/pitches.py
 
@@ -340,6 +339,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 
 ## Personalization
 If you're feeling adventurous (and we highly encourage it!), the sections below outline how you can truly personalize your scoreboard and make it your own!
+
 ### Custom Board Layout
 You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `coordinates/` directory for more information.
 

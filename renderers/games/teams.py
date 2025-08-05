@@ -4,7 +4,7 @@ ABSOLUTE = "absolute"
 RELATIVE = "relative"
 
 def render_team_banner(
-    canvas, layout, team_colors, home_team, away_team, full_team_names, short_team_names_for_runs_hits, show_score,
+    canvas, layout, team_colors, home_team, away_team, show_score,
 ):
     away_colors = away_team.lookup_color(team_colors)
     home_colors = home_team.lookup_color(team_colors)
@@ -26,9 +26,7 @@ def render_team_banner(
         accent_color = home_colors['accent'] if team == "home" else away_colors['accent']
         __draw_filled_box(canvas, accent_coords[team], accent_color)
 
-    use_full_team_names = can_use_full_team_names(
-        canvas, full_team_names, short_team_names_for_runs_hits, [home_team, away_team]
-    )
+    use_full_team_names = can_use_full_team_names(layout, [home_team, away_team])
 
     away_name_end_pos = __render_team_text(canvas, layout, away_colors['text'], away_team, "away", use_full_team_names)
     home_name_end_pos = __render_team_text(canvas, layout, home_colors['text'], home_team, "home", use_full_team_names)
@@ -47,29 +45,27 @@ def render_team_banner(
         __render_team_score(canvas, layout, home_colors['text'], home_team, "home", score_spacing)
 
 
-def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
-    # Settings enabled and size is able to display it
-    if enabled and canvas.width > 32:
+def can_use_full_team_names(layout, teams):
+    name_coords = layout.coords("teams.name")
 
-        # If config enabled for abbreviating if runs or hits takes up an additional column (i.e. 9 -> 10)
-        if abbreviate_on_overflow:
+    # Global setting is disabled
+    if not name_coords.get("full", False):
+        return False
 
-            # Iterate through the teams to see if we should abbreviate
-            for team in teams:
-                if team.runs > 9 or team.hits > 9:
-                    return False
+    # Setting for abbreviating if a line score contains more than 3 total digits (i.e. R, H, or E >= 10)
+    if name_coords.get("shorten_on_high_line_score", False):
 
-            # Else use full names if no stats column has overflowed
-            return True
+        # For each team, check digits for each line score item. Disable full names if any exceed a single digit.
+        # A 10 error game would be rough, but the edge case is covered...
+        for team in teams:
+            if team.runs > 9 or team.hits > 9 or team.errors > 9:
+                return False
 
-        # If config for abbreviating is not set, use full name
-        else:
-            return True
+        # No line score column has overflowed
+        return True
 
-    # Fallback to abbreviated names for all cases
-    return False
-
-
+    # Global setting is enabled
+    return True
 
 
 def __render_team_text(canvas, layout, text_color, team, homeaway, full_team_names):
@@ -104,26 +100,26 @@ def __render_record_text(canvas, layout, text_color, team, homeaway, origin):
 
 def __render_score_component(canvas, layout, text_color, homeaway, coords, component_val, width_chars):
     # The coords passed in are the rightmost pixel.
-    font = layout.font(f"teams.runs.{homeaway}")
+    font = layout.font(f"teams.line_score.{homeaway}")
     font_width = font["size"]["width"]
     # Number of pixels between runs/hits and hits/errors.
-    rhe_coords = layout.coords("teams.runs.runs_hits_errors")
+    line_score_coords = layout.coords("teams.line_score")
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     component_val = str(component_val)
     # Draw each digit from right to left.
     for i, c in enumerate(component_val[::-1]):
-        if i > 0 and rhe_coords["compress_digits"]:
+        if i > 0 and line_score_coords["compress_digits"]:
             coords["x"] += 1
         char_draw_x = coords["x"] - font_width * (i + 1)  # Determine character position
         graphics.DrawText(canvas, font["font"], char_draw_x, coords["y"], text_color_graphic, c)
-    if rhe_coords["compress_digits"]:
+    if line_score_coords["compress_digits"]:
         coords["x"] += width_chars - len(component_val)  # adjust for compaction on values not rendered
-    coords["x"] -= font_width * width_chars + rhe_coords["spacing"] - 1  # adjust coordinates for next score.
+    coords["x"] -= font_width * width_chars + line_score_coords["spacing"] - 1  # adjust coordinates for next score.
 
 
 def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacing):
-    coords = layout.coords(f"teams.runs.{homeaway}").copy()
-    if layout.coords("teams.runs.runs_hits_errors")["show"]:
+    coords = layout.coords(f"teams.line_score.{homeaway}").copy()
+    if layout.coords("teams.line_score")["show_hits_and_errors"]:
         __render_score_component(
             canvas, layout, text_color, homeaway, coords, team.errors, score_spacing["errors"]
         )
