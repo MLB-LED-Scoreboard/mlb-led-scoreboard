@@ -22,7 +22,6 @@ API_FIELDS = (
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
 
-GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
