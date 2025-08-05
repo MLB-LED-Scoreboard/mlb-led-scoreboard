@@ -107,6 +107,9 @@ venv.bak/
 # Ignore backups
 *.bak
 
+# Ignore migration checkpoints
+migrations/checkpoint.txt
+
 # Ignore our customized config.json
 /config*.json
 emulator_config.json
