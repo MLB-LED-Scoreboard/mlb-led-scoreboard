@@ -74,7 +74,7 @@ class Execute(CLICommand):
                 checkpoints = f.readlines()
                 return checkpoints[-1].strip()
         except (FileNotFoundError, IndexError):
-            return "0.0.0"
+            return "0"
 
 class Rollback(CLICommand):
     class RollbackFailed(Exception):
@@ -115,7 +115,7 @@ class Rollback(CLICommand):
                 checkpoints = f.readlines()
                 return checkpoints[-1].strip()
         except (FileNotFoundError, IndexError):
-            return "0.0.0"
+            return "0"
 
 
 if __name__ == "__main__":
