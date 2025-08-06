@@ -17,9 +17,6 @@ import json
 
 
 class {}(ConfigMigration):
-    PRIOR_VERSION  = "{}"
-    TARGET_VERSION = "{}"
-
     def up(self):
         raise NotImplementedError("Migration logic not implemented.")
 
@@ -53,16 +50,16 @@ class Execute(CLICommand):
         print("Executing migrations...")
 
         migrations = MigrationLoader.load_migrations()
-        for migration_class in migrations:
+        for version, migration_class in migrations:
             print("=" * 80)
-            print(f"MIGRATE {migration_class.__name__} - Version: {migration_class.TARGET_VERSION}")
+            print(f"MIGRATE {migration_class.__name__} - Version: {version}")
             print("=" * 80)
 
             migration = migration_class()
 
-            if self.last_checkpoint() < migration.TARGET_VERSION:
+            if self.last_checkpoint() < version:
                 migration.up()
-                self.create_checkpoint(migration.TARGET_VERSION)
+                self.create_checkpoint(version)
                 print("Done.")
             else:
                 print("Up to date, skipping migration.")
@@ -87,14 +84,14 @@ class Rollback(CLICommand):
         print("Rolling back most recent migration...")
 
         migrations = MigrationLoader.load_migrations()
-        for migration_class in migrations[::-1]:
+        for version, migration_class in migrations[::-1]:
             print("=" * 80)
-            print(f"ROLLBACK {migration_class.__name__} - Version: {migration_class.TARGET_VERSION}")
+            print(f"ROLLBACK {migration_class.__name__} - Version: {version}")
             print("=" * 80)
 
             migration = migration_class()
 
-            if self.last_checkpoint() == migration.TARGET_VERSION:
+            if self.last_checkpoint() == version:
                 migration.down()
                 self.create_checkpoint()
                 print("Done.")

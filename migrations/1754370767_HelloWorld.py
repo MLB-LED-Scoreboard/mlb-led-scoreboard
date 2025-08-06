@@ -3,16 +3,14 @@ from migrations._base import ConfigMigration
 import json
 
 
-class AddVersionToAllConfigs(ConfigMigration):
-    TARGET_VERSION = "1754370767"
-
+class HelloWorld(ConfigMigration):
     def up(self):
         for _config_type, config_files in self.configs.items():
             for config_file in config_files:
                 with open(config_file, 'r') as f:
                     content = json.load(f)
 
-                content["version"] = self.TARGET_VERSION
+                content["new_key"] = "Hello world!"
 
                 with open(config_file, 'w') as f:
                     json.dump(content, f, indent=2)
@@ -23,8 +21,8 @@ class AddVersionToAllConfigs(ConfigMigration):
                 with open(config_file, 'r') as f:
                     content = json.load(f)
 
-                if "version" in content:
-                    del content["version"]
+                if "new_key" in content:
+                    del content["new_key"]
 
                 with open(config_file, 'w') as f:
                     json.dump(content, f, indent=2)

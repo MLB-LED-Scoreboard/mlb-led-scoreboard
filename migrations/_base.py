@@ -62,9 +62,9 @@ class MigrationLoader:
         for path in sorted((pathlib.Path(__file__).parent).glob("*.py")):
             if path.name[0].isdigit():
                 migration_module = getattr(__import__("migrations." + path.stem), path.stem)
-                _, migration_class_name = path.stem.split('_', 1)
+                version, migration_class_name = path.stem.split('_', 1)
                 migration_class = getattr(migration_module, migration_class_name.replace('_', ''))
 
-                migrations.append(migration_class)
+                migrations.append((version, migration_class))
 
         return migrations
