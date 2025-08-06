@@ -45,7 +45,7 @@ class {}(ConfigMigration):
             raise ValueError("Migration name must be a valid Python identifier.")
 
 
-class Execute(CLICommand):
+class Up(CLICommand):
     def execute(self):
         print("Executing migrations...")
 
@@ -76,7 +76,7 @@ class Execute(CLICommand):
         except (FileNotFoundError, IndexError):
             return "0"
 
-class Rollback(CLICommand):
+class Down(CLICommand):
     class RollbackFailed(Exception):
         pass
 
@@ -126,11 +126,11 @@ if __name__ == "__main__":
     generate_parser = subparsers.add_parser('generate', help='Generate a new migration file')
     generate_parser.add_argument('migration_name', type=str, help='Name of the migration')
 
-    # "migrate" command
-    migrate_parser = subparsers.add_parser('execute', help='Run migrations')
+    # "up" command
+    up_parser = subparsers.add_parser('up', help='Run migrations')
 
-    # "rollback" command
-    rollback_parser = subparsers.add_parser('rollback', help='Roll back the last migration (if possible)')
+    # "down" command
+    down_parser = subparsers.add_parser('down', help='Roll back the last migration (if possible)')
 
     args = parser.parse_args()
 
@@ -138,10 +138,10 @@ if __name__ == "__main__":
         command = Generate(args.migration_name)
         command.execute()
 
-    if args.command == "execute":
-        command = Execute()
+    if args.command == "up":
+        command = Up()
         command.execute()
 
-    if args.command == "rollback":
-        command = Rollback()
+    if args.command == "down":
+        command = Down()
         command.execute()
