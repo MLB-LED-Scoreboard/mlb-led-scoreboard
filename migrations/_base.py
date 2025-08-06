@@ -107,7 +107,7 @@ class ConfigMigration:
 
                 current = current[part]
 
-            del current[keypath.parts[-1]]
+            del current[parts[-1]]
 
     @cast_keypaths("keypath_from", "keypath_to")
     def move_key(self, keypath_from, keypath_to, configs):
@@ -140,7 +140,22 @@ class ConfigMigration:
     @cast_keypaths("keypath")
     def rename_key(self, keypath, new_name, configs):
         '''Rename a key at the specified keypath.'''
-        pass
+        for content in self.__enumerate_configs(configs):
+            parts = keypath.parts
+            current = content
+
+            for part in parts[:-1]:
+                if part not in current:
+                    return
+
+                current = current[part]
+
+            if parts[-1] not in current:
+                raise KeyError(f"Keypath '{keypath.keypath}' does not exist.")
+
+            value = current[parts[-1]]
+            del current[parts[-1]]
+            current[new_name] = value
 
     def __enumerate_configs(self, configs):
         '''
