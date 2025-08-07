@@ -1,4 +1,4 @@
-from migrations._base import ConfigMigration
+from migrations import ConfigMigration
 
 import json
 

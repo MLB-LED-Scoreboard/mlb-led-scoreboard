@@ -109,6 +109,7 @@ venv.bak/
 
 # Ignore migration checkpoints
 migrations/checkpoint.txt
+*.migrate
 
 # Ignore our customized config.json
 /config*.json
