@@ -54,5 +54,15 @@
   "pregame_weather": true,
   "scrolling_speed": 2,
   "debug": false,
-  "demo_date": false
+  "demo_date": false,
+  "new_key": "Hello world!",
+  "helloworld2": "Hello world!",
+  "path": {
+    "to": {
+      "the": {
+        "renamed_key2": 1
+      }
+    }
+  },
+  "test_transaction": true
 }
