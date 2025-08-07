@@ -11,8 +11,9 @@ class {}(ConfigMigration):
     def up(self):
         raise NotImplementedError("Migration logic not implemented.")
 
-    def down(self):
-        super().down()
+    # def down(self):
+    #     Implement the logic to revert the migration if necessary.
+    #     Raises IrreversibleMigration by default.
 '''
 
 class Generate(CLICommand):
