@@ -367,5 +367,7 @@
       "x": 29,
       "y": 31
     }
-  }
+  },
+  "new_key": "Hello world!",
+  "helloworld2": "Hello world!"
 }

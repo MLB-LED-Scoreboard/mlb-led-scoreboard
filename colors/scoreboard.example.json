@@ -307,5 +307,7 @@
       "g": 14,
       "b": 25
     }
-  }
+  },
+  "new_key": "Hello world!",
+  "helloworld2": "Hello world!"
 }

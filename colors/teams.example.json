@@ -1035,5 +1035,7 @@
       "g": 255,
       "b": 255
     }
-  }
+  },
+  "new_key": "Hello world!",
+  "helloworld2": "Hello world!"
 }
