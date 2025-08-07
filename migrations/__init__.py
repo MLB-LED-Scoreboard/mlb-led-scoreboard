@@ -235,14 +235,14 @@ class ConfigMigration:
         if not isinstance(configs, list):
             configs = [configs]
 
-        for config_file in configs:
-            with open(config_file, 'r') as f:
-                content = json.load(f)
-            
-            yield content
+        with Transaction() as transaction:
+            for config_file in configs:
+                with open(config_file, 'r') as f:
+                    content = json.load(f)
+                
+                yield content
 
-            with open(config_file, 'w') as f:
-                json.dump(content, f, indent=2)
+                transaction.write(config_file, content)
 
 class MigrationLoader:
     '''
