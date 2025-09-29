@@ -20,6 +20,7 @@ import threading
 import time
 
 from PIL import Image
+from pathlib import Path
 
 # Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
@@ -159,6 +160,10 @@ if __name__ == "__main__":
     # Check for led configuration arguments
     command_line_args = args()
     matrixOptions = led_matrix_options(command_line_args)
+
+    if driver.is_emulated():
+        matrixOptions.emulator_title = f"MLB LED Scoreboard v{__version__}"
+        matrixOptions.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
 
     # Initialize the matrix
     matrix = RGBMatrix(options=matrixOptions)
