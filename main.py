@@ -59,7 +59,8 @@ def main(matrix, config_base):
         debug.log("Using rgbmatrix version %s", __version__)
 
     # Draw startup screen
-    logo_path = os.path.abspath("./assets/mlb-w" + str(matrix.width) + "h" + str(matrix.height) + ".png")
+    logo_filename = "mlb-w{}h{}.png".format(matrix.width, matrix.height)
+    logo_path = (Path(__file__).parent / "assets" / logo_filename).resolve()
 
     # MLB image disabled when using renderer, for now.
     # see: https://github.com/ty-porter/RGBMatrixEmulator/issues/9#issuecomment-922869679
