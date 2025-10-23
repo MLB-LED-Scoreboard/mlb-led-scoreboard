@@ -43,7 +43,7 @@
 	},
 	"time_format": "12h",
 	"end_of_day": "00:00",
-	"preferred_game_delay_multiplier": 0,
+	"sync_delay_seconds": 0,
 	"api_refresh_rate" : 5,
 	"scrolling_speed": 2,
 	"debug": false,
