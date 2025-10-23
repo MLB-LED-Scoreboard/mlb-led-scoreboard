@@ -289,10 +289,16 @@ A default `config.example.json` file is included for reference. Copy this file t
 "end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
 "sync_delay_seconds"              Integer Delays game updates to sychronize with broadcasts. May introduce delay before rendering live games. Must be at least 0, defaults to 0 (no delay).
-"api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
+"api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds. Must be at least 3, default is 10.
 "debug"                           Bool    Game and other debug data is written to your console.
 "demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
+
+### Synchronizing with Broadcasts
+
+You can manually delay live game updates to synchronize the scoreboard to live broadcasts. The API is typically faster than video feeds, so you may wish to delay the scoreboard to compensate. You may specify the total delay via the `sync_delay_seconds` config option.
+
+Note that the actual delay may be slightly higher than your specified setting since it is dependent on the API refresh rate. Therefore you may want to slightly **decrease** the sync delay to compensate.
 
 ### Additional Features
 * Line score (RHE) - Runs are always shown on the games screen, but you can enable or adjust spacing of the line score display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.

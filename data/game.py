@@ -38,11 +38,11 @@ class Game:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts, series_status, sync_rate, api_refresh_rate):
+    def __init__(self, game_id, date, broadcasts, series_status, sync_amount, api_refresh_rate):
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
-        self._data_wait_queue = CircularQueue(sync_rate + 1)
+        self._data_wait_queue = CircularQueue(sync_amount + 1)
         self._current_data = {}
         self._broadcasts = broadcasts
         self._series_status = series_status
