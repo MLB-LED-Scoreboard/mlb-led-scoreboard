@@ -124,7 +124,7 @@ class TestValidateConfigMethods(unittest.TestCase):
         self.assertEqual(
           custom_config_files(),
           [
-            (ROOT_DIR, "config.json", { "ignored_keys": [], "renamed_keys": {"preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier"} }),
+            (ROOT_DIR, "config.json", { "ignored_keys": [], "renamed_keys": {} }),
             (COORDINATES_DIR, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {} }),
             (COLORS_DIR, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {} }),
           ]

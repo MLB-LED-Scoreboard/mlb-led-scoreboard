@@ -22,7 +22,6 @@ API_FIELDS = (
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
 
-GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
@@ -39,11 +38,11 @@ class Game:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts, series_status, preferred_game_delay_multiplier, api_refresh_rate):
+    def __init__(self, game_id, date, broadcasts, series_status, sync_amount, api_refresh_rate):
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
-        self._data_wait_queue = CircularQueue(preferred_game_delay_multiplier + 1)
+        self._data_wait_queue = CircularQueue(sync_amount + 1)
         self._current_data = {}
         self._broadcasts = broadcasts
         self._series_status = series_status
