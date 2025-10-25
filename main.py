@@ -163,7 +163,7 @@ if __name__ == "__main__":
     matrixOptions = led_matrix_options(command_line_args)
 
     if driver.is_emulated():
-        matrixOptions.emulator_title = f"MLB LED Scoreboard v{__version__}"
+        matrixOptions.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
         matrixOptions.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
 
     # Initialize the matrix
