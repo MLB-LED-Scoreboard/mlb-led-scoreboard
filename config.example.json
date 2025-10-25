@@ -1,53 +1,58 @@
 {
-	"preferred": {
-		"teams": ["Cubs"],
-		"divisions": ["NL Central", "NL Wild Card"]
-	},
-	"news_ticker": {
-		"team_offday": true,
-		"always_display": false,
-		"preferred_teams": true,
-		"display_no_games_live": false,
-		"traderumors": true,
-		"mlb_news": true,
-		"countdowns": true,
-		"date": true,
-		"date_format": "%A, %B %-d"
-	},
-	"standings": {
-		"team_offday": false,
-		"mlb_offday": true,
-		"always_display": false,
-		"display_no_games_live": true
-	},
-	"rotation": {
-		"enabled": true,
-		"scroll_until_finished": true,
-		"only_preferred": false,
-		"only_live": true,
-		"rates": {
-			"live": 15.0,
-			"final": 15.0,
-			"pregame": 15.0
-		},
-		"while_preferred_team_live": {
-			"enabled": false,
-			"during_inning_breaks": false
-		}
-	},
-	"weather": {
-		"apikey": "YOUR_API_KEY_HERE",
-		"location": "Chicago,il,us",
-		"metric_units": false
-	},
-	"time_format": "12h",
-	"end_of_day": "00:00",
-	"full_team_names": true,
-	"short_team_names_for_runs_hits": true,
-	"preferred_game_delay_multiplier": 0,
-	"api_refresh_rate" : 5,
-	"pregame_weather": true,
-	"scrolling_speed": 2,
-	"debug": false,
-	"demo_date": false
+  "preferred": {
+    "teams": [
+      "Cubs"
+    ],
+    "divisions": [
+      "NL Central",
+      "NL Wild Card"
+    ]
+  },
+  "news_ticker": {
+    "team_offday": true,
+    "always_display": false,
+    "preferred_teams": true,
+    "display_no_games_live": false,
+    "traderumors": true,
+    "mlb_news": true,
+    "countdowns": true,
+    "date": true,
+    "date_format": "%A, %B %-d"
+  },
+  "standings": {
+    "team_offday": false,
+    "mlb_offday": true,
+    "always_display": false,
+    "display_no_games_live": true
+  },
+  "rotation": {
+    "enabled": true,
+    "scroll_until_finished": true,
+    "only_preferred": false,
+    "only_live": true,
+    "rates": {
+      "live": 15.0,
+      "final": 15.0,
+      "pregame": 15.0
+    },
+    "while_preferred_team_live": {
+      "enabled": false,
+      "during_inning_breaks": false
+    }
+  },
+  "weather": {
+    "apikey": "YOUR_API_KEY_HERE",
+    "location": "Chicago,il,us",
+    "metric_units": false
+  },
+  "time_format": "12h",
+  "end_of_day": "00:00",
+  "full_team_names": true,
+  "short_team_names_for_runs_hits": true,
+  "preferred_game_delay_multiplier": 0,
+  "api_refresh_rate": 5,
+  "pregame_weather": true,
+  "scrolling_speed": 2,
+  "debug": false,
+  "demo_date": false
 }
