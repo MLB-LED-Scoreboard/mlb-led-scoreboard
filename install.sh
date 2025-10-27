@@ -8,7 +8,7 @@ SKIP_CONFIG=false
 SKIP_MATRIX=false
 NO_SUDO=false
 SKIP_VENV=false
-DRIVER_SHA=master
+DRIVER_SHA=d8778b5 # until https://github.com/hzeller/rpi-rgb-led-matrix/pull/1818 is merged
 FORCE=false
 
 usage() {
@@ -66,7 +66,7 @@ while [ $# -gt 0 ]; do
         shift
         ;;
     -d | --driver)
-        DRIVER="$2"
+        DRIVER_SHA="$2"
         shift 2
         ;;
     -f | --force)
