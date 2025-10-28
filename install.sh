@@ -35,6 +35,35 @@ USAGE
     exit 1
 }
 
+handle_error() {
+    local exit_code="$?"
+    local line_number="$LINENO"
+
+    # Red
+    printf "\e[31m"                                                                            >&2
+    echo                                                                                       >&2
+    echo "| WARNING |========================================================================" >&2
+    echo "  mlb-led-scoreboard failed to install correctly!"                                   >&2
+    echo                                                                                       >&2
+    echo "  Ensure you are installing from the project directory with:"                        >&2
+    echo                                                                                       >&2
+    echo "      sudo ./install.sh"                                                             >&2
+    echo                                                                                       >&2
+    echo "  You may be able to bypass this error by reinstalling with the --force flag"        >&2
+    echo                                                                                       >&2
+    echo "      sudo ./install.sh --force"                                                     >&2
+    echo                                                                                       >&2
+    echo "  Debug information:"                                                                >&2
+    echo "      | exit_code:   $exit_code"                                                     >&2
+    echo "      | line_number: $line_number"                                                   >&2
+    echo "===================================================================================" >&2
+    echo                                                                                       >&2
+    printf "\e[0m"                                                                             >&2
+    # End red
+
+    exit "$exit_code"
+}
+
 while [ $# -gt 0 ]; do
     case "$1" in
     -p | --skip-python)
@@ -83,7 +112,9 @@ while [ $# -gt 0 ]; do
 done
 
 if [ "$FORCE" = false ]; then
-    set -euo pipefail
+    set -Eeuo pipefail
+
+    trap handle_error ERR
 fi
 
 if [ "$SKIP_PYTHON" = false ]; then
@@ -167,7 +198,13 @@ if [ "$SKIP_MATRIX" = false ]; then
     # Checkout the branch or commit specified for rpi-rgb-led-matrix
     git fetch
     git checkout $DRIVER_SHA
-    git pull
+
+    # If we're on 'detached HEAD' state, git pull has a non-zero exit and fails
+    # Current branch will be a zero-length string (-z) in this state, so test (-n) for non-empty string
+    if [ -n "$(git branch --show-current)" ]; then
+        git pull
+    fi
+
     make build-python PYTHON="$PYTHON" CYTHON=cython3
     sudo make install-python PYTHON="$PYTHON"
 
@@ -216,7 +253,7 @@ else
     # Yellow
     printf "\e[33m"
     echo
-    echo "==================================================================================="
+    echo "| NOTICE |========================================================================="
     echo "  If you have custom configurations, colors, or coordinates, it's recommended to"
     echo "  update them with the latest options at this time."
     echo
