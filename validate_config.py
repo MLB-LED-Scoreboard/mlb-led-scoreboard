@@ -7,9 +7,7 @@ COLORS_DIR      = os.path.join(ROOT_DIR, "colors")
 VALIDATIONS = {
   ROOT_DIR: {
     "ignored_keys": [],
-    "renamed_keys": {
-      "preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier",
-    },
+    "renamed_keys": {},
   },
   COORDINATES_DIR: {
     "ignored_keys": [

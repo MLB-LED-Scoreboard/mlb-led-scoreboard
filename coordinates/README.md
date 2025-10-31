@@ -18,10 +18,12 @@ Any scoreboard element that prints text can accept a `"font_name"` attribute. Su
 The layout can have a couple of different states where things are rendered differently. Adding an object named for the layout state and giving it the same properties from the parent object will change the positioning of that parent object only when that state is found. For instance, when a game enters the `Warmup` state, the text `Warmup` appears under the time and the scrolling text is moved down.
 * `warmup` will	only render on the `pregame` screen and appears when a game enters the `Warmup` status. This usually happens 15-20 minutes before a game begins.
 * `nohit` and `perfect_game` will only render on the live game screen and appears when a game returns that it is currently a no hitter or perfect game and the `innings_until_display` of `nohitter` has passed.
-* The `runs_hits_errors` section enables the addition of hits and errors to the game screen.  
-  * `show` turns this feature on or off.
+* The `line_score` section configures the line score (RHE) on the game screen.
+  * Runs are always displayed.
+  * `show_hits_and_errors` toggles displaying hits and errors.
   * `compress_digits` will reduce the space between digits when the number of runs or hits is > 9.
   * `spacing` is the number of pixels between the runs/hits and hits/errors.
+  * When the line score is high (greater than 3 total digits), use `teams.name.shorten_on_high_line_score` to shorten team names to prevent overflow.
 
 ## Pitch Data
 * `enabled` (true/false) Turn feature on/off
