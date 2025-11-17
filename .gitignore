@@ -129,3 +129,6 @@ configs/
 # Ignore logs
 logs.txt
 logs/
+
+# Sqlite
+*.db
