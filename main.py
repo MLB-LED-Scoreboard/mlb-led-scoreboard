@@ -41,11 +41,11 @@ def main(matrix, config_base):
     logger = logging.getLogger("mlbled")
     if config.debug:
         logger.setLevel(logging.DEBUG)
+        if config.debug == "with-statsapi":
+            # Assign the scoreboard logger to statsapi
+            statsapi.logger = logger
     else:
         logger.setLevel(logging.WARNING)
-
-    # Assign the scoreboard logger to statsapi
-    statsapi.logger = logger
 
     # Print some basic info on startup
     debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
@@ -149,8 +149,6 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
                     data.advance_to_next_game()
         else:
             data.refresh_game()
-
-
 
 
 def __render_main(matrix, data):
