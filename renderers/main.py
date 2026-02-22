@@ -226,9 +226,9 @@ class MainRenderer:
                 self.data.config.time_format,
                 self.scrolling_text_pos,
             )
-            # TODO(BMW) make scrolling_text_pos something persistent/news-specific
-            # not strictly necessary but would be nice, avoids only seeing first headline over and over
             self.__update_scrolling_text_pos(pos, self.canvas.width)
+            if self.scrolling_text_pos == self.canvas.width:
+                self.data.headlines.advance_ticker()
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
@@ -379,14 +379,5 @@ def any_of(*conds) -> Callable[[], bool]:
 
     def cond():
         return any(c() for c in conds)
-
-    return cond
-
-
-def all_of(*conds) -> Callable[[], bool]:
-    """Create a condition that is true if all of the given conditions are true"""
-
-    def cond():
-        return all(c() for c in conds)
 
     return cond
