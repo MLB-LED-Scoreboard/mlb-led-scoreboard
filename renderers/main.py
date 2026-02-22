@@ -266,6 +266,19 @@ class MainRenderer:
                 return
         self.scrolling_text_pos = pos_after_scroll
 
+    def __update_layout_state(self, game):
+        import data.config.layout as layout
+
+        self.config.layout.set_state()
+        if game.status() == status.WARMUP:
+            self.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)
+
+        if game.is_no_hitter():
+            self.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
+
+        if game.is_perfect_game():
+            self.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
+
     def no_games_cond(self) -> bool:
         """A condition that is true only while there are no games live"""
         return not self.data.schedule.games_live()

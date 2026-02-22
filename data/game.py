@@ -9,6 +9,10 @@ from data import teams
 from data.update import UpdateStatus
 from data.delay_buffer import CircularQueue
 from data.uniforms import Uniforms
+from data.scoreboard import Scoreboard
+from data.scoreboard.postgame import Postgame
+from data.scoreboard.pregame import Pregame
+from data.time_formats import TIME_FORMAT_24H
 import data.headers
 
 API_FIELDS = (
@@ -23,6 +27,7 @@ API_FIELDS = (
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
 
 GAME_UPDATE_RATE = 10
+
 
 class Game:
     @staticmethod
@@ -56,7 +61,11 @@ class Game:
             self.starttime = time.time()
             try:
                 debug.log("Fetching data for game %s", str(self.game_id))
-                live_data = statsapi.get("game", {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params, request_kwargs={"headers": data.headers.API_HEADERS} )
+                live_data = statsapi.get(
+                    "game",
+                    {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params,
+                    request_kwargs={"headers": data.headers.API_HEADERS},
+                )
                 # we add a delay to avoid spoilers. During construction, this will still yield live data, but then
                 # it will recycle that data until the queue is full.
                 self._data_wait_queue.push(live_data)
@@ -67,7 +76,9 @@ class Game:
                     debug.log("Getting game status from schedule for game with strange date!")
                     try:
                         scheduled = statsapi.get(
-                            "schedule", {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS}
+                            "schedule",
+                            {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS},
+                            request_kwargs={"headers": data.headers.API_HEADERS},
                         )
                         self._status = next(
                             g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date
@@ -76,6 +87,7 @@ class Game:
                         debug.error("Failed to get game status from schedule")
 
                 self._uniform_data.update()
+                self.print_game_data_debug()
                 return UpdateStatus.SUCCESS
             except:
                 debug.exception("Networking Error while refreshing the current game data.")
@@ -348,3 +360,10 @@ class Game:
     @staticmethod
     def _format_id(player):
         return player if "ID" in str(player) else "ID" + str(player)
+
+    def print_game_data_debug(self):
+        debug.log("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
+        debug.log("Game is %d seconds behind", self.current_delay())
+        debug.log("Pre: %s", Pregame(self, TIME_FORMAT_24H))
+        debug.log("Live: %s", Scoreboard(self))
+        debug.log("Final: %s", Postgame(self))

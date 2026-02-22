@@ -9,3 +9,12 @@ class UpdateStatus(Enum):
 
 def ok(status: UpdateStatus) -> bool:
     return status in [UpdateStatus.SUCCESS, UpdateStatus.DEFERRED]
+
+
+def merge(*statuses: UpdateStatus) -> UpdateStatus:
+    if UpdateStatus.FAIL in statuses:
+        return UpdateStatus.FAIL
+    elif UpdateStatus.SUCCESS in statuses:
+        return UpdateStatus.SUCCESS
+    else:
+        return UpdateStatus.DEFERRED
