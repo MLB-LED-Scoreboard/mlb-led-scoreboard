@@ -8,7 +8,7 @@ from data import status
 from data.game import Game
 from data.update import UpdateStatus
 
-GAMES_REFRESH_RATE = 6 * 60
+GAMES_REFRESH_RATE = 30
 
 
 class Schedule:
@@ -80,36 +80,35 @@ class Schedule:
     def get_preferred_game(self):
         team_index = self._game_index_for_preferred_team()
         self.current_idx = team_index
-        return self.__current_game()
+        scheduled = self.__current_game()
+        if scheduled is not None:
+            return Game.from_scheduled(
+                scheduled, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
+            )
+        else:
+            return None
 
     def next_game(self):
         # We only need to check the preferred team's game status if we're
         # rotating during mid-innings because, otherwise, we would never
-        # have rotated off of it up in data
-        if (
-            not self.config.rotation_preferred_team_live_enabled
-            and self.config.rotation_preferred_team_live_mid_inning
-            and not self.is_offday_for_preferred_team()
-        ):
+        # have rotated off of it
+        if not self.config.rotation_preferred_team_live_enabled and self.config.rotation_preferred_team_live_mid_inning:
             game_index = self._game_index_for_preferred_team()
             if game_index >= 0:  # we return -1 if no live games for preferred team
                 scheduled_game = self._games[game_index]
-                preferred_game = Game.from_scheduled(scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate)
-                if preferred_game is not None:
-                    debug.log(
-                        "Preferred Team's Game Status: %s, %s %d",
-                        preferred_game.status(),
-                        preferred_game.inning_state(),
-                        preferred_game.inning_number(),
-                    )
+                debug.log(
+                    "Preferred Team's Game Status: %s, %s %d",
+                    scheduled_game["status"],
+                    scheduled_game["inning_state"],
+                    scheduled_game["current_inning"],
+                )
 
-                    if status.is_live(preferred_game.status()) and not status.is_inning_break(
-                        preferred_game.inning_state()
-                    ):
-                        self.current_idx = game_index
-                        debug.log("Moving to preferred game, index: %d", self.current_idx)
-                        return preferred_game
-
+                if status.is_live(scheduled_game["status"]) and not status.is_inning_break(
+                    scheduled_game["inning_state"]
+                ):
+                    self.current_idx = game_index
+                    debug.log("Moving to preferred game, index: %d", self.current_idx)
+                    return scheduled_game
 
         self.current_idx = self.__next_game_index()
         return self.__current_game()
@@ -120,14 +119,9 @@ class Schedule:
 
         team_id = data.teams.get_team_id(self.config.preferred_teams[0])
         return next(
-            (
-                i
-                for i, game in enumerate(self._games)
-                if team_id in (game["away_id"], game["home_id"])
-            ),
-            -1, # no preferred team game
+            (i for i, game in enumerate(self._games) if team_id in (game["away_id"], game["home_id"])),
+            -1,  # no preferred team game
         )
-
 
     def __next_game_index(self):
         counter = self.current_idx + 1
@@ -137,10 +131,10 @@ class Schedule:
         return counter
 
     def __current_game(self):
-        if self._games:
-            scheduled_game = self._games[self.current_idx]
-            return Game.from_scheduled(scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate)
-        return None
+        try:
+            return self._games[self.current_idx]
+        except:
+            return None
 
     @staticmethod
     def __filter_list_of_games(games, filter_teams):

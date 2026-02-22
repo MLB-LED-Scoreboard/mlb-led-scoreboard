@@ -1,27 +1,36 @@
-import time
-from data.screens import ScreenType
+from typing import Literal
 
+from data import update
 import debug
-from data import status
 from data.game import Game
 from data.headlines import Headlines
 from data.schedule import Schedule
 from data.standings import Standings
 from data.update import UpdateStatus
 from data.weather import Weather
+from data.screens import ScreenType
 
 
 class Data:
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         # Save the parsed config
         self.config = config
 
         # get schedule
         self.schedule: Schedule = Schedule(config)
+
         # NB: Can return none, but shouldn't matter?
         self.current_game: Game = self.schedule.get_preferred_game()
 
-        self.game_changed_time = time.time()
+        # render thread can switch to next
+        self.next_game: Game = Game.from_scheduled(
+            self.schedule.next_game(), self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
+        )
+        self.rendering: Literal["current"] | Literal["next"] = "current"
+        self.next_requested = None
+        # main thread acknowledges, so it can switch back to current
+        self.acknowledged_next_game: bool = False
+
         if self.current_game is not None:
             self.current_game.print_game_data_debug()
 
@@ -37,63 +46,31 @@ class Data:
         # Network status state - we useweather condition as a sort of sentinial value
         self.network_issues: bool = self.weather.conditions == "Error"
 
-        # RENDER ITEMS
-        self.scrolling_finished: bool = False
-
-    def should_rotate_to_next_game(self):
-        if not self.config.rotation_enabled:
-            # never rotate
-            return False
-
-        if self.config.rotation_preferred_team_live_enabled or not self.config.preferred_teams:
-            # if there's no preferred team, or if we rotate during their games, always rotate
-            return True
-
-        game = self.current_game
-
-        if status.is_live(game.status()):
-            if self.schedule.num_games() <= 1:
-                # don't rotate if this is the only game
-                return False
-
-            # if we're here, it means we should pause on the preferred team's games
-            if game.features_team(self.config.preferred_teams[0]):
-                # unless we're allowed to rotate during mid-inning breaks
-                return self.config.rotation_preferred_team_live_mid_inning and status.is_inning_break(game.inning_state())
-
-        # if our current game isn't live, we might as well try to rotate.
-        # this should help most issues with games getting stuck
-        return True
-
     def refresh_game(self):
-        status = self.current_game.update()
-        if status == UpdateStatus.SUCCESS:
-            self.__update_layout_state()
-            self.print_game_data_debug()
-            self.network_issues = False
-        elif status == UpdateStatus.FAIL:
-            self.network_issues = True
+        # handle double buffering
+        if self.rendering == "next":
+            debug.log("Main thread: acknowledging render thread's request to read 'next', mirroring into 'current'")
+            self.current_game = self.next_game
+            self.acknowledged_next_game = True
 
+        if self.rendering == "current" and self.acknowledged_next_game:
+            self.acknowledged_next_game = False
+            debug.log("Main thread: render thread has switched back to 'current', advancing 'next' game")
+            if self.next_requested is None:
+                self.network_issues = True
+            elif self.next_requested["game_id"] != self.next_game.game_id:
+                # prefer to keep the old next game if it's the same, for better delay buffering
+                next_game = Game.from_scheduled(
+                    self.next_requested, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
+                )
+                if next_game is None:
+                    self.network_issues = True
+                else:
+                    self.next_game = next_game
+            self.next_requested = None
 
-    def advance_to_next_game(self):
-        game = self.schedule.next_game()
-        if game is None:
-            self.network_issues = True
-            return
-
-        if game.game_id != self.current_game.game_id:
-            self.current_game = game
-            self.game_changed_time = time.time()
-            self.__update_layout_state()
-            self.print_game_data_debug()
-            self.network_issues = False
-
-        elif self.current_game is not None:
-            # prefer to update the existing game rather than
-            # rotating if its the same game.
-            # this helps with e.g. the delay logic
-            debug.log("Rotating to the same game, refreshing instead")
-            self.refresh_game()
+        # network requests
+        self.__process_network_status(update.merge(self.current_game.update(), self.next_game.update()))
 
     def refresh_standings(self):
         self.__process_network_status(self.standings.update())
@@ -133,15 +110,8 @@ class Data:
         # Playball!
         return ScreenType.GAMEDAY
 
-    def __update_layout_state(self):
-        import data.config.layout as layout
-
-        self.config.layout.set_state()
-        if self.current_game.status() == status.WARMUP:
-            self.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)
-
-        if self.current_game.is_no_hitter():
-            self.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
-
-        if self.current_game.is_perfect_game():
-            self.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
+    def get_rendering_game(self) -> Game:
+        if self.rendering == "current":
+            return self.current_game
+        else:
+            return self.next_game
