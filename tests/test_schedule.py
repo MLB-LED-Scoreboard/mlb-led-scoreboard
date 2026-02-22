@@ -9,6 +9,7 @@ import unittest
 import unittest.mock
 import data.schedule
 import data.config
+from data.game import Game
 
 
 class TestSchedule(unittest.TestCase):
@@ -33,7 +34,11 @@ class TestSchedule(unittest.TestCase):
         # this was a fun game
         self.assertEqual(gm.inning_number(), 14)
 
-        gn = self.schedule.next_game()
+        gn = Game.from_scheduled(
+            self.schedule.next_game(),
+            self.demo_config.preferred_game_delay_multiplier,
+            self.demo_config.api_refresh_rate,
+        )
         self.assertIsNotNone(gn)
         self.assertEqual(gn.home_name(), "Red Sox")
 
