@@ -1,5 +1,8 @@
-from data.game import Game
+from typing import TYPE_CHECKING
 
+
+if TYPE_CHECKING:
+    from data.game import Game
 
 class Inning:
 
@@ -8,7 +11,7 @@ class Inning:
     MIDDLE = "Middle"
     END = "End"
 
-    def __init__(self, game: Game):
+    def __init__(self, game: "Game"):
         self.number = game.inning_number()
         self.state = game.inning_state()
         self.ordinal = game.inning_ordinal()

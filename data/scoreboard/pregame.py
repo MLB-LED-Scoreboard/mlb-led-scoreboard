@@ -1,13 +1,18 @@
+from typing import TYPE_CHECKING
+
 import tzlocal
 import debug
-from data.game import Game
 from data.time_formats import TIME_FORMAT_12H
 
 PITCHER_TBD = "TBD"
 
 
+if TYPE_CHECKING:
+    from data.game import Game
+
+
 class Pregame:
-    def __init__(self, game: Game, time_format):
+    def __init__(self, game: "Game", time_format):
         self.home_team = game.home_abbreviation()
         self.away_team = game.away_abbreviation()
         self.pregame_weather = game.pregame_weather()
@@ -43,7 +48,7 @@ class Pregame:
                 self.home_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
             except:
                 debug.exception("Error getting away starter stats")
-                
+
         self.national_broadcasts = game.broadcasts()
         self.series_status = game.series_status()
 

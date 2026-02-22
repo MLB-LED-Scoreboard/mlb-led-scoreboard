@@ -1,11 +1,18 @@
-from data.game import Game
 import debug
+
+
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from data.game import Game
+
 
 PITCHER_UNKNOWN = "Unknown"
 
 
 class Postgame:
-    def __init__(self, game: Game):
+    def __init__(self, game: "Game"):
 
         self.winning_pitcher = PITCHER_UNKNOWN
         self.winning_pitcher_wins = 0
@@ -45,9 +52,7 @@ class Postgame:
             except:
                 debug.exception("Error getting losing pitcher stats")
 
-
         self.series_status = game.series_status()
-
 
     def __str__(self):
         return "<{} {}> W: {} {}-{}; L: {} {}-{}; S: {} ({})".format(
