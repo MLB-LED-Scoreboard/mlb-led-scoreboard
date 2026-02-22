@@ -8,7 +8,7 @@ from data import status
 from data.game import Game
 from data.update import UpdateStatus
 
-GAMES_REFRESH_RATE = 30
+SCHEDULE_REFRESH_RATE = 30
 
 
 class Schedule:
@@ -56,7 +56,7 @@ class Schedule:
 
     def __should_update(self):
         endtime = time.time()
-        return endtime - self.starttime >= GAMES_REFRESH_RATE
+        return endtime - self.starttime >= SCHEDULE_REFRESH_RATE
 
     # offday code
     def is_offday_for_preferred_team(self):
@@ -94,7 +94,8 @@ class Schedule:
         # have rotated off of it
         if not self.config.rotation_preferred_team_live_enabled and self.config.rotation_preferred_team_live_mid_inning:
             game_index = self._game_index_for_preferred_team()
-            if game_index >= 0:  # we return -1 if no live games for preferred team
+            # we return -1 if no live games for preferred team
+            if game_index >= 0 and self.current_idx != game_index:
                 scheduled_game = self._games[game_index]
                 debug.log(
                     "Preferred Team's Game Status: %s, %s %d",

@@ -92,7 +92,7 @@ class MainRenderer:
 
             self.__render_games()
             if self.data.config.rotation_include_news:
-                self.__draw_news(timer_cond(STANDINGS_NEWS_ROTATION_TIME))
+                self.__draw_news(any_of(timer_cond(STANDINGS_NEWS_ROTATION_TIME), self.scrolling_finished_cond))
             if self.data.config.rotation_include_standings:
                 self.__draw_standings(timer_cond(STANDINGS_NEWS_ROTATION_TIME))
 
@@ -212,6 +212,8 @@ class MainRenderer:
         """
         Draw the news screen for as long as cond returns True
         """
+        self.scrolling_text_pos = self.canvas.width
+        self.scrolling_finished = False
         color = self.data.config.scoreboard_colors.color("default.background")
         while cond():
             self.canvas.Fill(color["r"], color["g"], color["b"])
