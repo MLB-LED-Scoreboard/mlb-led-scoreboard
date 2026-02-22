@@ -123,7 +123,8 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
         time.sleep(0.1)
         data.refresh_schedule()
         time.sleep(0.1)
-        data.refresh_game()
+        if data.schedule.games_live() or not (data.config.standings_no_games or data.config.news_no_games):
+            data.refresh_game()
         time.sleep(0.1)
         data.refresh_standings()
         time.sleep(0.1)
