@@ -126,11 +126,12 @@ def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) ->
         if data.schedule.games_live() or not (data.config.standings_no_games or data.config.news_no_games):
             data.refresh_game()
         time.sleep(0.1)
-        data.refresh_standings()
-        time.sleep(0.1)
-        data.refresh_news_ticker()
-        time.sleep(0.1)
-        data.refresh_weather()
+        if data.config.standings_no_games or data.config.rotation_include_standings:
+            data.refresh_standings()
+        time.sleep(0.2)
+        if data.config.news_no_games or data.config.rotation_include_news:
+            data.refresh_news_ticker()
+            data.refresh_weather()
 
 
 def __render_main(matrix, data):
