@@ -49,7 +49,7 @@ class Schedule:
                     self.current_idx %= len(games)
 
                 self._games = games
-
+                debug.log("Schedule updated with %d games", len(self._games))
                 return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED

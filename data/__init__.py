@@ -1,20 +1,22 @@
 from typing import Literal
 
-from data import update
+
 import debug
 from data.game import Game
 from data.headlines import Headlines
 from data.schedule import Schedule
 from data.standings import Standings
+from data import update
 from data.update import UpdateStatus
 from data.weather import Weather
 from data.screens import ScreenType
+from data.config import Config
 
 
 class Data:
-    def __init__(self, config) -> None:
+    def __init__(self, config: Config) -> None:
         # Save the parsed config
-        self.config = config
+        self.config: Config = config
 
         # get schedule
         self.schedule: Schedule = Schedule(config)

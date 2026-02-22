@@ -18,12 +18,13 @@ from renderers.games import postgame as postgamerender
 from renderers.games import pregame as pregamerender
 from renderers.games import teams
 
-# TODO(BMW) make configurable time?
+# TODO(BMW) make configurable?
 STANDINGS_NEWS_SWITCH_TIME = 120
+STANDINGS_NEWS_ROTATION_TIME = 20  # should be multiple of 10 due to division timings
 
 
 class MainRenderer:
-    def __init__(self, matrix, data) -> None:
+    def __init__(self, matrix, data: Data) -> None:
         self.matrix = matrix
         self.data: Data = data
         self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
@@ -90,14 +91,16 @@ class MainRenderer:
                     self.__draw_standings(self.no_games_cond)
 
             self.__render_games()
-            # TODO: add config to add weather/standings into game rotation:
-            # self.__draw_news(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
-            # self.__draw_standings(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
+            if self.data.config.rotation_include_news:
+                self.__draw_news(timer_cond(STANDINGS_NEWS_ROTATION_TIME))
+            if self.data.config.rotation_include_standings:
+                self.__draw_standings(timer_cond(STANDINGS_NEWS_ROTATION_TIME))
 
     def __render_games(self):
 
         # this loop is purely so that every now and then this function returns
         # which lets __render_gameday show weather/standings/etc and run its checks
+        # we could also make this a timer_cond?
         for _ in range(self.data.schedule.num_games()):
             self.scrolling_text_pos = self.canvas.width
             self.scrolling_finished = False
@@ -223,8 +226,7 @@ class MainRenderer:
                 self.data.config.time_format,
                 self.scrolling_text_pos,
             )
-            # todo make scrolling_text_pos something persistent/news-specific
-            # if we want to show news as part of rotation?
+            # TODO(BMW) make scrolling_text_pos something persistent/news-specific
             # not strictly necessary but would be nice, avoids only seeing first headline over and over
             self.__update_scrolling_text_pos(pos, self.canvas.width)
             # Show network issues
@@ -232,6 +234,7 @@ class MainRenderer:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(self.data.config.scrolling_speed)
+            self.__check_acknowledgement()
 
     def __draw_standings(self, cond: Callable[[], bool]):
         """
@@ -283,6 +286,7 @@ class MainRenderer:
 
             time.sleep(1)
             update = (update + 1) % 100
+            self.__check_acknowledgement()
 
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]

@@ -33,7 +33,9 @@
 		"while_preferred_team_live": {
 			"enabled": false,
 			"during_inning_breaks": false
-		}
+		},
+		"include_standings": true,
+		"include_news_ticker": false
 	},
 	"weather": {
 		"apikey": "YOUR_API_KEY_HERE",
