@@ -124,7 +124,6 @@ class MainRenderer:
     def __request_next_game(self):
         self.data.rendering = "next"
         debug.log("Render thread: requesting main thread to read 'next' game")
-        self.data.next_requested = self.data.schedule.next_game()
 
     def __check_acknowledgement(self):
         if self.data.rendering == "next" and self.data.acknowledged_next_game:

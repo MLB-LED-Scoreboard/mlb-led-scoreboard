@@ -25,11 +25,8 @@ class Data:
         self.current_game: Game = self.schedule.get_preferred_game()
 
         # render thread can switch to next
-        self.next_game: Game = Game.from_scheduled(
-            self.schedule.next_game(), self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
-        )
+        self.next_game: Game = self.schedule.next_game()
         self.rendering: Literal["current"] | Literal["next"] = "current"
-        self.next_requested = None
         # main thread acknowledges, so it can switch back to current
         self.acknowledged_next_game: bool = False
 
@@ -58,18 +55,12 @@ class Data:
         if self.rendering == "current" and self.acknowledged_next_game:
             self.acknowledged_next_game = False
             debug.log("Main thread: render thread has switched back to 'current', advancing 'next' game")
-            if self.next_requested is None:
+            would_be_next_next_game = self.schedule.next_game()
+            if would_be_next_next_game is None:
                 self.network_issues = True
-            elif self.next_requested["game_id"] != self.next_game.game_id:
+            elif would_be_next_next_game.game_id != self.next_game.game_id:
                 # prefer to keep the old next game if it's the same, for better delay buffering
-                next_game = Game.from_scheduled(
-                    self.next_requested, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
-                )
-                if next_game is None:
-                    self.network_issues = True
-                else:
-                    self.next_game = next_game
-            self.next_requested = None
+                self.next_game = would_be_next_next_game
 
         # network requests
         self.__process_network_status(update.merge(self.current_game.update(), self.next_game.update()))

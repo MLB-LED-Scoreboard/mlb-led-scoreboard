@@ -171,6 +171,7 @@ class Headlines:
 
         for idx, entry in enumerate(feed.entries):
             if idx < max_entries:
+                # TODO(BMW): also remove non-ascii -- look into https://github.com/anyascii/anyascii/tree/master
                 text = html.unescape(entry.title)
                 ticker.append(text)
 

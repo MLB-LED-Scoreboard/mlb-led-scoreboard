@@ -8,7 +8,7 @@ from data import status
 from data.game import Game
 from data.update import UpdateStatus
 
-SCHEDULE_REFRESH_RATE = 30
+GAMES_REFRESH_RATE = 6 * 60
 
 
 class Schedule:
@@ -56,7 +56,7 @@ class Schedule:
 
     def __should_update(self):
         endtime = time.time()
-        return endtime - self.starttime >= SCHEDULE_REFRESH_RATE
+        return endtime - self.starttime >= GAMES_REFRESH_RATE
 
     # offday code
     def is_offday_for_preferred_team(self):
@@ -80,36 +80,34 @@ class Schedule:
     def get_preferred_game(self):
         team_index = self._game_index_for_preferred_team()
         self.current_idx = team_index
-        scheduled = self.__current_game()
-        if scheduled is not None:
-            return Game.from_scheduled(
-                scheduled, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
-            )
-        else:
-            return None
+        return self.__current_game()
 
     def next_game(self):
         # We only need to check the preferred team's game status if we're
         # rotating during mid-innings because, otherwise, we would never
-        # have rotated off of it
+        # have rotated off of it up in data
         if not self.config.rotation_preferred_team_live_enabled and self.config.rotation_preferred_team_live_mid_inning:
             game_index = self._game_index_for_preferred_team()
             # we return -1 if no live games for preferred team
             if game_index >= 0 and self.current_idx != game_index:
                 scheduled_game = self._games[game_index]
-                debug.log(
-                    "Preferred Team's Game Status: %s, %s %d",
-                    scheduled_game["status"],
-                    scheduled_game["inning_state"],
-                    scheduled_game["current_inning"],
+                preferred_game = Game.from_scheduled(
+                    scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
                 )
+                if preferred_game is not None:
+                    debug.log(
+                        "Preferred Team's Game Status: %s, %s %d",
+                        preferred_game.status(),
+                        preferred_game.inning_state(),
+                        preferred_game.inning_number(),
+                    )
 
-                if status.is_live(scheduled_game["status"]) and not status.is_inning_break(
-                    scheduled_game["inning_state"]
-                ):
-                    self.current_idx = game_index
-                    debug.log("Moving to preferred game, index: %d", self.current_idx)
-                    return scheduled_game
+                    if status.is_live(preferred_game.status()) and not status.is_inning_break(
+                        preferred_game.inning_state()
+                    ):
+                        self.current_idx = game_index
+                        debug.log("Moving to preferred game, index: %d", self.current_idx)
+                        return preferred_game
 
         self.current_idx = self.__next_game_index()
         return self.__current_game()
@@ -132,10 +130,12 @@ class Schedule:
         return counter
 
     def __current_game(self):
-        try:
-            return self._games[self.current_idx]
-        except:
-            return None
+        if self._games:
+            scheduled_game = self._games[self.current_idx]
+            return Game.from_scheduled(
+                scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
+            )
+        return None
 
     @staticmethod
     def __filter_list_of_games(games, filter_teams):
