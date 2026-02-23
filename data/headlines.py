@@ -92,7 +92,6 @@ class Headlines:
     def __init__(self, config, year):
         self.preferred_teams = config.preferred_teams
         self.include_mlb = config.news_ticker_mlb_news
-        self.include_preferred = config.news_ticker_preferred_teams
         self.include_traderumors = config.news_ticker_traderumors
         self.include_countdowns = config.news_ticker_countdowns
         self.include_date = config.news_ticker_date
@@ -179,10 +178,9 @@ class Headlines:
         if self.include_mlb:
             self.feed_urls.append(self.__mlb_url_for_team("MLB"))
 
-        if self.include_preferred:
-            if len(self.preferred_teams) > 0:
-                for team in self.preferred_teams:
-                    self.feed_urls.append(self.__mlb_url_for_team(team))
+        if len(self.preferred_teams) > 0:
+            for team in self.preferred_teams:
+                self.feed_urls.append(self.__mlb_url_for_team(team))
 
         if self.include_traderumors:
             if len(self.preferred_teams) > 0:

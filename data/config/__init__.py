@@ -3,8 +3,9 @@ import os
 import sys
 
 from datetime import datetime, timedelta
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
+from collections import defaultdict
+from typing import Mapping, Optional
 
 import debug
 from data import status
@@ -28,45 +29,24 @@ class Config:
         json = self.__get_config(filename_base)
 
         # Preferred Teams/Divisions
-        self.preferred_teams = json["preferred"]["teams"]
-        self.preferred_divisions = json["preferred"]["divisions"]
 
         # News Ticker
-        self.news_ticker_team_offday = json["news_ticker"]["team_offday"]
-        self.news_ticker_always_display = json["news_ticker"]["always_display"]
-        self.news_ticker_preferred_teams = json["news_ticker"]["preferred_teams"]
+        self.preferred_teams = json["news_ticker"]["teams"]
         self.news_ticker_traderumors = json["news_ticker"]["traderumors"]
         self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
         self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
         self.news_ticker_date = json["news_ticker"]["date"]
         self.news_ticker_date_format = json["news_ticker"]["date_format"]
-        self.news_no_games = json["news_ticker"]["display_no_games_live"]
 
         # Display Standings
-        self.standings_team_offday = json["standings"]["team_offday"]
-        self.standings_mlb_offday = json["standings"]["mlb_offday"]
-        self.standings_always_display = json["standings"]["always_display"]
-        self.standings_display_offday = False
-        self.standings_no_games = json["standings"]["display_no_games_live"]
+        self.preferred_divisions = json["standings"]["divisions"]
 
         # Rotation
-        self.rotation_enabled = json["rotation"]["enabled"]
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
-        self.rotation_only_preferred = json["rotation"]["only_preferred"]
-        self.rotation_only_live = json["rotation"]["only_live"]
-        self.rotation_include_standings = json["rotation"]["include_standings"]
-        self.rotation_include_news = json["rotation"]["include_news_ticker"]
         self.rotation_rates = json["rotation"]["rates"]
-        self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
-        self.rotation_preferred_team_live_mid_inning = json["rotation"]["while_preferred_team_live"][
-            "during_inning_breaks"
-        ]
 
-        self.rotation_rules = [  # TODO(BMW): read from config\
-            Rule(priority=3, requirement=Requirements.LIVE_IN_INNING, teams=["Angels", "Nationals"]),
-            Rule(priority=2, requirement=Requirements.LIVE),  # any live game
-            Rule(priority=1),  # all games
-        ]
+        self.rotation_rules = _game_rules_from_json(json["rotation"]["screens"])
+        self.screen_rules = _screen_rules_from_json(json["rotation"]["screens"])
 
         # Weather
         self.weather_apikey = json["weather"]["apikey"]
@@ -211,22 +191,10 @@ class Config:
         return today.date()
 
     def news_at_priority(self, priority):
-        # TODO(BMW): read from config
-        if priority == 3:
-            return 0  # skip
-        elif priority == 2 or priority == 1:
-            return 20
-        elif priority == 0:  # offday
-            return 60
+        self.screen_rules.get("news", {}).get(priority, 0)
 
     def standings_at_priority(self, priority):
-        # TODO(BMW): read from config
-        if priority == 3:
-            return 0  # skip
-        elif priority == 2 or priority == 1:
-            return 20
-        elif priority == 0:  # offday
-            return 60
+        self.screen_rules.get("standings", {}).get(priority, 0)
 
     def read_json(self, path):
         """
@@ -249,6 +217,15 @@ class Config:
         reference_config = self.read_json(reference_filename)
         custom_config = self.read_json(filename)
         if custom_config:
+            if "format" in reference_config and (
+                "format" not in custom_config or custom_config["format"] != reference_config["format"]
+            ):
+                debug.error(
+                    "Config format version {} does not match expected format version {}. Please update your config file.".format(
+                        custom_config.get("format"), reference_config["format"]
+                    )
+                )
+                sys.exit(1)
             new_config = deep_update(reference_config, custom_config)
             return new_config
         return reference_config
@@ -293,12 +270,12 @@ class Config:
         return reference_layout
 
 
-class Requirements(Enum):
+class Requirements(StrEnum):
     LIVE = "live"
     LIVE_IN_INNING = "live_in_inning"
 
 
-class Rule:
+class GameRule:
     def __init__(
         self,
         priority: int,
@@ -326,3 +303,70 @@ class Rule:
                 return self.priority
 
         return 0
+
+    def __repr__(self):
+        return f"GameRule(priority={self.priority}, requirement={self.requirement}, teams={self.teams!r})"
+
+
+def _game_rules_from_json(json) -> list[GameRule]:
+    rules = []
+    for rule_json in json:
+        if "type" not in rule_json:
+            debug.warning("Invalid rule in config, missing 'type' field. Skipping. Rule: {}".format(rule_json))
+            continue
+        if rule_json["type"] == "game":
+            if "priority" not in rule_json:
+                debug.warning(
+                    "Invalid game rule in config, missing 'priority' field. Skipping. Rule: {}".format(rule_json)
+                )
+                continue
+            json_requirement = rule_json.get("requirement")
+            if json_requirement and json_requirement not in Requirements.__members__:
+                debug.warning(
+                    "Invalid game rule in config, unknown requirement '{}'. Skipping. Rule: {}".format(
+                        json_requirement, rule_json
+                    )
+                )
+                continue
+            rule = GameRule(
+                priority=rule_json["priority"],
+                requirement=Requirements(rule_json["requirement"]) if "requirement" in rule_json else None,
+                teams=rule_json.get("teams", []),
+            )
+            rules.append(rule)
+
+    return rules
+
+
+def _screen_rules_from_json(json) -> Mapping[str, Mapping[int, int]]:
+    screen_rules: defaultdict[str, defaultdict[int, int]] = defaultdict(lambda: defaultdict(int))
+
+    for rule_json in json:
+        if "type" not in rule_json or rule_json["type"] == "game":
+            # already warned in game check
+            continue
+        if rule_json["type"] not in ["news", "standings"]:
+            debug.warning(
+                "Invalid screen rule in config, unknown type '{}'. Skipping. Rule: {}".format(
+                    rule_json.get("type"), rule_json
+                )
+            )
+            continue
+        if "with_priority" not in rule_json:
+            debug.warning(
+                "Invalid screen rule in config, missing 'with_priority' field. Skipping. Rule: {}".format(rule_json)
+            )
+            continue
+        if "seconds" not in rule_json:
+            debug.warning(
+                "Invalid screen rule in config, missing 'seconds' field. Skipping. Rule: {}".format(rule_json)
+            )
+            continue
+        priorities = rule_json["with_priority"]
+        if isinstance(priorities, int):
+            screen_rules[rule_json["type"]][priorities] = rule_json["seconds"]
+        elif isinstance(priorities, list):
+            for priority in priorities:
+                screen_rules[rule_json["type"]][priority] = rule_json["seconds"]
+
+    return screen_rules

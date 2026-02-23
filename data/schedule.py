@@ -7,7 +7,7 @@ import statsapi
 import debug
 from data.game import Game
 from data.update import UpdateStatus
-from data.config import Rule, Config
+from data.config import GameRule, Config
 
 GAMES_REFRESH_RATE = 15
 
@@ -80,7 +80,7 @@ class Schedule:
         except IndexError:
             return None
 
-    def __filter_rules(self, rules: list[Rule]) -> tuple[int, list]:
+    def __filter_rules(self, rules: list[GameRule]) -> tuple[int, list]:
         priorities: defaultdict[int, list] = defaultdict(list)
         for game in self.__all_games:
             for rule in rules:
