@@ -82,9 +82,17 @@ class Schedule:
 
     def __filter_rules(self, rules: list[GameRule]) -> tuple[int, list]:
         priorities: defaultdict[int, list] = defaultdict(list)
+        non_passive_priorities = set()
         for game in self.__all_games:
+            seen = set()
             for rule in rules:
-                if priority := rule.matches(game):
-                    priorities[priority].append(game)
-        highest = max(priorities.keys(), default=0)
+                priority, passive = rule.matches(game)
+                if priority:
+                    if priority not in seen:
+                        priorities[priority].append(game)
+                        seen.add(priority)
+
+                    if not passive:
+                        non_passive_priorities.add(priority)
+        highest = max(non_passive_priorities, default=0)
         return highest, priorities[highest]

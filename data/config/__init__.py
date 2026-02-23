@@ -281,31 +281,33 @@ class GameRule:
         priority: int,
         *,
         requirement: Optional[Requirements] = None,
+        passive=False,
         teams: list[str] = [],
     ):
         self.priority = priority
         self.requirement = requirement
+        self.passive = passive
         self.teams = set(team_metadata.get_team_id(t) for t in teams)
 
-    def matches(self, game) -> int:
+    def matches(self, game) -> tuple[int, bool]:
         if self.teams and not set([game["away_id"], game["home_id"]]).intersection(self.teams):
-            return 0
+            return 0, True
 
         if self.requirement is None:
-            return self.priority
+            return self.priority, self.passive
 
         # both others require a live game
         if status.is_fresh(game["status"]) or (status.is_live(game["status"])):
             if self.requirement == Requirements.LIVE:
-                return self.priority
+                return self.priority, self.passive
 
             if self.requirement == Requirements.LIVE_IN_INNING and not status.is_inning_break(game["inning_state"]):
-                return self.priority
+                return self.priority, self.passive
 
-        return 0
+        return 0, True
 
     def __repr__(self):
-        return f"GameRule(priority={self.priority}, requirement={self.requirement}, teams={self.teams!r})"
+        return f"GameRule(priority={self.priority}, requirement={self.requirement}, passive={self.passive}, teams={self.teams})"
 
 
 def _game_rules_from_json(json) -> list[GameRule]:
@@ -320,21 +322,26 @@ def _game_rules_from_json(json) -> list[GameRule]:
                     "Invalid game rule in config, missing 'priority' field. Skipping. Rule: {}".format(rule_json)
                 )
                 continue
-            json_requirement = rule_json.get("requirement")
-            if json_requirement and json_requirement not in Requirements.__members__:
-                debug.warning(
-                    "Invalid game rule in config, unknown requirement '{}'. Skipping. Rule: {}".format(
-                        json_requirement, rule_json
+            json_requirement = rule_json.get("required_status")
+            if json_requirement:
+                try:
+                    json_requirement = Requirements(json_requirement)
+                except ValueError:
+                    debug.warning(
+                        "Invalid game rule in config, unknown required_status '{}'. Skipping. Rule: {}".format(
+                            json_requirement, rule_json
+                        )
                     )
-                )
-                continue
+                    continue
             rule = GameRule(
                 priority=rule_json["priority"],
-                requirement=Requirements(rule_json["requirement"]) if "requirement" in rule_json else None,
+                requirement=json_requirement,
+                passive=rule_json.get("secondary", False),
                 teams=rule_json.get("teams", []),
             )
             rules.append(rule)
 
+    print(rules)
     return rules
 
 
