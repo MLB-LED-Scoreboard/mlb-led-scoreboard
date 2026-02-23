@@ -9,7 +9,6 @@ from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
 from data.game import Game
 import data.config.layout as layout
-from data.screens import ScreenType
 
 from renderers import network, offday, standings
 from renderers.games import game as gamerender
@@ -17,10 +16,6 @@ from renderers.games import irregular
 from renderers.games import postgame as postgamerender
 from renderers.games import pregame as pregamerender
 from renderers.games import teams
-
-# TODO(BMW) make configurable?
-STANDINGS_NEWS_SWITCH_TIME = 120
-STANDINGS_NEWS_ROTATION_TIME = 20  # should be multiple of 10 due to division timings
 
 
 class MainRenderer:
@@ -36,84 +31,40 @@ class MainRenderer:
         self.standings_stat = "w"
         self.standings_league = "NL"
 
-    def render(self):
-        screen = self.data.get_screen_type()
-        # display the news ticker
-        if screen == ScreenType.ALWAYS_NEWS:
-            self.__draw_news(permanent_cond)
-        # display the standings
-        elif screen == ScreenType.ALWAYS_STANDINGS:
-            self.__render_standings()
-        elif screen == ScreenType.LEAGUE_OFFDAY:
-            self.__render_offday(team_offday=False)
-        elif screen == ScreenType.PREFERRED_TEAM_OFFDAY:
-            self.__render_offday(team_offday=True)
-        # Playball!
-        else:
-            self.__render_gameday()
-
-    def __render_offday(self, team_offday=True):
-        if team_offday:
-            news = self.data.config.news_ticker_team_offday
-            standings = self.data.config.standings_team_offday
-        else:
-            news = True
-            standings = self.data.config.standings_mlb_offday
-
-        if news and standings:
-            while True:
-                self.__draw_news(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
-                self.__draw_standings(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
-        elif news:
-            self.__draw_news(permanent_cond)
-        else:
-            self.__render_standings()
-
-    def __render_standings(self):
-        self.__draw_standings(permanent_cond)
-
-        # Out of season off days don't always return standings so fall back on the news renderer
-        debug.error("No standings data.  Falling back to news.")
-        self.__draw_news(permanent_cond)
-
-    # Renders a game screen based on it's status
-    # May also call draw_offday or draw_standings if there are no games
-    def __render_gameday(self) -> NoReturn:
+    def render(self) -> NoReturn:
         while True:
-            if not self.data.schedule.games_live():
-                if self.data.config.news_no_games and self.data.config.standings_no_games:
-                    while self.no_games_cond():
-                        self.__draw_news(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
-                        self.__draw_standings(timer_cond(STANDINGS_NEWS_SWITCH_TIME))
-                elif self.data.config.news_no_games:
-                    self.__draw_news(self.no_games_cond)
-                elif self.data.config.standings_no_games:
-                    self.__draw_standings(self.no_games_cond)
-
             self.__render_games()
-            if self.data.config.rotation_include_news:
-                self.__draw_news(any_of(timer_cond(STANDINGS_NEWS_ROTATION_TIME), self.scrolling_finished_cond))
-            if self.data.config.rotation_include_standings:
-                self.__draw_standings(timer_cond(STANDINGS_NEWS_ROTATION_TIME))
+            self.__check_acknowledgement()
+            if t := self.data.config.standings_at_priority(self.data.schedule.priority):
+                self.__draw_standings(timer_cond(t))
+            if t := self.data.config.news_at_priority(self.data.schedule.priority):
+                self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond))
 
     def __render_games(self):
-
-        # this loop is purely so that every now and then this function returns
-        # which lets __render_gameday show weather/standings/etc and run its checks
-        # we could also make this a timer_cond?
-        for _ in range(self.data.schedule.num_games()):
+        self.__request_next_game()
+        i = 0
+        last_game_id = None
+        while True:
             self.scrolling_text_pos = self.canvas.width
             self.scrolling_finished = False
             self.__check_acknowledgement()
 
             game = self.data.get_rendering_game()
-            timer = timer_cond(self.data.config.rotate_rate_for_status(game))
-            game_cond = self.game_cond(game)
-            while any_of(
-                timer,
-                game_cond,
+            if game is None:
+                break
+
+            if last_game_id != game.game_id:
+                i += 1
+                if i > self.data.schedule.num_games():
+                    break
+                last_game_id = game.game_id
+                debug.log("Render thread: showing game %d / %d", i, self.data.schedule.num_games())
+
+            cond = any_of(
+                timer_cond(self.data.config.rotate_rate_for_status(game.status())),
                 self.scrolling_finished_cond,
-            )():
+            )
+            while cond():
                 self.__update_layout_state(game)
                 self.__draw_game(game)
                 self.__check_acknowledgement()
@@ -122,8 +73,9 @@ class MainRenderer:
             self.__request_next_game()
 
     def __request_next_game(self):
+        if self.data.rendering == "current":
+            debug.log("Render thread: requesting main thread to read 'next' game")
         self.data.rendering = "next"
-        debug.log("Render thread: requesting main thread to read 'next' game")
 
     def __check_acknowledgement(self):
         if self.data.rendering == "next" and self.data.acknowledged_next_game:
@@ -317,42 +269,9 @@ class MainRenderer:
         if game.is_perfect_game():
             self.data.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
 
-    def no_games_cond(self) -> bool:
-        """A condition that is true only while there are no games live"""
-        return not self.data.schedule.games_live()
-
     def scrolling_finished_cond(self) -> bool:
         """A condition that is true only while the scrolling text has finished scrolling"""
         return self.data.config.rotation_scroll_until_finished and not self.scrolling_finished
-
-    def game_cond(self, game: Game) -> Callable[[], bool]:
-        if not self.data.config.rotation_enabled:
-            # never rotate
-            return permanent_cond
-
-        if self.data.config.rotation_preferred_team_live_enabled or not self.data.config.preferred_teams:
-            # if there's no preferred team, or if we rotate during their games, always rotate
-            return never_cond
-
-        def cond():
-            if status.is_live(game.status()):
-                if self.data.schedule.num_games() <= 1:
-                    # don't rotate if this is the only game
-                    return True
-
-                # if we're here, it means we should pause on the preferred team's games
-                if game.features_team(self.data.config.preferred_teams[0]):
-                    # unless we're allowed to rotate during mid-inning breaks
-                    return not (
-                        self.data.config.rotation_preferred_team_live_mid_inning
-                        and status.is_inning_break(game.inning_state())
-                    )
-
-            # if our current game isn't live, we might as well try to rotate.
-            # this should help most issues with games getting stuck
-            return False
-
-        return cond
 
 
 def never_cond() -> bool:

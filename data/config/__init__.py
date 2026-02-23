@@ -3,12 +3,15 @@ import os
 import sys
 
 from datetime import datetime, timedelta
+from enum import Enum
+from typing import Optional
 
 import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
 from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
+from data import teams as team_metadata
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -57,6 +60,12 @@ class Config:
         self.rotation_preferred_team_live_enabled = json["rotation"]["while_preferred_team_live"]["enabled"]
         self.rotation_preferred_team_live_mid_inning = json["rotation"]["while_preferred_team_live"][
             "during_inning_breaks"
+        ]
+
+        self.rotation_rules = [  # TODO(BMW): read from config\
+            Rule(priority=3, requirement=Requirements.LIVE_IN_INNING, teams=["Angels", "Nationals"]),
+            Rule(priority=2, requirement=Requirements.LIVE),  # any live game
+            Rule(priority=1),  # all games
         ]
 
         # Weather
@@ -119,9 +128,7 @@ class Config:
 
     def check_delay(self):
         if self.preferred_game_delay_multiplier < 0:
-            debug.warning(
-                "preferred_game_delay_multiplier should be a positive integer. Using default value of 0"
-            )
+            debug.warning("preferred_game_delay_multiplier should be a positive integer. Using default value of 0")
             self.preferred_game_delay_multiplier = 0
         if self.preferred_game_delay_multiplier != int(self.preferred_game_delay_multiplier):
             debug.warning(
@@ -132,15 +139,10 @@ class Config:
 
     def check_api_refresh_rate(self):
         if self.api_refresh_rate < 3:
-            debug.warning(
-                "api_refresh_rate should be a positive integer greater than 2. Using default value of 10"
-            )
+            debug.warning("api_refresh_rate should be a positive integer greater than 2. Using default value of 10")
             self.api_refresh_rate = 10
         if self.api_refresh_rate != int(self.api_refresh_rate):
-            debug.warning(
-                "api_refresh_rate should be an integer."
-                f" Truncating to {int(self.api_refresh_rate)}"
-            )
+            debug.warning("api_refresh_rate should be an integer." f" Truncating to {int(self.api_refresh_rate)}")
             self.api_refresh_rate = int(self.api_refresh_rate)
 
     def check_preferred_divisions(self):
@@ -188,7 +190,7 @@ class Config:
         self.rotation_rates_final = self.rotation_rates.get("final", DEFAULT_ROTATE_RATES["final"])
         self.rotation_rates_pregame = self.rotation_rates.get("pregame", DEFAULT_ROTATE_RATES["pregame"])
 
-    def rotate_rate_for_status(self, game_status):
+    def rotate_rate_for_status(self, game_status: str):
         rotate_rate = self.rotation_rates_live
         if status.is_pregame(game_status):
             rotate_rate = self.rotation_rates_pregame
@@ -207,6 +209,24 @@ class Config:
             if end_of_day > datetime.now():
                 today -= timedelta(days=1)
         return today.date()
+
+    def news_at_priority(self, priority):
+        # TODO(BMW): read from config
+        if priority == 3:
+            return 0  # skip
+        elif priority == 2 or priority == 1:
+            return 20
+        elif priority == 0:  # offday
+            return 60
+
+    def standings_at_priority(self, priority):
+        # TODO(BMW): read from config
+        if priority == 3:
+            return 0  # skip
+        elif priority == 2 or priority == 1:
+            return 20
+        elif priority == 0:  # offday
+            return 60
 
     def read_json(self, path):
         """
@@ -271,3 +291,38 @@ class Config:
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
+
+
+class Requirements(Enum):
+    LIVE = "live"
+    LIVE_IN_INNING = "live_in_inning"
+
+
+class Rule:
+    def __init__(
+        self,
+        priority: int,
+        *,
+        requirement: Optional[Requirements] = None,
+        teams: list[str] = [],
+    ):
+        self.priority = priority
+        self.requirement = requirement
+        self.teams = set(team_metadata.get_team_id(t) for t in teams)
+
+    def matches(self, game) -> int:
+        if self.teams and not set([game["away_id"], game["home_id"]]).intersection(self.teams):
+            return 0
+
+        if self.requirement is None:
+            return self.priority
+
+        # both others require a live game
+        if status.is_fresh(game["status"]) or (status.is_live(game["status"])):
+            if self.requirement == Requirements.LIVE:
+                return self.priority
+
+            if self.requirement == Requirements.LIVE_IN_INNING and not status.is_inning_break(game["inning_state"]):
+                return self.priority
+
+        return 0

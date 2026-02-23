@@ -1,6 +1,5 @@
 import sys
 
-from data.screens import ScreenType
 import debug
 
 if sys.version_info < (3, 9):
@@ -78,58 +77,17 @@ def main(matrix, config_base):
     time.sleep(1)
     render.start()
 
-    screen = data.get_screen_type()
-    if screen == ScreenType.ALWAYS_NEWS:
-        __refresh_news(render, data)
-    elif screen == ScreenType.ALWAYS_STANDINGS:
-        __refresh_standings(render, data)
-    elif screen == ScreenType.LEAGUE_OFFDAY or screen == ScreenType.PREFERRED_TEAM_OFFDAY:
-        __refresh_offday(render, data)
-    else:
-        __refresh_gameday(render, data)
-
-
-def __refresh_news(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the news to refresh")
-    while render_thread.is_alive():
-        time.sleep(30)
-        data.refresh_weather()
-        data.refresh_news_ticker()
-
-
-def __refresh_standings(render_thread, data):  # type: (threading.Thread, Data) -> None
-    if data.standings.populated():
-        debug.log("Main has selected the standings to refresh")
-        while render_thread.is_alive():
-            time.sleep(30)
-            data.refresh_standings()
-    else:
-        __refresh_news(render_thread, data)
-
-
-def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the offday information to refresh")
-    while render_thread.is_alive():
-        time.sleep(30)
-        data.refresh_standings()
-        data.refresh_weather()
-        data.refresh_news_ticker()
-
-
-def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the gameday information to refresh")
-
-    while render_thread.is_alive():
+    while render.is_alive():
         time.sleep(0.1)
         data.refresh_schedule()
         time.sleep(0.1)
-        if data.schedule.games_live() or not (data.config.standings_no_games or data.config.news_no_games):
+        if data.schedule.num_games():
             data.refresh_game()
         time.sleep(0.1)
-        if data.config.standings_no_games or data.config.rotation_include_standings:
+        if data.config.standings_at_priority(data.schedule.priority):
             data.refresh_standings()
         time.sleep(0.2)
-        if data.config.news_no_games or data.config.rotation_include_news:
+        if data.config.news_at_priority(data.schedule.priority):
             data.refresh_news_ticker()
             data.refresh_weather()
 
