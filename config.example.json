@@ -1,6 +1,6 @@
 {
+	"$schema": "./config.schema.json",
 	"format": 9.0,
-
 	"rotation": {
 		"scroll_until_finished": true,
 		"rates": {
@@ -19,7 +19,6 @@
 				"seconds": 60,
 				"with_priority": 0
 			},
-
 			{
 				"type": "news",
 				"seconds": 60,

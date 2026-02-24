@@ -190,11 +190,11 @@ class Config:
                 today -= timedelta(days=1)
         return today.date()
 
-    def news_at_priority(self, priority):
-        self.screen_rules.get("news", {}).get(priority, 0)
+    def news_at_priority(self, priority: int) -> int:
+        return self.screen_rules.get("news", {}).get(priority, 0)
 
-    def standings_at_priority(self, priority):
-        self.screen_rules.get("standings", {}).get(priority, 0)
+    def standings_at_priority(self, priority: int) -> int:
+        return self.screen_rules.get("standings", {}).get(priority, 0)
 
     def read_json(self, path):
         """
@@ -341,7 +341,6 @@ def _game_rules_from_json(json) -> list[GameRule]:
             )
             rules.append(rule)
 
-    print(rules)
     return rules
 
 
@@ -375,5 +374,9 @@ def _screen_rules_from_json(json) -> Mapping[str, Mapping[int, int]]:
         elif isinstance(priorities, list):
             for priority in priorities:
                 screen_rules[rule_json["type"]][priority] = rule_json["seconds"]
+
+    if not any(screen_rules[s][0] for s in screen_rules.keys()):
+        # prevents nothing showing for an empty config
+        screen_rules["news"][0] = 60
 
     return screen_rules

@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": 9.0
+    },
+    "rotation": {
+      "type": "object",
+      "properties": {
+        "scroll_until_finished": {
+          "type": "boolean"
+        },
+        "rates": {
+          "type": "object",
+          "properties": {
+            "live": {
+              "type": "number"
+            },
+            "final": {
+              "type": "number"
+            },
+            "pregame": {
+              "type": "number"
+            }
+          }
+        },
+        "screens": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["priority"],
+                "properties": {
+                  "type": {
+                    "const": "game"
+                  },
+                  "priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "required_status": {
+                    "type": "string"
+                  },
+                  "secondary": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "teams": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["with_priority", "seconds"],
+                "properties": {
+                  "type": {
+                    "anyOf": [
+                      {
+                        "const": "standings"
+                      },
+                      {
+                        "const": "news"
+                      }
+                    ]
+                  },
+                  "with_priority": {
+                    "oneOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      }
+                    ]
+                  },
+                  "seconds": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "news_ticker": {
+      "type": "object",
+      "properties": {
+        "teams": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "traderumors": {
+          "type": "boolean"
+        },
+        "mlb_news": {
+          "type": "boolean"
+        },
+        "countdowns": {
+          "type": "boolean"
+        },
+        "date": {
+          "type": "boolean"
+        },
+        "date_format": {
+          "type": "string"
+        }
+      }
+    },
+    "weather": {
+      "type": "object",
+      "required": ["apikey", "location"],
+      "properties": {
+        "apikey": {
+          "type": "string",
+          "not": {
+            "pattern": "YOUR_API_KEY_HERE"
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "metric_units": {
+          "type": "boolean"
+        }
+      }
+    },
+    "standings": {
+      "type": "object",
+      "properties": {
+        "divisions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "time_format": {
+      "anyOf": [
+        {
+          "const": "12h"
+        },
+        {
+          "const": "24h"
+        }
+      ]
+    },
+    "end_of_day": {
+      "type": "string",
+      "pattern": "^\\d{2}:\\d{2}$"
+    },
+    "full_team_names": {
+      "type": "boolean"
+    },
+    "short_team_names_for_runs_hits": {
+      "type": "boolean"
+    },
+    "preferred_game_delay_multiplier": {
+      "type": "number"
+    },
+    "api_refresh_rate": {
+      "type": "number"
+    },
+    "pregame_weather": {
+      "type": "boolean"
+    },
+    "scrolling_speed": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "debug": {
+      "type": "boolean"
+    },
+    "demo_date": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      ]
+    }
+  }
+}

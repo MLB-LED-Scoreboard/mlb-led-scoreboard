@@ -119,6 +119,7 @@ colors/*.json
 
 # Do not ignore example configs or test fixtures
 !*example.json
+!*schema.json
 !/tests/fixtures/*.json
 
 #
