@@ -65,13 +65,21 @@ def main(matrix, config):
     # This will fetch initial data from MLB
     data = Data(config, plugin_data)
 
+    # Event that is set when the display should be on, cleared when it should be off
+    display_on = threading.Event()
+    display_on.set()
+
     # create render thread
     plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
     render = threading.Thread(
-        target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
+        target=__render_main, args=[matrix, data, plugin_renderers, display_on], name="render_thread", daemon=True
     )
     time.sleep(1)
     render.start()
+
+    # Start HomeKit control listener (adjusts brightness/on-off from external control file)
+    homekit = threading.Thread(target=__homekit_control_loop, args=[matrix, display_on], name="homekit_control", daemon=True)
+    homekit.start()
 
     while render.is_alive():
         time.sleep(0.1)
@@ -86,8 +94,22 @@ def main(matrix, config):
         time.sleep(0.2)
 
 
-def __render_main(matrix, data, plugins):
-    MainRenderer(matrix, data, plugins).render()
+def __homekit_control_loop(matrix, display_on):
+    from homekit_control import read_control_state
+
+    while True:
+        state = read_control_state()
+        if state["on"]:
+            matrix.brightness = state["brightness"]
+            display_on.set()
+        else:
+            display_on.clear()
+            matrix.Clear()
+        time.sleep(1)
+
+
+def __render_main(matrix, data, plugins, display_on):
+    MainRenderer(matrix, data, plugins, display_on).render()
 
 
 if __name__ == "__main__":

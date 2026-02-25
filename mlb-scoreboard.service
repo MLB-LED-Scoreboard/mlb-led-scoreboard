@@ -1,0 +1,16 @@
+[Unit]
+Description=MLB LED Scoreboard with HomeKit
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/mlb-led-scoreboard
+ExecStart=/home/pi/mlb-led-scoreboard/venv/bin/python3 /home/pi/mlb-led-scoreboard/homekit_bridge.py --led-gpio-mapping="adafruit-hat-pwm" --led-cols=128 --led-rows=64 --led-rgb-sequence=BRG
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

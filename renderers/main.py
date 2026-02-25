@@ -20,9 +20,10 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data, plugins: dict[str, api.PluginRenderer]) -> None:
+    def __init__(self, matrix, data: Data, plugins: dict[str, api.PluginRenderer], display_on=None) -> None:
         self.matrix = matrix
         self.data = data
+        self.display_on = display_on
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished: bool = False
@@ -145,7 +146,7 @@ class MainRenderer:
         if self.data.network_issues:
             network.render_network_error(self.canvas, layout, colors)
 
-        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        self.canvas = self.__swap_canvas()
 
     def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]) -> None:
         from driver import graphics
@@ -162,7 +163,7 @@ class MainRenderer:
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
+            self.canvas = self.__swap_canvas()
             time.sleep(wait_time)
 
         renderer.reset()
@@ -170,6 +171,12 @@ class MainRenderer:
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
         self.scrolling_text_pos = min(scroll_max_x, self.scrolling_text_pos)
+
+    def __swap_canvas(self):
+        """Block until display is on, then swap the canvas."""
+        if self.display_on is not None:
+            self.display_on.wait()
+        return self.matrix.SwapOnVSync(self.canvas)
 
     def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of scrolling text"""
