@@ -1,0 +1,16 @@
+[Unit]
+Description=MLB LED Scoreboard Web Config Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/mlb-led-scoreboard
+ExecStart=/home/pi/mlb-led-scoreboard/venv/bin/python3 /home/pi/mlb-led-scoreboard/config_server.py --port 8080
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
