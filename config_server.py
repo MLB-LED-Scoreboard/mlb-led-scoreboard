@@ -17,142 +17,146 @@ CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.j
 EXAMPLE_CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.example.json")
 SERVICE_NAME = "mlb-scoreboard"
 
-HTML_TEMPLATE = """<!DOCTYPE html>
+MLB_TEAMS = [
+    # AL East
+    "Yankees", "Red Sox", "Blue Jays", "Rays", "Orioles",
+    # AL Central
+    "White Sox", "Guardians", "Tigers", "Royals", "Twins",
+    # AL West
+    "Astros", "Angels", "Athletics", "Mariners", "Rangers",
+    # NL East
+    "Braves", "Marlins", "Mets", "Phillies", "Nationals",
+    # NL Central
+    "Cubs", "Reds", "Brewers", "Pirates", "Cardinals",
+    # NL West
+    "Diamondbacks", "Rockies", "Dodgers", "Padres", "Giants",
+]
+
+MLB_TEAMS_BY_DIVISION = {
+    "AL East":    ["Yankees", "Red Sox", "Blue Jays", "Rays", "Orioles"],
+    "AL Central": ["White Sox", "Guardians", "Tigers", "Royals", "Twins"],
+    "AL West":    ["Astros", "Angels", "Athletics", "Mariners", "Rangers"],
+    "NL East":    ["Braves", "Marlins", "Mets", "Phillies", "Nationals"],
+    "NL Central": ["Cubs", "Reds", "Brewers", "Pirates", "Cardinals"],
+    "NL West":    ["Diamondbacks", "Rockies", "Dodgers", "Padres", "Giants"],
+}
+
+DIVISIONS = [
+    "AL East", "AL Central", "AL West",
+    "NL East", "NL Central", "NL West",
+    "AL Wild Card", "NL Wild Card",
+]
+
+
+def build_team_checkboxes(selected_teams):
+    selected_set = set(selected_teams)
+    parts = []
+    for div_name, teams in MLB_TEAMS_BY_DIVISION.items():
+        parts.append(f'<div class="cb-group-label">{div_name}</div>')
+        for team in teams:
+            chk = "checked" if team in selected_set else ""
+            parts.append(
+                f'<label class="cb-item">'
+                f'<input type="checkbox" name="preferred__teams" value="{team}" {chk}>'
+                f'<span>{team}</span></label>'
+            )
+    return "\n".join(parts)
+
+
+def build_division_checkboxes(selected_divs):
+    selected_set = set(selected_divs)
+    parts = []
+    for div in DIVISIONS:
+        chk = "checked" if div in selected_set else ""
+        parts.append(
+            f'<label class="cb-item">'
+            f'<input type="checkbox" name="preferred__divisions" value="{div}" {chk}>'
+            f'<span>{div}</span></label>'
+        )
+    return "\n".join(parts)
+
+
+def build_time_format_radios(current):
+    r12 = "checked" if current in ("12h", "%-I:%M") else ""
+    r24 = "checked" if current in ("24h", "%H:%M") else ""
+    return f"""
+      <label class="radio-item">
+        <input type="radio" name="time_format" value="12h" {r12}> 12h
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="time_format" value="24h" {r24}> 24h
+      </label>"""
+
+
+def build_scrolling_speed_slider(current):
+    val = int(current) if str(current).isdigit() else 2
+    return (
+        f'<div class="slider-wrap">'
+        f'<input type="range" name="scrolling_speed" min="0" max="6" step="1" value="{val}" '
+        f'oninput="this.nextElementSibling.textContent=this.value">'
+        f'<span class="slider-val">{val}</span>'
+        f'</div>'
+    )
+
+
+HTML_PAGE = """\
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MLB LED Scoreboard Config</title>
 <style>
-  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f1117;
-    color: #e2e8f0;
-    min-height: 100vh;
-    padding: 24px 16px;
-  }}
-  .container {{ max-width: 760px; margin: 0 auto; }}
-  header {{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 28px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #2d3748;
-  }}
-  header h1 {{ font-size: 1.4rem; font-weight: 700; color: #f7fafc; }}
-  header span {{ font-size: 0.8rem; color: #718096; margin-left: auto; }}
-  .alert {{
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }}
-  .alert-success {{ background: #1a3a2a; border: 1px solid #276749; color: #68d391; }}
-  .alert-error   {{ background: #3b1a1a; border: 1px solid #c53030; color: #fc8181; }}
-  .section {{
-    background: #1a202c;
-    border: 1px solid #2d3748;
-    border-radius: 10px;
-    margin-bottom: 16px;
-    overflow: hidden;
-  }}
-  .section-header {{
-    padding: 14px 18px;
-    background: #2d3748;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #90cdf4;
-  }}
-  .field-row {{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border-bottom: 1px solid #2d3748;
-  }}
-  .field-row:last-child {{ border-bottom: none; }}
-  .field-label {{
-    padding: 12px 18px;
-    font-size: 0.85rem;
-    color: #a0aec0;
-    display: flex;
-    align-items: center;
-    border-right: 1px solid #2d3748;
-    word-break: break-word;
-  }}
-  .field-value {{ padding: 8px 12px; display: flex; align-items: center; }}
-  input[type="text"],
-  input[type="number"],
-  input[type="password"] {{
-    width: 100%;
-    background: #2d3748;
-    border: 1px solid #4a5568;
-    border-radius: 6px;
-    color: #e2e8f0;
-    padding: 7px 10px;
-    font-size: 0.85rem;
-    transition: border-color 0.15s;
-    outline: none;
-  }}
-  input:focus {{ border-color: #63b3ed; }}
-  .toggle {{
-    position: relative;
-    width: 44px;
-    height: 24px;
-    flex-shrink: 0;
-  }}
-  .toggle input {{ opacity: 0; width: 0; height: 0; }}
-  .toggle-slider {{
-    position: absolute;
-    inset: 0;
-    background: #4a5568;
-    border-radius: 24px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }}
-  .toggle-slider:before {{
-    content: "";
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    left: 3px;
-    top: 3px;
-    background: white;
-    border-radius: 50%;
-    transition: transform 0.2s;
-  }}
-  .toggle input:checked + .toggle-slider {{ background: #3182ce; }}
-  .toggle input:checked + .toggle-slider:before {{ transform: translateX(20px); }}
-  .actions {{
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-  }}
-  button {{
-    padding: 11px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-  }}
-  button:active {{ transform: scale(0.98); }}
-  .btn-primary {{ background: #3182ce; color: white; }}
-  .btn-primary:hover {{ opacity: 0.85; }}
-  .btn-restart {{ background: #276749; color: white; }}
-  .btn-restart:hover {{ opacity: 0.85; }}
-  .btn-danger {{ background: #c53030; color: white; }}
-  .btn-danger:hover {{ opacity: 0.85; }}
-  .note {{ font-size: 0.78rem; color: #718096; margin-top: 12px; }}
-  @media (max-width: 500px) {{
-    .field-row {{ grid-template-columns: 1fr; }}
-    .field-label {{ border-right: none; border-bottom: 1px solid #2d3748; }}
+  *{{box-sizing:border-box;margin:0;padding:0}}
+  body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:24px 16px}}
+  .container{{max-width:800px;margin:0 auto}}
+  header{{display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #2d3748}}
+  header h1{{font-size:1.4rem;font-weight:700;color:#f7fafc}}
+  header span{{font-size:0.8rem;color:#718096;margin-left:auto}}
+  .alert{{padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:.9rem;font-weight:500}}
+  .alert-success{{background:#1a3a2a;border:1px solid #276749;color:#68d391}}
+  .alert-error{{background:#3b1a1a;border:1px solid #c53030;color:#fc8181}}
+  .section{{background:#1a202c;border:1px solid #2d3748;border-radius:10px;margin-bottom:16px;overflow:hidden}}
+  .section-header{{padding:14px 18px;background:#2d3748;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#90cdf4}}
+  .field-row{{display:grid;grid-template-columns:220px 1fr;border-bottom:1px solid #2d3748}}
+  .field-row:last-child{{border-bottom:none}}
+  .field-label{{padding:12px 18px;font-size:.85rem;color:#a0aec0;display:flex;align-items:flex-start;padding-top:14px;border-right:1px solid #2d3748;word-break:break-word}}
+  .field-value{{padding:10px 14px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}}
+  input[type="text"],input[type="number"]{{width:100%;background:#2d3748;border:1px solid #4a5568;border-radius:6px;color:#e2e8f0;padding:7px 10px;font-size:.85rem;transition:border-color .15s;outline:none}}
+  input:focus{{border-color:#63b3ed}}
+  /* toggle */
+  .toggle{{position:relative;width:44px;height:24px;flex-shrink:0}}
+  .toggle input{{opacity:0;width:0;height:0}}
+  .toggle-slider{{position:absolute;inset:0;background:#4a5568;border-radius:24px;cursor:pointer;transition:background .2s}}
+  .toggle-slider:before{{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:transform .2s}}
+  .toggle input:checked+.toggle-slider{{background:#3182ce}}
+  .toggle input:checked+.toggle-slider:before{{transform:translateX(20px)}}
+  /* checkbox grid */
+  .cb-grid{{display:flex;flex-wrap:wrap;gap:6px 10px;padding:10px 14px}}
+  .cb-group-label{{width:100%;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#4a5568;margin-top:8px;padding-top:6px;border-top:1px solid #2d3748}}
+  .cb-group-label:first-child{{margin-top:0;padding-top:0;border-top:none}}
+  .cb-item{{display:flex;align-items:center;gap:5px;font-size:.85rem;color:#cbd5e0;cursor:pointer;white-space:nowrap}}
+  .cb-item input[type="checkbox"]{{width:15px;height:15px;accent-color:#3182ce;cursor:pointer;flex-shrink:0}}
+  /* radio */
+  .radio-group{{display:flex;gap:18px;padding:10px 14px;align-items:center}}
+  .radio-item{{display:flex;align-items:center;gap:6px;font-size:.9rem;color:#cbd5e0;cursor:pointer}}
+  .radio-item input[type="radio"]{{width:16px;height:16px;accent-color:#3182ce;cursor:pointer}}
+  /* slider */
+  .slider-wrap{{display:flex;align-items:center;gap:10px;width:100%}}
+  input[type="range"]{{flex:1;accent-color:#3182ce;height:4px}}
+  .slider-val{{min-width:20px;text-align:center;font-size:.9rem;font-weight:600;color:#90cdf4}}
+  /* buttons */
+  .actions{{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}}
+  button{{padding:11px 24px;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:opacity .15s,transform .1s}}
+  button:active{{transform:scale(.98)}}
+  .btn-primary{{background:#3182ce;color:white}}
+  .btn-primary:hover{{opacity:.85}}
+  .btn-restart{{background:#276749;color:white}}
+  .btn-restart:hover{{opacity:.85}}
+  .note{{font-size:.78rem;color:#718096;margin-top:12px}}
+  @media(max-width:540px){{
+    .field-row{{grid-template-columns:1fr}}
+    .field-label{{border-right:none;border-bottom:1px solid #2d3748;padding-bottom:6px}}
   }}
 </style>
 </head>
@@ -167,180 +171,140 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
   <form method="POST" action="/save">
 
+    <!-- ── Preferred Teams & Divisions ───────────────────────── -->
     <div class="section">
       <div class="section-header">Preferred Teams &amp; Divisions</div>
-      <div class="field-row">
-        <div class="field-label">Teams (comma-separated)</div>
-        <div class="field-value">
-          <input type="text" name="preferred__teams" value="{preferred__teams}">
+      <div class="field-row" style="grid-template-columns:1fr">
+        <div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">
+          Teams &mdash; <span style="font-size:.75rem;color:#718096">First team is your &ldquo;favorite&rdquo; shown by default</span>
+        </div>
+        <div class="cb-grid">
+          {team_checkboxes}
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-label">Divisions (comma-separated)</div>
-        <div class="field-value">
-          <input type="text" name="preferred__divisions" value="{preferred__divisions}">
+      <div class="field-row" style="grid-template-columns:1fr">
+        <div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">
+          Divisions &mdash; <span style="font-size:.75rem;color:#718096">Shown in standings rotation</span>
+        </div>
+        <div class="cb-grid" style="gap:8px 16px">
+          {division_checkboxes}
         </div>
       </div>
     </div>
 
+    <!-- ── News Ticker ────────────────────────────────────────── -->
     <div class="section">
       <div class="section-header">News Ticker</div>
       <div class="field-row">
         <div class="field-label">Show on team off-day</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__team_offday" {news_ticker__team_offday}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__team_offday" {news_ticker__team_offday}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Always display</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__always_display" {news_ticker__always_display}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__always_display" {news_ticker__always_display}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Show preferred teams news</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__preferred_teams" {news_ticker__preferred_teams}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__preferred_teams" {news_ticker__preferred_teams}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Show when no games live</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__display_no_games_live" {news_ticker__display_no_games_live}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__display_no_games_live" {news_ticker__display_no_games_live}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Trade rumors</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__traderumors" {news_ticker__traderumors}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__traderumors" {news_ticker__traderumors}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">MLB news</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__mlb_news" {news_ticker__mlb_news}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__mlb_news" {news_ticker__mlb_news}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Countdowns</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__countdowns" {news_ticker__countdowns}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__countdowns" {news_ticker__countdowns}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Show date</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="news_ticker__date" {news_ticker__date}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="news_ticker__date" {news_ticker__date}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Date format</div>
         <div class="field-value">
-          <input type="text" name="news_ticker__date_format" value="{news_ticker__date_format}">
+          <input type="text" name="news_ticker__date_format" value="{news_ticker__date_format}" placeholder="%A, %B %-d">
         </div>
       </div>
     </div>
 
+    <!-- ── Standings ──────────────────────────────────────────── -->
     <div class="section">
       <div class="section-header">Standings</div>
       <div class="field-row">
         <div class="field-label">Show on team off-day</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="standings__team_offday" {standings__team_offday}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="standings__team_offday" {standings__team_offday}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Show on MLB off-day</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="standings__mlb_offday" {standings__mlb_offday}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="standings__mlb_offday" {standings__mlb_offday}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Always display</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="standings__always_display" {standings__always_display}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="standings__always_display" {standings__always_display}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Show when no games live</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="standings__display_no_games_live" {standings__display_no_games_live}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="standings__display_no_games_live" {standings__display_no_games_live}><span class="toggle-slider"></span></label>
         </div>
       </div>
     </div>
 
+    <!-- ── Rotation ───────────────────────────────────────────── -->
     <div class="section">
       <div class="section-header">Rotation</div>
       <div class="field-row">
         <div class="field-label">Enabled</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="rotation__enabled" {rotation__enabled}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="rotation__enabled" {rotation__enabled}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Scroll until finished</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="rotation__scroll_until_finished" {rotation__scroll_until_finished}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="rotation__scroll_until_finished" {rotation__scroll_until_finished}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Only preferred teams</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="rotation__only_preferred" {rotation__only_preferred}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="rotation__only_preferred" {rotation__only_preferred}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Only live games</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="rotation__only_live" {rotation__only_live}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="rotation__only_live" {rotation__only_live}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
@@ -364,23 +328,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <div class="field-row">
         <div class="field-label">Preferred team live: enabled</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="rotation__while_preferred_team_live__enabled" {rotation__while_preferred_team_live__enabled}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="rotation__while_preferred_team_live__enabled" {rotation__while_preferred_team_live__enabled}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label">Preferred team live: during inning breaks</div>
+        <div class="field-label">Preferred team live: inning breaks</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="rotation__while_preferred_team_live__during_inning_breaks" {rotation__while_preferred_team_live__during_inning_breaks}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="rotation__while_preferred_team_live__during_inning_breaks" {rotation__while_preferred_team_live__during_inning_breaks}><span class="toggle-slider"></span></label>
         </div>
       </div>
     </div>
 
+    <!-- ── Weather ────────────────────────────────────────────── -->
     <div class="section">
       <div class="section-header">Weather</div>
       <div class="field-row">
@@ -398,86 +357,72 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <div class="field-row">
         <div class="field-label">Metric units</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="weather__metric_units" {weather__metric_units}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="weather__metric_units" {weather__metric_units}><span class="toggle-slider"></span></label>
         </div>
       </div>
     </div>
 
+    <!-- ── General ────────────────────────────────────────────── -->
     <div class="section">
       <div class="section-header">General</div>
       <div class="field-row">
         <div class="field-label">Time format</div>
-        <div class="field-value">
-          <input type="text" name="time_format" value="{time_format}" placeholder="12h or 24h">
+        <div class="radio-group">
+          {time_format_radios}
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">End of day (HH:MM)</div>
         <div class="field-value">
-          <input type="text" name="end_of_day" value="{end_of_day}" placeholder="00:00">
+          <input type="text" name="end_of_day" value="{end_of_day}" placeholder="00:00" style="max-width:120px">
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Full team names</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="full_team_names" {full_team_names}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="full_team_names" {full_team_names}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Short names for runs/hits</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="short_team_names_for_runs_hits" {short_team_names_for_runs_hits}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="short_team_names_for_runs_hits" {short_team_names_for_runs_hits}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Pregame weather</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="pregame_weather" {pregame_weather}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="pregame_weather" {pregame_weather}><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">Scrolling speed (0–6)</div>
+        <div class="field-value" style="padding:10px 14px">
+          {scrolling_speed_slider}
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Preferred game delay multiplier</div>
         <div class="field-value">
-          <input type="number" name="preferred_game_delay_multiplier" value="{preferred_game_delay_multiplier}" min="0" step="1">
+          <input type="number" name="preferred_game_delay_multiplier" value="{preferred_game_delay_multiplier}" min="0" step="1" style="max-width:120px">
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">API refresh rate (seconds)</div>
         <div class="field-value">
-          <input type="number" name="api_refresh_rate" value="{api_refresh_rate}" min="3" step="1">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field-label">Scrolling speed (0-6)</div>
-        <div class="field-value">
-          <input type="number" name="scrolling_speed" value="{scrolling_speed}" min="0" max="6" step="1">
+          <input type="number" name="api_refresh_rate" value="{api_refresh_rate}" min="3" step="1" style="max-width:120px">
         </div>
       </div>
       <div class="field-row">
         <div class="field-label">Debug mode</div>
         <div class="field-value">
-          <label class="toggle">
-            <input type="checkbox" name="debug" {debug}>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle"><input type="checkbox" name="debug" {debug}><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="field-row">
-        <div class="field-label">Demo date (YYYY-MM-DD or false)</div>
+        <div class="field-label">Demo date</div>
         <div class="field-value">
-          <input type="text" name="demo_date" value="{demo_date}" placeholder="false or 2024-04-01">
+          <input type="text" name="demo_date" value="{demo_date}" placeholder="false or 2024-04-01" style="max-width:180px">
         </div>
       </div>
     </div>
@@ -486,7 +431,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <button type="submit" name="action" value="save" class="btn-primary">Save</button>
       <button type="submit" name="action" value="save_restart" class="btn-restart">Save &amp; Restart Service</button>
     </div>
-    <p class="note">Config is saved to <code>config.json</code> in the project directory. Restart applies to the <code>{service_name}</code> systemd service.</p>
+    <p class="note">Config saved to <code>config.json</code>. Restart applies to the <code>{service_name}</code> systemd service.</p>
   </form>
 </div>
 </body>
@@ -494,7 +439,6 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 
 def load_config():
-    """Load the merged config (example as base, config.json as overrides)."""
     config = {}
     if os.path.isfile(EXAMPLE_CONFIG_FILE):
         with open(EXAMPLE_CONFIG_FILE) as f:
@@ -516,15 +460,22 @@ def deep_update(base, overrides):
     return result
 
 
-def config_to_form_values(config):
-    """Flatten config into form field values."""
+def config_to_template_vars(config):
     def checked(val):
         return "checked" if val else ""
 
     c = config
+    teams = c["preferred"]["teams"]
+    if isinstance(teams, str):
+        teams = [teams]
+
+    divs = c["preferred"]["divisions"]
+    if isinstance(divs, str):
+        divs = [divs]
+
     return {
-        "preferred__teams": ", ".join(c["preferred"]["teams"]) if isinstance(c["preferred"]["teams"], list) else c["preferred"]["teams"],
-        "preferred__divisions": ", ".join(c["preferred"]["divisions"]) if isinstance(c["preferred"]["divisions"], list) else c["preferred"]["divisions"],
+        "team_checkboxes": build_team_checkboxes(teams),
+        "division_checkboxes": build_division_checkboxes(divs),
         "news_ticker__team_offday": checked(c["news_ticker"]["team_offday"]),
         "news_ticker__always_display": checked(c["news_ticker"]["always_display"]),
         "news_ticker__preferred_teams": checked(c["news_ticker"]["preferred_teams"]),
@@ -550,14 +501,14 @@ def config_to_form_values(config):
         "weather__apikey": c["weather"]["apikey"],
         "weather__location": c["weather"]["location"],
         "weather__metric_units": checked(c["weather"]["metric_units"]),
-        "time_format": c["time_format"],
+        "time_format_radios": build_time_format_radios(c["time_format"]),
         "end_of_day": c["end_of_day"],
         "full_team_names": checked(c["full_team_names"]),
         "short_team_names_for_runs_hits": checked(c["short_team_names_for_runs_hits"]),
         "pregame_weather": checked(c["pregame_weather"]),
+        "scrolling_speed_slider": build_scrolling_speed_slider(c["scrolling_speed"]),
         "preferred_game_delay_multiplier": c["preferred_game_delay_multiplier"],
         "api_refresh_rate": c["api_refresh_rate"],
-        "scrolling_speed": c["scrolling_speed"],
         "debug": checked(c["debug"]),
         "demo_date": str(c["demo_date"]) if c["demo_date"] else "false",
         "service_name": SERVICE_NAME,
@@ -566,24 +517,23 @@ def config_to_form_values(config):
 
 
 def form_data_to_config(fields):
-    """Convert flat form POST fields back to nested config dict."""
     def get(key, default=""):
         vals = fields.get(key, [default])
         return vals[0] if vals else default
 
+    def get_list(key):
+        return fields.get(key, [])
+
     def checkbox(key):
         return key in fields
-
-    def split_list(val):
-        return [x.strip() for x in val.split(",") if x.strip()]
 
     demo_raw = get("demo_date", "false").strip()
     demo_val = False if demo_raw.lower() in ("false", "") else demo_raw
 
     return {
         "preferred": {
-            "teams": split_list(get("preferred__teams")),
-            "divisions": split_list(get("preferred__divisions")),
+            "teams": get_list("preferred__teams"),
+            "divisions": get_list("preferred__divisions"),
         },
         "news_ticker": {
             "team_offday": checkbox("news_ticker__team_offday"),
@@ -629,20 +579,36 @@ def form_data_to_config(fields):
         "pregame_weather": checkbox("pregame_weather"),
         "preferred_game_delay_multiplier": int(float(get("preferred_game_delay_multiplier", "0"))),
         "api_refresh_rate": int(float(get("api_refresh_rate", "5"))),
-        "scrolling_speed": int(float(get("scrolling_speed", "2"))),
+        "scrolling_speed": int(get("scrolling_speed", "2")),
         "debug": checkbox("debug"),
         "demo_date": demo_val,
     }
 
 
+def run_validator():
+    """Run validate_config.py as a subprocess and return (success, output_text)."""
+    validator = os.path.join(os.path.dirname(os.path.abspath(__file__)), "validate_config.py")
+    if not os.path.isfile(validator):
+        return False, "validate_config.py not found."
+    try:
+        result = subprocess.run(
+            [sys.executable, validator],
+            capture_output=True, text=True, timeout=30,
+            cwd=os.path.dirname(os.path.abspath(__file__)),
+        )
+        output = (result.stdout + result.stderr).strip()
+        return result.returncode == 0, output
+    except subprocess.TimeoutExpired:
+        return False, "Validator timed out."
+    except Exception as e:
+        return False, f"Error running validator: {e}"
+
+
 def restart_service():
-    """Attempt to restart the systemd service. Returns (success, message)."""
     try:
         result = subprocess.run(
             ["sudo", "systemctl", "restart", SERVICE_NAME],
-            capture_output=True,
-            text=True,
-            timeout=15,
+            capture_output=True, text=True, timeout=15,
         )
         if result.returncode == 0:
             return True, f"Service '{SERVICE_NAME}' restarted successfully."
@@ -656,8 +622,8 @@ def restart_service():
 
 
 class ConfigHandler(BaseHTTPRequestHandler):
-    def log_message(self, format, *args):
-        print(f"[{self.address_string()}] {format % args}")
+    def log_message(self, fmt, *args):
+        print(f"[{self.address_string()}] {fmt % args}")
 
     def send_html(self, html, status=200):
         encoded = html.encode("utf-8")
@@ -667,16 +633,18 @@ class ConfigHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(encoded)
 
+    def render(self, config, alert_html=""):
+        tvars = config_to_template_vars(config)
+        tvars["alert_html"] = alert_html
+        return HTML_PAGE.format(**tvars)
+
     def do_GET(self):
         if urlparse(self.path).path not in ("/", "/index.html"):
             self.send_response(404)
             self.end_headers()
             return
         try:
-            config = load_config()
-            values = config_to_form_values(config)
-            html = HTML_TEMPLATE.format(**values)
-            self.send_html(html)
+            self.send_html(self.render(load_config()))
         except Exception as e:
             self.send_html(f"<pre>Error loading config: {e}</pre>", 500)
 
@@ -689,32 +657,34 @@ class ConfigHandler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length).decode("utf-8")
         fields = parse_qs(body, keep_blank_values=True)
-
         action = fields.get("action", ["save"])[0]
 
+        alert = ""
         try:
             new_config = form_data_to_config(fields)
             with open(CONFIG_FILE, "w") as f:
                 json.dump(new_config, f, indent="\t")
 
-            alert = ""
+            # Always run the validator after saving
+            val_ok, val_output = run_validator()
+            val_detail = ""
+            if val_output:
+                escaped = val_output.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                val_detail = f'<pre style="margin-top:8px;font-size:.75rem;color:#a0aec0;white-space:pre-wrap">{escaped}</pre>'
+
             if action == "save_restart":
                 ok, msg = restart_service()
-                if ok:
-                    alert = f'<div class="alert alert-success">Saved. {msg}</div>'
-                else:
-                    alert = f'<div class="alert alert-error">Saved, but restart failed: {msg}</div>'
+                status_cls = "alert-success" if ok else "alert-error"
+                alert = f'<div class="alert {status_cls}">Saved. {msg}{val_detail}</div>'
             else:
-                alert = '<div class="alert alert-success">Config saved successfully.</div>'
+                val_cls = "alert-success" if val_ok else "alert-error"
+                alert = f'<div class="alert {val_cls}">Config saved.{val_detail}</div>'
 
         except Exception as e:
             alert = f'<div class="alert alert-error">Error saving config: {e}</div>'
 
         try:
-            config = load_config()
-            values = config_to_form_values(config)
-            values["alert_html"] = alert
-            html = HTML_TEMPLATE.format(**values)
+            html = self.render(load_config(), alert)
         except Exception as e:
             html = f"<pre>{alert}\n\nError reloading config: {e}</pre>"
 
