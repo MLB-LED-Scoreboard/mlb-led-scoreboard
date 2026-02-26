@@ -104,7 +104,6 @@ def __homekit_control_loop(matrix, display_on):
             display_on.set()
         else:
             display_on.clear()
-            matrix.Clear()
         time.sleep(1)
 
 

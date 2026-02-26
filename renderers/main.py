@@ -174,7 +174,9 @@ class MainRenderer:
 
     def __swap_canvas(self):
         """Block until display is on, then swap the canvas."""
-        if self.display_on is not None:
+        if self.display_on is not None and not self.display_on.is_set():
+            self.canvas.Clear()
+            self.matrix.SwapOnVSync(self.canvas)
             self.display_on.wait()
         return self.matrix.SwapOnVSync(self.canvas)
 
