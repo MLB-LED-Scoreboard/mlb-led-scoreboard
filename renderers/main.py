@@ -140,7 +140,6 @@ class MainRenderer:
             scoreboard.home_team,
             scoreboard.away_team,
             show_score=not status.is_pregame(game.status()),
-            show_runs_hits_errors=self.data.config.show_runs_hits_errors,
         )
 
         # Show network issues

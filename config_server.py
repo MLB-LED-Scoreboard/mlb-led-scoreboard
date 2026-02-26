@@ -507,7 +507,6 @@ def build_page(config, alert_html="", active_tab="config"):
       <div class="field-row"><div class="field-label">End of day (HH:MM)</div><div class="field-value"><input type="text" name="end_of_day" value="{c["end_of_day"]}" placeholder="00:00" style="max-width:120px"></div></div>
       <div class="field-row"><div class="field-label">Full team names</div><div class="field-value"><label class="toggle"><input type="checkbox" name="full_team_names" {ck(c["full_team_names"])}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row"><div class="field-label">Short names for runs/hits</div><div class="field-value"><label class="toggle"><input type="checkbox" name="short_team_names_for_runs_hits" {ck(c["short_team_names_for_runs_hits"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Show runs / hits / errors</div><div class="field-value"><label class="toggle"><input type="checkbox" name="show_runs_hits_errors" {ck(c["show_runs_hits_errors"])}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row"><div class="field-label">Pregame weather</div><div class="field-value"><label class="toggle"><input type="checkbox" name="pregame_weather" {ck(c["pregame_weather"])}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row"><div class="field-label">Scrolling speed (0–6)</div><div class="field-value" style="padding:10px 14px">{build_scrolling_speed_slider(scrolling_int)}</div></div>
       <div class="field-row"><div class="field-label">Preferred game delay multiplier</div><div class="field-value"><input type="number" name="preferred_game_delay_multiplier" value="{c["preferred_game_delay_multiplier"]}" min="0" step="1" style="max-width:120px"></div></div>
@@ -686,7 +685,6 @@ def form_data_to_config(fields):
         "end_of_day": get("end_of_day", "00:00"),
         "full_team_names": checkbox("full_team_names"),
         "short_team_names_for_runs_hits": checkbox("short_team_names_for_runs_hits"),
-        "show_runs_hits_errors": checkbox("show_runs_hits_errors"),
         "pregame_weather": checkbox("pregame_weather"),
         "preferred_game_delay_multiplier": int(float(get("preferred_game_delay_multiplier", "0"))),
         "api_refresh_rate": int(float(get("api_refresh_rate", "5"))),

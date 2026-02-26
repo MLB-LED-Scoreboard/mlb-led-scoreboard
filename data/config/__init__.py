@@ -66,7 +66,6 @@ class Config:
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.show_runs_hits_errors = json.get("show_runs_hits_errors", True)
         self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
 

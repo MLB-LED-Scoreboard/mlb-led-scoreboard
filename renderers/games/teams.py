@@ -11,7 +11,6 @@ def render_team_banner(
     home_team,
     away_team,
     show_score,
-    show_runs_hits_errors=None,
 ):
     away_colors = away_team.lookup_color(team_colors)
     home_colors = home_team.lookup_color(team_colors)
@@ -49,8 +48,8 @@ def render_team_banner(
             "hits": max(len(str(away_team.hits)), len(str(home_team.hits))),
             "errors": max(len(str(away_team.errors)), len(str(home_team.errors))),
         }
-        __render_team_score(canvas, layout, away_colors["text"], away_team, "away", score_spacing, show_runs_hits_errors)
-        __render_team_score(canvas, layout, home_colors["text"], home_team, "home", score_spacing, show_runs_hits_errors)
+        __render_team_score(canvas, layout, away_colors["text"], away_team, "away", score_spacing)
+        __render_team_score(canvas, layout, home_colors["text"], home_team, "home", score_spacing)
 
 
 def can_use_full_team_names(layout, teams):
@@ -147,10 +146,9 @@ def __render_score_component(canvas, layout, text_color, homeaway, coords, compo
     coords["x"] -= font_width * width_chars + line_score_coords["spacing"] - 1  # adjust coordinates for next score.
 
 
-def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacing, show_runs_hits_errors=None):
+def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacing):
     coords = layout.coords(f"teams.line_score.{homeaway}").copy()
-    show = show_runs_hits_errors if show_runs_hits_errors is not None else layout.coords("teams.line_score")["show_hits_and_errors"]
-    if show:
+    if layout.coords("teams.line_score")["show_hits_and_errors"]:
     __render_score_component(canvas, layout, text_color, homeaway, coords, team.runs, score_spacing["runs"])
 
 
