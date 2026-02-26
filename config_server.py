@@ -369,7 +369,23 @@ function showTab(id) {
   history.replaceState(null,'','?tab='+id);
 }
 const initTab = new URLSearchParams(location.search).get('tab') || 'config';
-showTab(initTab);"""
+showTab(initTab);
+
+function toggleDemoDate(enabled) {
+  const picker = document.getElementById('demo_date_picker');
+  const dateInput = picker.querySelector('input[type="date"]');
+  picker.style.display = enabled ? 'block' : 'none';
+  dateInput.disabled = !enabled;
+  if (enabled && !dateInput.value) {
+    // Default to today
+    dateInput.value = new Date().toISOString().slice(0, 10);
+  }
+}
+// Disable the date input on load if toggle is off, so it won't be submitted
+document.addEventListener('DOMContentLoaded', () => {
+  const cb = document.getElementById('demo_date_enabled');
+  if (cb) toggleDemoDate(cb.checked);
+});"""
 
 
 def build_page(config, alert_html="", active_tab="config"):
@@ -441,7 +457,20 @@ def build_page(config, alert_html="", active_tab="config"):
       <div class="field-row"><div class="field-label">MLB news</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__mlb_news" {ck(c["news_ticker"]["mlb_news"])}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row"><div class="field-label">Countdowns</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__countdowns" {ck(c["news_ticker"]["countdowns"])}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row"><div class="field-label">Show date</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__date" {ck(c["news_ticker"]["date"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Date format</div><div class="field-value"><input type="text" name="news_ticker__date_format" value="{c["news_ticker"]["date_format"]}" placeholder="%A, %B %-d"></div></div>
+      <div class="field-row">
+        <div class="field-label">Date format</div>
+        <div class="field-value" style="flex-direction:column;align-items:flex-start;gap:6px">
+          <input type="text" name="news_ticker__date_format" value="{c["news_ticker"]["date_format"]}" placeholder="%A, %B %-d">
+          <span style="font-size:.75rem;color:#718096">
+            Uses Python strftime codes &mdash;
+            <a href="https://strftime.org" target="_blank" rel="noopener"
+              style="color:#63b3ed;text-decoration:none">strftime.org</a>
+            &nbsp;&middot;&nbsp; e.g. <code style="color:#90cdf4">%A</code> = Monday &nbsp;
+            <code style="color:#90cdf4">%B</code> = January &nbsp;
+            <code style="color:#90cdf4">%-d</code> = 4
+          </span>
+        </div>
+      </div>
     </div>
 
     <div class="section">
@@ -483,7 +512,23 @@ def build_page(config, alert_html="", active_tab="config"):
       <div class="field-row"><div class="field-label">Preferred game delay multiplier</div><div class="field-value"><input type="number" name="preferred_game_delay_multiplier" value="{c["preferred_game_delay_multiplier"]}" min="0" step="1" style="max-width:120px"></div></div>
       <div class="field-row"><div class="field-label">API refresh rate (seconds)</div><div class="field-value"><input type="number" name="api_refresh_rate" value="{c["api_refresh_rate"]}" min="3" step="1" style="max-width:120px"></div></div>
       <div class="field-row"><div class="field-label">Debug mode</div><div class="field-value"><label class="toggle"><input type="checkbox" name="debug" {ck(c["debug"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Demo date</div><div class="field-value"><input type="text" name="demo_date" value="{str(c["demo_date"]) if c["demo_date"] else "false"}" placeholder="false or 2024-04-01" style="max-width:180px"></div></div>
+      <div class="field-row">
+        <div class="field-label">Demo date</div>
+        <div class="field-value" style="flex-direction:column;align-items:flex-start;gap:8px">
+          <label class="toggle" title="Enable demo mode">
+            <input type="checkbox" id="demo_date_enabled" {"checked" if c["demo_date"] else ""}
+              onchange="toggleDemoDate(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+          <div id="demo_date_picker" style="display:{"block" if c["demo_date"] else "none"}">
+            <input type="date" name="demo_date"
+              value="{str(c["demo_date"]) if c["demo_date"] else ""}"
+              style="background:#2d3748;border:1px solid #4a5568;border-radius:6px;color:#e2e8f0;padding:7px 10px;font-size:.85rem;outline:none;color-scheme:dark">
+          </div>
+          <input type="hidden" name="demo_date_off" value="false">
+          <span style="font-size:.75rem;color:#718096">{"Demo mode: " + str(c["demo_date"]) if c["demo_date"] else "Live data"}</span>
+        </div>
+      </div>
     </div>
 
     <div class="actions">
@@ -591,8 +636,8 @@ def form_data_to_config(fields):
     def checkbox(key):
         return key in fields
 
-    demo_raw = get("demo_date", "false").strip()
-    demo_val = False if demo_raw.lower() in ("false", "") else demo_raw
+    demo_raw = get("demo_date", "").strip()
+    demo_val = demo_raw if demo_raw else False
 
     return {
         "preferred": {
