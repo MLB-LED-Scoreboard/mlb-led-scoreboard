@@ -66,6 +66,7 @@
   "plugins": {},
   "time_format": "12h",
   "end_of_day": "00:00",
+  "show_runs_hits_errors": true,
   "sync_delay_seconds": 0,
   "api_refresh_rate": 5,
   "scrolling_speed": 2,
