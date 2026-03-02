@@ -273,9 +273,13 @@ class Config:
 class Requirements(StrEnum):
     LIVE = "live"
     LIVE_IN_INNING = "live_in_inning"
+    PREGAME = "pregame"
+    GAME_OVER = "game_over"
 
 
 class GameRule:
+    DEFAULT_PRIORITY = 0, True
+
     def __init__(
         self,
         priority: int,
@@ -284,27 +288,32 @@ class GameRule:
         passive=False,
         teams: list[str] = [],
     ):
-        self.priority = priority
         self.requirement = requirement
-        self.passive = passive
+        self.priority = priority, passive
         self.teams = set(team_metadata.get_team_id(t) for t in teams)
 
     def matches(self, game) -> tuple[int, bool]:
         if self.teams and not set([game["away_id"], game["home_id"]]).intersection(self.teams):
-            return 0, True
+            return GameRule.DEFAULT_PRIORITY
 
         if self.requirement is None:
-            return self.priority, self.passive
+            return self.priority
+
+        if self.requirement == Requirements.PREGAME and status.is_pregame(game["status"]):
+            return self.priority
+
+        if self.requirement == Requirements.GAME_OVER and status.is_complete(game["status"]):
+            return self.priority
 
         # both others require a live game
         if status.is_fresh(game["status"]) or (status.is_live(game["status"])):
             if self.requirement == Requirements.LIVE:
-                return self.priority, self.passive
+                return self.priority
 
             if self.requirement == Requirements.LIVE_IN_INNING and not status.is_inning_break(game["inning_state"]):
-                return self.priority, self.passive
+                return self.priority
 
-        return 0, True
+        return GameRule.DEFAULT_PRIORITY
 
     def __repr__(self):
         return f"GameRule(priority={self.priority}, requirement={self.requirement}, passive={self.passive}, teams={self.teams})"

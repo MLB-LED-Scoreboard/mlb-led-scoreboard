@@ -41,7 +41,7 @@
                     "minimum": 0
                   },
                   "required_status": {
-                    "type": "string"
+                    "enum": ["live", "live_in_inning", "pregame", "game_over"]
                   },
                   "secondary": {
                     "type": "boolean",

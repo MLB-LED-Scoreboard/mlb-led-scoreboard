@@ -41,6 +41,9 @@ class MainRenderer:
                 self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond))
 
     def __render_games(self):
+        # bit of a hack, helps when we change priorities
+        # and want to go back to a specific game.
+        # could also let the drawings/standings tell the main that they can update next?
         self.__request_next_game()
         i = 0
         last_game_id = None
