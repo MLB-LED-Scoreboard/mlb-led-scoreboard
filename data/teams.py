@@ -14,7 +14,7 @@ _SPECIAL_TEAMS = {
     792: { "abbr": "CBA", "name": "Colombia" }, # NOTE: api uses COL, but that conflicts with Colorado Rockies
     798: { "abbr": "CUB", "name": "Cuba" },
     800: { "abbr": "CZE", "name": "Czechia" },
-    805: { "abbr": "DOM", "name": "Dominican Republic" },
+    805: { "abbr": "DR", "name": "Dominican Republic" },
     821: { "abbr": "GBR", "name": "Great Britain" },
     840: { "abbr": "ISR", "name": "Israel" },
     841: { "abbr": "ITA", "name": "Italy" },
@@ -23,7 +23,7 @@ _SPECIAL_TEAMS = {
     878: { "abbr": "NED", "name": "Netherlands" },
     881: { "abbr": "NCA", "name": "Nicaragua" },
     890: { "abbr": "PAN", "name": "Panama" },
-    897: { "abbr": "PUR", "name": "Puerto Rico" },
+    897: { "abbr": "PR", "name": "Puerto Rico" },
     940: { "abbr": "USA", "name": "United States" },
     944: { "abbr": "VEN", "name": "Venezuela" },
     1171: {"abbr": "KOR", "name": "Korea" },
