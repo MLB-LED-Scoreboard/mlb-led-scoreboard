@@ -74,7 +74,7 @@ class Schedule:
             scheduled_game = self._games[self.current_idx]
             if unless and scheduled_game["game_id"] == unless.game_id:
                 return unless
-            # TODO(bmw): tie config for delay etc to priority somehow
+            # TODO(bmw): tie config for delay etc to priority somehow?
             return Game.from_scheduled(
                 scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
             )

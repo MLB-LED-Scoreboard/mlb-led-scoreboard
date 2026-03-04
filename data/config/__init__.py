@@ -305,18 +305,25 @@ class GameRule:
         if self.requirement == Requirements.GAME_OVER and status.is_complete(game["status"]):
             return self.priority
 
-        # both others require a live game
-        if status.is_fresh(game["status"]) or (status.is_live(game["status"])):
-            if self.requirement == Requirements.LIVE:
-                return self.priority
+        if self.requirement == Requirements.LIVE and (
+            status.is_fresh(game["status"]) or (status.is_live(game["status"]))
+        ):
+            return self.priority
 
-            if self.requirement == Requirements.LIVE_IN_INNING and not status.is_inning_break(game["inning_state"]):
-                return self.priority
+        if self.requirement == Requirements.LIVE_IN_INNING and (
+            status.is_live(game["status"])
+            and game["status"] != status.WARMUP
+            and not status.is_inning_break(game["inning_state"])
+        ):
+            return self.priority
 
         return GameRule.DEFAULT_PRIORITY
 
     def __repr__(self):
-        return f"GameRule(priority={self.priority}, requirement={self.requirement}, passive={self.passive}, teams={self.teams})"
+        return (
+            f"GameRule(priority={self.priority[0]}, requirement={self.requirement}"
+            f", passive={self.priority[1]}, teams={self.teams})"
+        )
 
 
 def _game_rules_from_json(json) -> list[GameRule]:
