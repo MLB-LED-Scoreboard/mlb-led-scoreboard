@@ -89,7 +89,7 @@ class Standings:
         return time_delta >= STANDINGS_UPDATE_RATE
 
     def populated(self):
-        return bool(self.standings) or (bool(self.leagues) and self.is_postseason())
+        return (bool(self.preferred_divisions) and bool(self.standings)) or (bool(self.leagues) and self.is_postseason())
 
     def is_postseason(self):
         return self.date > self.playoffs_start_date
