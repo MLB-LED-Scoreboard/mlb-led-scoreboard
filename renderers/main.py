@@ -57,7 +57,7 @@ class MainRenderer:
 
             if game.game_id not in seen_games:
                 seen_games.add(game.game_id)
-                if len(seen_games) > self.data.schedule.num_games():
+                if len(seen_games) >= self.data.schedule.num_games():
                     break
                 debug.log("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
 
