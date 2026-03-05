@@ -45,8 +45,7 @@ class MainRenderer:
         # and want to go back to a specific game.
         # could also let the drawings/standings tell the main that they can update next?
         self.__request_next_game()
-        i = 0
-        last_game_id = None
+        seen_games = set()
         while True:
             self.scrolling_text_pos = self.canvas.width
             self.scrolling_finished = False
@@ -56,12 +55,11 @@ class MainRenderer:
             if game is None:
                 break
 
-            if last_game_id != game.game_id:
-                i += 1
-                if i > self.data.schedule.num_games():
+            if game.game_id not in seen_games:
+                seen_games.add(game.game_id)
+                if len(seen_games) > self.data.schedule.num_games():
                     break
-                last_game_id = game.game_id
-                debug.log("Render thread: showing game %d / %d", i, self.data.schedule.num_games())
+                debug.log("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
 
             cond = any_of(
                 timer_cond(self.data.config.rotate_rate_for_status(game.status())),
