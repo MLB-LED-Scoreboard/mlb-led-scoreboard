@@ -84,10 +84,10 @@ def main(matrix, config_base):
         if data.schedule.num_games():
             data.refresh_game()
         time.sleep(0.1)
-        if data.config.standings_at_priority(data.schedule.priority):
+        if data.config.screen_time_at_priority("standings", data.schedule.priority):
             data.refresh_standings()
         time.sleep(0.2)
-        if data.config.news_at_priority(data.schedule.priority):
+        if data.config.screen_time_at_priority("news", data.schedule.priority):
             data.refresh_news_ticker()
             data.refresh_weather()
 

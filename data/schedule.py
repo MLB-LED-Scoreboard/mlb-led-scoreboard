@@ -1,4 +1,5 @@
 from collections import defaultdict
+import datetime
 import time
 from typing import Optional
 
@@ -7,7 +8,7 @@ import statsapi
 import debug
 from data.game import Game
 from data.update import UpdateStatus
-from data.config import GameRule, Config
+from data.config import Config
 
 GAMES_REFRESH_RATE = 15
 
@@ -37,7 +38,7 @@ class Schedule:
             else:
                 games = self.__all_games
 
-                priority, games = self.__filter_rules(self.config.rotation_rules)
+                priority, games = self.__filter_rules(self.config)
 
                 if len(games) > 0:
                     self.current_idx %= len(games)
@@ -81,12 +82,21 @@ class Schedule:
         except IndexError:
             return None
 
-    def __filter_rules(self, rules: list[GameRule]) -> tuple[int, list]:
+    def __filter_rules(self, config: Config) -> tuple[int, list]:
+
         priorities: defaultdict[int, list] = defaultdict(list)
-        non_passive_priorities = set()
+        highest = 0
+
+        for rule in config.rotation_time_rules:
+            priority = rule.matches(datetime.datetime.now().time())
+            if priority:
+                highest = max(highest, priority)
+
         for game in self.__all_games:
             seen = set()
-            for rule in rules:
+            for rule in config.rotation_game_rules:
+                if rule.priority() < highest:
+                    continue
                 priority, passive = rule.matches(game)
                 if priority:
                     if priority not in seen:
@@ -94,6 +104,6 @@ class Schedule:
                         seen.add(priority)
 
                     if not passive:
-                        non_passive_priorities.add(priority)
-        highest = max(non_passive_priorities, default=0)
+                        highest = max(highest, priority)
+
         return highest, priorities[highest]

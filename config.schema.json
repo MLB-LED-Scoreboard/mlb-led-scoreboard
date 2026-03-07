@@ -31,7 +31,7 @@
             "oneOf": [
               {
                 "type": "object",
-                "required": ["priority"],
+                "required": ["priority", "type"],
                 "properties": {
                   "type": {
                     "const": "game"
@@ -41,16 +41,12 @@
                     "minimum": 0
                   },
                   "required_status": {
-                    "enum": ["live", "live_in_inning", "pregame", "game_over"]
-                  },
-                  "secondary": {
-                    "type": "boolean",
-                    "default": false
+                    "$ref": "#/$defs/required_status"
                   },
                   "teams": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "$ref": "#/$defs/team"
                     },
                     "default": []
                   }
@@ -58,7 +54,62 @@
               },
               {
                 "type": "object",
-                "required": ["with_priority", "seconds"],
+                "required": ["priority", "type"],
+                "properties": {
+                  "type": {
+                    "const": "time"
+                  },
+                  "priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "start_time": {
+                    "type": "string",
+                    "pattern": "^\\d{2}:\\d{2}$"
+                  },
+                  "end_time": {
+                    "type": "string",
+                    "pattern": "^\\d{2}:\\d{2}$"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["with_priority", "type"],
+                "properties": {
+                  "type": {
+                    "const": "secondary_game"
+                  },
+                  "with_priority": {
+                    "oneOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0
+                        }
+                      }
+                    ]
+                  },
+                  "required_status": {
+                    "$ref": "#/$defs/required_status"
+                  },
+                  "teams": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/team"
+                    },
+                    "default": []
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["with_priority", "seconds", "type"],
                 "properties": {
                   "type": {
                     "anyOf": [
@@ -101,7 +152,7 @@
         "teams": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/team"
           }
         },
         "traderumors": {
@@ -196,6 +247,57 @@
           "type": "string",
           "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         }
+      ]
+    }
+  },
+  "$defs": {
+    "required_status": {
+      "enum": ["live", "live_in_inning", "pregame", "game_over"]
+    },
+    "division": {
+      "enum": [
+        "AL East",
+        "AL Central",
+        "AL West",
+        "NL East",
+        "NL Central",
+        "NL West",
+        "AL Wild Card",
+        "NL Wild Card"
+      ]
+    },
+    "team": {
+      "enum": [
+        "Angels",
+        "D-backs",
+        "Orioles",
+        "Red Sox",
+        "Cubs",
+        "Reds",
+        "Guardians",
+        "Rockies",
+        "Tigers",
+        "Astros",
+        "Royals",
+        "Dodgers",
+        "Nationals",
+        "Mets",
+        "Athletics",
+        "Pirates",
+        "Padres",
+        "Mariners",
+        "Giants",
+        "Cardinals",
+        "Rays",
+        "Rangers",
+        "Blue Jays",
+        "Twins",
+        "Phillies",
+        "Braves",
+        "White Sox",
+        "Marlins",
+        "Yankees",
+        "Brewers"
       ]
     }
   }

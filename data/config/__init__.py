@@ -2,7 +2,7 @@ import json
 import os
 import sys
 
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from enum import StrEnum
 from collections import defaultdict
 from typing import Mapping, Optional
@@ -45,8 +45,7 @@ class Config:
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
         self.rotation_rates = json["rotation"]["rates"]
 
-        self.rotation_rules = _game_rules_from_json(json["rotation"]["screens"])
-        self.screen_rules = _screen_rules_from_json(json["rotation"]["screens"])
+        self.rotation_game_rules, self.rotation_time_rules, self.rotation_screen_rules = _screen_rules_from_json(json["rotation"]["screens"])
 
         # Weather
         self.weather_apikey = json["weather"]["apikey"]
@@ -190,11 +189,8 @@ class Config:
                 today -= timedelta(days=1)
         return today.date()
 
-    def news_at_priority(self, priority: int) -> int:
-        return self.screen_rules.get("news", {}).get(priority, 0)
-
-    def standings_at_priority(self, priority: int) -> int:
-        return self.screen_rules.get("standings", {}).get(priority, 0)
+    def screen_time_at_priority(self, screen: str, priority: int) -> int:
+        return self.rotation_screen_rules.get(screen, {}).get(priority, 0)
 
     def read_json(self, path):
         """
@@ -289,110 +285,171 @@ class GameRule:
         teams: list[str] = [],
     ):
         self.requirement = requirement
-        self.priority = priority, passive
+        self.when_matched = priority, passive
         self.teams = set(team_metadata.get_team_id(t) for t in teams)
+
+    def priority(self) -> int:
+        return self.when_matched[0]
 
     def matches(self, game) -> tuple[int, bool]:
         if self.teams and not set([game["away_id"], game["home_id"]]).intersection(self.teams):
             return GameRule.DEFAULT_PRIORITY
 
         if self.requirement is None:
-            return self.priority
+            return self.when_matched
 
         if self.requirement == Requirements.PREGAME and status.is_pregame(game["status"]):
-            return self.priority
+            return self.when_matched
 
         if self.requirement == Requirements.GAME_OVER and status.is_complete(game["status"]):
-            return self.priority
+            return self.when_matched
 
         if self.requirement == Requirements.LIVE and (
             status.is_fresh(game["status"]) or (status.is_live(game["status"]))
         ):
-            return self.priority
+            return self.when_matched
 
         if self.requirement == Requirements.LIVE_IN_INNING and (
             status.is_live(game["status"])
             and game["status"] != status.WARMUP
             and not status.is_inning_break(game["inning_state"])
         ):
-            return self.priority
+            return self.when_matched
 
         return GameRule.DEFAULT_PRIORITY
 
     def __repr__(self):
         return (
-            f"GameRule(priority={self.priority[0]}, requirement={self.requirement}"
-            f", passive={self.priority[1]}, teams={self.teams})"
+            f"GameRule(priority={self.when_matched[0]}, requirement={self.requirement}"
+            f", passive={self.when_matched[1]}, teams={self.teams})"
         )
 
 
-def _game_rules_from_json(json) -> list[GameRule]:
-    rules = []
-    for rule_json in json:
-        if "type" not in rule_json:
-            debug.warning("Invalid rule in config, missing 'type' field. Skipping. Rule: {}".format(rule_json))
-            continue
-        if rule_json["type"] == "game":
-            if "priority" not in rule_json:
-                debug.warning(
-                    "Invalid game rule in config, missing 'priority' field. Skipping. Rule: {}".format(rule_json)
-                )
-                continue
-            json_requirement = rule_json.get("required_status")
-            if json_requirement:
-                try:
-                    json_requirement = Requirements(json_requirement)
-                except ValueError:
-                    debug.warning(
-                        "Invalid game rule in config, unknown required_status '{}'. Skipping. Rule: {}".format(
-                            json_requirement, rule_json
-                        )
-                    )
-                    continue
-            rule = GameRule(
-                priority=rule_json["priority"],
-                requirement=json_requirement,
-                passive=rule_json.get("secondary", False),
-                teams=rule_json.get("teams", []),
+class TimeRule:
+    def __init__(
+        self,
+        priority: int,
+        *,
+        start_time: Optional[time] = None,
+        end_time: Optional[time] = None,
+    ):
+        self.priority = priority
+        self.start_time = start_time
+        self.end_time = end_time
+
+    def matches(self, now: time) -> int:
+        if self.start_time and now < self.start_time:
+            return 0
+        if self.end_time and now > self.end_time:
+            return 0
+        return self.priority
+
+    def __repr__(self):
+        return f"TimeRule(priority={self.priority}, start_time={self.start_time}, end_time={self.end_time})"
+
+
+def _parse_requirements(json) -> Optional[Requirements]:
+    json_requirement = json.get("required_status")
+    if json_requirement:
+        try:
+            return Requirements(json_requirement)
+        except ValueError:
+            raise ValueError(
+                "Invalid game rule in config, unknown required_status '{}'. Rule: {}".format(json_requirement, json)
             )
-            rules.append(rule)
-
-    return rules
+    return None
 
 
-def _screen_rules_from_json(json) -> Mapping[str, Mapping[int, int]]:
+def _parse_with_priority(json) -> list[int]:
+    with_priority = json.get("with_priority")
+    if with_priority is None:
+        raise ValueError("Invalid screen rule in config, missing 'with_priority' field. Rule: {}".format(json))
+
+    if isinstance(with_priority, int):
+        return [with_priority]
+    elif isinstance(with_priority, list) and all(isinstance(p, int) for p in with_priority):
+        return with_priority
+    else:
+        raise ValueError(
+            "Invalid screen rule in config, 'with_priority' field should be an integer or list of integers. Rule: {}".format(
+                json
+            )
+        )
+
+
+VALID_NON_GAME_SCREEN_TYPES = ["news", "standings"]
+
+
+def _screen_rules_from_json(json) -> tuple[list[GameRule], list[TimeRule], Mapping[str, Mapping[int, int]]]:
+    game_rules = []
+    time_rules = []
     screen_rules: defaultdict[str, defaultdict[int, int]] = defaultdict(lambda: defaultdict(int))
 
     for rule_json in json:
-        if "type" not in rule_json or rule_json["type"] == "game":
-            # already warned in game check
-            continue
-        if rule_json["type"] not in ["news", "standings"]:
+        if "type" not in rule_json:
+            raise ValueError("Invalid rule in config, missing 'type' field. Rule: {}".format(rule_json))
+
+        if rule_json["type"] == "game":
+            if "priority" not in rule_json:
+                raise ValueError("Invalid game rule in config, missing 'priority' field. Rule: {}".format(rule_json))
+            rule = GameRule(
+                priority=rule_json["priority"],
+                requirement=_parse_requirements(rule_json),
+                passive=False,
+                teams=rule_json.get("teams", []),
+            )
+            game_rules.append(rule)
+        elif rule_json["type"] == "secondary_game":
+            requirement = _parse_requirements(rule_json)
+            for priority in _parse_with_priority(rule_json):
+                rule = GameRule(
+                    priority=priority,
+                    requirement=requirement,
+                    passive=True,
+                    teams=rule_json.get("teams", []),
+                )
+                game_rules.append(rule)
+        elif rule_json["type"] == "time":
+            if "priority" not in rule_json:
+                raise ValueError("Invalid time rule in config, missing 'priority' field. Rule: {}".format(rule_json))
+            start_time = None
+            end_time = None
+            if "start_time" in rule_json:
+                try:
+                    start_time = datetime.strptime(rule_json["start_time"], "%H:%M").time()
+                except ValueError:
+                    raise ValueError(
+                        "Invalid time format for 'start_time' in config. Expected HH:MM. Rule: {}".format(rule_json)
+                    )
+            if "end_time" in rule_json:
+                try:
+                    end_time = datetime.strptime(rule_json["end_time"], "%H:%M").time()
+                except ValueError:
+                    raise ValueError(
+                        "Invalid time format for 'end_time' in config. Expected HH:MM. Rule: {}".format(rule_json)
+                    )
+            if start_time is None and end_time is None:
+                raise ValueError(
+                    "Invalid time rule in config, need at least one of 'start_time' or 'end_time' fields. Rule: {}".format(
+                        rule_json
+                    )
+                )
+            time_rules.append(TimeRule(priority=rule_json["priority"], start_time=start_time, end_time=end_time))
+
+        elif rule_json["type"] in VALID_NON_GAME_SCREEN_TYPES:
+            if "seconds" not in rule_json:
+                raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
+            for priority in _parse_with_priority(rule_json):
+                screen_rules[rule_json["type"]][priority] = rule_json["seconds"]
+        else:
             debug.warning(
                 "Invalid screen rule in config, unknown type '{}'. Skipping. Rule: {}".format(
                     rule_json.get("type"), rule_json
                 )
             )
-            continue
-        if "with_priority" not in rule_json:
-            debug.warning(
-                "Invalid screen rule in config, missing 'with_priority' field. Skipping. Rule: {}".format(rule_json)
-            )
-            continue
-        if "seconds" not in rule_json:
-            debug.warning(
-                "Invalid screen rule in config, missing 'seconds' field. Skipping. Rule: {}".format(rule_json)
-            )
-            continue
-        priorities = rule_json["with_priority"]
-        if isinstance(priorities, int):
-            screen_rules[rule_json["type"]][priorities] = rule_json["seconds"]
-        elif isinstance(priorities, list):
-            for priority in priorities:
-                screen_rules[rule_json["type"]][priority] = rule_json["seconds"]
 
     if not any(screen_rules[s][0] for s in screen_rules.keys()):
         # prevents nothing showing for an empty config
         screen_rules["news"][0] = 60
 
-    return screen_rules
+    return game_rules, time_rules, screen_rules

@@ -35,9 +35,9 @@ class MainRenderer:
         while True:
             self.__render_games()
             self.__check_acknowledgement()
-            if t := self.data.config.standings_at_priority(self.data.schedule.priority):
+            if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
                 self.__draw_standings(timer_cond(t))
-            if t := self.data.config.news_at_priority(self.data.schedule.priority):
+            if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
                 self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond))
 
     def __render_games(self):
