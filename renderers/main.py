@@ -53,13 +53,15 @@ class MainRenderer:
 
             game = self.data.get_rendering_game()
             if game is None:
+                debug.log("Render thread: no game to render, sleeping for a bit")
+                time.sleep(1)
                 break
 
-            if game.game_id not in seen_games:
-                seen_games.add(game.game_id)
-                if len(seen_games) >= self.data.schedule.num_games():
-                    break
-                debug.log("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
+            if len(seen_games) >= self.data.schedule.num_games():
+                break
+            seen_games.add(game.game_id)
+
+            debug.log("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
 
             cond = any_of(
                 timer_cond(self.data.config.rotate_rate_for_status(game.status())),
