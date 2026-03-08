@@ -243,18 +243,11 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 
 A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
-See [config.schema.json] for the schema that 
+See [config.schema.json] for the schema that
 
 ```
-"preferred":                              Options for team and division preference
-  "teams"                         Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                     Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
-
 "news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
-  "always_display"                Bool    Display the news ticker screen at all times. Supercedes the standings setting.
-  "team_offday"                   Bool    Display the news ticker when your prefered team is on an offday.
-  "preferred_teams"               Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
-  "display_no_games_live"         Bool    Display news and weather when none of your games are currently live.
+  "teams"                         Array   Teams you'd like to pull down headlines for.
   "traderumors"                   Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
   "mlb_news"                      Bool    Include MLB's frontpage news.
   "countdowns"                    Bool    Include various countdowns in the ticker.
@@ -262,21 +255,13 @@ See [config.schema.json] for the schema that
   "date_format"                   String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
 
 "standings":                              Options for displaying standings for a division
-  "always_display"                Bool    Display standings for your preferred divisions.
-  "mlb_offday"                    Bool    Display standings for your preferred divisions when there are no games on the current day.
-  "team_offday"                   Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
-  "display_no_games_live"         Bool    Display standings when none of your games are currently live.
+  "divisions"                     Array   Names of divisions you'd like to show on the standings screen
 
 "rotation":                               Options for rotation through the day's games
-  "enabled"                       Bool    Rotate through each game of the day according to the configured `rates`.
   "scroll_until_finished"         Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"                Bool    Only rotate through games in your preferred teams.
-  "only_live"                     Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
   "rates"                         Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
 
-  "while_preferred_team_live":            Options for rotating between screens while one of your preferred teams is live
-    "enabled"                     Bool    Enable rotation while a preferred team is live.
-    "during_inning_breaks"        Bool    Enable rotation while a preferred team is live during an inning break.
+  "screens"                       Array    See the next section.
 
 "weather":                                Options for retrieving the weather
   "apikey"                        String  An API key is required to use the weather service.
@@ -297,6 +282,11 @@ See [config.schema.json] for the schema that
 "debug"                           Bool    Game and other debug data is written to your console.
 "demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
+
+
+### Controlling what shows on the board: `rotation.screens`
+
+TODO
 
 ### Delaying Board Update
 * The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
