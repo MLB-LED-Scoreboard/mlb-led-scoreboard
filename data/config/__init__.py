@@ -3,7 +3,7 @@ import os
 import sys
 
 from datetime import datetime, time, timedelta
-from enum import StrEnum
+from enum import Enum
 from collections import defaultdict
 from typing import Mapping, Optional
 
@@ -266,11 +266,21 @@ class Config:
         return reference_layout
 
 
-class Requirements(StrEnum):
+class Requirements(Enum):
     LIVE = "live"
     LIVE_IN_INNING = "live_in_inning"
     PREGAME = "pregame"
     GAME_OVER = "game_over"
+
+    def __str__(self):
+        return self.value
+
+    @staticmethod
+    def from_str(label):
+        for requirement in Requirements:
+            if requirement.value == label:
+                return requirement
+        raise ValueError(f"Unknown requirement: {label}")
 
 
 class GameRule:
@@ -352,7 +362,7 @@ def _parse_requirements(json) -> Optional[Requirements]:
     json_requirement = json.get("required_status")
     if json_requirement:
         try:
-            return Requirements(json_requirement)
+            return Requirements.from_str(json_requirement)
         except ValueError:
             raise ValueError(
                 "Invalid game rule in config, unknown required_status '{}'. Rule: {}".format(json_requirement, json)
