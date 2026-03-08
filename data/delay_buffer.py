@@ -23,5 +23,8 @@ class CircularQueue:
         self.queue.appendleft(top)
         return top
 
+    def clear(self):
+        self.queue.clear()
+
     def __len__(self):
         return len(self.queue)

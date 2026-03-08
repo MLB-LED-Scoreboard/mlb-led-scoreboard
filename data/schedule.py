@@ -1,13 +1,15 @@
-from collections import defaultdict
 import datetime
 import time
+from collections import defaultdict
 from typing import Optional
+from math import ceil
 
 import statsapi
 
 import debug
 from data.game import Game
 from data.update import UpdateStatus
+from data.delay_buffer import CircularQueue
 from data.config import Config
 
 GAMES_REFRESH_RATE = 15
@@ -19,10 +21,15 @@ class Schedule:
         self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
-        # all games for the day
-        self.__all_games = []
-        # the actual (filtered) schedule
+
+        delay_required = ceil(
+            (self.config.preferred_game_delay_multiplier * self.config.api_refresh_rate) / GAMES_REFRESH_RATE
+        )
+
+        self._data_wait_queue = CircularQueue(delay_required + 1)
+        # the (filtered) schedule
         self._games = []
+        self.priority = 0
         self.update(True)
 
     def update(self, force=False) -> UpdateStatus:
@@ -31,14 +38,19 @@ class Schedule:
             debug.log("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
-                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
+                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
             except:
                 debug.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
             else:
-                games = self.__all_games
 
-                priority, games = self.__filter_rules(self.config)
+                priority, games = self.__filter_rules(all_games)
+                if priority > self.priority:
+                    # going up a priority level should never be delayed
+                    self._data_wait_queue.clear()
+                self._data_wait_queue.push((priority, games))
+
+                priority, games = self._data_wait_queue.peek()
 
                 if len(games) > 0:
                     self.current_idx %= len(games)
@@ -47,7 +59,12 @@ class Schedule:
 
                 self._games = games
                 self.priority = priority
-                debug.log("Schedule updated with %d games (priority %d)", len(self._games), priority)
+                debug.log(
+                    "Schedule updated with %d games (priority %d) (current delay %d)",
+                    len(self._games),
+                    priority,
+                    self.current_delay(),
+                )
                 return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED
@@ -55,6 +72,9 @@ class Schedule:
     def __should_update(self):
         endtime = time.time()
         return endtime - self.starttime >= GAMES_REFRESH_RATE
+
+    def current_delay(self):
+        return (len(self._data_wait_queue) - 1) * GAMES_REFRESH_RATE
 
     def num_games(self):
         return len(self._games)
@@ -75,26 +95,25 @@ class Schedule:
             scheduled_game = self._games[self.current_idx]
             if unless and scheduled_game["game_id"] == unless.game_id:
                 return unless
-            # TODO(bmw): tie config for delay etc to priority somehow?
             return Game.from_scheduled(
                 scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
             )
         except IndexError:
             return None
 
-    def __filter_rules(self, config: Config) -> tuple[int, list]:
+    def __filter_rules(self, all_games: list) -> tuple[int, list]:
 
         priorities: defaultdict[int, list] = defaultdict(list)
         highest = 0
 
-        for rule in config.rotation_time_rules:
+        for rule in self.config.rotation_time_rules:
             priority = rule.matches(datetime.datetime.now().time())
             if priority:
                 highest = max(highest, priority)
 
-        for game in self.__all_games:
+        for game in all_games:
             seen = set()
-            for rule in config.rotation_game_rules:
+            for rule in self.config.rotation_game_rules:
                 if rule.priority() < highest:
                     continue
                 priority, passive = rule.matches(game)
