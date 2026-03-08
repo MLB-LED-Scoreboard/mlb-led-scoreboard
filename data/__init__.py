@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 
 
 import debug
@@ -25,7 +25,7 @@ class Data:
 
         # render thread can switch to next
         self.next_game: Game = self.current_game
-        self.rendering: Literal["current"] | Literal["next"] = "current"
+        self.rendering: Literal["current", "next"] = "current"
         # main thread acknowledges, so it can switch back to current
         self.acknowledged_next_game: bool = False
 
@@ -79,7 +79,7 @@ class Data:
         elif status == UpdateStatus.FAIL:
             self.network_issues = True
 
-    def get_rendering_game(self) -> Game | None:
+    def get_rendering_game(self) -> Optional[Game]:
         if self.rendering == "current":
             return self.current_game
         else:
