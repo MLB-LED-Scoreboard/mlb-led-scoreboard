@@ -9,7 +9,7 @@
 </a>
 
 ---------------
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > If you are upgrading from v7 to v8, please be sure to read the [Usage](#usage) section, as the startup commands have changed!
 ---------------
 
@@ -243,6 +243,8 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 
 A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
 
+See [config.schema.json] for the schema that 
+
 ```
 "preferred":                              Options for team and division preference
   "teams"                         Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
@@ -300,7 +302,7 @@ A default `config.example.json` file is included for reference. Copy this file t
 * The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
 * This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with api_refresh_rate=5 will delay the game updates by 10 seconds.
 * There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
-* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  
+* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.
 * If you set the * preferred_game_delay_multiplier=10 with api_refresh_rate=3, it will take 30-40 seconds for the buffer to fill and the board to delay.
 
 ### Additional Features

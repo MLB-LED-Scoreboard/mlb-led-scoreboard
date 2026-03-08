@@ -1,9 +1,4 @@
 {
-    "preferred": {
-        "teams": [
-            "Braves",
-            "Yankees"
-        ]
-    },
+    "format": 9.0,
     "demo_date": "2024-10-05"
 }

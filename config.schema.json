@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
+  "required": ["format"],
   "properties": {
     "format": {
       "const": 9.0
@@ -26,10 +27,12 @@
           }
         },
         "screens": {
+          "title": "Screens to rotate through",
           "type": "array",
           "items": {
             "oneOf": [
               {
+                "title": "Game rule",
                 "type": "object",
                 "required": ["priority", "type"],
                 "properties": {
@@ -53,6 +56,8 @@
                 }
               },
               {
+                "title": "Time of day rule",
+                "description": "Does not directly add a screen to show, just introduces a priority level at certain times of day",
                 "type": "object",
                 "required": ["priority", "type"],
                 "properties": {
@@ -74,6 +79,8 @@
                 }
               },
               {
+                "title": "Additional game rule",
+                "description": "Does not introduce a new priority level, but can add games to one",
                 "type": "object",
                 "required": ["with_priority", "type"],
                 "properties": {
@@ -108,18 +115,12 @@
                 }
               },
               {
+                "title": "News or standings rule",
                 "type": "object",
                 "required": ["with_priority", "seconds", "type"],
                 "properties": {
                   "type": {
-                    "anyOf": [
-                      {
-                        "const": "standings"
-                      },
-                      {
-                        "const": "news"
-                      }
-                    ]
+                    "enum": ["news", "standings"]
                   },
                   "with_priority": {
                     "oneOf": [
@@ -168,7 +169,9 @@
           "type": "boolean"
         },
         "date_format": {
-          "type": "string"
+          "description": "Made up of the format codes from https://docs.python.org/3/library/datetime.html#format-codes",
+          "type": "string",
+          "default": "%A, %B %d"
         }
       }
     },
@@ -180,7 +183,8 @@
           "type": "string",
           "not": {
             "pattern": "YOUR_API_KEY_HERE"
-          }
+          },
+          "description": "Go to https://home.openweathermap.org/users/sign_up to get an API key"
         },
         "location": {
           "type": "string"
@@ -202,14 +206,7 @@
       }
     },
     "time_format": {
-      "anyOf": [
-        {
-          "const": "12h"
-        },
-        {
-          "const": "24h"
-        }
-      ]
+      "enum": ["12h", "24h"]
     },
     "end_of_day": {
       "type": "string",
@@ -236,9 +233,11 @@
       "maximum": 6
     },
     "debug": {
+      "description": "Should the board enable extra logging?",
       "type": "boolean"
     },
     "demo_date": {
+      "description": "Date to simulate the board on. Mostly for testing.",
       "oneOf": [
         {
           "type": "boolean"
@@ -252,9 +251,17 @@
   },
   "$defs": {
     "required_status": {
-      "enum": ["live", "live_in_inning", "pregame", "game_over"]
+      "enum": ["live", "live_in_inning", "pregame", "game_over"],
+      "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
+      "meta:enum": {
+        "live": "Game is currently in progress",
+        "live_in_inning": "Game is currently in progress and has reached the inning specified in the teams array (if any)",
+        "pregame": "Game has not started yet",
+        "game_over": "Game has finished"
+      }
     },
     "division": {
+      "title": "MLB division or wildcard group",
       "enum": [
         "AL East",
         "AL Central",
@@ -267,6 +274,7 @@
       ]
     },
     "team": {
+      "title": "MLB team",
       "enum": [
         "Angels",
         "D-backs",

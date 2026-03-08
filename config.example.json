@@ -11,8 +11,13 @@
 		"screens": [
 			{
 				"type": "game",
-				"priority": 1,
+				"priority": 2,
+				"required_status": "live",
 				"teams": ["Cubs"]
+			},
+			{
+				"type": "game",
+				"priority": 1
 			},
 			{
 				"type": "standings",
