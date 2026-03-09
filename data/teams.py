@@ -7,6 +7,26 @@
 _SPECIAL_TEAMS = {
     159: { "abbr": "AL",  "name": "American League All-Stars" },
     160: { "abbr": "NL",  "name": "National League All-Stars" },
+    760: { "abbr": "AUS", "name": "Australia" },
+    776: { "abbr": "BRA", "name": "Brazil" },
+    784: { "abbr": "CAN", "name": "Canada" },
+    791: { "abbr": "TPE", "name": "Chinese Taipei" },
+    792: { "abbr": "CBA", "name": "Colombia" }, # NOTE: api uses COL, but that conflicts with Colorado Rockies
+    798: { "abbr": "CUB", "name": "Cuba" },
+    800: { "abbr": "CZE", "name": "Czechia" },
+    805: { "abbr": "DR", "name": "Dominican Republic" },
+    821: { "abbr": "GBR", "name": "Great Britain" },
+    840: { "abbr": "ISR", "name": "Israel" },
+    841: { "abbr": "ITA", "name": "Italy" },
+    843: { "abbr": "JPN", "name": "Japan" },
+    867: { "abbr": "MEX", "name": "Mexico" },
+    878: { "abbr": "NED", "name": "Netherlands" },
+    881: { "abbr": "NCA", "name": "Nicaragua" },
+    890: { "abbr": "PAN", "name": "Panama" },
+    897: { "abbr": "PR", "name": "Puerto Rico" },
+    940: { "abbr": "USA", "name": "United States" },
+    944: { "abbr": "VEN", "name": "Venezuela" },
+    1171: {"abbr": "KOR", "name": "Korea" },
 }
 
 # Run this file to retreive the latest team data from the MLB API.
@@ -57,7 +77,7 @@ def get_team_id(team_name):
         # this function is only ever given user's config as input
         # so we provide a more exact error message
         raise ValueError(f"Unknown team name: {team_name}")
-    
+
 def _fetch_team_data():
     import json, os, statsapi
 
@@ -78,7 +98,7 @@ def _fetch_team_data():
 
     with open(norm_path, "w") as f:
         json.dump(teams, f, indent=4)
-    
+
     print(f"Team data written to {norm_path}")
 
     return teams
