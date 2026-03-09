@@ -247,6 +247,7 @@ A default `config.example.json` file is included for reference. Copy this file t
 "preferred":                              Options for team and division preference
   "teams"                         Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
   "divisions"                     Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
+  "leagues"                       Array   An array of preferred leagues. Teams from any league can be included in preferred_teams. Example: ["MLB", "WBC", "Olympics"]. Defaults to ["MLB"]
 
 "news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
   "always_display"                Bool    Display the news ticker screen at all times. Supercedes the standings setting.
