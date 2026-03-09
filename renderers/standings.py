@@ -44,6 +44,53 @@ def __render_rotating_standings(canvas, layout, colors, division, stat, league):
 
         offset += coords["offset"]
 
+    __render_standings_indicator(canvas, layout, colors, division, league)
+
+
+def __render_standings_indicator(canvas, layout, colors, division, league):
+    divider_color = get_standings_color_node(colors, "divider", league)
+    team_name_color = get_standings_color_node(colors, "team.name", league)
+
+    xMax = canvas.width
+    yMax = canvas.height
+    xMin = 0
+    xS = xMax-1
+    xH = int(xMax/2)
+    xt1 = xH / 3
+    xt2 = (xH / 3) * 2
+    yS = yMax-1
+
+    graphics.DrawLine(canvas, xMin, yS, xS, yS, divider_color)
+
+    if ("Wild Card" in division.name):
+        if ("AL" in division.name):
+            for x in range (xMin, xH):
+                if (x % 5) > 0:
+                    graphics.DrawLine(canvas, x, yS, x, yS, divider_color)
+                else:
+                    graphics.DrawLine(canvas, x, yS, x, yS, team_name_color)
+        else:
+            for x in range (xH, xMax):
+                if (x % 5) > 0:
+                    graphics.DrawLine(canvas, x, yS, x, yS, divider_color)
+                else:
+                    graphics.DrawLine(canvas, x, yS, x, yS, team_name_color)
+    if ("West" in division.name):
+        if ("AL" in division.name):
+            graphics.DrawLine(canvas, xMin, yS, xt1, yS, team_name_color)
+        else:
+            graphics.DrawLine(canvas, xMin+xH, yS, xt1+xH, yS, team_name_color)
+    elif ("Central" in division.name):
+        if ("AL" in division.name):
+            graphics.DrawLine(canvas, xt1, yS, xt2, yS, team_name_color)
+        else:
+            graphics.DrawLine(canvas, xt1+xH, yS, xt2+xH, yS, team_name_color)
+    elif ("East" in division.name):
+        if ("AL" in division.name):
+            graphics.DrawLine(canvas, xt2, yS, xH, yS, team_name_color)
+        else:
+            graphics.DrawLine(canvas, xt2+xH, yS, xS, yS, team_name_color)
+
 
 def __render_static_wide_standings(canvas, layout, colors, division, league):
     coords = layout.coords("standings")

@@ -8,7 +8,7 @@ import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
-from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
+from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -36,7 +36,7 @@ class Config:
         self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
         self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
         self.news_ticker_date = json["news_ticker"]["date"]
-        self.news_ticker_date_format = json["news_ticker"]["date_format"]
+        self.news_ticker_date_format = os_datetime_format(json["news_ticker"]["date_format"])
         self.news_no_games = json["news_ticker"]["display_no_games_live"]
 
         # Display Standings
