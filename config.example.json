@@ -1,7 +1,8 @@
 {
 	"preferred": {
 		"teams": ["Cubs"],
-		"divisions": ["NL Central", "NL Wild Card"]
+		"divisions": ["NL Central", "NL Wild Card"],
+		"leagues": ["MLB"]
 	},
 	"news_ticker": {
 		"team_offday": true,

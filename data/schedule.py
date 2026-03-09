@@ -10,6 +10,12 @@ from data.update import UpdateStatus
 
 GAMES_REFRESH_RATE = 6 * 60
 
+LEAGUES = {
+    "MLB": "1",
+    "WBC": "52",
+    "Olympics": "52"
+}
+DEFAULT_LEAGUE = "MLB"
 
 class Schedule:
     def __init__(self, config):
@@ -29,8 +35,8 @@ class Schedule:
             debug.log("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
-                # add sportId=51 to additionally get WBC games
-                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId="1,51")
+                sport_ids = [LEAGUES[league] for league in self.config.preferred_leagues]
+                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId=",".join(sport_ids))
             except:
                 debug.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL

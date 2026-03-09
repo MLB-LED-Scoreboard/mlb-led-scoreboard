@@ -8,7 +8,8 @@ import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
-from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
+from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
+from data.schedule import LEAGUES, DEFAULT_LEAGUE
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -18,15 +19,17 @@ MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
 DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
+DEFAULT_PREFERRED_LEAGUE = DEFAULT_LEAGUE
 
 
 class Config:
     def __init__(self, filename_base, width, height):
         json = self.__get_config(filename_base)
 
-        # Preferred Teams/Divisions
+        # Preferred Teams/Divisions/Leagues
         self.preferred_teams = json["preferred"]["teams"]
         self.preferred_divisions = json["preferred"]["divisions"]
+        self.preferred_leagues = json["preferred"]["leagues"]
 
         # News Ticker
         self.news_ticker_team_offday = json["news_ticker"]["team_offday"]
@@ -36,7 +39,7 @@ class Config:
         self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
         self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
         self.news_ticker_date = json["news_ticker"]["date"]
-        self.news_ticker_date_format = json["news_ticker"]["date_format"]
+        self.news_ticker_date_format = os_datetime_format(json["news_ticker"]["date_format"])
         self.news_no_games = json["news_ticker"]["display_no_games_live"]
 
         # Display Standings
@@ -98,6 +101,7 @@ class Config:
         self.check_time_format()
         self.check_preferred_teams()
         self.check_preferred_divisions()
+        self.check_preferred_leagues()
 
         # Check the rotation_rates to make sure it's valid and not silly
         self.check_rotate_rates()
@@ -114,6 +118,39 @@ class Config:
         if isinstance(self.preferred_teams, str):
             team = self.preferred_teams
             self.preferred_teams = [team]
+
+    def check_preferred_leagues(self):
+        if not isinstance(self.preferred_leagues, str) and not isinstance(self.preferred_leagues, list):
+            debug.warning(
+                "preferred_league should be an array of team names or a single team name string."
+                "Using default preferred_league, {}".format(DEFAULT_PREFERRED_LEAGUE)
+            )
+            self.preferred_leagues = [DEFAULT_PREFERRED_LEAGUE]
+
+        leagues = []
+        invalid_leagues = []
+
+        for league_name in self.preferred_leagues:
+            if league_name in LEAGUES:
+                leagues.append(league_name)
+            else:
+                invalid_leagues.append(league_name)
+
+        if invalid_leagues:
+            debug.warning(
+                'Removing unknown league names [{}], must be one of [{}]'.format(
+                    ", ".join(f'{sport}' for sport in invalid_leagues),
+                    ", ".join(f'{sport}' for sport in LEAGUES.keys())
+                )
+            )
+
+        if not leagues:
+            debug.warning(
+                "No valid league name listed! Defaulting to '{}'...".format(DEFAULT_PREFERRED_LEAGUE)
+            )
+            leagues = [DEFAULT_PREFERRED_LEAGUE]
+
+        self.preferred_leagues = leagues
 
     def check_delay(self):
         if self.preferred_game_delay_multiplier < 0:
