@@ -8,6 +8,7 @@ import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
+from data.paths import *
 from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
 from utils import deep_update
 
@@ -21,8 +22,8 @@ DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config:
-    def __init__(self, filename_base, width, height):
-        json = self.__get_config(filename_base)
+    def __init__(self, config_path, width, height):
+        json = self.__get_config(config_path)
 
         # Preferred Teams/Divisions
         self.preferred_teams = json["preferred"]["teams"]
@@ -212,33 +213,43 @@ class Config:
         If file not present return empty data.
         Exception if json invalid.
         """
-        j = {}
-        if os.path.isfile(path):
-            j = json.load(open(path))
-        else:
-            debug.info(f"Could not find json file {path}.  Skipping.")
-        return j
+        if not os.path.isfile(path):
+            return {}
+        
+        return json.load(open(path))
 
-    # example config is a "base config" which always gets read.
-    # our "custom" config contains overrides.
-    def __get_config(self, base_filename):
-        filename = "{}.json".format(base_filename)
-        reference_filename = "config.example.json"  # always use this filename.
-        reference_config = self.read_json(reference_filename)
-        custom_config = self.read_json(filename)
+    def __get_config(self, path=None):
+        if path is None:
+            path = ROOT_DIRECTORY / "config.json"
+        else:
+            path = (CURRENT_DIRECTORY / path).with_suffix(".json")
+        reference_filename = "config.example.json"
+        reference_path = ROOT_DIRECTORY / reference_filename
+        reference_config = self.read_json(reference_path)
+        custom_config = self.read_json(path)
+        if not reference_config:
+            debug.critical(f"""\
+Invalid example configuration. Make sure {reference_filename} exists in root directory.
+You should not edit or move this file!
+"""
+            )
+            sys.exit(1)
+
         if custom_config:
             new_config = deep_update(reference_config, custom_config)
             return new_config
         return reference_config
 
     def __get_colors(self, base_filename):
-        filename_prefix = "colors/{}".format(base_filename)
-        filename = "{}.json".format(filename_prefix)
-        reference_filename = "{}.example.json".format(filename_prefix)
-        reference_colors = self.read_json(reference_filename)
+        filename = "{}.json".format(base_filename)
+        reference_filename = "{}.example.json".format(base_filename)
+        reference_path = COLORS_DIRECTORY / reference_filename
+        reference_colors = self.read_json(reference_path)
         if not reference_colors:
-            debug.error(
-                "Invalid {} reference color file. Make sure {} exists in colors/".format(base_filename, base_filename)
+            debug.critical(f"""\
+Invalid reference color file. Make sure {reference_filename} exists in colors/.
+You should not edit or move this file!"
+"""
             )
             sys.exit(1)
 
@@ -250,15 +261,20 @@ class Config:
         return reference_colors
 
     def __get_layout(self, width, height):
-        filename_prefix = "coordinates/w{}h{}".format(width, height)
+        filename_prefix = "w{}h{}".format(width, height)
         filename = "{}.json".format(filename_prefix)
         reference_filename = "{}.example.json".format(filename_prefix)
-        reference_layout = self.read_json(reference_filename)
+        reference_path = COORDINATES_DIRECTORY / reference_filename
+        reference_layout = self.read_json(reference_path)
         if not reference_layout:
-            # Unsupported coordinates
-            debug.error(
-                "Invalid matrix dimensions provided. See top of README for supported dimensions."
-                "\nIf you would like to see new dimensions supported, please file an issue on GitHub!"
+            supported_dimensions = sorted([file.name.split(".")[0] for file in COORDINATES_DIRECTORY.glob("*.example.json")], reverse=True)
+            debug.critical(f"""\
+Invalid reference layout file. Make sure {reference_filename} exists in coordinates/
+You should not edit or move this file!
+
+Supported dimensions are: {', '.join(supported_dimensions)}
+If you aren't sure why you're seeing this, there might not be official support for your matrix dimensions yet.
+"""
             )
             sys.exit(1)
 
