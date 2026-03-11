@@ -3,13 +3,13 @@
   "rotation": {
     "screens": [
       {
-        "type": "game",
+        "kind": "game",
         "priority": 2,
         "required_status": "live",
         "teams": ["Nationals", "Red Sox"]
       },
       {
-        "type": "game",
+        "kind": "game",
         "priority": 1
       }
     ]

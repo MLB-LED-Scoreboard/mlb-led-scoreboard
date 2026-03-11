@@ -396,10 +396,10 @@ def _screen_rules_from_json(json) -> tuple[list[GameRule], list[TimeRule], Mappi
     screen_rules: defaultdict[str, defaultdict[int, int]] = defaultdict(lambda: defaultdict(int))
 
     for rule_json in json:
-        if "type" not in rule_json:
-            raise ValueError("Invalid rule in config, missing 'type' field. Rule: {}".format(rule_json))
+        if "kind" not in rule_json:
+            raise ValueError("Invalid rule in config, missing 'kind' field. Rule: {}".format(rule_json))
 
-        if rule_json["type"] == "game":
+        if rule_json["kind"] == "game":
             if "priority" not in rule_json:
                 raise ValueError("Invalid game rule in config, missing 'priority' field. Rule: {}".format(rule_json))
             rule = GameRule(
@@ -409,7 +409,7 @@ def _screen_rules_from_json(json) -> tuple[list[GameRule], list[TimeRule], Mappi
                 teams=rule_json.get("teams", []),
             )
             game_rules.append(rule)
-        elif rule_json["type"] == "secondary_game":
+        elif rule_json["kind"] == "secondary_game":
             requirement = _parse_requirements(rule_json)
             for priority in _parse_with_priority(rule_json):
                 rule = GameRule(
@@ -419,7 +419,7 @@ def _screen_rules_from_json(json) -> tuple[list[GameRule], list[TimeRule], Mappi
                     teams=rule_json.get("teams", []),
                 )
                 game_rules.append(rule)
-        elif rule_json["type"] == "time":
+        elif rule_json["kind"] == "time":
             if "priority" not in rule_json:
                 raise ValueError("Invalid time rule in config, missing 'priority' field. Rule: {}".format(rule_json))
             start_time = None
@@ -446,15 +446,15 @@ def _screen_rules_from_json(json) -> tuple[list[GameRule], list[TimeRule], Mappi
                 )
             time_rules.append(TimeRule(priority=rule_json["priority"], start_time=start_time, end_time=end_time))
 
-        elif rule_json["type"] in VALID_NON_GAME_SCREEN_TYPES:
+        elif rule_json["kind"] in VALID_NON_GAME_SCREEN_TYPES:
             if "seconds" not in rule_json:
                 raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
             for priority in _parse_with_priority(rule_json):
-                screen_rules[rule_json["type"]][priority] = rule_json["seconds"]
+                screen_rules[rule_json["kind"]][priority] = rule_json["seconds"]
         else:
             debug.warning(
                 "Invalid screen rule in config, unknown type '{}'. Skipping. Rule: {}".format(
-                    rule_json.get("type"), rule_json
+                    rule_json.get("kind"), rule_json
                 )
             )
 
