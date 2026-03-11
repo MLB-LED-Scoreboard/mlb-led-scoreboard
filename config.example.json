@@ -10,22 +10,22 @@
 		},
 		"screens": [
 			{
-				"type": "game",
+				"kind": "game",
 				"priority": 2,
 				"required_status": "live",
 				"teams": ["Cubs"]
 			},
 			{
-				"type": "game",
+				"kind": "game",
 				"priority": 1
 			},
 			{
-				"type": "standings",
+				"kind": "standings",
 				"seconds": 60,
 				"with_priority": 0
 			},
 			{
-				"type": "news",
+				"kind": "news",
 				"seconds": 60,
 				"with_priority": 0
 			}
