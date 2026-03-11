@@ -343,17 +343,19 @@
       "description": "Which priority level(s) this screen should be associated with. Screens will only show if at least one of their associated priority levels is active. If multiple screens are associated with the same priority level, they will rotate amongst themselves.",
       "oneOf": [
         {
-          "description": "Single priorities",
-          "type": "number",
-          "minimum": 0
-        },
-        {
           "description": "Multiple priorities",
           "type": "array",
           "items": {
             "type": "number",
             "minimum": 0
-          }
+          },
+          "uniqueItems": true,
+          "x-format": "table"
+        },
+        {
+          "description": "Single priorities",
+          "type": "number",
+          "minimum": 0
         }
       ]
     },
