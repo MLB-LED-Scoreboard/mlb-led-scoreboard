@@ -1,40 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Config for the MLB LED Scoreboard",
   "type": "object",
   "required": ["format"],
   "properties": {
     "format": {
       "type": "number",
       "const": 9.0,
-      "default": 9.0
+      "default": 9.0,
+      "x-hidden": true
     },
     "rotation": {
       "type": "object",
       "properties": {
-        "scroll_until_finished": {
-          "description": "Should we let scrolling text complete before allowing the next screen to rotate?",
-          "type": "boolean",
-          "default": true,
-          "x-format": "checkbox"
-        },
-        "rates": {
-          "description": "Seconds to spend on each type of game screen (minimum)",
-          "type": "object",
-          "properties": {
-            "live": {
-              "type": "number",
-              "default": 15.0
-            },
-            "final": {
-              "type": "number",
-              "default": 15.0
-            },
-            "pregame": {
-              "type": "number",
-              "default": 15.0
-            }
-          }
-        },
         "screens": {
           "title": "Screens to rotate through",
           "type": "array",
@@ -44,7 +22,8 @@
             "properties": {
               "kind": {
                 "type": "string",
-                "enum": ["game", "secondary_game", "news", "standings", "time"]
+                "enum": ["game", "secondary_game", "news", "standings", "time"],
+                "description": "What type of screen this rule applies to"
               }
             },
             "anyOf": [
@@ -72,7 +51,8 @@
                     "uniqueItems": true,
                     "x-format": "choices"
                   }
-                }
+                },
+                "additionalProperties": false
               },
               {
                 "title": "Time of day rule",
@@ -93,7 +73,8 @@
                   "end_time": {
                     "$ref": "#/$defs/time"
                   }
-                }
+                },
+                "additionalProperties": false
               },
               {
                 "title": "Additional game rule",
@@ -120,15 +101,16 @@
                     "default": [],
                     "x-format": "choices"
                   }
-                }
+                },
+                "additionalProperties": false
               },
               {
-                "title": "News or standings rule",
+                "title": "News rule",
                 "type": "object",
                 "required": ["with_priority", "seconds"],
                 "properties": {
                   "kind": {
-                    "enum": ["news", "standings"]
+                    "const": "news"
                   },
                   "with_priority": {
                     "$ref": "#/$defs/with_priority"
@@ -138,14 +120,60 @@
                     "minimum": 5,
                     "default": 20
                   }
-                }
+                },
+                "additionalProperties": false
+              },
+              {
+                "title": "Standings rule",
+                "type": "object",
+                "required": ["with_priority", "seconds"],
+                "properties": {
+                  "kind": {
+                    "const": "standings"
+                  },
+                  "with_priority": {
+                    "$ref": "#/$defs/with_priority"
+                  },
+                  "seconds": {
+                    "type": "number",
+                    "minimum": 5,
+                    "default": 20
+                  }
+                },
+                "additionalProperties": false
               }
             ],
             "x-discriminator": "kind",
             "x-embedSwitcher": true
           },
-          "x-format": "table",
           "x-arrayMove": false
+        },
+        "scroll_until_finished": {
+          "description": "Should we let scrolling text complete before allowing the next screen to rotate?",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "rates": {
+          "description": "Seconds to spend on each type of game screen (minimum)",
+          "type": "object",
+          "properties": {
+            "live": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            },
+            "final": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            },
+            "pregame": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            }
+          }
         }
       }
     },
