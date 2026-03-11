@@ -1,17 +1,15 @@
 import copy, json, os
 
-ROOT_DIR        = "."
-COORDINATES_DIR = os.path.join(ROOT_DIR, "coordinates")
-COLORS_DIR      = os.path.join(ROOT_DIR, "colors")
+from data.paths import *
 
 VALIDATIONS = {
-  ROOT_DIR: {
+  ROOT_DIRECTORY: {
     "ignored_keys": [],
     "renamed_keys": {
       "preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier",
     },
   },
-  COORDINATES_DIR: {
+  COORDINATES_DIRECTORY: {
     "ignored_keys": [
       "font_name",
       "no_hitter",
@@ -20,7 +18,7 @@ VALIDATIONS = {
     ],
     "renamed_keys": {},
   },
-  COLORS_DIR: {
+  COLORS_DIRECTORY: {
     "ignored_keys": [
       "city_connect"
     ],
