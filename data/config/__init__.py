@@ -336,6 +336,7 @@ class GameRule:
 
 
 class TimeRule:
+    # TODO(bmw): extend to day of week?
     def __init__(
         self,
         priority: int,

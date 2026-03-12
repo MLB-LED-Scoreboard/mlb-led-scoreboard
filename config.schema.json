@@ -350,6 +350,7 @@
             "minimum": 0
           },
           "uniqueItems": true,
+          "x-arrayMove": false,
           "x-format": "table"
         },
         {
