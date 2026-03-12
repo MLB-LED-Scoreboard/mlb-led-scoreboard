@@ -116,6 +116,7 @@
                     "$ref": "#/$defs/with_priority"
                   },
                   "seconds": {
+                    "description": "Seconds to spend on this screen before rotating",
                     "type": "number",
                     "minimum": 5,
                     "default": 20
@@ -135,6 +136,7 @@
                     "$ref": "#/$defs/with_priority"
                   },
                   "seconds": {
+                    "description": "Seconds to spend on this screen before rotating",
                     "type": "number",
                     "minimum": 5,
                     "default": 20
@@ -340,10 +342,9 @@
       }
     },
     "with_priority": {
-      "description": "Which priority level(s) this screen should be associated with. Screens will only show if at least one of their associated priority levels is active. If multiple screens are associated with the same priority level, they will rotate amongst themselves.",
       "oneOf": [
         {
-          "description": "Multiple priorities",
+          "description": "Multiple priorities to match. Screens will only show if at least one of their associated priority levels is active. If multiple screens are associated with the same priority level, they will rotate amongst themselves.",
           "type": "array",
           "items": {
             "type": "number",
@@ -354,7 +355,7 @@
           "x-format": "table"
         },
         {
-          "description": "Single priorities",
+          "description": "Single priority to match. Screens will only show if at least one of their associated priority levels is active. If multiple screens are associated with the same priority level, they will rotate amongst themselves.",
           "type": "number",
           "minimum": 0
         }
