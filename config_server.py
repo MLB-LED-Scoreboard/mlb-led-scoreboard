@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 MLB LED Scoreboard - Web Config Server
-Serves a local web page to view/edit config.json, colors, and HomeKit status.
+Serves a local web page to view/edit config.json and colors.
 Usage: python3 config_server.py [--port 8080]
 """
 
@@ -25,13 +25,8 @@ SCOREBOARD_COLORS_FILE         = ROOT / "colors" / "scoreboard.json"
 SCOREBOARD_COLORS_EXAMPLE_FILE = ROOT / "colors" / "scoreboard.example.json"
 TEAMS_COLORS_FILE         = ROOT / "colors" / "teams.json"
 TEAMS_COLORS_EXAMPLE_FILE = ROOT / "colors" / "teams.example.json"
-HOMEKIT_PERSIST_FILE = Path.home() / ".homekit-scoreboard" / "accessory.state"
 
 SERVICE_NAME = "mlb-scoreboard"
-
-# Pin and category as defined in homekit_bridge.py
-HOMEKIT_PINCODE  = "123-45-678"
-HOMEKIT_CATEGORY = 5  # CATEGORY_LIGHTBULB
 
 # ── MLB data ───────────────────────────────────────────────────────────────────
 MLB_TEAMS_BY_DIVISION = {
@@ -106,48 +101,6 @@ def unflatten_colors(flat):
         node[parts[-1]] = hex_to_rgb(hex_val)
     return result
 
-
-# ── HomeKit helpers ────────────────────────────────────────────────────────────
-
-def homekit_state():
-    """Return dict with pairing info. Keys: paired (bool), client_count (int), clients (list)."""
-    if not HOMEKIT_PERSIST_FILE.is_file():
-        return {"paired": False, "client_count": 0, "clients": []}
-    try:
-        data = json.loads(HOMEKIT_PERSIST_FILE.read_text())
-        paired_clients = data.get("paired_clients", {})
-        count = len(paired_clients)
-        return {"paired": count > 0, "client_count": count, "clients": list(paired_clients.keys())}
-    except Exception:
-        return {"paired": False, "client_count": 0, "clients": []}
-
-
-def homekit_qr_data_uri():
-    """
-    Build the X-HM:// pairing URI and return a PNG data URI, or None if qrcode unavailable.
-    URI format per HAP spec:
-      X-HM://00{9 uppercase hex digits}
-      payload = (category << 31) | (2 << 27) | setup_code_int
-      flag 2 = IP support
-    """
-    try:
-        import qrcode
-        digits = HOMEKIT_PINCODE.replace("-", "")
-        code_int = int(digits)
-        payload = (HOMEKIT_CATEGORY << 31) | (2 << 27) | code_int
-        uri = f"X-HM://00{payload:09X}"
-        qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=6, border=2)
-        qr.add_data(uri)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        b64 = base64.b64encode(buf.getvalue()).decode()
-        return f"data:image/png;base64,{b64}", uri
-    except ImportError:
-        return None, None
-
-
 # ── HTML builders ──────────────────────────────────────────────────────────────
 
 def build_team_checkboxes(selected_teams):
@@ -214,67 +167,6 @@ def build_color_pickers(colors_dict, form_prefix):
         )
     return "\n".join(parts)
 
-
-def build_homekit_section():
-    state = homekit_state()
-    if state["paired"]:
-        n = state["client_count"]
-        noun = "controller" if n == 1 else "controllers"
-        return f"""
-<div class="section">
-  <div class="section-header">HomeKit Status</div>
-  <div class="hk-status hk-paired">
-    <div class="hk-status-icon">&#10003;</div>
-    <div>
-      <div class="hk-status-title">Paired</div>
-      <div class="hk-status-sub">Linked to {n} HomeKit {noun}</div>
-    </div>
-  </div>
-  <div class="hk-body">
-    <p style="font-size:.85rem;color:#a0aec0;margin-bottom:14px">
-      To re-pair this accessory, remove the current pairing first. This deletes the
-      accessory state file and restarts the service so it becomes discoverable again.
-    </p>
-    <form method="POST" action="/homekit/unpair">
-      <button type="submit" class="btn-danger"
-        onclick="return confirm('Remove pairing and restart service?')">
-        Remove Pairing &amp; Restart
-      </button>
-    </form>
-  </div>
-</div>"""
-    else:
-        qr_uri, xhm_uri = homekit_qr_data_uri()
-        qr_block = ""
-        if qr_uri:
-            qr_block = f"""
-    <div class="hk-qr-wrap">
-      <img src="{qr_uri}" alt="HomeKit QR code" class="hk-qr">
-      <div class="hk-qr-caption">Scan with the iPhone <strong>Home</strong> app<br>
-        <span style="font-size:.72rem;color:#718096">{xhm_uri}</span></div>
-    </div>"""
-        else:
-            qr_block = '<p style="color:#718096;font-size:.85rem">Install the <code>qrcode[pil]</code> package to show a QR code.</p>'
-        return f"""
-<div class="section">
-  <div class="section-header">HomeKit Status</div>
-  <div class="hk-status hk-unpaired">
-    <div class="hk-status-icon">&#9679;</div>
-    <div>
-      <div class="hk-status-title">Not Paired</div>
-      <div class="hk-status-sub">Open the Home app and add an accessory</div>
-    </div>
-  </div>
-  <div class="hk-body">
-    {qr_block}
-    <div class="hk-pin-wrap">
-      <span class="hk-pin-label">Setup Code</span>
-      <span class="hk-pin">{HOMEKIT_PINCODE}</span>
-    </div>
-  </div>
-</div>"""
-
-
 # ── CSS / JS shared shell ──────────────────────────────────────────────────────
 
 SHELL_CSS = """\
@@ -340,27 +232,6 @@ button:active{transform:scale(.98)}
 .btn-restart{background:#276749;color:white}.btn-restart:hover{opacity:.85}
 .btn-danger{background:#c53030;color:white}.btn-danger:hover{opacity:.85}
 .note{font-size:.78rem;color:#718096;margin-top:10px}
-/* HomeKit */
-.hk-status{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid #2d3748}
-.hk-status-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
-.hk-paired .hk-status-icon{background:#1a3a2a;color:#68d391}
-.hk-unpaired .hk-status-icon{background:#2d3748;color:#718096;font-size:.6rem}
-.hk-status-title{font-weight:700;font-size:.95rem}
-.hk-paired .hk-status-title{color:#68d391}
-.hk-unpaired .hk-status-title{color:#a0aec0}
-.hk-status-sub{font-size:.8rem;color:#718096;margin-top:2px}
-.hk-body{padding:18px}
-.hk-qr-wrap{display:flex;align-items:center;gap:20px;margin-bottom:18px;flex-wrap:wrap}
-.hk-qr{width:160px;height:160px;border-radius:8px;border:3px solid #2d3748;image-rendering:pixelated}
-.hk-qr-caption{font-size:.85rem;color:#a0aec0;line-height:1.5}
-.hk-pin-wrap{display:flex;align-items:center;gap:12px;margin-top:6px}
-.hk-pin-label{font-size:.8rem;color:#718096;text-transform:uppercase;letter-spacing:.06em}
-.hk-pin{font-family:monospace;font-size:1.5rem;font-weight:700;color:#f7fafc;letter-spacing:.1em;background:#2d3748;padding:6px 14px;border-radius:8px;border:1px solid #4a5568}
-@media(max-width:540px){
-  .field-row{grid-template-columns:1fr}
-  .field-label{border-right:none;border-bottom:1px solid #2d3748;padding-bottom:6px}
-  .hk-qr-wrap{flex-direction:column;align-items:flex-start}
-}"""
 
 SHELL_JS = """\
 function showTab(id) {
@@ -424,7 +295,6 @@ def build_page(config, alert_html="", active_tab="config"):
   <div class="tabs">
     <div class="tab" data-tab="config"   onclick="showTab('config')">Config</div>
     <div class="tab" data-tab="colors"   onclick="showTab('colors')">Colors</div>
-    <div class="tab" data-tab="homekit"  onclick="showTab('homekit')">HomeKit</div>
   </div>
 
   <!-- ═══════════════════ CONFIG TAB ═══════════════════ -->
@@ -571,17 +441,6 @@ def build_page(config, alert_html="", active_tab="config"):
     </form>
 
   </div>
-
-  <!-- ═══════════════════ HOMEKIT TAB ═══════════════════ -->
-  <div class="tab-panel" id="homekit">
-    {build_homekit_section()}
-  </div>
-
-</div>
-<script>{SHELL_JS}</script>
-</body>
-</html>"""
-
 
 # ── Backend helpers ────────────────────────────────────────────────────────────
 
@@ -752,8 +611,6 @@ class ConfigHandler(BaseHTTPRequestHandler):
         elif path == "/save-colors":
             file_key = qs.get("file", ["scoreboard"])[0]
             self._handle_save_colors(tab, file_key)
-        elif path == "/homekit/unpair":
-            self._handle_homekit_unpair()
         else:
             self.send_response(404)
             self.end_headers()
@@ -804,25 +661,6 @@ class ConfigHandler(BaseHTTPRequestHandler):
             self.send_html(build_page(load_config(), alert, active_tab=tab))
         except Exception as e:
             self.send_html(f"<pre>{alert}\nError reloading: {e}</pre>")
-
-    def _handle_homekit_unpair(self):
-        alert = ""
-        try:
-            if HOMEKIT_PERSIST_FILE.is_file():
-                # Back up then remove
-                bak = HOMEKIT_PERSIST_FILE.with_suffix(".state.bak")
-                shutil.copy2(HOMEKIT_PERSIST_FILE, bak)
-                HOMEKIT_PERSIST_FILE.unlink()
-            ok, msg = restart_service()
-            alert = make_alert(ok, f"Pairing removed. {msg}" if ok else f"Pairing removed, but restart failed: {msg}")
-        except Exception as e:
-            alert = make_alert(False, f"Error removing pairing: {e}")
-
-        try:
-            self.send_html(build_page(load_config(), alert, active_tab="homekit"))
-        except Exception as e:
-            self.send_html(f"<pre>{alert}\nError reloading: {e}</pre>")
-
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 
