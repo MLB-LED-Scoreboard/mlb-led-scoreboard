@@ -12,6 +12,7 @@
     },
     "example_team_color": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "accent": { "$ref": "#/$defs/color" },
         "home": { "$ref": "#/$defs/color" },
@@ -432,7 +433,10 @@
         "b": { "type": "number", "minimum": 0, "maximum": 255 }
       },
       "required": ["r", "g", "b"],
-      "x-format": "custom-color"
+      "x-format": "custom-color",
+      "x-grid": {
+        "columns": 4
+      }
     }
   },
   "x-enforceEnum": true,
