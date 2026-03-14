@@ -10,6 +10,14 @@
       "default": 9.0,
       "x-hidden": true
     },
+    "example_team_color": {
+      "type": "object",
+      "properties": {
+        "accent": { "$ref": "#/$defs/color" },
+        "home": { "$ref": "#/$defs/color" },
+        "text": { "$ref": "#/$defs/color" }
+      }
+    },
     "rotation": {
       "type": "object",
       "properties": {
@@ -415,6 +423,16 @@
         "Yankees",
         "Brewers"
       ]
+    },
+    "color": {
+      "type": "object",
+      "properties": {
+        "r": { "type": "number", "minimum": 0, "maximum": 255 },
+        "g": { "type": "number", "minimum": 0, "maximum": 255 },
+        "b": { "type": "number", "minimum": 0, "maximum": 255 }
+      },
+      "required": ["r", "g", "b"],
+      "x-format": "custom-color"
     }
   },
   "x-enforceEnum": true,
