@@ -42,7 +42,11 @@
                 "required": ["priority"],
                 "properties": {
                   "kind": {
-                    "const": "game"
+                    "const": "game",
+                    "default": "game",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
                   },
                   "priority": {
                     "type": "number",
@@ -70,7 +74,11 @@
                 "required": ["priority"],
                 "properties": {
                   "kind": {
-                    "const": "time"
+                    "const": "time",
+                    "default": "time",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
                   },
                   "priority": {
                     "type": "number",
@@ -92,7 +100,11 @@
                 "required": ["with_priority"],
                 "properties": {
                   "kind": {
-                    "const": "secondary_game"
+                    "const": "secondary_game",
+                    "default": "secondary_game",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
                   },
                   "with_priority": {
                     "$ref": "#/$defs/with_priority"
@@ -119,7 +131,11 @@
                 "required": ["with_priority", "seconds"],
                 "properties": {
                   "kind": {
-                    "const": "news"
+                    "const": "news",
+                    "default": "news",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
                   },
                   "with_priority": {
                     "$ref": "#/$defs/with_priority"
@@ -139,7 +155,11 @@
                 "required": ["with_priority", "seconds"],
                 "properties": {
                   "kind": {
-                    "const": "standings"
+                    "const": "standings",
+                    "default": "standings",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
                   },
                   "with_priority": {
                     "$ref": "#/$defs/with_priority"
@@ -154,8 +174,7 @@
                 "additionalProperties": false
               }
             ],
-            "x-discriminator": "kind",
-            "x-embedSwitcher": true
+            "x-discriminator": "kind"
           },
           "x-arrayMove": false
         },
