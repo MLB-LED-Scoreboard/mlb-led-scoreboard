@@ -214,6 +214,7 @@ class Config:
         Exception if json invalid.
         """
         if not os.path.isfile(path):
+            debug.warning("Config file %s not found. Using default values for this file.", path)
             return {}
         
         return json.load(open(path))
@@ -263,6 +264,7 @@ You should not edit or move this file!"
     def __get_layout(self, width, height):
         filename_prefix = "w{}h{}".format(width, height)
         filename = "{}.json".format(filename_prefix)
+        filename = COORDINATES_DIRECTORY / filename
         reference_filename = "{}.example.json".format(filename_prefix)
         reference_path = COORDINATES_DIRECTORY / reference_filename
         reference_layout = self.read_json(reference_path)
