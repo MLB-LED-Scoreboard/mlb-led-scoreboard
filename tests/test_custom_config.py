@@ -33,7 +33,8 @@ def make_config(config_path="nonexistent", use_layout=False, use_teams=False, us
             path = redirects[path]
         return original_read_json(self, path)
 
-    with mock.patch.object(Config, "read_json", patched_read_json):
+    # Patch reads, patch warning on missing files
+    with mock.patch.object(Config, "read_json", patched_read_json), mock.patch("debug.warning"):
         return Config(config_path, 32, 32)
 
 
@@ -56,10 +57,10 @@ class TestCustomConfig(unittest.TestCase):
 
     def test_custom_not_present(self):
         no_custom = make_config()
-        self.assertEqual(no_custom.layout, self.default_config.layout)
+        self.assertEqual(no_custom, self.default_config)
 
     def test_custom_config_priority(self):
-        self.assertNotEqual(self.custom_config.layout, self.default_config.layout)
+        self.assertNotEqual(self.custom_config, self.default_config)
 
     def test_custom_preferred_teams_override(self):
         self.assertEqual(self.custom_config.preferred_teams, ["Braves"])
