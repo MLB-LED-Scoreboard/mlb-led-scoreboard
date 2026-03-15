@@ -85,7 +85,8 @@
                     "minimum": 0
                   },
                   "start_time": {
-                    "$ref": "#/$defs/time"
+                    "$ref": "#/$defs/time",
+                    "default": "00:00"
                   },
                   "end_time": {
                     "$ref": "#/$defs/time"
