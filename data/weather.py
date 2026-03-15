@@ -73,17 +73,14 @@ class Weather:
                 except pyowm.commons.exceptions.APIRequestError:
                     debug.warning("[WEATHER] Fetching weather information failed from a connection issue.")
                     debug.exception("[WEATHER] Error Message:")
-                    # Set some placeholder weather info if this is our first weather update
-                    if self.temp is None:
-                        self.temp = -99
-                    if self.wind_speed is None:
-                        self.wind_speed = -9
-                    if self.wind_dir is None:
-                        self.wind_dir = 0
-                    if self.conditions is None:
-                        self.conditions = "Error"
-                    if self.icon_name is None:
-                        self.icon_name = "50d"
+                    self.__set_fail_state_defaults()
+                    return UpdateStatus.FAIL
+                except pyowm.commons.exceptions.NotFoundError:
+                    debug.warning("[WEATHER] Fetching weather information failed from a not found error.")
+                    debug.warning("[WEATHER] The 'weather.location' config is likely not formatted correctly.")
+                    debug.warning("[WEATHER] The correct format is '<city>,<state>,<country>' (example: 'Chicago,il,us')")
+                    debug.exception("[WEATHER] Error Message:")
+                    self.__set_fail_state_defaults()
                     return UpdateStatus.FAIL
 
         return UpdateStatus.DEFERRED
@@ -113,3 +110,16 @@ class Weather:
         val = int((degrees / 22.5) + 0.5)
         arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
         return arr[(val % 16)]
+
+    def __set_fail_state_defaults(self):
+        # Set some placeholder weather info if this is our first weather update
+        if self.temp is None:
+            self.temp = -99
+        if self.wind_speed is None:
+            self.wind_speed = -9
+        if self.wind_dir is None:
+            self.wind_dir = 0
+        if self.conditions is None:
+            self.conditions = "Error"
+        if self.icon_name is None:
+            self.icon_name = "50d"
