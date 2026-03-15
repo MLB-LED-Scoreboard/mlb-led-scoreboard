@@ -1,6 +1,6 @@
 # mlb-led-scoreboard
 
-![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) ![](https://img.shields.io/badge/python-3.9+-blue)
+![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) ![](https://img.shields.io/badge/python-3.10+-blue)
 
 [![Join Discord](https://img.shields.io/badge/discord-join-green.svg)](https://discord.gg/FdD6ec9fdt)
 
