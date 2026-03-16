@@ -46,7 +46,9 @@ class Config:
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
         self.rotation_rates = json["rotation"]["rates"]
 
-        self.rotation_game_rules, self.rotation_time_rules, self.rotation_screen_rules = _screen_rules_from_json(json["rotation"]["screens"])
+        self.rotation_game_rules, self.rotation_time_rules, self.rotation_screen_rules = _screen_rules_from_json(
+            json["rotation"]["screens"]
+        )
 
         # Weather
         self.weather_apikey = json["weather"]["apikey"]
@@ -200,9 +202,11 @@ class Config:
         Exception if json invalid.
         """
         if not os.path.isfile(path):
+            debug.warning("Config file %s not found. Using default values for this file.", path)
             return {}
 
-        return json.load(open(path))
+        with open(path) as f:
+            return json.load(f)
 
     def __get_config(self, path=None):
         if path is None:
@@ -214,7 +218,8 @@ class Config:
         reference_config = self.read_json(reference_path)
         custom_config = self.read_json(path)
         if not reference_config:
-            debug.critical(f"""\
+            debug.critical(
+                f"""\
 Invalid example configuration. Make sure {reference_filename} exists in root directory.
 You should not edit or move this file!
 """
@@ -236,12 +241,13 @@ You should not edit or move this file!
         return reference_config
 
     def __get_colors(self, base_filename):
-        filename = "{}.json".format(base_filename)
+        filename = COLORS_DIRECTORY / "{}.json".format(base_filename)
         reference_filename = "{}.example.json".format(base_filename)
         reference_path = COLORS_DIRECTORY / reference_filename
         reference_colors = self.read_json(reference_path)
         if not reference_colors:
-            debug.critical(f"""\
+            debug.critical(
+                f"""\
 Invalid reference color file. Make sure {reference_filename} exists in colors/.
 You should not edit or move this file!"
 """
@@ -257,13 +263,16 @@ You should not edit or move this file!"
 
     def __get_layout(self, width, height):
         filename_prefix = "w{}h{}".format(width, height)
-        filename = "{}.json".format(filename_prefix)
+        filename = COORDINATES_DIRECTORY / "{}.json".format(filename_prefix)
         reference_filename = "{}.example.json".format(filename_prefix)
         reference_path = COORDINATES_DIRECTORY / reference_filename
         reference_layout = self.read_json(reference_path)
         if not reference_layout:
-            supported_dimensions = sorted([file.name.split(".")[0] for file in COORDINATES_DIRECTORY.glob("*.example.json")], reverse=True)
-            debug.critical(f"""\
+            supported_dimensions = sorted(
+                [file.name.split(".")[0] for file in COORDINATES_DIRECTORY.glob("*.example.json")], reverse=True
+            )
+            debug.critical(
+                f"""\
 Invalid reference layout file. Make sure {reference_filename} exists in coordinates/
 You should not edit or move this file!
 
@@ -280,6 +289,11 @@ If you aren't sure why you're seeing this, there might not be official support f
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
+
+    def __eq__(self, other):
+        if not isinstance(other, Config):
+            return NotImplemented
+        return vars(self) == vars(other)
 
 
 class Requirements(Enum):
