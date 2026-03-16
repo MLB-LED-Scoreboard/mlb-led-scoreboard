@@ -216,8 +216,9 @@ class Config:
         if not os.path.isfile(path):
             debug.warning("Config file %s not found. Using default values for this file.", path)
             return {}
-        
-        return json.load(open(path))
+
+        with open(path) as f:
+            return json.load(f)
 
     def __get_config(self, path=None):
         if path is None:
@@ -242,7 +243,7 @@ You should not edit or move this file!
         return reference_config
 
     def __get_colors(self, base_filename):
-        filename = "{}.json".format(base_filename)
+        filename = COLORS_DIRECTORY / "{}.json".format(base_filename)
         reference_filename = "{}.example.json".format(base_filename)
         reference_path = COLORS_DIRECTORY / reference_filename
         reference_colors = self.read_json(reference_path)
@@ -263,8 +264,7 @@ You should not edit or move this file!"
 
     def __get_layout(self, width, height):
         filename_prefix = "w{}h{}".format(width, height)
-        filename = "{}.json".format(filename_prefix)
-        filename = COORDINATES_DIRECTORY / filename
+        filename = COORDINATES_DIRECTORY / "{}.json".format(filename_prefix)
         reference_filename = "{}.example.json".format(filename_prefix)
         reference_path = COORDINATES_DIRECTORY / reference_filename
         reference_layout = self.read_json(reference_path)
@@ -287,3 +287,8 @@ If you aren't sure why you're seeing this, there might not be official support f
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
+
+    def __eq__(self, other):
+        if not isinstance(other, Config):
+            return NotImplemented
+        return vars(self) == vars(other)
