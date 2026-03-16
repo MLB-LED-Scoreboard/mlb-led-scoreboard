@@ -5,11 +5,11 @@ from unittest import mock
 from validate_config import *
 
 class TestValidateConfigMethods(unittest.TestCase):
-  
+
   def test_colorize(self):
     text = "OUTPUT"
     color_code = 99
-    
+
     self.assertEqual(
       colorize(text, color_code),
       f"\033[{color_code}m{text}\033[0m"
@@ -55,7 +55,7 @@ class TestValidateConfigMethods(unittest.TestCase):
   def test_deep_pop_with_nested_pop(self):
     d = {
       "deeply": { "nested": "dict" },
-      "second": { "nested": "dict" } 
+      "second": { "nested": "dict" }
     }
 
     self.assertEqual(
@@ -73,11 +73,11 @@ class TestValidateConfigMethods(unittest.TestCase):
       deep_set(d, "simple", "set"),
       { "simple": "set" }
     )
-  
+
   def test_deep_set_with_nested_set(self):
     d = {
       "deeply": { "nested": "dict" },
-      "second": {} 
+      "second": {}
     }
 
     self.assertEqual(
@@ -90,7 +90,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 
   def test_generate_change(self):
     source = { "three": 4 }
-    
+
     self.assertEqual(
       generate_change(source, "three", ["one", "two"]),
       { "one": { "two": { "three": 4 } } }
@@ -159,7 +159,7 @@ class TestValidateConfigMethods(unittest.TestCase):
         "rename": []
       }
     )
-  
+
   def test_upsert_config_with_simple_deletion(self):
     config = { "should": "be deleted" }
     schema = {}
@@ -215,7 +215,7 @@ class TestValidateConfigMethods(unittest.TestCase):
       changes,
       {
         "add": [
-          { 
+          {
             "already": { "but": "not this one" }
           }
         ],
@@ -693,11 +693,8 @@ Fetching custom config files...
         self.assertNotIn("deprecated_option", config["test_config"])
         # 3. Check that values are not overwritten
         self.assertEqual(
-            config["preferred"],
-            {
-              "teams": ["Braves"],
-              "divisions": ["AL Central", "AL Wild Card"]
-            }
+            config["rotation"]["screens"][0],
+            {"kind": "game", "priority": 2, "required_status": "live", "teams": ["Braves"]},
         )
         # 4. Check that an ignored key is still present
         self.assertIn("ignored_key", config["test_config"])

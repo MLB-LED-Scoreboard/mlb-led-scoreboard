@@ -1,49 +1,51 @@
 {
-  "preferred": {
-    "teams": [
-      "Cubs"
-    ],
-    "divisions": [
-      "NL Central",
-      "NL Wild Card"
-    ]
-  },
-  "news_ticker": {
-    "team_offday": true,
-    "always_display": false,
-    "preferred_teams": true,
-    "traderumors": true,
-    "mlb_news": true,
-    "countdowns": true,
-    "date": true,
-    "date_format": "%A, %B %-d"
-  },
-  "standings": {
-    "team_offday": false,
-    "mlb_offday": true,
-    "always_display": false,
-    "display_no_games_live": true
-  },
-  "rotation": {
-    "enabled": true,
-    "scroll_until_finished": true,
-    "only_preferred": false,
-    "only_live": true,
-    "rates": {
-      "live": 15,
-      "final": 15,
-      "pregame": 15
-    },
-    "while_preferred_team_live": {
-      "enabled": false,
-      "during_inning_breaks": false
-    }
-  },
-  "weather": {
-    "apikey": "YOUR_API_KEY_HERE",
-    "location": "Chicago,il,us",
-    "metric_units": false
-  },
+	"format": 9.0,
+	"rotation": {
+		"scroll_until_finished": true,
+		"rates": {
+			"live": 15.0,
+			"final": 15.0,
+			"pregame": 15.0
+		},
+		"screens": [
+			{
+				"kind": "game",
+				"priority": 2,
+				"required_status": "live",
+				"teams": ["Cubs"]
+			},
+			{
+				"kind": "game",
+				"priority": 1
+			},
+			{
+				"kind": "standings",
+				"seconds": 60,
+				"with_priority": 0
+			},
+			{
+				"kind": "news",
+				"seconds": 60,
+				"with_priority": 0
+			}
+		]
+	},
+	"news_ticker": {
+		"teams": ["Cubs"],
+		"traderumors": true,
+		"mlb_news": true,
+		"countdowns": true,
+		"date": true,
+		"date_format": "%A, %B %-d"
+	},
+	"standings": {
+		"divisions": ["NL Central", "NL Wild Card"]
+	},
+	"weather": {
+		"apikey": "YOUR_API_KEY_HERE",
+		"location": "Chicago,il,us",
+		"metric_units": false
+	},
   "time_format": "12h",
   "end_of_day": "00:00",
   "full_team_names": true,

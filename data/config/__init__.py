@@ -364,6 +364,15 @@ class GameRule:
             f", passive={self.when_matched[1]}, teams={self.teams})"
         )
 
+    def __eq__(self, other):
+        if not isinstance(other, GameRule):
+            return NotImplemented
+        return (
+            self.requirement == other.requirement
+            and self.when_matched == other.when_matched
+            and self.teams == other.teams
+        )
+
 
 class TimeRule:
     # TODO(bmw): extend to day of week?
@@ -388,6 +397,14 @@ class TimeRule:
     def __repr__(self):
         return f"TimeRule(priority={self.priority}, start_time={self.start_time}, end_time={self.end_time})"
 
+    def __eq__(self, other):
+        if not isinstance(other, TimeRule):
+            return NotImplemented
+        return (
+            self.priority == other.priority
+            and self.start_time == other.start_time
+            and self.end_time == other.end_time
+        )
 
 def _parse_requirements(json) -> Optional[Requirements]:
     json_requirement = json.get("required_status")
