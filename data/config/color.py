@@ -18,3 +18,8 @@ class Color:
         for key in keys:
             rv = rv[key]
         return rv
+
+    def __eq__(self, other):
+        if not isinstance(other, Color):
+            return NotImplemented
+        return self.json == other.json
