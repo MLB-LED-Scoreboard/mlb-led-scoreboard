@@ -1,21 +1,20 @@
-These JSON files are named in correspondence to the dimensions of the LED board used when running the software. A file, located in the `coordinates` directory with a filename `w<cols>h<rows>.example.json` tells the scoreboard that those dimensions are officially supported.
-
 # Custom Coordinates
 
-You can edit these coordinates to display parts of the scoreboard in any way you choose.
+These JSON files are named in correspondence to the dimensions of the LED board used when running the software. A file, located in the `coordinates` directory with a filename `w<cols>h<rows>.example.json` tells the scoreboard that those dimensions are officially supported. This `.example` file is required and you will need to copy one of the existing files into a file that matches your dimensions.
 
-During installation (see the main README for setup instructions), custom coordinate files (e.g., `w64h32.json`) are created from their corresponding schema files (e.g., `w64h32.example.json`). You can then edit the custom files to override any coordinates you want to change.
-
-## Example
-
-**Customizing coordinates for a 64x32 board:**
-1. After installation, edit the coordinates in `w64h32.json` as you see fit
-2. Your customized coordinates will always take precedence over the schema defaults
+You can edit these coordinates to display parts of the scoreboard in any way you choose. Simply copy the file corresponding to your board's dimensions to `w<cols>h<rows>.json`. This JSON file only needs to contain the parts you wish to override but it's often easier to just make a copy of the full example file and edit the values you want to change.
 
 > [!WARNING]
 > **DO NOT** edit or remove `.example` files!
 >
 > These are checked by the software to determine which matrix dimensions are supported. If you remove the file, the scoreboard may fail to start.
+
+## Example
+
+**Customizing coordinates for a 64x32 board:**
+1. Copy the example using the user interface or a command such as `cp coordinates/w64h32.example.json coordinates/w64h32.json`
+2. Edit the coordinates in `w64h32.json` as you see fit
+3. Your customized coordinates will always take precedence over the example defaults
 
 ## Fonts
 Any scoreboard element that prints text can accept a `"font_name"` attribute. Supported fonts need to be named with `<width>x<height>.bdf` (or `<width>x<height>B.bdf` for bold fonts). The font loader will search `assets/` first for the specified font and then it will fall back to searching `matrix/fonts/` if one was not found.
