@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from math import ceil
 from datetime import datetime, timedelta
 
 import debug
@@ -104,7 +105,7 @@ class Config:
         self.check_api_refresh_rate()
 
         # Set up update delay parameter
-        self.sync_amount = self.sync_delay_seconds // self.api_refresh_rate
+        self.sync_amount = ceil(self.sync_delay_seconds / self.api_refresh_rate)
 
     def check_preferred_teams(self):
         if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
