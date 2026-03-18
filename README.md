@@ -9,7 +9,7 @@
 </a>
 
 ---------------
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > If you are upgrading from v7 to v8, please be sure to read the [Usage](#usage) section, as the startup commands have changed!
 ---------------
 
@@ -286,8 +286,6 @@ A default `config.example.json` file is included for reference. Copy this file t
 
 "time_format"                     String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
-"full_team_names"                 Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
-"short_team_names_for_runs_hits"  Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
 "preferred_game_delay_multiplier" Integer This value multiplied by api_refresh_rate determines the preferred team update delay in seconds. Must be 0 or greater.
 "api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
@@ -300,7 +298,7 @@ A default `config.example.json` file is included for reference. Copy this file t
 * The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
 * This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with api_refresh_rate=5 will delay the game updates by 10 seconds.
 * There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
-* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  
+* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.
 * If you set the * preferred_game_delay_multiplier=10 with api_refresh_rate=3, it will take 30-40 seconds for the buffer to fill and the board to delay.
 
 ### Additional Features
