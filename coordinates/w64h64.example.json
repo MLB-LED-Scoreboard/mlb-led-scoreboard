@@ -236,6 +236,7 @@
       }
     },
     "name": {
+      "full_names": true,
       "away": {
         "x": 4,
         "y": 8
@@ -277,7 +278,8 @@
       "runs_hits_errors": {
         "show": false,
         "compress_digits": false,
-        "spacing": 3
+        "spacing": 3,
+        "shorten_team_names_on_overflow": true
       },
       "away": {
         "x": 63,

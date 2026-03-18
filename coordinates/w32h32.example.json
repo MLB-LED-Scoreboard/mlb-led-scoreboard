@@ -281,6 +281,7 @@
       }
     },
     "name": {
+      "full_names": false,
       "away": {
         "x": 3,
         "y": 6
@@ -306,7 +307,8 @@
       "runs_hits_errors": {
         "show": false,
         "compress_digits": true,
-        "spacing": 2
+        "spacing": 2,
+        "shorten_team_names_on_overflow": true
       },
       "away": {
         "x": 31,
