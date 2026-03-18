@@ -288,7 +288,9 @@
       "home": {
         "x": 3,
         "y": 13
-      }
+      },
+      "full": false,
+      "auto_abbreviate": true
     },
     "record": {
       "enabled": false,
@@ -302,12 +304,7 @@
         "y": 13
       }
     },
-    "runs": {
-      "runs_hits_errors": {
-        "show": false,
-        "compress_digits": true,
-        "spacing": 2
-      },
+    "line_score": {
       "away": {
         "x": 31,
         "y": 6
@@ -315,7 +312,10 @@
       "home": {
         "x": 31,
         "y": 13
-      }
+      },
+      "show_hits_and_errors": false,
+      "compress_digits": true,
+      "spacing": 2
     }
   },
   "offday": {

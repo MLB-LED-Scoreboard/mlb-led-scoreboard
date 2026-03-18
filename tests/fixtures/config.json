@@ -12,6 +12,7 @@
     "team_offday": true,
     "always_display": false,
     "preferred_teams": true,
+    "display_no_games_live": true,
     "traderumors": true,
     "mlb_news": false,
     "countdowns": false,
@@ -42,13 +43,13 @@
   "weather": {
     "apikey": "SUPER SECRET DON'T LOOK",
     "location": "New York,ny,us",
-    "metric_units": false
+    "metric_units": false,
+    "pregame": true
   },
   "time_format": "24h",
   "end_of_day": "20:00",
-  "full_team_names": true,
-  "short_team_names_for_runs_hits": false,
-  "pregame_weather": true,
+  "api_refresh_rate": 5,
+  "sync_delay_seconds": 0,
   "scrolling_speed": 1,
   "debug": true,
   "demo_date": true,

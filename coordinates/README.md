@@ -1,13 +1,19 @@
-These JSON files are named in correspondence to the dimensions of the LED board used when running the software. A file, located in the `coordinates` directory with a filename `w<cols>h<rows>.example.json` tells the scoreboard that those dimensions are officially supported. This `.example` file is required and you will need to copy one of the existing files into a file that matches your dimensions.
+These JSON files are named in correspondence to the dimensions of the LED board used when running the software. A file, located in the `coordinates` directory with a filename `w<cols>h<rows>.example.json` tells the scoreboard that those dimensions are officially supported.
 
 # Custom Coordinates
-You can edit these coordinates to display parts of the scoreboard in any way you choose. Simply copy the file corresponding to your board's dimensions to `w<cols>h<rows>.json`. This JSON file only needs to contain the parts you wish to override but it's often easier to just make a copy of the full example file and edit the values you want to change.
+
+You can edit these coordinates to display parts of the scoreboard in any way you choose.
+
+During installation (see the main README for setup instructions), custom coordinate files (e.g., `w64h32.json`) are created from their corresponding schema files (e.g., `w64h32.example.json`). You can then edit the custom files to override any coordinates you want to change.
 
 ## Example
-If you have a 64x32 board, copy `w64h32.example.json` to a new file called `w64h32.json`, then edit the coordinates in that file as you see fit. Your customized coordinates will always take precedence.
 
->!WARNING
-> **DO NOT** remove `.example` files! **Copy** the files instead.
+**Customizing coordinates for a 64x32 board:**
+1. After installation, edit the coordinates in `w64h32.json` as you see fit
+2. Your customized coordinates will always take precedence over the schema defaults
+
+> [!WARNING]
+> **DO NOT** edit or remove `.example` files!
 >
 > These are checked by the software to determine which matrix dimensions are supported. If you remove the file, the scoreboard may fail to start.
 
@@ -18,10 +24,12 @@ Any scoreboard element that prints text can accept a `"font_name"` attribute. Su
 The layout can have a couple of different states where things are rendered differently. Adding an object named for the layout state and giving it the same properties from the parent object will change the positioning of that parent object only when that state is found. For instance, when a game enters the `Warmup` state, the text `Warmup` appears under the time and the scrolling text is moved down.
 * `warmup` will	only render on the `pregame` screen and appears when a game enters the `Warmup` status. This usually happens 15-20 minutes before a game begins.
 * `nohit` and `perfect_game` will only render on the live game screen and appears when a game returns that it is currently a no hitter or perfect game and the `innings_until_display` of `nohitter` has passed.
-* The `runs_hits_errors` section enables the addition of hits and errors to the game screen.  
-  * `show` turns this feature on or off.
+* The `line_score` section configures the line score (RHE) on the game screen.
+  * Runs are always displayed.
+  * `show_hits_and_errors` toggles displaying hits and errors.
   * `compress_digits` will reduce the space between digits when the number of runs or hits is > 9.
   * `spacing` is the number of pixels between the runs/hits and hits/errors.
+  * When the line score is high (greater than 3 total digits), use `teams.name.auto_abbreviate` to shorten team names to prevent overflow.
 
 ## Pitch Data
 * `enabled` (true/false) Turn feature on/off
@@ -45,4 +53,3 @@ A couple of things are not completely implemented or have some implementation de
 
 * `bases` currently requires an even `size` value to be rendered correctly
 * Not all options are enabled on all board sizes by default. For example pitch count and pitch type are not enabled by default on boards smaller than 64x64. Options are "disabled" by forcing them to render outside the board, by setting X and Y coordinates less than 0 or greater than the height or width of the board.
-
