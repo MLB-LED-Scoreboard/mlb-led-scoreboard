@@ -282,8 +282,7 @@
         "x": 4,
         "y": 29
       },
-      "full": true,
-      "auto_abbreviate": true
+      "full": true
     },
     "record": {
       "enabled": false,
@@ -310,6 +309,7 @@
       },
       "show_hits_and_errors": true,
       "compress_digits": true,
+      "shorten_team_name_on_high_line_score": true,
       "spacing": 9
     }
   },

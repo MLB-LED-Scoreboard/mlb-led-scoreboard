@@ -29,7 +29,7 @@ The layout can have a couple of different states where things are rendered diffe
   * `show_hits_and_errors` toggles displaying hits and errors.
   * `compress_digits` will reduce the space between digits when the number of runs or hits is > 9.
   * `spacing` is the number of pixels between the runs/hits and hits/errors.
-  * When the line score is high (greater than 3 total digits), use `teams.name.auto_abbreviate` to shorten team names to prevent overflow.
+  * When the line score is high (greater than 3 total digits), use `shorten_team_name_on_high_line_score` to shorten team names to prevent overflow.
 
 ## Pitch Data
 * `enabled` (true/false) Turn feature on/off

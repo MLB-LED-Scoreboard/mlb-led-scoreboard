@@ -244,8 +244,7 @@
         "x": 4,
         "y": 18
       },
-      "full": true,
-      "auto_abbreviate": true
+      "full": true
     },
     "accent": {
       "away": {
@@ -286,6 +285,7 @@
       },
       "show_hits_and_errors": false,
       "compress_digits": false,
+      "shorten_team_name_on_high_line_score": true,
       "spacing": 3
     }
   },
