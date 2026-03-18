@@ -37,7 +37,7 @@ def render_team_banner(
         "shorten_team_names_on_overflow", True
     )
     use_full_team_names = can_use_full_team_names(
-        canvas, full_team_names, short_team_names_for_runs_hits, [home_team, away_team]
+        full_team_names, short_team_names_for_runs_hits, [home_team, away_team]
     )
 
     away_name_end_pos = __render_team_text(canvas, layout, away_colors["text"], away_team, "away", use_full_team_names)
@@ -57,13 +57,10 @@ def render_team_banner(
         __render_team_score(canvas, layout, home_colors["text"], home_team, "home", score_spacing)
 
 
-def can_use_full_team_names(canvas, enabled, abbreviate_on_overflow, teams):
-    # Settings enabled and size is able to display it
-    if enabled and canvas.width > 32:
-
+def can_use_full_team_names(enabled, abbreviate_on_overflow, teams):
+    if enabled:
         # If config enabled for abbreviating if runs or hits takes up an additional column (i.e. 9 -> 10)
         if abbreviate_on_overflow:
-
             # Iterate through the teams to see if we should abbreviate
             for team in teams:
                 if team.runs > 9 or team.hits > 9:
