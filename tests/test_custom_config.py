@@ -95,7 +95,7 @@ class TestCustomConfig(unittest.TestCase):
         self.assertNotEqual(self.custom_config.time_format, self.default_config.time_format)
 
     def test_unset_keys_equal_default(self):
-        self.assertEqual(self.custom_config.preferred_game_delay_multiplier, self.default_config.preferred_game_delay_multiplier)
+        self.assertEqual(self.custom_config.sync_delay_seconds, self.default_config.sync_delay_seconds)
         self.assertEqual(self.custom_config.api_refresh_rate, self.default_config.api_refresh_rate)
 
 

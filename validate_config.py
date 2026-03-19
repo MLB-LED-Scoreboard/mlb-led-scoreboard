@@ -5,9 +5,7 @@ from data.paths import *
 VALIDATIONS = {
   ROOT_DIRECTORY: {
     "ignored_keys": [],
-    "renamed_keys": {
-      "preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier",
-    },
+    "renamed_keys": {},
   },
   COORDINATES_DIRECTORY: {
     "ignored_keys": [

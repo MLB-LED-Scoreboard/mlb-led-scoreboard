@@ -294,7 +294,8 @@
       "home": {
         "x": 99,
         "y": 99
-      }
+      },
+      "full": false
     },
     "record": {
       "enabled": false,
@@ -308,12 +309,7 @@
         "y": 99
       }
     },
-    "runs": {
-      "runs_hits_errors": {
-        "show": false,
-        "compress_digits": true,
-        "spacing": 2
-      },
+    "line_score": {
       "away": {
         "x": 99,
         "y": 99
@@ -321,7 +317,11 @@
       "home": {
         "x": 99,
         "y": 99
-      }
+      },
+      "show_hits_and_errors": false,
+      "compress_digits": true,
+      "shorten_team_name_on_high_line_score": true,
+      "spacing": 2
     }
   },
   "offday": {
