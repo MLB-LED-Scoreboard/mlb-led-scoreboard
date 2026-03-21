@@ -2,8 +2,8 @@ import sys
 
 import debug
 
-if sys.version_info < (3, 9):
-    debug.error("Please run with Python >= 3.9")
+if sys.version_info < (3, 10):
+    debug.error("Please run with Python >= 3.10")
     sys.exit(1)
 
 import statsapi

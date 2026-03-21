@@ -4,6 +4,13 @@
   "type": "object",
   "required": ["format"],
   "properties": {
+    "$schema": {
+      "type": "string",
+      "default": "./config.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
     "format": {
       "type": "number",
       "const": 9.0,
@@ -270,6 +277,12 @@
           "type": "boolean",
           "default": false,
           "x-format": "checkbox"
+        },
+        "pregame": {
+          "description": "Include weather in the pre-game text after probable starters?",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
         }
       }
     },
@@ -299,18 +312,8 @@
       "$ref": "#/$defs/time",
       "default": "00:00"
     },
-    "full_team_names": {
-      "type": "boolean",
-      "default": true,
-      "x-format": "checkbox"
-    },
-    "short_team_names_for_runs_hits": {
-      "type": "boolean",
-      "default": true,
-      "x-format": "checkbox"
-    },
-    "preferred_game_delay_multiplier": {
-      "description": "How long should we wait to show live updates, in multiples of api_refresh_rate (prevents spoilers)",
+    "sync_delay_seconds": {
+      "description": "How long should we wait to show live updates (prevents spoilers)",
       "type": "number",
       "default": 0,
       "minimum": 0
@@ -320,12 +323,6 @@
       "type": "number",
       "default": 5,
       "minimum": 1
-    },
-    "pregame_weather": {
-      "description": "Include weather in the pre-game text after probable starters?",
-      "type": "boolean",
-      "default": true,
-      "x-format": "checkbox"
     },
     "scrolling_speed": {
       "description": "How quickly should text scroll on the board",
@@ -459,6 +456,7 @@
       }
     }
   },
+  "additionalProperties": false,
   "x-enforceEnum": true,
   "x-enforceConst": true
 }

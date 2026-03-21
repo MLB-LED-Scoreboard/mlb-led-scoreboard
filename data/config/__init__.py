@@ -6,6 +6,7 @@ from datetime import datetime, time, timedelta
 from enum import Enum
 from collections import defaultdict
 from typing import Mapping, Optional
+from math import ceil
 
 import debug
 from data import status
@@ -54,14 +55,12 @@ class Config:
         self.weather_apikey = json["weather"]["apikey"]
         self.weather_location = json["weather"]["location"]
         self.weather_metric_units = json["weather"]["metric_units"]
+        self.pregame_weather = json["weather"]["pregame"]
 
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.full_team_names = json["full_team_names"]
-        self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
-        self.pregame_weather = json["pregame_weather"]
-        self.preferred_game_delay_multiplier = json["preferred_game_delay_multiplier"]
+        self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
 
         self.debug = json["debug"]
@@ -97,6 +96,9 @@ class Config:
         self.check_delay()
         self.check_api_refresh_rate()
 
+        # Set up update delay parameter
+        self.sync_amount = ceil(self.sync_delay_seconds / self.api_refresh_rate)
+
     def check_preferred_teams(self):
         if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
             debug.warning(
@@ -109,15 +111,17 @@ class Config:
             self.preferred_teams = [team]
 
     def check_delay(self):
-        if self.preferred_game_delay_multiplier < 0:
-            debug.warning("preferred_game_delay_multiplier should be a positive integer. Using default value of 0")
-            self.preferred_game_delay_multiplier = 0
-        if self.preferred_game_delay_multiplier != int(self.preferred_game_delay_multiplier):
+        if self.sync_delay_seconds < 0:
             debug.warning(
-                "preferred_game_delay_multiplier should be an integer."
-                f" Truncating to {int(self.preferred_game_delay_multiplier)}"
+                "sync_delay_seconds should be a positive integer. Using default value of 0"
             )
-            self.preferred_game_delay_multiplier = int(self.preferred_game_delay_multiplier)
+            self.sync_delay_seconds = 0
+        if self.sync_delay_seconds != int(self.sync_delay_seconds):
+            debug.warning(
+                "sync_delay_seconds should be an integer."
+                f" Truncating to {int(self.sync_delay_seconds)}"
+            )
+            self.sync_delay_seconds = int(self.sync_delay_seconds)
 
     def check_api_refresh_rate(self):
         if self.api_refresh_rate < 3:

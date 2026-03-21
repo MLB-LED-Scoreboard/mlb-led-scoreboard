@@ -22,9 +22,7 @@ class Schedule:
         self.starttime = time.time()
         self.current_idx = 0
 
-        delay_required = ceil(
-            (self.config.preferred_game_delay_multiplier * self.config.api_refresh_rate) / GAMES_REFRESH_RATE
-        )
+        delay_required = ceil(self.config.sync_delay_seconds / GAMES_REFRESH_RATE)
 
         self._data_wait_queue = CircularQueue(delay_required + 1)
         # the (filtered) schedule
@@ -96,9 +94,7 @@ class Schedule:
             scheduled_game = self._games[self.current_idx]
             if unless and scheduled_game["game_id"] == unless.game_id:
                 return unless
-            return Game.from_scheduled(
-                scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
-            )
+            return Game.from_scheduled(scheduled_game, self.config.sync_amount, self.config.api_refresh_rate)
         except IndexError:
             return None
 
