@@ -43,7 +43,7 @@ class Schedule:
                 return UpdateStatus.FAIL
             else:
 
-                priority, games = self.__filter_rules(all_games)
+                priority, games = self.__filter_games(all_games)
                 if priority > self.priority:
                     # going up a priority level should never be delayed
                     self._data_wait_queue.clear()
@@ -98,8 +98,11 @@ class Schedule:
         except IndexError:
             return None
 
-    def __filter_rules(self, all_games: list) -> tuple[int, list]:
-
+    def __filter_games(self, all_games: list) -> tuple[int, list]:
+        """
+        Returns the highest priority level and the games that match that level,
+        for the given list of games and current time.
+        """
         priorities: defaultdict[int, list] = defaultdict(list)
         highest = 0
 
