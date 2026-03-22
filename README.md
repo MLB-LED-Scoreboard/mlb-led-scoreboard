@@ -241,9 +241,8 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 
 ### Configuration
 
-A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
-
-See [config.schema.json] for the schema that
+A default [`config.example.json`](config.example.json) file is included for reference. Copy this file to `config.json` and modify the values as needed.
+See [`config.schema.json`](config.schema.json) for a schema for configuration files.
 
 ```
 "news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
@@ -284,7 +283,63 @@ See [config.schema.json] for the schema that
 
 ### Controlling what shows on the board: `rotation.screens`
 
-TODO
+What the board shows at any given time is controlled by an internal `priority` number.
+The highest active priority at any moment wins. By default, when no other rules are active,
+the priority level is `0`.
+
+There are two kinds of things that can *set* the current priority: `time` rules, which match
+certain times of day, and `game` rules, which can match MLB games of certain teams or in certain statuses.
+
+For example, you can create a priority level `5` that is triggered in the morning with the following `screens` rule:
+```json
+{"kind":"time", "priority": 5, "start_time": "07:00", "end_time": "09:05"}
+```
+Similarly, you can create a priority level `4` whenever a Cubs game is actively being played:
+```json
+{
+  "kind": "game",
+  "priority": 4,
+  "required_status": "live",
+  "teams": ["Cubs"]
+}
+```
+
+There are three kinds of things that can be *added* to a specific priority level:
+`news`, the news screen, `standings`, the divisional standings, and `secondary_game` screens, which
+are just like game screens except for they don't create any rules on their own.
+
+For example, here's a config that:
+- First, prioritizes showing the Cubs game if it is live.
+- If the Cubs are not live, it shows any games that are **plus** the standings, and the pre/post game of the Cubs if they play that day.
+- If no team is live, shows the news and standings alternatingly.
+
+```json
+{
+  "kind": "game",
+  "priority": 2,
+  "required_status": "live",
+  "teams": ["Cubs"]
+},
+{
+  "kind": "game",
+  "required_status": "live",
+  "priority": 1
+},
+{ "kind": "secondary_game", "with_priority": 1, "teams": ["Cubs"] },
+{
+  "kind": "standings",
+  "seconds": 30,
+  "with_priority": [0, 1]
+},
+{
+  "kind": "news",
+  "seconds": 60,
+  "with_priority": 0
+}
+```
+
+These rules are powerful but we know they can be confusing. Feel free to reach out on our Discord if you
+want help crafting something specific!
 
 
 ### Synchronizing with Broadcasts

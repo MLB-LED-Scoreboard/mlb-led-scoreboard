@@ -50,10 +50,12 @@ class MainRenderer:
             self.scrolling_text_pos = self.canvas.width
             self.data.games.consumer_tick()
 
-            game = self.data.get_rendering_game()
+            game = self.data.games.active()
             if game is None:
                 debug.log("Render thread: no game to render, sleeping for a bit")
+                self.data.games.consumer_advance()
                 time.sleep(1)
+                self.data.games.consumer_tick()
                 break
 
             if len(seen_games) >= self.data.schedule.num_games():

@@ -59,6 +59,3 @@ class Data:
             self.network_issues = False
         elif status == UpdateStatus.FAIL:
             self.network_issues = True
-
-    def get_rendering_game(self) -> Optional[Game]:
-        return self.games.active()
