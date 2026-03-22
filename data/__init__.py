@@ -6,16 +6,13 @@ from data import status
 from data.game import Game
 from data.headlines import Headlines
 from data.schedule import Schedule
-from data.scoreboard import Scoreboard
-from data.scoreboard.postgame import Postgame
-from data.scoreboard.pregame import Pregame
 from data.standings import Standings
 from data.update import UpdateStatus
 from data.weather import Weather
 
 
 class Data:
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         # Save the parsed config
         self.config = config
 
@@ -26,7 +23,6 @@ class Data:
 
         self.game_changed_time = time.time()
         if self.current_game is not None:
-            self.print_game_data_debug()
             self.__update_layout_state()
 
         # Weather info
@@ -73,7 +69,6 @@ class Data:
         status = self.current_game.update()
         if status == UpdateStatus.SUCCESS:
             self.__update_layout_state()
-            self.print_game_data_debug()
             self.network_issues = False
         elif status == UpdateStatus.FAIL:
             self.network_issues = True
@@ -89,7 +84,6 @@ class Data:
             self.current_game = game
             self.game_changed_time = time.time()
             self.__update_layout_state()
-            self.print_game_data_debug()
             self.network_issues = False
 
         elif self.current_game is not None:
@@ -150,9 +144,3 @@ class Data:
         if self.current_game.is_perfect_game():
             self.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
 
-    def print_game_data_debug(self):
-        debug.log("Game Data Refreshed: %s", self.current_game._current_data["gameData"]["game"]["id"])
-        debug.log("Current game is %d seconds behind", self.current_game.current_delay())
-        debug.log("Pre: %s", Pregame(self.current_game, self.config.time_format))
-        debug.log("Live: %s", Scoreboard(self.current_game))
-        debug.log("Final: %s", Postgame(self.current_game))

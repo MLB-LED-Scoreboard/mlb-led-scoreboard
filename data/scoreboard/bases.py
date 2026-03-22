@@ -1,8 +1,12 @@
-from data.game import Game
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from data.game import Game
 
 
 class Bases:
-    def __init__(self, game: Game):
+    def __init__(self, game: "Game"):
         b1 = game.man_on("first")
         b2 = game.man_on("second")
         b3 = game.man_on("third")

@@ -1,4 +1,5 @@
-from data.game import Game
+from typing import TYPE_CHECKING
+
 from data.scoreboard.atbat import AtBat
 from data.scoreboard.bases import Bases
 from data.scoreboard.inning import Inning
@@ -7,6 +8,8 @@ from data.scoreboard.pitches import Pitches
 from data.scoreboard.team import Team
 from data import plays
 
+if TYPE_CHECKING:
+    from data.game import Game
 
 
 class Scoreboard:
@@ -15,7 +18,7 @@ class Scoreboard:
     including runners on base, balls, strikes, and outs.
     """
 
-    def __init__(self, game: Game):
+    def __init__(self, game: "Game"):
         self.away_team = Team(
             game.away_abbreviation(), game.away_score(), game.away_name(), game.away_hits(), game.away_errors(), game.away_record(), game.away_special_uniforms()
         )
