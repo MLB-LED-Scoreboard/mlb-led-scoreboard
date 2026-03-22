@@ -21,7 +21,7 @@ from renderers.games import teams
 class MainRenderer:
     def __init__(self, matrix, data: Data) -> None:
         self.matrix = matrix
-        self.data: Data = data
+        self.data = data
         self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
