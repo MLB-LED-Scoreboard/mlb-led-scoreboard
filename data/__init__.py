@@ -1,7 +1,6 @@
-from typing import Literal, Optional
+from typing import Optional
 
 
-import debug
 from data.game import Game
 from data.headlines import Headlines
 from data.schedule import Schedule
@@ -10,6 +9,7 @@ from data import update
 from data.update import UpdateStatus
 from data.weather import Weather
 from data.config import Config
+from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
@@ -20,14 +20,8 @@ class Data:
         # get schedule
         self.schedule: Schedule = Schedule(config)
 
-        # NB: Can return none, but shouldn't matter?
-        self.current_game: Game = self.schedule.next_game()
-
-        # render thread can switch to next
-        self.next_game: Game = self.current_game
-        self.rendering: Literal["current", "next"] = "current"
-        # main thread acknowledges, so it can switch back to current
-        self.acknowledged_next_game: bool = False
+        # Games -- keeps two copies internally to let render thread move asynchronously
+        self.games = DoubleBuffer(self.schedule.next_game())
 
         # Weather info
         self.weather: Weather = Weather(config)
@@ -43,23 +37,10 @@ class Data:
 
     def refresh_game(self):
         # handle double buffering
-        if self.rendering == "next":
-            debug.log("Main thread: acknowledging render thread's request to read 'next', mirroring into 'current'")
-            self.current_game = self.next_game
-            self.acknowledged_next_game = True
-
-        if self.rendering == "current":
-            if self.acknowledged_next_game or (
-                self.schedule.num_games() > 1 and self.current_game.game_id == self.next_game.game_id
-            ):
-                self.next_game = self.schedule.next_game(unless=self.next_game)
-
-            if self.acknowledged_next_game:
-                self.acknowledged_next_game = False
-                debug.log("Main thread: render thread has switched back to 'current', advanced 'next' game")
+        self.games.producer_tick(self.schedule.next_game)
 
         # network requests
-        self.__process_network_status(update.merge(self.current_game.update(), self.next_game.update()))
+        self.__process_network_status(update.merge(g.update() for g in self.games.items))
 
     def refresh_standings(self):
         self.__process_network_status(self.standings.update())
@@ -80,7 +61,4 @@ class Data:
             self.network_issues = True
 
     def get_rendering_game(self) -> Optional[Game]:
-        if self.rendering == "current":
-            return self.current_game
-        else:
-            return self.next_game
+        return self.games.active()

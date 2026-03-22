@@ -288,9 +288,7 @@ If you aren't sure why you're seeing this, there might not be official support f
         return reference_layout
 
     def __eq__(self, other):
-        if not isinstance(other, Config):
-            return NotImplemented
-        return vars(self) == vars(other)
+        return isinstance(other, Config) and vars(self) == vars(other)
 
 
 def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[str, Mapping[int, int]]]:
@@ -318,6 +316,10 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
                 )
             )
 
+    if not any(screen[0] for screen in screen_rules.values()):
+        # prevents nothing showing for an empty config
+        screen_rules["news"][0] = 60
+
     for t in time_rules:
         has_matching_screen = False
         for screen_rule in screen_rules.values():
@@ -328,9 +330,5 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             raise ValueError(
                 f"Invalid time rule in config, can lead to situation with no valid screens. Add at least one with with 'with_priority={t.priority}'."
             )
-
-    if not any(screen_rules[s][0] for s in screen_rules.keys()):
-        # prevents nothing showing for an empty config
-        screen_rules["news"][0] = 60
 
     return game_rules, time_rules, screen_rules

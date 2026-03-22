@@ -34,22 +34,21 @@ class MainRenderer:
     def render(self) -> NoReturn:
         while True:
             self.__render_games()
-            self.__check_acknowledgement()
+            self.data.games.consumer_tick()
             if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
                 self.__draw_standings(timer_cond(t))
             if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
-                self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond))
+                self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond()))
 
     def __render_games(self):
         # bit of a hack, helps when we change priorities
         # and want to go back to a specific game.
         # could also let the drawings/standings tell the main that they can update next?
-        self.__request_next_game()
+        self.data.games.consumer_advance()
         seen_games = set()
         while True:
             self.scrolling_text_pos = self.canvas.width
-            self.scrolling_finished = False
-            self.__check_acknowledgement()
+            self.data.games.consumer_tick()
 
             game = self.data.get_rendering_game()
             if game is None:
@@ -65,25 +64,15 @@ class MainRenderer:
 
             cond = any_of(
                 timer_cond(self.data.config.rotate_rate_for_status(game.status())),
-                self.scrolling_finished_cond,
+                self.scrolling_finished_cond(),
             )
             while cond():
-                self.__update_layout_state(game)
+                self.data.config.layout.state_for_game(game)
                 self.__draw_game(game)
-                self.__check_acknowledgement()
+                self.data.games.consumer_tick()
                 time.sleep(self.data.config.scrolling_speed)
 
-            self.__request_next_game()
-
-    def __request_next_game(self):
-        if self.data.rendering == "current":
-            debug.log("Render thread: requesting main thread to read 'next' game")
-        self.data.rendering = "next"
-
-    def __check_acknowledgement(self):
-        if self.data.rendering == "next" and self.data.acknowledged_next_game:
-            debug.log("Render thread: main thread has acknowledged, switching back to reading 'current' game")
-            self.data.rendering = "current"
+            self.data.games.consumer_advance()
 
     # Draws the provided game on the canvas
     def __draw_game(self, game: Game):
@@ -165,7 +154,6 @@ class MainRenderer:
         Draw the news screen for as long as cond returns True
         """
         self.scrolling_text_pos = self.canvas.width
-        self.scrolling_finished = False
         color = self.data.config.scoreboard_colors.color("default.background")
         while cond():
             self.canvas.Fill(color["r"], color["g"], color["b"])
@@ -188,7 +176,7 @@ class MainRenderer:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(self.data.config.scrolling_speed)
-            self.__check_acknowledgement()
+            self.data.games.consumer_tick()
 
     def __draw_standings(self, cond: Callable[[], bool]):
         """
@@ -240,7 +228,7 @@ class MainRenderer:
 
             time.sleep(1)
             update = (update + 1) % 100
-            self.__check_acknowledgement()
+            self.data.games.consumer_tick()
 
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
@@ -258,31 +246,22 @@ class MainRenderer:
             self.scrolling_finished = False
         self.scrolling_text_pos = pos_after_scroll
 
-    def __update_layout_state(self, game):
-
-        self.data.config.layout.set_state()
-        if game.status() == status.WARMUP:
-            self.data.config.layout.set_state(layout.LAYOUT_STATE_WARMUP)
-
-        if game.is_no_hitter():
-            self.data.config.layout.set_state(layout.LAYOUT_STATE_NOHIT)
-
-        if game.is_perfect_game():
-            self.data.config.layout.set_state(layout.LAYOUT_STATE_PERFECT)
-
-    def scrolling_finished_cond(self) -> bool:
+    def scrolling_finished_cond(self) -> Callable[[], bool]:
         """A condition that is true only while the scrolling text has finished scrolling"""
-        return self.data.config.rotation_scroll_until_finished and not self.scrolling_finished
+        if self.data.config.rotation_scroll_until_finished:
+            return never_cond
+
+        self.scrolling_finished = False
+
+        def cond():
+            return not self.scrolling_finished
+
+        return cond
 
 
 def never_cond() -> bool:
     """A condition that is always false"""
     return False
-
-
-def permanent_cond() -> bool:
-    """A condition that is always true"""
-    return True
 
 
 def timer_cond(seconds) -> Callable[[], bool]:

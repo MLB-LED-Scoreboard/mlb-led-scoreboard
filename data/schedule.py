@@ -9,7 +9,7 @@ import statsapi
 import debug
 from data.game import Game
 from data.update import UpdateStatus
-from data.delay_buffer import CircularQueue
+from data.utils.circular_queue import CircularQueue
 from data.config import Config
 
 GAMES_REFRESH_RATE = 15
@@ -78,7 +78,7 @@ class Schedule:
     def num_games(self):
         return len(self._games)
 
-    def next_game(self, *, unless: Optional[Game] = None):
+    def next_game(self, unless: Optional[Game] = None):
         self.current_idx = self.__next_game_index()
         return self.__current_game(unless)
 
@@ -86,7 +86,8 @@ class Schedule:
         counter = self.current_idx + 1
         if counter >= len(self._games):
             counter = 0
-        debug.log("Schedule: going to game index %d", counter)
+        if counter != self.current_idx:
+            debug.log("Schedule: going to game index %d", counter)
         return counter
 
     def __current_game(self, unless: Optional[Game] = None):

@@ -7,7 +7,7 @@ import statsapi
 import debug
 from data import teams
 from data.update import UpdateStatus
-from data.delay_buffer import CircularQueue
+from data.utils.circular_queue import CircularQueue
 from data.uniforms import Uniforms
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
@@ -360,6 +360,11 @@ class Game:
     @staticmethod
     def _format_id(player):
         return player if "ID" in str(player) else "ID" + str(player)
+
+    def __eq__(self, value):
+        if isinstance(value, Game):
+            return self.game_id == value.game_id
+        return False
 
     def print_game_data_debug(self):
         debug.log("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])

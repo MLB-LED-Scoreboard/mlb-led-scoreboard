@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from data import game, status
+from data import status
 from data import teams as team_metadata
 from data.config.other_screens import parse_with_priority
 
@@ -21,6 +21,24 @@ class Requirements(Enum):
             if requirement.value == label:
                 return requirement
         raise ValueError(f"Unknown requirement: {label}")
+
+    def matches(self, game) -> bool:
+        game_status = game["status"]
+        match self:
+            case Requirements.PREGAME if status.is_pregame(game_status):
+                return True
+            case Requirements.GAME_OVER if status.is_complete(game_status):
+                return True
+            case Requirements.LIVE if status.is_fresh(game_status) or status.is_live(game_status):
+                return True
+            case Requirements.LIVE_IN_INNING if (
+                status.is_live(game_status)
+                and game_status != status.WARMUP
+                and not status.is_inning_break(game["inning_state"])
+            ):
+                return True
+            case _:
+                return False
 
 
 def parse_requirements(json) -> Optional[Requirements]:
@@ -57,40 +75,21 @@ class GameScreen:
         if self.teams and not set([game["away_id"], game["home_id"]]).intersection(self.teams):
             return GameScreen.DEFAULT_PRIORITY
 
-        if self.requirement is None:
-            return self.when_matched
-
-        if self.requirement == Requirements.PREGAME and status.is_pregame(game["status"]):
-            return self.when_matched
-
-        if self.requirement == Requirements.GAME_OVER and status.is_complete(game["status"]):
-            return self.when_matched
-
-        if self.requirement == Requirements.LIVE and (
-            status.is_fresh(game["status"]) or (status.is_live(game["status"]))
-        ):
-            return self.when_matched
-
-        if self.requirement == Requirements.LIVE_IN_INNING and (
-            status.is_live(game["status"])
-            and game["status"] != status.WARMUP
-            and not status.is_inning_break(game["inning_state"])
-        ):
+        if self.requirement is None or self.requirement.matches(game):
             return self.when_matched
 
         return GameScreen.DEFAULT_PRIORITY
 
     def __repr__(self):
         return (
-            f"GameRule(priority={self.when_matched[0]}, requirement={self.requirement}"
+            f"GameScreen(priority={self.when_matched[0]}, requirement={self.requirement}"
             f", passive={self.when_matched[1]}, teams={self.teams})"
         )
 
     def __eq__(self, other):
-        if not isinstance(other, GameScreen):
-            return NotImplemented
         return (
-            self.requirement == other.requirement
+            isinstance(other, GameScreen)
+            and self.requirement == other.requirement
             and self.when_matched == other.when_matched
             and self.teams == other.teams
         )
