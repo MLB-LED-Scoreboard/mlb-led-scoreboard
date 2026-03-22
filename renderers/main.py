@@ -19,9 +19,9 @@ STANDINGS_NEWS_SWITCH_TIME = 120
 
 
 class MainRenderer:
-    def __init__(self, matrix, data):
+    def __init__(self, matrix, data: Data) -> None:
         self.matrix = matrix
-        self.data: Data = data
+        self.data = data
         self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
@@ -175,6 +175,8 @@ class MainRenderer:
         """
         Draw the news screen for as long as cond returns True
         """
+        self.scrolling_text_pos = self.canvas.width
+        self.data.scrolling_finished = False
         color = self.data.config.scoreboard_colors.color("default.background")
         while cond():
             self.canvas.Fill(color["r"], color["g"], color["b"])
@@ -189,10 +191,10 @@ class MainRenderer:
                 self.data.config.time_format,
                 self.scrolling_text_pos,
             )
-            # todo make scrolling_text_pos something persistent/news-specific
-            # if we want to show news as part of rotation?
-            # not strictly necessary but would be nice, avoids only seeing first headline over and over
+
             self.__update_scrolling_text_pos(pos, self.canvas.width)
+            if self.scrolling_text_pos == self.canvas.width:
+                self.data.headlines.advance_ticker()
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)

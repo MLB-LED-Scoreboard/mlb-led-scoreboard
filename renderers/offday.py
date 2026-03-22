@@ -62,9 +62,7 @@ def __render_weather_icon(canvas, layout, colors, weather_icon):
     resize = coords.get("rescale_icon")
 
     if resize:
-        weather_icon = weather_icon.resize(
-            (weather_icon.width * resize, weather_icon.height * resize), Image.NEAREST
-        )
+        weather_icon = weather_icon.resize((weather_icon.width * resize, weather_icon.height * resize), Image.NEAREST)
     for x in range(weather_icon.width):
         for y in range(weather_icon.height):
             pixel = weather_icon.getpixel((x, y))
@@ -79,5 +77,14 @@ def __render_news_ticker(canvas, layout, colors, headlines, text_pos):
     bgcolor = colors.graphics_color("default.background")
     ticker_text = headlines.ticker_string()
     return scrollingtext.render_text(
-        canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, ticker_text, text_pos
+        canvas,
+        coords["x"],
+        coords["y"],
+        coords["width"],
+        font,
+        color,
+        bgcolor,
+        ticker_text,
+        text_pos,
+        force_scroll=True,
     )
