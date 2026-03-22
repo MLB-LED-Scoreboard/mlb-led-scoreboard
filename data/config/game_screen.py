@@ -25,20 +25,18 @@ class Requirements(Enum):
     def matches(self, game) -> bool:
         game_status = game["status"]
         match self:
-            case Requirements.PREGAME if status.is_pregame(game_status):
-                return True
-            case Requirements.GAME_OVER if status.is_complete(game_status):
-                return True
-            case Requirements.LIVE if status.is_fresh(game_status) or status.is_live(game_status):
-                return True
-            case Requirements.LIVE_IN_INNING if (
-                status.is_live(game_status)
-                and game_status != status.WARMUP
-                and not status.is_inning_break(game["inning_state"])
-            ):
-                return True
-            case _:
-                return False
+            case Requirements.PREGAME:
+                return status.is_pregame(game_status)
+            case Requirements.GAME_OVER:
+                return status.is_complete(game_status)
+            case Requirements.LIVE:
+                return status.is_fresh(game_status) or status.is_live(game_status)
+            case Requirements.LIVE_IN_INNING:
+                return (
+                    status.is_live(game_status)
+                    and game_status != status.WARMUP
+                    and not status.is_inning_break(game["inning_state"])
+                )
 
 
 def parse_requirements(json) -> Optional[Requirements]:
@@ -72,7 +70,7 @@ class GameScreen:
         return self.when_matched[0]
 
     def matches(self, game) -> tuple[int, bool]:
-        if self.teams and not set([game["away_id"], game["home_id"]]).intersection(self.teams):
+        if self.teams and not self.teams.intersection([game["away_id"], game["home_id"]]):
             return GameScreen.DEFAULT_PRIORITY
 
         if self.requirement is None or self.requirement.matches(game):

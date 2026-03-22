@@ -1,7 +1,7 @@
 import datetime
 import time
 from collections import defaultdict
-from typing import Optional
+from typing import Any, Optional
 from math import ceil
 
 import statsapi
@@ -16,7 +16,7 @@ GAMES_REFRESH_RATE = 15
 
 
 class Schedule:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.config = config
         self.date = self.config.parse_today()
         self.starttime = time.time()
@@ -26,7 +26,7 @@ class Schedule:
 
         self._data_wait_queue = CircularQueue(delay_required + 1)
         # the (filtered) schedule
-        self._games = []
+        self._games: list[dict[str, Any]] = []
         self.priority = 0
         self.update(True)
 

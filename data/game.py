@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 import statsapi
 
@@ -31,7 +31,7 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_scheduled(game_data, delay, api_refresh_rate) -> Optional["Game"]:
+    def from_scheduled(game_data: dict[str, Any], delay: int, api_refresh_rate: int) -> Optional["Game"]:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
