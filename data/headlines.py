@@ -9,7 +9,6 @@ from data.dates import Dates
 from data.update import UpdateStatus
 
 HEADLINE_UPDATE_RATE = 60 * 60  # 1 hour between feed updates
-HEADLINE_SPACER_SIZE = 10  # Number of spaces between headlines
 HEADLINE_MAX_FEEDS = 2  # Number of preferred team's feeds to fetch
 HEADLINE_MAX_ENTRIES = 7  # Number of headlines per feed
 FALLBACK_DATE_FORMAT = "%A, %B %d"
@@ -93,7 +92,6 @@ class Headlines:
     def __init__(self, config, year):
         self.preferred_teams = config.preferred_teams
         self.include_mlb = config.news_ticker_mlb_news
-        self.include_preferred = config.news_ticker_preferred_teams
         self.include_traderumors = config.news_ticker_traderumors
         self.include_countdowns = config.news_ticker_countdowns
         self.include_date = config.news_ticker_date
@@ -102,6 +100,9 @@ class Headlines:
         self.feed_data = None
         self.starttime = time.time()
         self.important_dates = Dates(year)
+
+        self.ticker = []
+        self.current_ticker_idx = 0
 
         self.__compile_feed_list()
         self.update(True)
@@ -128,59 +129,58 @@ class Headlines:
                             debug.warning("There was a problem fetching {}".format(url))
                             status = UpdateStatus.FAIL
                 self.feed_data = feeds
+            ticker = self._build_ticker()
+            self.current_ticker_idx = self.current_ticker_idx % len(ticker)
+            self.ticker = ticker
         else:
             status = UpdateStatus.DEFERRED
         return status
 
-    def ticker_string(self, max_entries=HEADLINE_MAX_ENTRIES):
-        ticker = ""
+    def ticker_string(self):
+        return self.ticker[self.current_ticker_idx]
+
+    def advance_ticker(self):
+        self.current_ticker_idx = (self.current_ticker_idx + 1) % len(self.ticker)
+
+    def _build_ticker(self, max_entries=HEADLINE_MAX_ENTRIES) -> list[str]:
+        ticker: list[str] = []
         if self.include_date:
             date_string = datetime.now().strftime(self.date_format)
-            ticker = self.__add_string_to_ticker(ticker, date_string)
+            ticker.append(date_string)
 
         if self.include_countdowns:
             countdown_string = self.important_dates.next_important_date_string()
 
             # If we get None back from this method, we don't have an important date coming soon
             if countdown_string is not None:
-                ticker = self.__add_string_to_ticker(ticker, countdown_string)
+                ticker.append(countdown_string)
 
         if self.feed_data is not None:
-            ticker = self.__add_string_to_ticker(ticker, "")
             for feed in self.feed_data:
-                ticker += self.__strings_for_feed(feed, max_entries)
+                self.__strings_for_feed(feed, ticker, max_entries)
 
         # In case all of the ticker options are turned off and there's no data, return the date
-        return datetime.now().strftime(FALLBACK_DATE_FORMAT) if len(ticker) < 1 else ticker
-
-    def __add_string_to_ticker(self, ticker, text_to_add):
-        t = ticker
-        if len(t) > 0:
-            t += " " * HEADLINE_SPACER_SIZE
-        return t + text_to_add
+        return [datetime.now().strftime(FALLBACK_DATE_FORMAT)] if len(ticker) < 1 else ticker
 
     def available(self):
         return self.feed_data is not None
 
-    def __strings_for_feed(self, feed, max_entries):
-        spaces = " " * HEADLINE_SPACER_SIZE
-        title = feed.feed.title
-        headlines = ""
+    def __strings_for_feed(self, feed, ticker, max_entries):
+        ticker.append(feed.feed.title)
 
         for idx, entry in enumerate(feed.entries):
             if idx < max_entries:
+                # TODO(BMW): also remove non-ascii -- look into https://github.com/anyascii/anyascii/tree/master
                 text = html.unescape(entry.title)
-                headlines += text + spaces
-        return title + spaces + headlines
+                ticker.append(text)
 
     def __compile_feed_list(self):
         if self.include_mlb:
             self.feed_urls.append(self.__mlb_url_for_team("MLB"))
 
-        if self.include_preferred:
-            if len(self.preferred_teams) > 0:
-                for team in self.preferred_teams:
-                    self.feed_urls.append(self.__mlb_url_for_team(team))
+        if len(self.preferred_teams) > 0:
+            for team in self.preferred_teams:
+                self.feed_urls.append(self.__mlb_url_for_team(team))
 
         if self.include_traderumors:
             if len(self.preferred_teams) > 0:
@@ -200,7 +200,9 @@ class Headlines:
         feed_name = TRADE_FEEDS.get(team_name, None)
 
         if feed_name is None:
-            debug.error(f"Failed to fetch MLB Trade Rumors feed name for key '{team_name}', falling back to default feed.")
+            debug.error(
+                f"Failed to fetch MLB Trade Rumors feed name for key '{team_name}', falling back to default feed."
+            )
             feed_name = ""
 
         return "{}/{}/{}".format(TRADE_BASE, feed_name, TRADE_PATH)
