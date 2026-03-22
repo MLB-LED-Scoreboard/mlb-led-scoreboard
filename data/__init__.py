@@ -30,9 +30,6 @@ class Data:
         # main thread acknowledges, so it can switch back to current
         self.acknowledged_next_game: bool = False
 
-        if self.current_game is not None:
-            self.current_game.print_game_data_debug()
-
         # Weather info
         self.weather: Weather = Weather(config)
 

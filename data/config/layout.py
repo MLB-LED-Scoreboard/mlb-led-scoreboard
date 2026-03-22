@@ -118,3 +118,8 @@ class Layout:
                 "height": bdf.headers["fbby"]
             }
         }
+
+    def __eq__(self, other):
+        if not isinstance(other, Layout):
+            return NotImplemented
+        return self.json == other.json and self.width == other.width and self.height == other.height

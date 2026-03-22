@@ -281,7 +281,8 @@
         "font_name": "9x18B",
         "x": 4,
         "y": 29
-      }
+      },
+      "full": true
     },
     "record": {
       "enabled": false,
@@ -295,12 +296,7 @@
         "y": 29
       }
     },
-    "runs": {
-      "runs_hits_errors": {
-        "show": true,
-        "compress_digits": true,
-        "spacing": 5
-      },
+    "line_score": {
       "away": {
         "font_name": "9x18B",
         "x": 126,
@@ -310,7 +306,11 @@
         "font_name": "9x18B",
         "x": 126,
         "y": 29
-      }
+      },
+      "show_hits_and_errors": true,
+      "compress_digits": true,
+      "shorten_team_name_on_high_line_score": true,
+      "spacing": 5
     }
   },
   "offday": {

@@ -116,8 +116,8 @@ def args():
     parser.add_argument(
         "--config",
         action="store",
-        help="Base file name for config file. Can use relative path, e.g. config/rockies.config",
-        default="config",
+        help="Relative path to a custom config JSON file. Defaults to root config.json. The '.json' suffix is optional.",
+        default=None,
         type=str,
     )
     parser.add_argument(

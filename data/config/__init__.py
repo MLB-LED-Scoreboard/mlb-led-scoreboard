@@ -2,13 +2,15 @@ import json
 import os
 import sys
 
+from math import ceil
 from datetime import datetime, timedelta
 
 import debug
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
-from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
+from data.paths import *
+from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -21,8 +23,8 @@ DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config:
-    def __init__(self, filename_base, width, height):
-        json = self.__get_config(filename_base)
+    def __init__(self, config_path, width, height):
+        json = self.__get_config(config_path)
 
         # Preferred Teams/Divisions
         self.preferred_teams = json["preferred"]["teams"]
@@ -36,7 +38,7 @@ class Config:
         self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
         self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
         self.news_ticker_date = json["news_ticker"]["date"]
-        self.news_ticker_date_format = json["news_ticker"]["date_format"]
+        self.news_ticker_date_format = os_datetime_format(json["news_ticker"]["date_format"])
         self.news_no_games = json["news_ticker"]["display_no_games_live"]
 
         # Display Standings
@@ -63,14 +65,12 @@ class Config:
         self.weather_apikey = json["weather"]["apikey"]
         self.weather_location = json["weather"]["location"]
         self.weather_metric_units = json["weather"]["metric_units"]
+        self.pregame_weather = json["weather"]["pregame"]
 
         # Misc config options
         self.time_format = json["time_format"]
         self.end_of_day = json["end_of_day"]
-        self.full_team_names = json["full_team_names"]
-        self.short_team_names_for_runs_hits = json["short_team_names_for_runs_hits"]
-        self.pregame_weather = json["pregame_weather"]
-        self.preferred_game_delay_multiplier = json["preferred_game_delay_multiplier"]
+        self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
 
         self.debug = json["debug"]
@@ -106,6 +106,9 @@ class Config:
         self.check_delay()
         self.check_api_refresh_rate()
 
+        # Set up update delay parameter
+        self.sync_amount = ceil(self.sync_delay_seconds / self.api_refresh_rate)
+
     def check_preferred_teams(self):
         if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
             debug.warning(
@@ -118,17 +121,17 @@ class Config:
             self.preferred_teams = [team]
 
     def check_delay(self):
-        if self.preferred_game_delay_multiplier < 0:
+        if self.sync_delay_seconds < 0:
             debug.warning(
-                "preferred_game_delay_multiplier should be a positive integer. Using default value of 0"
+                "sync_delay_seconds should be a positive integer. Using default value of 0"
             )
-            self.preferred_game_delay_multiplier = 0
-        if self.preferred_game_delay_multiplier != int(self.preferred_game_delay_multiplier):
+            self.sync_delay_seconds = 0
+        if self.sync_delay_seconds != int(self.sync_delay_seconds):
             debug.warning(
-                "preferred_game_delay_multiplier should be an integer."
-                f" Truncating to {int(self.preferred_game_delay_multiplier)}"
+                "sync_delay_seconds should be an integer."
+                f" Truncating to {int(self.sync_delay_seconds)}"
             )
-            self.preferred_game_delay_multiplier = int(self.preferred_game_delay_multiplier)
+            self.sync_delay_seconds = int(self.sync_delay_seconds)
 
     def check_api_refresh_rate(self):
         if self.api_refresh_rate < 3:
@@ -214,33 +217,45 @@ class Config:
         If file not present return empty data.
         Exception if json invalid.
         """
-        j = {}
-        if os.path.isfile(path):
-            j = json.load(open(path))
-        else:
-            debug.info(f"Could not find json file {path}.  Skipping.")
-        return j
+        if not os.path.isfile(path):
+            debug.warning("Config file %s not found. Using default values for this file.", path)
+            return {}
 
-    # example config is a "base config" which always gets read.
-    # our "custom" config contains overrides.
-    def __get_config(self, base_filename):
-        filename = "{}.json".format(base_filename)
-        reference_filename = "config.example.json"  # always use this filename.
-        reference_config = self.read_json(reference_filename)
-        custom_config = self.read_json(filename)
+        with open(path) as f:
+            return json.load(f)
+
+    def __get_config(self, path=None):
+        if path is None:
+            path = ROOT_DIRECTORY / "config.json"
+        else:
+            path = (CURRENT_DIRECTORY / path).with_suffix(".json")
+        reference_filename = "config.example.json"
+        reference_path = ROOT_DIRECTORY / reference_filename
+        reference_config = self.read_json(reference_path)
+        custom_config = self.read_json(path)
+        if not reference_config:
+            debug.critical(f"""\
+Invalid example configuration. Make sure {reference_filename} exists in root directory.
+You should not edit or move this file!
+"""
+            )
+            sys.exit(1)
+
         if custom_config:
             new_config = deep_update(reference_config, custom_config)
             return new_config
         return reference_config
 
     def __get_colors(self, base_filename):
-        filename_prefix = "colors/{}".format(base_filename)
-        filename = "{}.json".format(filename_prefix)
-        reference_filename = "{}.example.json".format(filename_prefix)
-        reference_colors = self.read_json(reference_filename)
+        filename = COLORS_DIRECTORY / "{}.json".format(base_filename)
+        reference_filename = "{}.example.json".format(base_filename)
+        reference_path = COLORS_DIRECTORY / reference_filename
+        reference_colors = self.read_json(reference_path)
         if not reference_colors:
-            debug.error(
-                "Invalid {} reference color file. Make sure {} exists in colors/".format(base_filename, base_filename)
+            debug.critical(f"""\
+Invalid reference color file. Make sure {reference_filename} exists in colors/.
+You should not edit or move this file!"
+"""
             )
             sys.exit(1)
 
@@ -252,15 +267,20 @@ class Config:
         return reference_colors
 
     def __get_layout(self, width, height):
-        filename_prefix = "coordinates/w{}h{}".format(width, height)
-        filename = "{}.json".format(filename_prefix)
+        filename_prefix = "w{}h{}".format(width, height)
+        filename = COORDINATES_DIRECTORY / "{}.json".format(filename_prefix)
         reference_filename = "{}.example.json".format(filename_prefix)
-        reference_layout = self.read_json(reference_filename)
+        reference_path = COORDINATES_DIRECTORY / reference_filename
+        reference_layout = self.read_json(reference_path)
         if not reference_layout:
-            # Unsupported coordinates
-            debug.error(
-                "Invalid matrix dimensions provided. See top of README for supported dimensions."
-                "\nIf you would like to see new dimensions supported, please file an issue on GitHub!"
+            supported_dimensions = sorted([file.name.split(".")[0] for file in COORDINATES_DIRECTORY.glob("*.example.json")], reverse=True)
+            debug.critical(f"""\
+Invalid reference layout file. Make sure {reference_filename} exists in coordinates/
+You should not edit or move this file!
+
+Supported dimensions are: {', '.join(supported_dimensions)}
+If you aren't sure why you're seeing this, there might not be official support for your matrix dimensions yet.
+"""
             )
             sys.exit(1)
 
@@ -271,3 +291,8 @@ class Config:
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
+
+    def __eq__(self, other):
+        if not isinstance(other, Config):
+            return NotImplemented
+        return vars(self) == vars(other)

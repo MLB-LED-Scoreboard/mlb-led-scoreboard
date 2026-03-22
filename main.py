@@ -3,8 +3,8 @@ import sys
 from data.screens import ScreenType
 import debug
 
-if sys.version_info < (3, 9):
-    debug.error("Please run with Python >= 3.9")
+if sys.version_info < (3, 10):
+    debug.error("Please run with Python >= 3.10")
     sys.exit(1)
 
 import statsapi
@@ -140,8 +140,8 @@ def __render_main(matrix, data):
 
 if __name__ == "__main__":
     # Check for led configuration arguments
-    command_line_args = args()
-    matrixOptions = led_matrix_options(command_line_args)
+    clargs = args()
+    matrixOptions = led_matrix_options(clargs)
 
     if driver.is_emulated():
         matrixOptions.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
@@ -150,8 +150,7 @@ if __name__ == "__main__":
     # Initialize the matrix
     matrix = RGBMatrix(options=matrixOptions)
     try:
-        config, _ = os.path.splitext(command_line_args.config)
-        main(matrix, config)
+        main(matrix, clargs.config)
     except:
         debug.exception("Untrapped error in main!")
         sys.exit(1)

@@ -24,7 +24,7 @@ COMPLETED_EARLY_FOG = "Completed Early: Fog"  # Final
 COMPLETED_EARLY_INCLEMENT_WEATHER = "Completed Early: Inclement Weather"  # Final
 COMPLETED_EARLY_LIGHTNING = "Completed Early: Lightning"  # Final
 COMPLETED_EARLY_AIR_QUALITY = "Completed Early: Air Quality"  # Final
-COMPLETED_EARLY_MERCY_RULE = "Completed Early: Mercy Rule"  # Final
+COMPLETED_EARLY_MERCY_RULE = "Completed Early: Mercy"  # Final
 COMPLETED_EARLY_POWER = "Completed Early: Power"  # Final
 COMPLETED_EARLY_RAIN = "Completed Early: Rain"  # Final
 COMPLETED_EARLY_SNOW = "Completed Early: Snow"  # Final
@@ -65,21 +65,19 @@ DELAYED_WET_GROUNDS = "Delayed: Wet Grounds"  # Live
 DELAYED_WIND = "Delayed: Wind"  # Live
 FINAL = "Final"  # Final
 FINAL_TIED = "Final: Tied"  # Final
-FINAL_TIE_DECISION_BY_TIEBREAKER = "Final: Tie, decision by tiebreaker"  # Final
+FINAL_TIE_DECISION_BY_TIEBREAKER = "Final: Tied (won in tiebreaker)"  # Final
 FORFEIT = "Forfeit"  # Final
-FORFEIT_DELAY_OF_GAME = "Forfeit: Delay of game "  # Final
-FORFEIT_FAILURE_TO_APPEAR = "Forfeit: Failure to appear "  # Final
-FORFEIT_FAILURE_TO_FIELD_LINEUP = "Forfeit: Failure to field lineup "  # Final
-FORFEIT_FINAL = "Forfeit: Final"  # Final
-FORFEIT_GAME_OVER = "Forfeit: Game Over"  # Final
-FORFEIT_IGNORING_EJECTION = "Forfeit: Ignoring ejection "  # Final
-FORFEIT_INELIGIBLE_PLAYER = "Forfeit: Ineligible player "  # Final
-FORFEIT_REFUSES_TO_PLAY = "Forfeit: Refuses to play "  # Final
-FORFEIT_UNPLAYABLE_FIELD = "Forfeit: Unplayable field "  # Final
-FORFEIT_WILLFUL_RULE_VIOLATION = "Forfeit: Willful rule violation"  # Final
+FORFEIT_DELAY_OF_GAME = "Forfeit: Delay"  # Final
+FORFEIT_FAILURE_TO_APPEAR = "Forfeit: Appear"  # Final
+FORFEIT_FAILURE_TO_FIELD_LINEUP = "Forfeit: Lineup"  # Final
+FORFEIT_IGNORING_EJECTION = "Forfeit: Ejection"  # Final
+FORFEIT_INELIGIBLE_PLAYER = "Forfeit: Ineligible"  # Final
+FORFEIT_REFUSES_TO_PLAY = "Forfeit: Refusal"  # Final
+FORFEIT_UNPLAYABLE_FIELD = "Forfeit: Unplayable"  # Final
+FORFEIT_WILLFUL_RULE_VIOLATION = "Forfeit: Rule"  # Final
 GAME_OVER = "Game Over"  # Final
 GAME_OVER_TIED = "Game Over: Tied"  # Final
-GAME_OVER_TIE_DECISION_BY_TIEBREAKER = "Game Over: Tie, decision by tiebreaker"  # Final
+GAME_OVER_TIE_DECISION_BY_TIEBREAKER = "Game Over: Tied (won in tiebreaker)"  # Final
 IN_PROGRESS = "In Progress"  # Live
 INSTANT_REPLAY = "Instant Replay"  # Live
 MANAGER_CHALLENGE = "Manager challenge"  # Live
@@ -297,8 +295,6 @@ GAME_STATE_IRREGULAR = [
     FORFEIT_DELAY_OF_GAME,
     FORFEIT_FAILURE_TO_APPEAR,
     FORFEIT_FAILURE_TO_FIELD_LINEUP,
-    FORFEIT_FINAL,
-    FORFEIT_GAME_OVER,
     FORFEIT_IGNORING_EJECTION,
     FORFEIT_INELIGIBLE_PLAYER,
     FORFEIT_REFUSES_TO_PLAY,

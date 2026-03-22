@@ -29,7 +29,8 @@ class Schedule:
             debug.log("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
-                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
+                # add sportId=51 to additionally get WBC games
+                self.__all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId="1,51")
             except:
                 debug.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
@@ -91,9 +92,7 @@ class Schedule:
             # we return -1 if no live games for preferred team
             if game_index >= 0 and self.current_idx != game_index:
                 scheduled_game = self._games[game_index]
-                preferred_game = Game.from_scheduled(
-                    scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
-                )
+                preferred_game = Game.from_scheduled(scheduled_game, self.config.sync_amount, self.config.api_refresh_rate)
                 if preferred_game is not None:
                     debug.log(
                         "Preferred Team's Game Status: %s, %s %d",
@@ -132,9 +131,7 @@ class Schedule:
     def __current_game(self):
         if self._games:
             scheduled_game = self._games[self.current_idx]
-            return Game.from_scheduled(
-                scheduled_game, self.config.preferred_game_delay_multiplier, self.config.api_refresh_rate
-            )
+            return Game.from_scheduled(scheduled_game, self.config.sync_amount, self.config.api_refresh_rate)
         return None
 
     @staticmethod
