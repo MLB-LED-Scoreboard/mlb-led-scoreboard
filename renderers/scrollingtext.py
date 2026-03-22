@@ -3,8 +3,8 @@ from driver import graphics
 from utils import center_text_position
 
 
-def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_pos, center=True):
-    if __text_should_scroll(text, font, width):
+def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_pos, center=True, force_scroll=False):
+    if force_scroll or __text_should_scroll(text, font, width):
 
         w = font["size"]["width"]
         total_width = w * len(text)
@@ -23,7 +23,7 @@ def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_po
         # Offscreen to the right
         visible_width = total_width + empty_space_at_start
         if visible_width > width + w:
-            right =  -((visible_width - width) // w)
+            right = -((visible_width - width) // w)
 
         # Trim the text to only the visible part
         text = text[left:right]
