@@ -11,6 +11,11 @@
       {
         "kind": "game",
         "priority": 1
+      },
+      {
+        "kind": "standings",
+        "seconds": 120,
+        "with_priority": 0
       }
     ]
   },
