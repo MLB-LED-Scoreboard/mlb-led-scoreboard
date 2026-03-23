@@ -317,8 +317,9 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             )
 
     if not any(screen[0] for screen in screen_rules.values()):
-        # prevents nothing showing for an empty config
-        screen_rules["news"][0] = 60
+        raise ValueError(
+            "Invalid screens config! Add at least one with with 'with_priority=0' for when no games are available."
+        )
 
     for t in time_rules:
         has_matching_screen = False
@@ -328,7 +329,8 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
                 break
         if not has_matching_screen:
             raise ValueError(
-                f"Invalid time rule in config, can lead to situation with no valid screens. Add at least one with with 'with_priority={t.priority}'."
+                "Invalid time rule in screens config, can lead to situation with no valid screens."
+                f" Remove this rule or add at least one with with 'with_priority={t.priority}'."
             )
 
     return game_rules, time_rules, screen_rules
