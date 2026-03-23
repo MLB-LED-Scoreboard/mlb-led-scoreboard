@@ -39,18 +39,13 @@ class MainRenderer:
                 self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond()))
 
     def __render_games(self):
-        # bit of a hack, helps when we change priorities
-        # and want to go back to a specific game.
-        # could also let the drawings/standings tell the main that they can update next?
-        self.data.games.consumer_advance()
         seen_games = set()
         while True:
             self.scrolling_text_pos = self.canvas.width
 
-            game = self.data.games.active()
+            game = self.data.games.next()
             if game is None:
-                debug.log("Render thread: no game to render, sleeping for a bit")
-                self.data.games.consumer_advance()
+                debug.warn("Render thread: no game to render, sleeping for a bit")
                 time.sleep(1)
                 break
 
@@ -68,8 +63,6 @@ class MainRenderer:
                 self.data.config.layout.state_for_game(game)
                 self.__draw_game(game)
                 time.sleep(self.data.config.scrolling_speed)
-
-            self.data.games.consumer_advance()
 
     # Draws the provided game on the canvas
     def __draw_game(self, game: Game):
