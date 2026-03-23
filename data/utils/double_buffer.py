@@ -7,10 +7,9 @@ class DoubleBuffer:
         self.items = (initial_data, initial_data)
         # render thread can switch to next
         self._active: Literal["current", "next"] = "current"
-        # main thread acknowledges, so it can switch back to current
-        self._producer_acknowledged = False
 
     def active(self):
+        debug.log("Render thread: reading '%s'", self._active)
         if self._active == "current":
             return self.items[0]
         else:
@@ -18,24 +17,16 @@ class DoubleBuffer:
 
     def consumer_advance(self):
         if self._active == "current":
-            debug.log("Render thread: requesting main thread to read 'next' game")
+            debug.log("Render thread: informing main thread that render thread will read 'next' ")
         self._active = "next"
 
     def producer_tick(self, getter: Callable[[Any], Any]):
+        if self._active == "current" and (self.items[0] == self.items[1]):
+            self.items = (self.items[0], getter(self.items[1]))
+            debug.log("Main thread: advanced 'next' game")
+
         if self._active == "next":
             debug.log("Main thread: acknowledging render thread's request to read 'next', mirroring into 'current'")
             self.items = (self.items[1], self.items[1])
-            self._producer_acknowledged = True
-
-        if self._active == "current":
-            if self._producer_acknowledged or (self.items[0] == self.items[1]):
-                self.items = (self.items[0], getter(self.items[1]))
-
-            if self._producer_acknowledged:
-                self._producer_acknowledged = False
-                debug.log("Main thread: render thread has switched back to 'current', advanced 'next' game")
-
-    def consumer_tick(self):
-        if self._active == "next" and self._producer_acknowledged:
-            debug.log("Render thread: main thread has acknowledged, switching back to reading 'current' game")
             self._active = "current"
+            debug.log("Main thread: resetting active to 'current'")

@@ -33,7 +33,6 @@ class MainRenderer:
     def render(self) -> NoReturn:
         while True:
             self.__render_games()
-            self.data.games.consumer_tick()
             if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
                 self.__draw_standings(timer_cond(t))
             if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
@@ -47,14 +46,12 @@ class MainRenderer:
         seen_games = set()
         while True:
             self.scrolling_text_pos = self.canvas.width
-            self.data.games.consumer_tick()
 
             game = self.data.games.active()
             if game is None:
                 debug.log("Render thread: no game to render, sleeping for a bit")
                 self.data.games.consumer_advance()
                 time.sleep(1)
-                self.data.games.consumer_tick()
                 break
 
             if len(seen_games) >= self.data.schedule.num_games():
@@ -70,7 +67,6 @@ class MainRenderer:
             while cond():
                 self.data.config.layout.state_for_game(game)
                 self.__draw_game(game)
-                self.data.games.consumer_tick()
                 time.sleep(self.data.config.scrolling_speed)
 
             self.data.games.consumer_advance()
@@ -177,7 +173,6 @@ class MainRenderer:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(self.data.config.scrolling_speed)
-            self.data.games.consumer_tick()
 
     def __draw_standings(self, cond: Callable[[], bool]):
         """
@@ -229,7 +224,6 @@ class MainRenderer:
 
             time.sleep(1)
             update = (update + 1) % 100
-            self.data.games.consumer_tick()
 
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
@@ -249,7 +243,7 @@ class MainRenderer:
 
     def scrolling_finished_cond(self) -> Callable[[], bool]:
         """A condition that is true only while the scrolling text has finished scrolling"""
-        if self.data.config.rotation_scroll_until_finished:
+        if not self.data.config.rotation_scroll_until_finished:
             return never_cond
 
         self.scrolling_finished = False
