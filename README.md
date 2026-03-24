@@ -10,7 +10,7 @@
 
 ---------------
 > [!IMPORTANT]  
-> If you are upgrading from v7 to v8, please be sure to read the [Usage](#usage) section, as the startup commands have changed!
+> If you are upgrading to v9.0, please be sure to read the [Upgrading to v9.0 wiki page](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki/Upgrading-to-v9.0) for details on how to convert your custom configurations!
 ---------------
 
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
