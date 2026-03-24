@@ -20,6 +20,4 @@ class Color:
         return rv
 
     def __eq__(self, other):
-        if not isinstance(other, Color):
-            return NotImplemented
-        return self.json == other.json
+        return isinstance(other, Color) and self.json == other.json

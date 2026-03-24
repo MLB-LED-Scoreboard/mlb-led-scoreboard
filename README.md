@@ -9,7 +9,7 @@
 </a>
 
 ---------------
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > If you are upgrading to v9.0, please be sure to read the [Upgrading to v9.0 wiki page](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki/Upgrading-to-v9.0) for details on how to convert your custom configurations!
 ---------------
 
@@ -241,18 +241,12 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 
 ### Configuration
 
-A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
+A default [`config.example.json`](config.example.json) file is included for reference. Copy this file to `config.json` and modify the values as needed.
+See [`config.schema.json`](config.schema.json) for a schema for configuration files.
 
 ```
-"preferred":                              Options for team and division preference
-  "teams"                         Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                     Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
-
 "news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
-  "always_display"                Bool    Display the news ticker screen at all times. Supercedes the standings setting.
-  "team_offday"                   Bool    Display the news ticker when your prefered team is on an offday.
-  "preferred_teams"               Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
-  "display_no_games_live"         Bool    Display news and weather when none of your games are currently live.
+  "teams"                         Array   Teams you'd like to pull down headlines for.
   "traderumors"                   Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
   "mlb_news"                      Bool    Include MLB's frontpage news.
   "countdowns"                    Bool    Include various countdowns in the ticker.
@@ -260,21 +254,13 @@ A default `config.example.json` file is included for reference. Copy this file t
   "date_format"                   String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
 
 "standings":                              Options for displaying standings for a division
-  "always_display"                Bool    Display standings for your preferred divisions.
-  "mlb_offday"                    Bool    Display standings for your preferred divisions when there are no games on the current day.
-  "team_offday"                   Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
-  "display_no_games_live"         Bool    Display standings when none of your games are currently live.
+  "divisions"                     Array   Names of divisions you'd like to show on the standings screen
 
 "rotation":                               Options for rotation through the day's games
-  "enabled"                       Bool    Rotate through each game of the day according to the configured `rates`.
   "scroll_until_finished"         Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"                Bool    Only rotate through games in your preferred teams.
-  "only_live"                     Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
   "rates"                         Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
 
-  "while_preferred_team_live":            Options for rotating between screens while one of your preferred teams is live
-    "enabled"                     Bool    Enable rotation while a preferred team is live.
-    "during_inning_breaks"        Bool    Enable rotation while a preferred team is live during an inning break.
+  "screens"                       Array    See the next section.
 
 "weather":                                Options for retrieving the weather
   "apikey"                        String  An API key is required to use the weather service.
@@ -293,6 +279,68 @@ A default `config.example.json` file is included for reference. Copy this file t
 "debug"                           Bool    Game and other debug data is written to your console.
 "demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
+
+
+### Controlling what shows on the board: `rotation.screens`
+
+What the board shows at any given time is controlled by an internal `priority` number.
+The highest active priority at any moment wins. By default, when no other rules are active,
+the priority level is `0`.
+
+There are two kinds of things that can *set* the current priority: `time` rules, which match
+certain times of day, and `game` rules, which can match MLB games of certain teams or in certain statuses.
+
+For example, you can create a priority level `5` that is triggered in the morning with the following `screens` rule:
+```json
+{"kind":"time", "priority": 5, "start_time": "07:00", "end_time": "09:05"}
+```
+Similarly, you can create a priority level `4` whenever a Cubs game is actively being played:
+```json
+{
+  "kind": "game",
+  "priority": 4,
+  "required_status": "live",
+  "teams": ["Cubs"]
+}
+```
+
+There are three kinds of things that can be *added* to a specific priority level:
+`news`, the news screen, `standings`, the divisional standings, and `secondary_game` screens, which
+are just like game screens except for they don't create any rules on their own.
+
+For example, here's a config that:
+- First, prioritizes showing the Cubs game if it is live.
+- If the Cubs are not live, it shows any games that are **plus** the standings, and the pre/post game of the Cubs if they play that day.
+- If no team is live, shows the news and standings alternatingly.
+
+```json
+{
+  "kind": "game",
+  "priority": 2,
+  "required_status": "live",
+  "teams": ["Cubs"]
+},
+{
+  "kind": "game",
+  "required_status": "live",
+  "priority": 1
+},
+{ "kind": "secondary_game", "with_priority": 1, "teams": ["Cubs"] },
+{
+  "kind": "standings",
+  "seconds": 30,
+  "with_priority": [0, 1]
+},
+{
+  "kind": "news",
+  "seconds": 60,
+  "with_priority": 0
+}
+```
+
+These rules are powerful but we know they can be confusing. Feel free to reach out on our Discord if you
+want help crafting something specific!
+
 
 ### Synchronizing with Broadcasts
 

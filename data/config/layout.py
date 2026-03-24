@@ -1,3 +1,4 @@
+from data import status
 from driver import graphics
 
 import os.path
@@ -26,7 +27,7 @@ class Layout:
         self.default_font_name = self.coords("defaults.font_name")
 
         self.font_cache = {}
-        
+
         # Cache the default font to start
         self.__get_font_object(self.default_font_name)
 
@@ -72,6 +73,19 @@ class Layout:
         else:
             self.state = None
 
+    def state_for_game(self, game):
+        new_state = None
+        if game.status() == status.WARMUP:
+            new_state = LAYOUT_STATE_WARMUP
+
+        if game.is_no_hitter():
+            new_state = LAYOUT_STATE_NOHIT
+
+        if game.is_perfect_game():
+            new_state = LAYOUT_STATE_PERFECT
+
+        self.set_state(new_state)
+
     def state_is_warmup(self):
         return self.state == LAYOUT_STATE_WARMUP
 
@@ -107,7 +121,7 @@ class Layout:
                 } | self.__get_font_bdf_properties(abs_path)
 
                 return self.font_cache[font_name]
-            
+
     def __get_font_bdf_properties(self, path):
         bdf = bdfparser.Font(path)
 
@@ -120,6 +134,10 @@ class Layout:
         }
 
     def __eq__(self, other):
-        if not isinstance(other, Layout):
-            return NotImplemented
-        return self.json == other.json and self.width == other.width and self.height == other.height
+
+        return (
+            isinstance(other, Layout)
+            and self.json == other.json
+            and self.width == other.width
+            and self.height == other.height
+        )

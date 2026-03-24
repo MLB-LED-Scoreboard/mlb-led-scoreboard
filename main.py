@@ -1,6 +1,5 @@
 import sys
 
-from data.screens import ScreenType
 import debug
 
 if sys.version_info < (3, 10):
@@ -78,77 +77,19 @@ def main(matrix, config_base):
     time.sleep(1)
     render.start()
 
-    screen = data.get_screen_type()
-    if screen == ScreenType.ALWAYS_NEWS:
-        __refresh_news(render, data)
-    elif screen == ScreenType.ALWAYS_STANDINGS:
-        __refresh_standings(render, data)
-    elif screen == ScreenType.LEAGUE_OFFDAY or screen == ScreenType.PREFERRED_TEAM_OFFDAY:
-        __refresh_offday(render, data)
-    else:
-        __refresh_gameday(render, data)
-
-
-def __refresh_news(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the news to refresh")
-    while render_thread.is_alive():
-        time.sleep(30)
-        data.refresh_weather()
-        data.refresh_news_ticker()
-
-
-def __refresh_standings(render_thread, data):  # type: (threading.Thread, Data) -> None
-    if data.standings.populated():
-        debug.log("Main has selected the standings to refresh")
-        while render_thread.is_alive():
-            time.sleep(30)
-            data.refresh_standings()
-    else:
-        __refresh_news(render_thread, data)
-
-
-def __refresh_offday(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the offday information to refresh")
-    while render_thread.is_alive():
-        time.sleep(30)
-        data.refresh_standings()
-        data.refresh_weather()
-        data.refresh_news_ticker()
-
-
-def __refresh_gameday(render_thread, data):  # type: (threading.Thread, Data) -> None
-    debug.log("Main has selected the gameday information to refresh")
-
-    starttime = time.time()
-
-    while render_thread.is_alive():
-        time.sleep(0.5)
+    while render.is_alive():
+        time.sleep(0.1)
         data.refresh_schedule()
-        if not data.schedule.games_live():
-            cont = False
-            if data.config.standings_no_games:
-                data.refresh_standings()
-                cont = True
-            if data.config.news_no_games:
-                data.refresh_news_ticker()
-                data.refresh_weather()
-                cont = True
-            if cont:
-                continue
-
-        elif data.current_game is None:
-            # make sure a game is populated
-            data.advance_to_next_game()
-
-        if data.should_rotate_to_next_game():
-            if data.scrolling_finished:
-                time_delta = time.time() - starttime
-                rotate_rate = data.config.rotate_rate_for_status(data.current_game.status())
-                if time_delta >= rotate_rate:
-                    starttime = time.time()
-                    data.advance_to_next_game()
-        else:
+        time.sleep(0.1)
+        if data.schedule.num_games():
             data.refresh_game()
+        time.sleep(0.1)
+        if data.config.screen_time_at_priority("standings", data.schedule.priority):
+            data.refresh_standings()
+        time.sleep(0.2)
+        if data.config.screen_time_at_priority("news", data.schedule.priority):
+            data.refresh_news_ticker()
+            data.refresh_weather()
 
 
 def __render_main(matrix, data):

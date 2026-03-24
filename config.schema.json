@@ -1,0 +1,462 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Config for the MLB LED Scoreboard",
+  "type": "object",
+  "required": ["format"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "default": "./config.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
+    "format": {
+      "type": "number",
+      "const": 9.0,
+      "default": 9.0,
+      "x-hidden": true
+    },
+    "example_team_color": {
+      "type": "object",
+      "x-format": "grid",
+      "properties": {
+        "accent": { "$ref": "#/$defs/color" },
+        "home": { "$ref": "#/$defs/color" },
+        "text": { "$ref": "#/$defs/color" }
+      }
+    },
+    "rotation": {
+      "type": "object",
+      "properties": {
+        "screens": {
+          "title": "Screens to rotate through",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["game", "secondary_game", "news", "standings", "time"],
+                "description": "What type of screen this rule applies to"
+              }
+            },
+            "anyOf": [
+              {
+                "title": "Game rule",
+                "type": "object",
+                "required": ["priority"],
+                "properties": {
+                  "kind": {
+                    "const": "game",
+                    "default": "game",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
+                  },
+                  "priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "required_status": {
+                    "$ref": "#/$defs/required_status"
+                  },
+                  "teams": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/team"
+                    },
+                    "default": [],
+                    "uniqueItems": true,
+                    "x-format": "choices"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "title": "Time of day rule",
+                "description": "Does not directly add a screen to show, just introduces a priority level at certain times of day",
+                "type": "object",
+                "required": ["priority"],
+                "properties": {
+                  "kind": {
+                    "const": "time",
+                    "default": "time",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
+                  },
+                  "priority": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "start_time": {
+                    "$ref": "#/$defs/time",
+                    "default": "00:00"
+                  },
+                  "end_time": {
+                    "$ref": "#/$defs/time"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "title": "Additional game rule",
+                "description": "Does not introduce a new priority level, but can add games to one",
+                "type": "object",
+                "required": ["with_priority"],
+                "properties": {
+                  "kind": {
+                    "const": "secondary_game",
+                    "default": "secondary_game",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
+                  },
+                  "with_priority": {
+                    "$ref": "#/$defs/with_priority"
+                  },
+                  "required_status": {
+                    "$ref": "#/$defs/required_status"
+                  },
+                  "teams": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "$ref": "#/$defs/team"
+                    },
+                    "uniqueItems": true,
+                    "default": [],
+                    "x-format": "choices"
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "title": "News rule",
+                "type": "object",
+                "required": ["with_priority", "seconds"],
+                "properties": {
+                  "kind": {
+                    "const": "news",
+                    "default": "news",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
+                  },
+                  "with_priority": {
+                    "$ref": "#/$defs/with_priority"
+                  },
+                  "seconds": {
+                    "description": "Seconds to spend on this screen before rotating",
+                    "type": "number",
+                    "minimum": 5,
+                    "default": 20
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "title": "Standings rule",
+                "type": "object",
+                "required": ["with_priority", "seconds"],
+                "properties": {
+                  "kind": {
+                    "const": "standings",
+                    "default": "standings",
+                    "readOnly": true,
+                    "x-enforceConst": true,
+                    "x-hidden": true
+                  },
+                  "with_priority": {
+                    "$ref": "#/$defs/with_priority"
+                  },
+                  "seconds": {
+                    "description": "Seconds to spend on this screen before rotating",
+                    "type": "number",
+                    "minimum": 5,
+                    "default": 20
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "x-discriminator": "kind"
+          },
+          "x-arrayMove": false
+        },
+        "scroll_until_finished": {
+          "description": "Should we let scrolling text complete before allowing the next screen to rotate?",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "rates": {
+          "description": "Seconds to spend on each type of game screen (minimum)",
+          "type": "object",
+          "properties": {
+            "live": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            },
+            "final": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            },
+            "pregame": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "news_ticker": {
+      "type": "object",
+      "properties": {
+        "teams": {
+          "description": "Teams to show news headlines for",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/team"
+          },
+          "default": [],
+          "uniqueItems": true,
+          "x-format": "choices"
+        },
+        "traderumors": {
+          "description": "Should we show headlines from MLB Trade Rumors",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "mlb_news": {
+          "description": "Should we show headlines from mlb.com",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "countdowns": {
+          "description": "Should we show countdowns to upcoming dates (e.g. start of spring training, end of season)",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "date": {
+          "description": "Should we display the current date",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "date_format": {
+          "description": "Made up of the format codes from https://docs.python.org/3/library/datetime.html#format-codes",
+          "type": "string",
+          "default": "%A, %B %d"
+        }
+      }
+    },
+    "weather": {
+      "type": "object",
+      "required": ["apikey", "location"],
+      "properties": {
+        "apikey": {
+          "type": "string",
+          "not": {
+            "pattern": "YOUR_API_KEY_HERE"
+          },
+          "description": "Go to https://home.openweathermap.org/users/sign_up to get an API key"
+        },
+        "location": {
+          "type": "string"
+        },
+        "metric_units": {
+          "type": "boolean",
+          "default": false,
+          "x-format": "checkbox"
+        },
+        "pregame": {
+          "description": "Include weather in the pre-game text after probable starters?",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        }
+      }
+    },
+    "standings": {
+      "type": "object",
+      "properties": {
+        "divisions": {
+          "description": "Divisions or wild card standings to rotate through",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/division"
+          },
+          "default": [],
+          "uniqueItems": true,
+          "x-format": "choices"
+        }
+      }
+    },
+    "time_format": {
+      "description": "Whether times should be displayed in 12-hour or 24-hour format",
+      "type": "string",
+      "enum": ["12h", "24h"],
+      "default": "12h"
+    },
+    "end_of_day": {
+      "description": "What time should we switch to the next day of games. Depending on your timezone, setting this to ~3am may prevent issues where games in progress get cut off at midnight",
+      "$ref": "#/$defs/time",
+      "default": "00:00"
+    },
+    "sync_delay_seconds": {
+      "description": "How long should we wait to show live updates (prevents spoilers)",
+      "type": "number",
+      "default": 0,
+      "minimum": 0
+    },
+    "api_refresh_rate": {
+      "description": "How often we update the status of a game in seconds",
+      "type": "number",
+      "default": 5,
+      "minimum": 1
+    },
+    "scrolling_speed": {
+      "description": "How quickly should text scroll on the board",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 6,
+      "default": 2
+    },
+    "debug": {
+      "description": "Should the board enable extra logging?",
+      "type": "boolean",
+      "default": false,
+      "x-format": "checkbox"
+    },
+    "demo_date": {
+      "description": "Date to simulate the board on. Mostly for testing.",
+      "oneOf": [
+        {
+          "description": "Disabled",
+          "const": false,
+          "type": "boolean",
+          "x-format": "checkbox"
+        },
+        {
+          "description": "Specific date",
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      ],
+      "default": false
+    }
+  },
+  "$defs": {
+    "required_status": {
+      "type": "string",
+      "enum": ["live", "live_in_inning", "pregame", "game_over"],
+      "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
+      "meta:enum": {
+        "live": "Game is currently in progress",
+        "live_in_inning": "Game is currently in progress and has reached the inning specified in the teams array (if any)",
+        "pregame": "Game has not started yet",
+        "game_over": "Game has finished"
+      }
+    },
+    "with_priority": {
+      "oneOf": [
+        {
+          "description": "Multiple priorities to match. Screens will only show if at least one of their associated priority levels is active. If multiple screens are associated with the same priority level, they will rotate amongst themselves.",
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "uniqueItems": true,
+          "x-arrayMove": false,
+          "x-format": "table"
+        },
+        {
+          "description": "Single priority to match. Screens will only show if at least one of their associated priority levels is active. If multiple screens are associated with the same priority level, they will rotate amongst themselves.",
+          "type": "number",
+          "minimum": 0
+        }
+      ]
+    },
+    "time": {
+      "type": "string",
+      "pattern": "^\\d{2}:\\d{2}$",
+      "description": "Time in 24-hour format. For example, 19:30 for 7:30pm"
+    },
+    "division": {
+      "title": "MLB division or wildcard group",
+      "type": "string",
+      "enum": [
+        "AL East",
+        "AL Central",
+        "AL West",
+        "NL East",
+        "NL Central",
+        "NL West",
+        "AL Wild Card",
+        "NL Wild Card"
+      ]
+    },
+    "team": {
+      "title": "MLB team",
+      "type": "string",
+      "enum": [
+        "Angels",
+        "D-backs",
+        "Orioles",
+        "Red Sox",
+        "Cubs",
+        "Reds",
+        "Guardians",
+        "Rockies",
+        "Tigers",
+        "Astros",
+        "Royals",
+        "Dodgers",
+        "Nationals",
+        "Mets",
+        "Athletics",
+        "Pirates",
+        "Padres",
+        "Mariners",
+        "Giants",
+        "Cardinals",
+        "Rays",
+        "Rangers",
+        "Blue Jays",
+        "Twins",
+        "Phillies",
+        "Braves",
+        "White Sox",
+        "Marlins",
+        "Yankees",
+        "Brewers"
+      ]
+    },
+    "color": {
+      "type": "object",
+      "properties": {
+        "r": { "type": "number", "minimum": 0, "maximum": 255 },
+        "g": { "type": "number", "minimum": 0, "maximum": 255 },
+        "b": { "type": "number", "minimum": 0, "maximum": 255 }
+      },
+      "required": ["r", "g", "b"],
+      "x-format": "custom-color",
+      "x-grid": {
+        "columns": 4
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-enforceEnum": true,
+  "x-enforceConst": true
+}

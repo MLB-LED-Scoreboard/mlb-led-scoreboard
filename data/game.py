@@ -1,13 +1,13 @@
 import time
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 import statsapi
 
 import debug
 from data import teams
 from data.update import UpdateStatus
-from data.delay_buffer import CircularQueue
+from data.utils.circular_queue import CircularQueue
 from data.uniforms import Uniforms
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
@@ -31,7 +31,7 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_scheduled(game_data, delay, api_refresh_rate) -> Optional["Game"]:
+    def from_scheduled(game_data: dict[str, Any], delay: int, api_refresh_rate: int) -> Optional["Game"]:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
@@ -360,6 +360,11 @@ class Game:
     @staticmethod
     def _format_id(player):
         return player if "ID" in str(player) else "ID" + str(player)
+
+    def __eq__(self, value):
+        if isinstance(value, Game):
+            return self.game_id == value.game_id
+        return False
 
     def print_game_data_debug(self):
         debug.log("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])

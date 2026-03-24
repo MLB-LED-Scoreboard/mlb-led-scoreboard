@@ -1,11 +1,26 @@
 {
-    "preferred": {
-        "teams": [
-            "Nationals",
-            "Angels",
-            "Brewers"
-        ],
-		"divisions": ["NL East", "NL Wild Card"]
-    },
-    "demo_date": "2019-08-17"
+  "format": 9.0,
+  "rotation": {
+    "screens": [
+      {
+        "kind": "game",
+        "priority": 2,
+        "required_status": "live",
+        "teams": ["Nationals", "Red Sox"]
+      },
+      {
+        "kind": "game",
+        "priority": 1
+      },
+      {
+        "kind": "standings",
+        "seconds": 120,
+        "with_priority": 0
+      }
+    ]
+  },
+  "standings": {
+    "divisions": ["NL East", "NL Wild Card"]
+  },
+  "demo_date": "2019-08-17"
 }
