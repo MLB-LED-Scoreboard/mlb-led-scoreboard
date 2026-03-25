@@ -30,7 +30,9 @@
         "g": { "type": "number", "minimum": 0, "maximum": 255 },
         "b": { "type": "number", "minimum": 0, "maximum": 255 }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "x-format": "custom-color",
+      "x-grid": { "columns": 4 }
     },
     "team_colors": {
       "type": "object",
