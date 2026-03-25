@@ -80,7 +80,9 @@ def main(matrix, config_base):
 
     # create render thread
     plugin_renderers = {name: renderer for name, _, renderer in plugins}
-    render = threading.Thread(target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True)
+    render = threading.Thread(
+        target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
+    )
     time.sleep(1)
     render.start()
 
@@ -91,13 +93,11 @@ def main(matrix, config_base):
         if data.schedule.num_games():
             data.refresh_game()
         time.sleep(0.1)
-        if data.config.screen_time_at_priority("standings", data.schedule.priority):
-            data.refresh_standings()
-        time.sleep(0.2)
         for plugin in plugin_data:
             if data.config.screen_time_at_priority(plugin, data.schedule.priority):
                 data.refresh_plugins()
                 break
+        time.sleep(0.2)
         if data.config.screen_time_at_priority("news", data.schedule.priority):
             data.refresh_news_ticker()
             data.refresh_weather()

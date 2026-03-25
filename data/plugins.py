@@ -16,9 +16,9 @@ def load_plugins(config: Config) -> list[tuple[str, bullpen.PluginData, bullpen.
                 entry_point.load()
             )
             cfg_class, data_class, renderer_class = plugin()
-            cfg = cfg_class(config.for_plugin(name))
+            cfg = cfg_class(config)
             data = data_class(cfg)
-            renderer = renderer_class(cfg, config.layout, config.scoreboard_colors, config.scrolling_speed)
+            renderer = renderer_class(cfg, config.layout, config.scoreboard_colors)
         except Exception as e:
             print(f"Error loading plugin {name}: {e}")
             continue

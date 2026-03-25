@@ -1,12 +1,16 @@
+import logging
 import time
 from datetime import datetime
 
 import statsapi
 
-import debug
-from data import teams
 from bullpen import UpdateStatus
-import data.headers
+
+# TODO: avoid copying teams somehow
+from . import teams
+
+
+from .config import Config
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
@@ -17,11 +21,16 @@ API_FIELDS = (
 )
 
 
+def get_playoff_start_date(year: int):
+    # TODO
+    return datetime(year, 10, 1).date()
+
+
 class Standings:
-    def __init__(self, config, playoffs_start_date: datetime):
+    def __init__(self, config: Config) -> None:
         self.config = config
         self.date = self.config.parse_today()
-        self.playoffs_start_date = playoffs_start_date.date()
+        self.playoffs_start_date = get_playoff_start_date(self.date.year)
         self.starttime = time.time()
         self.preferred_divisions = config.preferred_divisions
         self.wild_cards = any("Wild" in division for division in config.preferred_divisions)
@@ -35,7 +44,7 @@ class Standings:
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
             self.date = self.config.parse_today()
-            debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
+            logging.info("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
                 if not self.is_postseason():
@@ -50,16 +59,12 @@ class Standings:
                     if self.date != datetime.today().date():
                         season_params["date"] = self.date.strftime("%m/%d/%Y")
 
-                    divisons_data = statsapi.get(
-                        "standings", season_params, request_kwargs={"headers": data.headers.API_HEADERS}
-                    )
+                    divisons_data = statsapi.get("standings", season_params)
                     standings = [Division(division_data) for division_data in divisons_data["records"]]
 
                     if self.wild_cards:
                         season_params["standingsTypes"] = "wildCard"
-                        wc_data = statsapi.get(
-                            "standings", season_params, request_kwargs={"headers": data.headers.API_HEADERS}
-                        )
+                        wc_data = statsapi.get("standings", season_params)
                         standings += [Division(data, wc=True) for data in wc_data["records"]]
 
                     self.standings = standings
@@ -72,13 +77,12 @@ class Standings:
                             "hydrate": "league,team",
                             "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
                         },
-                        request_kwargs={"headers": data.headers.API_HEADERS},
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")
                     self.leagues["NL"] = League(postseason_data, "NL")
 
             except:
-                debug.exception("Failed to refresh standings.")
+                logging.exception("Failed to refresh standings.")
                 return UpdateStatus.FAIL
             else:
 

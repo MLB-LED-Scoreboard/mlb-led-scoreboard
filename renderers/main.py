@@ -9,7 +9,7 @@ from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
 from data.game import Game
 
-from renderers import network, offday, standings
+from renderers import network, offday
 from renderers.games import game as gamerender
 from renderers.games import irregular
 from renderers.games import postgame as postgamerender
@@ -28,8 +28,6 @@ class MainRenderer:
         self.plugins = plugins
 
         self.animation_time = 0
-        self.standings_stat = "w"
-        self.standings_league = "NL"
 
     def render(self) -> NoReturn:
         while True:
@@ -37,9 +35,9 @@ class MainRenderer:
                 self.__render_games()
             for plugin in self.plugins:
                 if t := self.data.config.screen_time_at_priority(plugin, self.data.schedule.priority):
+                    debug.log("Rotating to plugin %s for %d seconds", plugin, t)
                     self.__draw_plugin_screen(plugin, any_of(timer_cond(t), self.scrolling_finished_cond()))
-            if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
-                self.__draw_standings(timer_cond(t))
+
             if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
                 self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond()))
 
@@ -172,57 +170,6 @@ class MainRenderer:
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(self.data.config.scrolling_speed)
 
-    def __draw_standings(self, cond: Callable[[], bool]):
-        """
-        Draw the standings screen for as long as cond returns True
-        """
-        if not self.data.standings.populated():
-            return
-
-        if self.data.standings.is_postseason() and self.canvas.width <= 32:
-            return
-
-        update = 1
-        while cond():
-            if self.data.standings.is_postseason():
-                standings.render_bracket(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.standings.leagues[self.standings_league],
-                )
-            else:
-                standings.render_standings(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.standings.current_standings(),
-                    self.standings_stat,
-                )
-
-            if self.data.network_issues:
-                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
-
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
-
-            if self.data.standings.is_postseason():
-                if update % 20 == 0:
-                    if self.standings_league == "NL":
-                        self.standings_league = "AL"
-                    else:
-                        self.standings_league = "NL"
-            elif self.canvas.width == 32 and update % 5 == 0:
-                if self.standings_stat == "w":
-                    self.standings_stat = "l"
-                else:
-                    self.standings_stat = "w"
-                    self.data.standings.advance_to_next_standings()
-            elif self.canvas.width > 32 and update % 10 == 0:
-                self.data.standings.advance_to_next_standings()
-
-            time.sleep(1)
-            update = (update + 1) % 100
-
     def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]):
         from driver import graphics
 
@@ -230,7 +177,8 @@ class MainRenderer:
         wait_time = renderer.wait_time()
 
         while cond():
-            renderer.render(self.data.plugin_data[plugin_name], self.canvas, graphics, self.scrolling_text_pos)
+            pos = renderer.render(self.data.plugin_data[plugin_name], self.canvas, graphics, self.scrolling_text_pos)
+            self.__update_scrolling_text_pos(pos, self.canvas.width)
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
@@ -243,6 +191,9 @@ class MainRenderer:
 
     def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of scrolling text"""
+        if new_pos is None:
+            self.scrolling_finished = True
+            return
         pos_after_scroll = self.scrolling_text_pos - 1
         if pos_after_scroll + new_pos < 0:
             self.scrolling_finished = True

@@ -23,7 +23,6 @@ DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
 DEFAULT_PREFERRED_TEAMS = ["Cubs"]
-DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config:
@@ -37,9 +36,6 @@ class Config:
         self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
         self.news_ticker_date = json["news_ticker"]["date"]
         self.news_ticker_date_format = os_datetime_format(json["news_ticker"]["date_format"])
-
-        # Display Standings
-        self.preferred_divisions = json["standings"]["divisions"]
 
         # Rotation
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
@@ -89,7 +85,6 @@ class Config:
         # Check the preferred teams and divisions are a list or a string
         self.check_time_format()
         self.check_preferred_teams()
-        self.check_preferred_divisions()
 
         # Check the rotation_rates to make sure it's valid and not silly
         self.check_rotate_rates()
@@ -126,16 +121,7 @@ class Config:
             debug.warning("api_refresh_rate should be an integer." f" Truncating to {int(self.api_refresh_rate)}")
             self.api_refresh_rate = int(self.api_refresh_rate)
 
-    def check_preferred_divisions(self):
-        if not isinstance(self.preferred_divisions, str) and not isinstance(self.preferred_divisions, list):
-            debug.warning(
-                "preferred_divisions should be an array of division names or a single division name string."
-                "Using default preferred_divisions, {}".format(DEFAULT_PREFERRED_DIVISIONS)
-            )
-            self.preferred_divisions = DEFAULT_PREFERRED_DIVISIONS
-        if isinstance(self.preferred_divisions, str):
-            division = self.preferred_divisions
-            self.preferred_divisions = [division]
+
 
     def check_time_format(self):
         if self.time_format.lower() == "24h":
@@ -194,8 +180,8 @@ class Config:
     def screen_time_at_priority(self, screen: str, priority: int) -> int:
         return self.rotation_screen_rules.get(screen, {}).get(priority, 0)
 
-    def for_plugin(self, plugin_name: str) -> Optional[dict[str, Any]]:
-        return self.config_json.get(plugin_name)
+    def for_plugin(self, plugin_name: str) -> dict[str, Any]:
+        return self.config_json.get(plugin_name, {})
 
     def read_json(self, path):
         """

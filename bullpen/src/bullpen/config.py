@@ -1,13 +1,26 @@
 import abc
+import datetime
 from typing import TYPE_CHECKING, Any, Union
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.graphics import Color
 
 
+class MLBConfig(abc.ABC):
+    @abc.abstractmethod
+    def for_plugin(self, plugin_name: str) -> dict[str, Any]: ...
+
+    @property
+    @abc.abstractmethod
+    def scrolling_speed(self) -> float: ...
+
+    @abc.abstractmethod
+    def parse_today(self) -> datetime.date: ...
+
+
 class Config(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, config_json: Union[Any, dict[str, Any]]) -> None: ...
+    def __init__(self, base: MLBConfig) -> None: ...
 
 
 class Layout(abc.ABC):

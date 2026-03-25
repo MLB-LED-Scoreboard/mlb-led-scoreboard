@@ -6,3 +6,4 @@ RGBMatrixEmulator>=0.13.5
 tzlocal==4.2
 bdfparser
 ./bullpen
+./standings

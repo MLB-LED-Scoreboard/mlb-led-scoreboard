@@ -8,8 +8,8 @@ if TYPE_CHECKING:
 
 
 class Config(bullpen.Config):
-    def __init__(self, config_json) -> None:
-        self.config_json = config_json
+    def __init__(self, base) -> None:
+        self.base = base
 
 
 class Data(bullpen.PluginData):
@@ -23,16 +23,16 @@ class Data(bullpen.PluginData):
 
 
 class Renderer(bullpen.Renderer):
-    def __init__(self, config: Config, layout: bullpen.Layout, colors: bullpen.Color, scrolling_speed: float) -> None:
+    def __init__(self, config: Config, layout: bullpen.Layout, colors: bullpen.Color) -> None:
         self.config = config
         self.layout = layout
         self.colors = colors
-        self.scrolling_speed = scrolling_speed
+        self.scrolling_speed = config.base.scrolling_speed
 
     def wait_time(self) -> float:
         return self.scrolling_speed
 
-    def render(self, data: Data, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int) -> int:
+    def render(self, data: Data, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int) -> None:
         canvas.Fill(255, 0, 0)
         graphics.DrawText(
             canvas,
@@ -42,7 +42,6 @@ class Renderer(bullpen.Renderer):
             self.colors.graphics_color("network.text"),
             f"Counter: {data.counter}",
         )
-        return 0
 
 
 def load() -> tuple[type[Config], type[Data], type[Renderer]]:

@@ -1,5 +1,5 @@
 import abc
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 
 from .data import PluginData
@@ -12,10 +12,12 @@ if TYPE_CHECKING:
 
 class Renderer(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, config: Config, layout: Layout, colors: Color, scrolling_speed: float) -> None: ...
+    def __init__(self, config: Config, layout: Layout, colors: Color) -> None: ...
 
     @abc.abstractmethod
     def wait_time(self) -> float: ...
 
     @abc.abstractmethod
-    def render(self, data: PluginData, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int) -> int: ...
+    def render(
+        self, data: PluginData, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int
+    ) -> Optional[int]: ...
