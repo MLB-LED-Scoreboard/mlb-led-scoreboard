@@ -79,6 +79,8 @@ def schema_to_output(schema_path):
 
 def _generate_all(overwrite=False, check=False):
   for schema_path in sorted(Path('schemas').rglob('*.schema.json')):
+    if schema_path.name.startswith('_'):
+      continue
     _generate(str(schema_path), schema_to_output(schema_path), overwrite, check)
 
 

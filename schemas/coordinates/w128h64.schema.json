@@ -2,6 +2,413 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "128x64 Scoreboard Coordinates",
   "x-indent": "  ",
+  "type": "object",
+  "required": ["format"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "default": "./../schemas/coordinates/w128h64.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
+    "format": {
+      "type": "number",
+      "const": 9.0,
+      "default": 9.0,
+      "x-hidden": true
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "font_name": { "$ref": "#/$defs/font_name" }
+      }
+    },
+    "bases": {
+      "type": "object",
+      "properties": {
+        "1B": { "$ref": "#/$defs/base_pos" },
+        "2B": { "$ref": "#/$defs/base_pos" },
+        "3B": { "$ref": "#/$defs/base_pos" }
+      }
+    },
+    "final": {
+      "type": "object",
+      "properties": {
+        "inning":         { "$ref": "#/$defs/point" },
+        "scrolling_text": { "$ref": "#/$defs/point_width" },
+        "nohit_text":     { "$ref": "#/$defs/point" }
+      }
+    },
+    "inning": {
+      "type": "object",
+      "properties": {
+        "break": {
+          "type": "object",
+          "properties": {
+            "number": { "$ref": "#/$defs/point" },
+            "text":   { "$ref": "#/$defs/point" },
+            "due_up": {
+              "type": "object",
+              "properties": {
+                "due":     { "$ref": "#/$defs/named_point" },
+                "up":      { "$ref": "#/$defs/point" },
+                "divider": {
+                  "type": "object",
+                  "properties": {
+                    "draw":    { "type": "boolean" },
+                    "x":       { "type": "integer" },
+                    "y_start": { "type": "integer" },
+                    "y_end":   { "type": "integer" }
+                  }
+                },
+                "loop":    { "type": "integer" },
+                "leadoff": { "$ref": "#/$defs/named_point_width" },
+                "on_deck": { "$ref": "#/$defs/point_width" },
+                "in_hole": { "$ref": "#/$defs/point_width" }
+              }
+            }
+          }
+        },
+        "number": {
+          "type": "object",
+          "properties": {
+            "x":             { "type": "integer" },
+            "y":             { "type": "integer" },
+            "nohit":         { "$ref": "#/$defs/point" },
+            "perfect_game":  { "$ref": "#/$defs/point" }
+          },
+          "required": ["x", "y"]
+        },
+        "arrow": {
+          "type": "object",
+          "properties": {
+            "size": { "type": "integer" },
+            "up":   { "$ref": "#/$defs/offset" },
+            "down": { "$ref": "#/$defs/offset" }
+          }
+        }
+      }
+    },
+    "outs": {
+      "type": "object",
+      "properties": {
+        "1": { "$ref": "#/$defs/out_pos" },
+        "2": { "$ref": "#/$defs/out_pos" },
+        "3": { "$ref": "#/$defs/out_pos" }
+      }
+    },
+    "atbat": {
+      "type": "object",
+      "properties": {
+        "batter": {
+          "type": "object",
+          "properties": {
+            "x":         { "type": "integer" },
+            "y":         { "type": "integer" },
+            "width":     { "type": "integer" },
+            "font_name": { "$ref": "#/$defs/font_name" },
+            "offset":    { "type": "integer" }
+          },
+          "required": ["x", "y", "width"]
+        },
+        "pitcher": {
+          "type": "object",
+          "properties": {
+            "x":         { "type": "integer" },
+            "y":         { "type": "integer" },
+            "width":     { "type": "integer" },
+            "font_name": { "$ref": "#/$defs/font_name" }
+          },
+          "required": ["x", "y", "width"]
+        },
+        "pitch": {
+          "type": "object",
+          "properties": {
+            "font_name":   { "$ref": "#/$defs/font_name" },
+            "x":           { "type": "integer" },
+            "y":           { "type": "integer" },
+            "enabled":     { "type": "boolean" },
+            "mph":         { "type": "boolean" },
+            "desc_length": { "$ref": "#/$defs/desc_length" }
+          }
+        },
+        "pitch_count": {
+          "type": "object",
+          "properties": {
+            "font_name":             { "$ref": "#/$defs/font_name" },
+            "x":                     { "type": "integer" },
+            "y":                     { "type": "integer" },
+            "enabled":               { "type": "boolean" },
+            "append_pitcher_name":   { "type": "boolean" }
+          }
+        },
+        "loop":        { "type": "integer" },
+        "strikeout":   { "$ref": "#/$defs/play_display" },
+        "play_result": { "$ref": "#/$defs/play_display" }
+      }
+    },
+    "batter_count": {
+      "type": "object",
+      "properties": {
+        "x":             { "type": "integer" },
+        "y":             { "type": "integer" },
+        "nohit":         { "$ref": "#/$defs/point" },
+        "perfect_game":  { "$ref": "#/$defs/point" }
+      },
+      "required": ["x", "y"]
+    },
+    "nohitter": {
+      "type": "object",
+      "properties": {
+        "x":                    { "type": "integer" },
+        "y":                    { "type": "integer" },
+        "innings_until_display": { "type": "integer" }
+      }
+    },
+    "pregame": {
+      "type": "object",
+      "properties": {
+        "scrolling_text": {
+          "type": "object",
+          "properties": {
+            "x":      { "type": "integer" },
+            "y":      { "type": "integer" },
+            "width":  { "type": "integer" },
+            "warmup": { "$ref": "#/$defs/point_width" }
+          },
+          "required": ["x", "y", "width"]
+        },
+        "start_time":  { "$ref": "#/$defs/point" },
+        "warmup_text": { "$ref": "#/$defs/point" }
+      }
+    },
+    "standings": {
+      "type": "object",
+      "properties": {
+        "font_name":  { "$ref": "#/$defs/font_name" },
+        "start":      { "type": "integer" },
+        "offset":     { "type": "integer" },
+        "height":     { "type": "integer" },
+        "width":      { "type": "integer" },
+        "divider":    { "$ref": "#/$defs/x_pos" },
+        "stat_title": { "$ref": "#/$defs/x_pos" },
+        "team": {
+          "type": "object",
+          "properties": {
+            "name":       { "$ref": "#/$defs/x_pos" },
+            "record":     { "$ref": "#/$defs/x_pos" },
+            "games_back": { "$ref": "#/$defs/x_pos" }
+          }
+        },
+        "postseason": {
+          "type": "object",
+          "properties": {
+            "matchup_y_gap": { "type": "integer" },
+            "series_x_gap":  { "type": "integer" },
+            "wc_x_start":    { "type": "integer" },
+            "wc_y_start":    { "type": "integer" },
+            "ds_a_y_start":  { "type": "integer" },
+            "__comment":     { "type": "string" }
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "object",
+          "properties": {
+            "x":          { "type": "integer" },
+            "y":          { "type": "integer" },
+            "short_text": { "type": "boolean" }
+          },
+          "required": ["x", "y"]
+        },
+        "scrolling_text": { "$ref": "#/$defs/point_width" }
+      }
+    },
+    "teams": {
+      "type": "object",
+      "properties": {
+        "background": { "$ref": "#/$defs/team_pair_rect" },
+        "accent":     { "$ref": "#/$defs/team_pair_rect" },
+        "name": {
+          "type": "object",
+          "properties": {
+            "away":      { "$ref": "#/$defs/named_point" },
+            "home":      { "$ref": "#/$defs/named_point" },
+            "full":      { "type": "boolean" },
+            "font_name": { "$ref": "#/$defs/font_name" }
+          },
+          "required": ["away", "home"]
+        },
+        "record": {
+          "type": "object",
+          "properties": {
+            "enabled":  { "type": "boolean" },
+            "position": { "type": "string" },
+            "away":     { "$ref": "#/$defs/named_point" },
+            "home":     { "$ref": "#/$defs/named_point" }
+          }
+        },
+        "line_score": {
+          "type": "object",
+          "properties": {
+            "away":                                  { "$ref": "#/$defs/named_point" },
+            "home":                                  { "$ref": "#/$defs/named_point" },
+            "show_hits_and_errors":                  { "type": "boolean" },
+            "compress_digits":                       { "type": "boolean" },
+            "shorten_team_name_on_high_line_score":  { "type": "boolean" },
+            "spacing":                               { "type": "integer" },
+            "font_name":                             { "$ref": "#/$defs/font_name" }
+          }
+        }
+      }
+    },
+    "offday": {
+      "type": "object",
+      "properties": {
+        "scrolling_text": { "$ref": "#/$defs/point_width" },
+        "time":           { "$ref": "#/$defs/point" },
+        "conditions":     { "$ref": "#/$defs/point" },
+        "temperature":    { "$ref": "#/$defs/point" },
+        "wind_speed":     { "$ref": "#/$defs/point" },
+        "wind_dir":       { "$ref": "#/$defs/point" },
+        "wind":           { "$ref": "#/$defs/point" },
+        "weather_icon": {
+          "type": "object",
+          "properties": {
+            "x":            { "type": "integer" },
+            "y":            { "type": "integer" },
+            "width":        { "type": "integer" },
+            "height":       { "type": "integer" },
+            "rescale_icon": { "type": "integer" }
+          },
+          "required": ["x", "y", "width", "height"]
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "properties": {
+        "font_name":  { "$ref": "#/$defs/font_name" },
+        "background": { "$ref": "#/$defs/rect" },
+        "text":       { "$ref": "#/$defs/point" }
+      }
+    }
+  },
+  "$defs": {
+    "font_name": {
+      "type": "string",
+      "description": "Font name used to render this element"
+    },
+    "desc_length": {
+      "type": "string",
+      "enum": ["short", "medium", "long"]
+    },
+    "point": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" }
+      },
+      "required": ["x", "y"]
+    },
+    "point_width": {
+      "type": "object",
+      "properties": {
+        "x":     { "type": "integer" },
+        "y":     { "type": "integer" },
+        "width": { "type": "integer" }
+      },
+      "required": ["x", "y", "width"]
+    },
+    "named_point": {
+      "type": "object",
+      "properties": {
+        "x":         { "type": "integer" },
+        "y":         { "type": "integer" },
+        "font_name": { "$ref": "#/$defs/font_name" }
+      },
+      "required": ["x", "y"]
+    },
+    "named_point_width": {
+      "type": "object",
+      "properties": {
+        "x":         { "type": "integer" },
+        "y":         { "type": "integer" },
+        "width":     { "type": "integer" },
+        "font_name": { "$ref": "#/$defs/font_name" }
+      },
+      "required": ["x", "y", "width"]
+    },
+    "rect": {
+      "type": "object",
+      "properties": {
+        "x":      { "type": "integer" },
+        "y":      { "type": "integer" },
+        "width":  { "type": "integer" },
+        "height": { "type": "integer" }
+      },
+      "required": ["x", "y", "width", "height"]
+    },
+    "base_pos": {
+      "type": "object",
+      "properties": {
+        "x":    { "type": "integer" },
+        "y":    { "type": "integer" },
+        "size": { "type": "integer" }
+      },
+      "required": ["x", "y", "size"]
+    },
+    "out_pos": {
+      "type": "object",
+      "properties": {
+        "x":             { "type": "integer" },
+        "y":             { "type": "integer" },
+        "size":          { "type": "integer" },
+        "nohit":         { "$ref": "#/$defs/base_pos" },
+        "perfect_game":  { "$ref": "#/$defs/base_pos" }
+      },
+      "required": ["x", "y", "size"]
+    },
+    "x_pos": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "integer" }
+      },
+      "required": ["x"]
+    },
+    "offset": {
+      "type": "object",
+      "properties": {
+        "x_offset": { "type": "integer" },
+        "y_offset": { "type": "integer" }
+      },
+      "required": ["x_offset", "y_offset"]
+    },
+    "play_display": {
+      "type": "object",
+      "properties": {
+        "x":           { "type": "integer" },
+        "y":           { "type": "integer" },
+        "font_name":   { "$ref": "#/$defs/font_name" },
+        "desc_length": { "$ref": "#/$defs/desc_length" },
+        "enabled":     { "type": "boolean" }
+      },
+      "required": ["x", "y"]
+    },
+    "team_pair_rect": {
+      "type": "object",
+      "properties": {
+        "away": { "$ref": "#/$defs/rect" },
+        "home": { "$ref": "#/$defs/rect" }
+      },
+      "required": ["away", "home"]
+    }
+  },
   "default": {
     "$schema": "./../schemas/coordinates/w128h64.schema.json",
     "format": 9.0,
