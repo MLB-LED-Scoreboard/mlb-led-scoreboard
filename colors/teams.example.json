@@ -1,5 +1,6 @@
 {
   "$schema": "./teams.schema.json",
+  "format": 9.0,
   "az": {
     "home": {
       "r": 166,

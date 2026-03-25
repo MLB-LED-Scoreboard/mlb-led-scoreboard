@@ -4,7 +4,19 @@
   "description": "RGB color overrides for scoreboard UI elements.",
   "type": "object",
   "properties": {
-    "$schema": { "type": "string", "default": "./scoreboard.schema.json", "readOnly": true, "x-enforceConst": true, "x-hidden": true },
+    "$schema": {
+      "type": "string",
+      "default": "./scoreboard.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
+    "format": {
+      "type": "number",
+      "const": 9.0,
+      "default": 9.0,
+      "x-hidden": true
+    },
     "bases": {
       "type": "object",
       "x-format": "grid",

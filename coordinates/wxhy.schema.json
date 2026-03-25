@@ -4,6 +4,19 @@
   "description": "Pixel coordinates and layout settings for a specific board size.",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "default": "./wxhy.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
+    "format": {
+      "type": "number",
+      "const": 9.0,
+      "default": 9.0,
+      "x-hidden": true
+    },
     "defaults": {
       "type": "object",
       "properties": {

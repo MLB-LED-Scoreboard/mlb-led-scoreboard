@@ -12,11 +12,23 @@
       "aus", "bra", "can", "tpe", "cba", "cub", "cze", "dr", "gbr", "isr",
       "ita", "jpn", "mex", "nca", "ned", "pan", "pr", "usa", "ven", "kor",
       "default",
-      "$schema"
+      "$schema", "format"
     ]
   },
   "properties": {
-    "$schema": { "type": "string", "default": "./teams.schema.json", "readOnly": true, "x-enforceConst": true, "x-hidden": true }
+    "$schema": {
+      "type": "string",
+      "default": "./teams.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
+    "format": {
+      "type": "number",
+      "const": 9.0,
+      "default": 9.0,
+      "x-hidden": true
+    }
   },
   "additionalProperties": {
     "$ref": "#/$defs/team_colors"
