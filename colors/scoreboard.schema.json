@@ -3,6 +3,7 @@
   "title": "Scoreboard Colors",
   "description": "RGB color overrides for scoreboard UI elements.",
   "type": "object",
+  "required": ["format"],
   "properties": {
     "$schema": {
       "type": "string",

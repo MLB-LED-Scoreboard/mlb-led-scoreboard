@@ -3,6 +3,7 @@
   "title": "Team Colors",
   "description": "Per-team RGB color overrides. Keys are team abbreviations (e.g. 'nyy', 'lad') or 'default'.",
   "type": "object",
+  "required": ["format"],
   "propertyNames": {
     "enum": [
       "az", "atl", "bal", "bos", "chc", "cws", "cin", "cle", "col", "det",

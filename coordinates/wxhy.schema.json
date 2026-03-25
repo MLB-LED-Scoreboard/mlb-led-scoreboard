@@ -3,6 +3,7 @@
   "title": "Scoreboard Coordinates",
   "description": "Pixel coordinates and layout settings for a specific board size.",
   "type": "object",
+  "required": ["format"],
   "properties": {
     "$schema": {
       "type": "string",
