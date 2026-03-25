@@ -36,6 +36,7 @@
     },
     "team_colors": {
       "type": "object",
+      "x-format": "grid",
       "required": ["home", "text", "accent"],
       "properties": {
         "home":   { "$ref": "#/$defs/color", "default": {"r": 255,   "g": 255,  "b": 255}  },
@@ -43,6 +44,7 @@
         "accent": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} },
         "city_connect": {
           "type": "object",
+          "x-format": "grid",
           "required": ["home", "text", "accent"],
           "properties": {
             "home":   { "$ref": "#/$defs/color" },

@@ -7,6 +7,7 @@
     "$schema": { "type": "string", "default": "./scoreboard.schema.json", "readOnly": true, "x-enforceConst": true, "x-hidden": true },
     "bases": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "1B": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "2B": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
@@ -16,6 +17,7 @@
     },
     "final": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "inning":         { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
@@ -25,9 +27,11 @@
     },
     "inning": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "break": {
           "type": "object",
+          "x-format": "grid",
           "properties": {
             "number":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
             "text":             { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
@@ -40,6 +44,7 @@
         "number": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "arrow": {
           "type": "object",
+          "x-format": "grid",
           "properties": {
             "up":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
             "down": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
@@ -51,9 +56,11 @@
     },
     "outs": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "fill": {
           "type": "object",
+          "x-format": "grid",
           "properties": {
             "1": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
           },
@@ -67,6 +74,7 @@
     },
     "atbat": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "batter":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
         "pitcher":      { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
@@ -82,6 +90,7 @@
     "perfect_game_text":  { "$ref": "#/$defs/color", "default": {"r": 255, "g": 110, "b": 110} },
     "pregame": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "matchup":        { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
@@ -92,6 +101,7 @@
     },
     "status": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "text":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
@@ -100,9 +110,11 @@
     },
     "standings": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "nl": {
           "type": "object",
+          "x-format": "grid",
           "properties": {
             "divider": { "$ref": "#/$defs/color", "default": {"r": 0,   "g": 0,   "b": 255} }
           },
@@ -110,6 +122,7 @@
         },
         "al": {
           "type": "object",
+          "x-format": "grid",
           "properties": {
             "divider": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   }
           },
@@ -120,6 +133,7 @@
         "stat":       { "$ref": "#/$defs/color", "default": {"r": 171, "g": 181, "b": 170} },
         "team": {
           "type": "object",
+          "x-format": "grid",
           "properties": {
             "name":     { "$ref": "#/$defs/color", "default": {"r": 171, "g": 181, "b": 170} },
             "elim":     { "$ref": "#/$defs/color", "default": {"r": 190, "g": 180, "b": 160} },
@@ -134,6 +148,7 @@
     },
     "offday": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "time":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
@@ -149,6 +164,7 @@
     },
     "network": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "background": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   },
         "text":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} }
@@ -157,6 +173,7 @@
     },
     "default": {
       "type": "object",
+      "x-format": "grid",
       "properties": {
         "background": { "$ref": "#/$defs/color", "default": {"r": 7, "g": 14, "b": 25} }
       },
