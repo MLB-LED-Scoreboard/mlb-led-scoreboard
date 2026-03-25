@@ -17,15 +17,6 @@
       "default": 9.0,
       "x-hidden": true
     },
-    "example_team_color": {
-      "type": "object",
-      "x-format": "grid",
-      "properties": {
-        "accent": { "$ref": "#/$defs/color" },
-        "home": { "$ref": "#/$defs/color" },
-        "text": { "$ref": "#/$defs/color" }
-      }
-    },
     "rotation": {
       "type": "object",
       "properties": {
@@ -265,9 +256,6 @@
       "properties": {
         "apikey": {
           "type": "string",
-          "not": {
-            "pattern": "YOUR_API_KEY_HERE"
-          },
           "description": "Go to https://home.openweathermap.org/users/sign_up to get an API key"
         },
         "location": {

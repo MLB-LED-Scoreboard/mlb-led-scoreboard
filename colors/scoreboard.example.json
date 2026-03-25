@@ -1,4 +1,5 @@
 {
+  "$schema": "./scoreboard.schema.json",
   "bases": {
     "1B": {
       "r": 255,

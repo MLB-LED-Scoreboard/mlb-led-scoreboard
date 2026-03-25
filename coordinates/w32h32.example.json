@@ -1,4 +1,5 @@
 {
+  "$schema": "./wxhy.schema.json",
   "defaults": {
     "font_name": "4x6"
   },

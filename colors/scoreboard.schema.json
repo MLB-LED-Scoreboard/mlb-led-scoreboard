@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scoreboard Colors",
+  "description": "RGB color overrides for scoreboard UI elements.",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string", "default": "./scoreboard.schema.json", "readOnly": true, "x-enforceConst": true, "x-hidden": true },
+    "bases": {
+      "type": "object",
+      "properties": {
+        "1B": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "2B": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "3B": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+      },
+      "additionalProperties": false
+    },
+    "final": {
+      "type": "object",
+      "properties": {
+        "inning":         { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "nohit_text":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 50,  "b": 50}  }
+      },
+      "additionalProperties": false
+    },
+    "inning": {
+      "type": "object",
+      "properties": {
+        "break": {
+          "type": "object",
+          "properties": {
+            "number":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "text":             { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "due_up":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "due_up_divider":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "due_up_names":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+          },
+          "additionalProperties": false
+        },
+        "number": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "arrow": {
+          "type": "object",
+          "properties": {
+            "up":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "down": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "outs": {
+      "type": "object",
+      "properties": {
+        "fill": {
+          "type": "object",
+          "properties": {
+            "1": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+          },
+          "additionalProperties": false
+        },
+        "1": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "2": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "3": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+      },
+      "additionalProperties": false
+    },
+    "atbat": {
+      "type": "object",
+      "properties": {
+        "batter":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
+        "pitcher":      { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
+        "pitch":        { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} },
+        "pitch_count":  { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} },
+        "play_result":  { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
+        "strikeout":    { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   }
+      },
+      "additionalProperties": false
+    },
+    "batter_count":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
+    "nohit_text":         { "$ref": "#/$defs/color", "default": {"r": 255, "g": 110, "b": 110} },
+    "perfect_game_text":  { "$ref": "#/$defs/color", "default": {"r": 255, "g": 110, "b": 110} },
+    "pregame": {
+      "type": "object",
+      "properties": {
+        "matchup":        { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "start_time":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "warmup_text":    { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+      },
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "object",
+      "properties": {
+        "text":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+      },
+      "additionalProperties": false
+    },
+    "standings": {
+      "type": "object",
+      "properties": {
+        "nl": {
+          "type": "object",
+          "properties": {
+            "divider": { "$ref": "#/$defs/color", "default": {"r": 0,   "g": 0,   "b": 255} }
+          },
+          "additionalProperties": false
+        },
+        "al": {
+          "type": "object",
+          "properties": {
+            "divider": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   }
+          },
+          "additionalProperties": false
+        },
+        "background": { "$ref": "#/$defs/color", "default": {"r": 37,  "g": 102, "b": 30}  },
+        "divider":    { "$ref": "#/$defs/color", "default": {"r": 13,  "g": 35,  "b": 11}  },
+        "stat":       { "$ref": "#/$defs/color", "default": {"r": 171, "g": 181, "b": 170} },
+        "team": {
+          "type": "object",
+          "properties": {
+            "name":     { "$ref": "#/$defs/color", "default": {"r": 171, "g": 181, "b": 170} },
+            "elim":     { "$ref": "#/$defs/color", "default": {"r": 190, "g": 180, "b": 160} },
+            "clinched": { "$ref": "#/$defs/color", "default": {"r": 180, "g": 210, "b": 175} },
+            "stat":     { "$ref": "#/$defs/color", "default": {"r": 171, "g": 181, "b": 170} }
+          },
+          "additionalProperties": false
+        },
+        "text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+      },
+      "additionalProperties": false
+    },
+    "offday": {
+      "type": "object",
+      "properties": {
+        "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "time":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "conditions":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "temperature":    { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "wind_speed":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "wind_dir":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "wind":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "weather_icon":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "text":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+      },
+      "additionalProperties": false
+    },
+    "network": {
+      "type": "object",
+      "properties": {
+        "background": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   },
+        "text":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} }
+      },
+      "additionalProperties": false
+    },
+    "default": {
+      "type": "object",
+      "properties": {
+        "background": { "$ref": "#/$defs/color", "default": {"r": 7, "g": 14, "b": 25} }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "color": {
+      "type": "object",
+      "required": ["r", "g", "b"],
+      "properties": {
+        "r": { "type": "number", "minimum": 0, "maximum": 255 },
+        "g": { "type": "number", "minimum": 0, "maximum": 255 },
+        "b": { "type": "number", "minimum": 0, "maximum": 255 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
