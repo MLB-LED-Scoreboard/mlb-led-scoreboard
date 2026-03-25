@@ -28,6 +28,7 @@ from utils import args, led_matrix_options
 
 from data import Data
 from data.config import Config
+from data.plugins import load_plugins
 from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
 
@@ -68,12 +69,18 @@ def main(matrix, config_base):
         matrix.SetImage(logo.convert("RGB"))
         logo.close()
 
+    plugins = load_plugins(config)
+    debug.info("Loaded plugins: %s", ", ".join(name for name, _, _ in plugins))
+
+    plugin_data = {name: data for name, data, _ in plugins}
+
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
-    data = Data(config)
+    data = Data(config, plugin_data)
 
     # create render thread
-    render = threading.Thread(target=__render_main, args=[matrix, data], name="render_thread", daemon=True)
+    plugin_renderers = {name: renderer for name, _, renderer in plugins}
+    render = threading.Thread(target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True)
     time.sleep(1)
     render.start()
 
@@ -87,13 +94,17 @@ def main(matrix, config_base):
         if data.config.screen_time_at_priority("standings", data.schedule.priority):
             data.refresh_standings()
         time.sleep(0.2)
+        for plugin in plugin_data:
+            if data.config.screen_time_at_priority(plugin, data.schedule.priority):
+                data.refresh_plugins()
+                break
         if data.config.screen_time_at_priority("news", data.schedule.priority):
             data.refresh_news_ticker()
             data.refresh_weather()
 
 
-def __render_main(matrix, data):
-    MainRenderer(matrix, data).render()
+def __render_main(matrix, data, plugins):
+    MainRenderer(matrix, data, plugins).render()
 
 
 if __name__ == "__main__":

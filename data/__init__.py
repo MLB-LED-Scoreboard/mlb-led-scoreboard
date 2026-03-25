@@ -6,17 +6,17 @@ from data.headlines import Headlines
 from data.schedule import Schedule
 from data.standings import Standings
 from data import update
-from data.update import UpdateStatus
+from bullpen import UpdateStatus
 from data.weather import Weather
 from data.config import Config
 from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, plugin_data) -> None:
         # Save the parsed config
         self.config: Config = config
-
+        self.plugin_data = plugin_data
         # get schedule
         self.schedule: Schedule = Schedule(config)
 
@@ -53,6 +53,9 @@ class Data:
 
     def refresh_schedule(self):
         self.__process_network_status(self.schedule.update())
+
+    def refresh_plugins(self):
+        self.__process_network_status(update.merge(plugin.update() for plugin in self.plugin_data.values()))
 
     def __process_network_status(self, status):
         if status == UpdateStatus.SUCCESS:

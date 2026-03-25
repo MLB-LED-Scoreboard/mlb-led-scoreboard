@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "bullpen"
+version = "0.1.0"
+description = "Plugin system for the mlb-led-scoreboard project"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"bullpen" = ["py.typed"]

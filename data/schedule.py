@@ -8,7 +8,7 @@ import statsapi
 
 import debug
 from data.game import Game
-from data.update import UpdateStatus
+from bullpen import UpdateStatus
 from data.utils.circular_queue import CircularQueue
 from data.config import Config
 

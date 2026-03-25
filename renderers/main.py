@@ -18,13 +18,14 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data) -> None:
+    def __init__(self, matrix, data: Data, plugins) -> None:
         self.matrix = matrix
         self.data = data
         self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished: bool = False
+        self.plugins = plugins
 
         self.animation_time = 0
         self.standings_stat = "w"
@@ -34,6 +35,9 @@ class MainRenderer:
         while True:
             if self.data.schedule.num_games() > 0:
                 self.__render_games()
+            for plugin in self.plugins:
+                if t := self.data.config.screen_time_at_priority(plugin, self.data.schedule.priority):
+                    self.__draw_plugin_screen(plugin, any_of(timer_cond(t), self.scrolling_finished_cond()))
             if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
                 self.__draw_standings(timer_cond(t))
             if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
@@ -218,6 +222,20 @@ class MainRenderer:
 
             time.sleep(1)
             update = (update + 1) % 100
+
+    def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]):
+        from driver import graphics
+
+        renderer = self.plugins[plugin_name]
+        wait_time = renderer.wait_time()
+
+        while cond():
+            renderer.render(self.data.plugin_data[plugin_name], self.canvas, graphics, self.scrolling_text_pos)
+            # Show network issues
+            if self.data.network_issues:
+                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
+            self.canvas = self.matrix.SwapOnVSync(self.canvas)
+            time.sleep(wait_time)
 
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]

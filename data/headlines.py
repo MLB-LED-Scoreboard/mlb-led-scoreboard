@@ -6,7 +6,7 @@ import feedparser
 
 import debug
 from data.dates import Dates
-from data.update import UpdateStatus
+from bullpen import UpdateStatus
 
 HEADLINE_UPDATE_RATE = 60 * 60  # 1 hour between feed updates
 HEADLINE_MAX_FEEDS = 2  # Number of preferred team's feeds to fetch

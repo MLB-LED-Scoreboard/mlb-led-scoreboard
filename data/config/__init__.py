@@ -4,7 +4,7 @@ import sys
 
 from datetime import datetime, timedelta
 from collections import defaultdict
-from typing import Mapping
+from typing import Any, Mapping, Optional
 from math import ceil
 
 from data.config.game_screen import GameScreen, parse_game_screen
@@ -73,6 +73,8 @@ class Config:
                 )
             )
             self.scrolling_speed = SCROLLING_SPEEDS[DEFAULT_SCROLLING_SPEED]
+
+        self.config_json = json
 
         # Get the layout info
         json = self.__get_layout(width, height)
@@ -192,6 +194,9 @@ class Config:
     def screen_time_at_priority(self, screen: str, priority: int) -> int:
         return self.rotation_screen_rules.get(screen, {}).get(priority, 0)
 
+    def for_plugin(self, plugin_name: str) -> Optional[dict[str, Any]]:
+        return self.config_json.get(plugin_name)
+
     def read_json(self, path):
         """
         Read a file expected to contain valid json.
@@ -304,17 +309,17 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             game_rules.extend(parse_game_screen(rule_json))
         elif rule_json["kind"] == "time":
             time_rules.append(parse_time_rule(rule_json))
-        elif rule_json["kind"] in VALID_NON_GAME_SCREEN_TYPES:
+        else:
+            if rule_json["kind"] not in VALID_NON_GAME_SCREEN_TYPES:
+                debug.warning(
+                    "Invalid screen rule in config, unknown type '{}'. Rule: {}".format(
+                        rule_json.get("kind"), rule_json
+                    )
+                )
             if "seconds" not in rule_json:
                 raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
             for priority in parse_with_priority(rule_json):
                 screen_rules[rule_json["kind"]][priority] = rule_json["seconds"]
-        else:
-            debug.warning(
-                "Invalid screen rule in config, unknown type '{}'. Skipping. Rule: {}".format(
-                    rule_json.get("kind"), rule_json
-                )
-            )
 
     if not any(screen[0] for screen in screen_rules.values()):
         raise ValueError(

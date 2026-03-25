@@ -3,7 +3,7 @@ import os, time
 import pyowm
 
 import debug
-from data.update import UpdateStatus
+from bullpen import UpdateStatus
 
 WEATHER_UPDATE_RATE = 10 * 60  # 10 minutes between weather updates
 
@@ -78,7 +78,9 @@ class Weather:
                 except pyowm.commons.exceptions.NotFoundError:
                     debug.warning("[WEATHER] Fetching weather information failed from a not found error.")
                     debug.warning("[WEATHER] The 'weather.location' config is likely not formatted correctly.")
-                    debug.warning("[WEATHER] The correct format is '<city>,<state>,<country>' (example: 'Chicago,il,us')")
+                    debug.warning(
+                        "[WEATHER] The correct format is '<city>,<state>,<country>' (example: 'Chicago,il,us')"
+                    )
                     debug.exception("[WEATHER] Error Message:")
                     self.__set_fail_state_defaults()
                     return UpdateStatus.FAIL
