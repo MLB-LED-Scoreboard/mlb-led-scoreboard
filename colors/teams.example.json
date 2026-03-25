@@ -1,5 +1,5 @@
 {
-  "$schema": "./teams.schema.json",
+  "$schema": "./../schemas/colors/teams.schema.json",
   "format": 9.0,
   "az": {
     "home": {

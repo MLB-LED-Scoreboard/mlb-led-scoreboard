@@ -1,5 +1,5 @@
 {
-	"$schema": "./config.schema.json",
+	"$schema": "./schemas/config.schema.json",
 	"format": 9.0,
 	"rotation": {
 		"scroll_until_finished": true,

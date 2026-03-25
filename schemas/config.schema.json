@@ -1,12 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Config for the MLB LED Scoreboard",
+  "x-indent": "\t",
   "type": "object",
-  "required": ["format"],
+  "required": [
+    "format"
+  ],
   "properties": {
     "$schema": {
       "type": "string",
-      "default": "./config.schema.json",
+      "default": "./schemas/config.schema.json",
       "readOnly": true,
       "x-enforceConst": true,
       "x-hidden": true
@@ -20,16 +23,51 @@
     "rotation": {
       "type": "object",
       "properties": {
+        "scroll_until_finished": {
+          "description": "Should we let scrolling text complete before allowing the next screen to rotate?",
+          "type": "boolean",
+          "default": true,
+          "x-format": "checkbox"
+        },
+        "rates": {
+          "description": "Seconds to spend on each type of game screen (minimum)",
+          "type": "object",
+          "properties": {
+            "live": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            },
+            "final": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            },
+            "pregame": {
+              "type": "number",
+              "default": 15.0,
+              "minimum": 1
+            }
+          }
+        },
         "screens": {
           "title": "Screens to rotate through",
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["kind"],
+            "required": [
+              "kind"
+            ],
             "properties": {
               "kind": {
                 "type": "string",
-                "enum": ["game", "secondary_game", "news", "standings", "time"],
+                "enum": [
+                  "game",
+                  "secondary_game",
+                  "news",
+                  "standings",
+                  "time"
+                ],
                 "description": "What type of screen this rule applies to"
               }
             },
@@ -37,7 +75,9 @@
               {
                 "title": "Game rule",
                 "type": "object",
-                "required": ["priority"],
+                "required": [
+                  "priority"
+                ],
                 "properties": {
                   "kind": {
                     "const": "game",
@@ -69,7 +109,9 @@
                 "title": "Time of day rule",
                 "description": "Does not directly add a screen to show, just introduces a priority level at certain times of day",
                 "type": "object",
-                "required": ["priority"],
+                "required": [
+                  "priority"
+                ],
                 "properties": {
                   "kind": {
                     "const": "time",
@@ -96,7 +138,9 @@
                 "title": "Additional game rule",
                 "description": "Does not introduce a new priority level, but can add games to one",
                 "type": "object",
-                "required": ["with_priority"],
+                "required": [
+                  "with_priority"
+                ],
                 "properties": {
                   "kind": {
                     "const": "secondary_game",
@@ -127,7 +171,10 @@
               {
                 "title": "News rule",
                 "type": "object",
-                "required": ["with_priority", "seconds"],
+                "required": [
+                  "with_priority",
+                  "seconds"
+                ],
                 "properties": {
                   "kind": {
                     "const": "news",
@@ -151,7 +198,10 @@
               {
                 "title": "Standings rule",
                 "type": "object",
-                "required": ["with_priority", "seconds"],
+                "required": [
+                  "with_priority",
+                  "seconds"
+                ],
                 "properties": {
                   "kind": {
                     "const": "standings",
@@ -175,34 +225,31 @@
             ],
             "x-discriminator": "kind"
           },
-          "x-arrayMove": false
-        },
-        "scroll_until_finished": {
-          "description": "Should we let scrolling text complete before allowing the next screen to rotate?",
-          "type": "boolean",
-          "default": true,
-          "x-format": "checkbox"
-        },
-        "rates": {
-          "description": "Seconds to spend on each type of game screen (minimum)",
-          "type": "object",
-          "properties": {
-            "live": {
-              "type": "number",
-              "default": 15.0,
-              "minimum": 1
+          "x-arrayMove": false,
+          "default": [
+            {
+              "kind": "game",
+              "priority": 2,
+              "required_status": "live",
+              "teams": [
+                "Cubs"
+              ]
             },
-            "final": {
-              "type": "number",
-              "default": 15.0,
-              "minimum": 1
+            {
+              "kind": "game",
+              "priority": 1
             },
-            "pregame": {
-              "type": "number",
-              "default": 15.0,
-              "minimum": 1
+            {
+              "kind": "standings",
+              "seconds": 60,
+              "with_priority": 0
+            },
+            {
+              "kind": "news",
+              "seconds": 60,
+              "with_priority": 0
             }
-          }
+          ]
         }
       }
     },
@@ -215,7 +262,9 @@
           "items": {
             "$ref": "#/$defs/team"
           },
-          "default": [],
+          "default": [
+            "Cubs"
+          ],
           "uniqueItems": true,
           "x-format": "choices"
         },
@@ -246,20 +295,25 @@
         "date_format": {
           "description": "Made up of the format codes from https://docs.python.org/3/library/datetime.html#format-codes",
           "type": "string",
-          "default": "%A, %B %d"
+          "default": "%A, %B %-d"
         }
       }
     },
     "weather": {
       "type": "object",
-      "required": ["apikey", "location"],
+      "required": [
+        "apikey",
+        "location"
+      ],
       "properties": {
         "apikey": {
           "type": "string",
-          "description": "Go to https://home.openweathermap.org/users/sign_up to get an API key"
+          "description": "Go to https://home.openweathermap.org/users/sign_up to get an API key",
+          "default": "YOUR_API_KEY_HERE"
         },
         "location": {
-          "type": "string"
+          "type": "string",
+          "default": "Chicago,il,us"
         },
         "metric_units": {
           "type": "boolean",
@@ -283,7 +337,10 @@
           "items": {
             "$ref": "#/$defs/division"
           },
-          "default": [],
+          "default": [
+            "NL Central",
+            "NL Wild Card"
+          ],
           "uniqueItems": true,
           "x-format": "choices"
         }
@@ -292,7 +349,10 @@
     "time_format": {
       "description": "Whether times should be displayed in 12-hour or 24-hour format",
       "type": "string",
-      "enum": ["12h", "24h"],
+      "enum": [
+        "12h",
+        "24h"
+      ],
       "default": "12h"
     },
     "end_of_day": {
@@ -346,7 +406,12 @@
   "$defs": {
     "required_status": {
       "type": "string",
-      "enum": ["live", "live_in_inning", "pregame", "game_over"],
+      "enum": [
+        "live",
+        "live_in_inning",
+        "pregame",
+        "game_over"
+      ],
       "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
       "meta:enum": {
         "live": "Game is currently in progress",
@@ -433,11 +498,27 @@
     "color": {
       "type": "object",
       "properties": {
-        "r": { "type": "number", "minimum": 0, "maximum": 255 },
-        "g": { "type": "number", "minimum": 0, "maximum": 255 },
-        "b": { "type": "number", "minimum": 0, "maximum": 255 }
+        "r": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "g": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "b": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 255
+        }
       },
-      "required": ["r", "g", "b"],
+      "required": [
+        "r",
+        "g",
+        "b"
+      ],
       "x-format": "custom-color",
       "x-grid": {
         "columns": 4

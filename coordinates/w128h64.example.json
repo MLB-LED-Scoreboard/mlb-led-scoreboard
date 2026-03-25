@@ -1,5 +1,5 @@
 {
-  "$schema": "./wxhy.schema.json",
+  "$schema": "./../schemas/coordinates/w128h64.schema.json",
   "format": 9.0,
   "defaults": {
     "font_name": "7x13"

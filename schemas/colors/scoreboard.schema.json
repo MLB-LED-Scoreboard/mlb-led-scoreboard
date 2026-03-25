@@ -2,12 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Scoreboard Colors",
   "description": "RGB color overrides for scoreboard UI elements.",
+  "x-indent": "  ",
   "type": "object",
   "required": ["format"],
   "properties": {
     "$schema": {
       "type": "string",
-      "default": "./scoreboard.schema.json",
+      "default": "./../schemas/colors/scoreboard.schema.json",
       "readOnly": true,
       "x-enforceConst": true,
       "x-hidden": true
