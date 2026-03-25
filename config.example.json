@@ -13,7 +13,9 @@
 				"kind": "game",
 				"priority": 2,
 				"required_status": "live",
-				"teams": ["Cubs"]
+				"teams": [
+					"Cubs"
+				]
 			},
 			{
 				"kind": "game",
@@ -32,15 +34,14 @@
 		]
 	},
 	"news_ticker": {
-		"teams": ["Cubs"],
+		"teams": [
+			"Cubs"
+		],
 		"traderumors": true,
 		"mlb_news": true,
 		"countdowns": true,
 		"date": true,
 		"date_format": "%A, %B %-d"
-	},
-	"standings": {
-		"divisions": ["NL Central", "NL Wild Card"]
 	},
 	"weather": {
 		"apikey": "YOUR_API_KEY_HERE",
@@ -48,10 +49,16 @@
 		"metric_units": false,
 		"pregame": true
 	},
+	"standings": {
+		"divisions": [
+			"NL Central",
+			"NL Wild Card"
+		]
+	},
 	"time_format": "12h",
 	"end_of_day": "00:00",
-	"api_refresh_rate": 5,
 	"sync_delay_seconds": 0,
+	"api_refresh_rate": 5,
 	"scrolling_speed": 2,
 	"debug": false,
 	"demo_date": false
