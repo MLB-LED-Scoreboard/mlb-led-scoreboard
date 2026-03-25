@@ -334,6 +334,14 @@
       "type": "string",
       "enum": ["short", "long"]
     },
+    "xy_base": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
     "xy": {
       "type": "object",
       "x-format": "grid",
@@ -341,9 +349,18 @@
       "properties": {
         "x":            { "type": "number" },
         "y":            { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/xy" },
-        "nohit":        { "$ref": "#/$defs/xy" },
-        "perfect_game": { "$ref": "#/$defs/xy" }
+        "warmup":       { "$ref": "#/$defs/xy_base" },
+        "nohit":        { "$ref": "#/$defs/xy_base" },
+        "perfect_game": { "$ref": "#/$defs/xy_base" }
+      },
+      "additionalProperties": false
+    },
+    "xy_font_base": {
+      "type": "object",
+      "properties": {
+        "x":         { "type": "number" },
+        "y":         { "type": "number" },
+        "font_name": { "$ref": "#/$defs/font_name" }
       },
       "additionalProperties": false
     },
@@ -355,9 +372,19 @@
         "x":            { "type": "number" },
         "y":            { "type": "number" },
         "font_name":    { "$ref": "#/$defs/font_name" },
-        "warmup":       { "$ref": "#/$defs/xy_font" },
-        "nohit":        { "$ref": "#/$defs/xy_font" },
-        "perfect_game": { "$ref": "#/$defs/xy_font" }
+        "warmup":       { "$ref": "#/$defs/xy_font_base" },
+        "nohit":        { "$ref": "#/$defs/xy_font_base" },
+        "perfect_game": { "$ref": "#/$defs/xy_font_base" }
+      },
+      "additionalProperties": false
+    },
+    "xy_width_font_base": {
+      "type": "object",
+      "properties": {
+        "x":         { "type": "number" },
+        "y":         { "type": "number" },
+        "width":     { "type": "number" },
+        "font_name": { "$ref": "#/$defs/font_name" }
       },
       "additionalProperties": false
     },
@@ -368,9 +395,17 @@
         "y":            { "type": "number" },
         "width":        { "type": "number" },
         "font_name":    { "$ref": "#/$defs/font_name" },
-        "warmup":       { "$ref": "#/$defs/xy_width_font" },
-        "nohit":        { "$ref": "#/$defs/xy_width_font" },
-        "perfect_game": { "$ref": "#/$defs/xy_width_font" }
+        "warmup":       { "$ref": "#/$defs/xy_width_font_base" },
+        "nohit":        { "$ref": "#/$defs/xy_width_font_base" },
+        "perfect_game": { "$ref": "#/$defs/xy_width_font_base" }
+      },
+      "additionalProperties": false
+    },
+    "offset_base": {
+      "type": "object",
+      "properties": {
+        "x_offset": { "type": "number" },
+        "y_offset": { "type": "number" }
       },
       "additionalProperties": false
     },
@@ -379,9 +414,19 @@
       "properties": {
         "x_offset":     { "type": "number" },
         "y_offset":     { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/offset" },
-        "nohit":        { "$ref": "#/$defs/offset" },
-        "perfect_game": { "$ref": "#/$defs/offset" }
+        "warmup":       { "$ref": "#/$defs/offset_base" },
+        "nohit":        { "$ref": "#/$defs/offset_base" },
+        "perfect_game": { "$ref": "#/$defs/offset_base" }
+      },
+      "additionalProperties": false
+    },
+    "rect_base": {
+      "type": "object",
+      "properties": {
+        "x":      { "type": "number" },
+        "y":      { "type": "number" },
+        "width":  { "type": "number" },
+        "height": { "type": "number" }
       },
       "additionalProperties": false
     },
@@ -392,9 +437,17 @@
         "y":            { "type": "number" },
         "width":        { "type": "number" },
         "height":       { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/rect" },
-        "nohit":        { "$ref": "#/$defs/rect" },
-        "perfect_game": { "$ref": "#/$defs/rect" }
+        "warmup":       { "$ref": "#/$defs/rect_base" },
+        "nohit":        { "$ref": "#/$defs/rect_base" },
+        "perfect_game": { "$ref": "#/$defs/rect_base" }
+      },
+      "additionalProperties": false
+    },
+    "home_away_rect_base": {
+      "type": "object",
+      "properties": {
+        "away": { "$ref": "#/$defs/rect" },
+        "home": { "$ref": "#/$defs/rect" }
       },
       "additionalProperties": false
     },
@@ -403,9 +456,18 @@
       "properties": {
         "away":         { "$ref": "#/$defs/rect" },
         "home":         { "$ref": "#/$defs/rect" },
-        "warmup":       { "$ref": "#/$defs/home_away_rect" },
-        "nohit":        { "$ref": "#/$defs/home_away_rect" },
-        "perfect_game": { "$ref": "#/$defs/home_away_rect" }
+        "warmup":       { "$ref": "#/$defs/home_away_rect_base" },
+        "nohit":        { "$ref": "#/$defs/home_away_rect_base" },
+        "perfect_game": { "$ref": "#/$defs/home_away_rect_base" }
+      },
+      "additionalProperties": false
+    },
+    "scroll_text_base": {
+      "type": "object",
+      "properties": {
+        "x":     { "type": "number" },
+        "y":     { "type": "number" },
+        "width": { "type": "number" }
       },
       "additionalProperties": false
     },
@@ -415,9 +477,18 @@
         "x":            { "type": "number" },
         "y":            { "type": "number" },
         "width":        { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/scroll_text" },
-        "nohit":        { "$ref": "#/$defs/scroll_text" },
-        "perfect_game": { "$ref": "#/$defs/scroll_text" }
+        "warmup":       { "$ref": "#/$defs/scroll_text_base" },
+        "nohit":        { "$ref": "#/$defs/scroll_text_base" },
+        "perfect_game": { "$ref": "#/$defs/scroll_text_base" }
+      },
+      "additionalProperties": false
+    },
+    "base_base": {
+      "type": "object",
+      "properties": {
+        "x":    { "type": "number" },
+        "y":    { "type": "number" },
+        "size": { "type": "number" }
       },
       "additionalProperties": false
     },
@@ -428,9 +499,18 @@
         "x":            { "type": "number" },
         "y":            { "type": "number" },
         "size":         { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/base" },
-        "nohit":        { "$ref": "#/$defs/base" },
-        "perfect_game": { "$ref": "#/$defs/base" }
+        "warmup":       { "$ref": "#/$defs/base_base" },
+        "nohit":        { "$ref": "#/$defs/base_base" },
+        "perfect_game": { "$ref": "#/$defs/base_base" }
+      },
+      "additionalProperties": false
+    },
+    "out_indicator_base": {
+      "type": "object",
+      "properties": {
+        "x":    { "type": "number" },
+        "y":    { "type": "number" },
+        "size": { "type": "number" }
       },
       "additionalProperties": false
     },
@@ -440,9 +520,20 @@
         "x":            { "type": "number" },
         "y":            { "type": "number" },
         "size":         { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/out_indicator" },
-        "nohit":        { "$ref": "#/$defs/out_indicator" },
-        "perfect_game": { "$ref": "#/$defs/out_indicator" }
+        "warmup":       { "$ref": "#/$defs/out_indicator_base" },
+        "nohit":        { "$ref": "#/$defs/out_indicator_base" },
+        "perfect_game": { "$ref": "#/$defs/out_indicator_base" }
+      },
+      "additionalProperties": false
+    },
+    "text_block_base": {
+      "type": "object",
+      "properties": {
+        "x":         { "type": "number" },
+        "y":         { "type": "number" },
+        "width":     { "type": "number" },
+        "font_name": { "$ref": "#/$defs/font_name" },
+        "offset":    { "type": "number" }
       },
       "additionalProperties": false
     },
@@ -454,9 +545,20 @@
         "width":        { "type": "number" },
         "font_name":    { "$ref": "#/$defs/font_name" },
         "offset":       { "type": "number" },
-        "warmup":       { "$ref": "#/$defs/text_block" },
-        "nohit":        { "$ref": "#/$defs/text_block" },
-        "perfect_game": { "$ref": "#/$defs/text_block" }
+        "warmup":       { "$ref": "#/$defs/text_block_base" },
+        "nohit":        { "$ref": "#/$defs/text_block_base" },
+        "perfect_game": { "$ref": "#/$defs/text_block_base" }
+      },
+      "additionalProperties": false
+    },
+    "play_text_base": {
+      "type": "object",
+      "properties": {
+        "x":           { "type": "number" },
+        "y":           { "type": "number" },
+        "font_name":   { "$ref": "#/$defs/font_name" },
+        "desc_length": { "$ref": "#/$defs/desc_length" },
+        "enabled":     { "type": "boolean" }
       },
       "additionalProperties": false
     },
@@ -468,9 +570,9 @@
         "font_name":    { "$ref": "#/$defs/font_name" },
         "desc_length":  { "$ref": "#/$defs/desc_length" },
         "enabled":      { "type": "boolean" },
-        "warmup":       { "$ref": "#/$defs/play_text" },
-        "nohit":        { "$ref": "#/$defs/play_text" },
-        "perfect_game": { "$ref": "#/$defs/play_text" }
+        "warmup":       { "$ref": "#/$defs/play_text_base" },
+        "nohit":        { "$ref": "#/$defs/play_text_base" },
+        "perfect_game": { "$ref": "#/$defs/play_text_base" }
       },
       "additionalProperties": false
     }
