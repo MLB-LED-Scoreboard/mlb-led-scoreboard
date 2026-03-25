@@ -4,11 +4,11 @@ import sys
 
 from datetime import datetime, timedelta
 from collections import defaultdict
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping
 from math import ceil
 
 from data.config.game_screen import GameScreen, parse_game_screen
-from data.config.other_screens import VALID_NON_GAME_SCREEN_TYPES, TimeRule, parse_time_rule, parse_with_priority
+from data.config.other_screens import TimeRule, parse_time_rule, parse_with_priority
 import debug
 from data import status
 from data.config.color import Color
@@ -121,7 +121,12 @@ class Config:
             debug.warning("api_refresh_rate should be an integer." f" Truncating to {int(self.api_refresh_rate)}")
             self.api_refresh_rate = int(self.api_refresh_rate)
 
-
+    def check_screens(self, plugins: list[str]):
+        for screen in self.rotation_screen_rules.keys():
+            if screen not in plugins:
+                raise ValueError(
+                    f"Screen with 'kind': '{screen}' in config does not have a corresponding plugin. Please add a plugin for this screen or remove it from the config."
+                )
 
     def check_time_format(self):
         if self.time_format.lower() == "24h":
@@ -296,12 +301,6 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
         elif rule_json["kind"] == "time":
             time_rules.append(parse_time_rule(rule_json))
         else:
-            if rule_json["kind"] not in VALID_NON_GAME_SCREEN_TYPES:
-                debug.warning(
-                    "Invalid screen rule in config, unknown type '{}'. Rule: {}".format(
-                        rule_json.get("kind"), rule_json
-                    )
-                )
             if "seconds" not in rule_json:
                 raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
             for priority in parse_with_priority(rule_json):

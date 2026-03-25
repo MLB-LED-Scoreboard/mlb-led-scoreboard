@@ -70,16 +70,15 @@ def main(matrix, config_base):
         logo.close()
 
     plugins = load_plugins(config)
-    debug.info("Loaded plugins: %s", ", ".join(name for name, _, _ in plugins))
 
-    plugin_data = {name: data for name, data, _ in plugins}
+    plugin_data = {name: data for name, (data, _) in plugins.items()}
 
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
     data = Data(config, plugin_data)
 
     # create render thread
-    plugin_renderers = {name: renderer for name, _, renderer in plugins}
+    plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
     render = threading.Thread(
         target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
     )
