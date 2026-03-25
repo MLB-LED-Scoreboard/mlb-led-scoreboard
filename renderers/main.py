@@ -32,7 +32,8 @@ class MainRenderer:
 
     def render(self) -> NoReturn:
         while True:
-            self.__render_games()
+            if self.data.schedule.num_games() > 0:
+                self.__render_games()
             if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
                 self.__draw_standings(timer_cond(t))
             if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
@@ -45,7 +46,7 @@ class MainRenderer:
 
             game = self.data.games.next()
             if game is None:
-                debug.warn("Render thread: no game to render, sleeping for a bit")
+                debug.warning("Render thread: no game to render, sleeping for a bit")
                 time.sleep(1)
                 break
 
