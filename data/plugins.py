@@ -7,10 +7,13 @@ import debug
 from data.config import Config
 
 
+PLUGIN_GROUP = "mlbled.bullpen.plugin"
+
+
 def load_plugins(config: Config) -> dict[str, tuple[bullpen.PluginData, bullpen.Renderer]]:
 
     plugins = {}
-    discovered_plugins = entry_points(group="mlbled.plugins")
+    discovered_plugins = entry_points(group=PLUGIN_GROUP)
     for entry_point in discovered_plugins:
         name = entry_point.name
         if name in plugins:

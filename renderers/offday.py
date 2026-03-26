@@ -9,8 +9,7 @@ from data.config.color import Color
 from data.config.layout import Layout
 from data.headlines import Headlines
 from data.weather import Weather
-from renderers import scrollingtext
-from utils import center_text_position
+from bullpen.renderer import center_text_position, scrolling_text
 
 
 def render_offday_screen(
@@ -76,8 +75,9 @@ def __render_news_ticker(canvas, layout, colors, headlines, text_pos):
     color = colors.graphics_color("offday.scrolling_text")
     bgcolor = colors.graphics_color("default.background")
     ticker_text = headlines.ticker_string()
-    return scrollingtext.render_text(
+    return scrolling_text(
         canvas,
+        graphics,
         coords["x"],
         coords["y"],
         coords["width"],

@@ -1,22 +1,26 @@
 import sys
+from typing import TYPE_CHECKING
 
 from utils import args
 from driver.mode import DriverMode
+
+if TYPE_CHECKING:
+    from RGBMatrixEmulator import graphics as graphics
+
 
 class DriverWrapper:
     def __init__(self):
         self.hardware_load_failed = False
         self.mode = None
 
-        if 'unittest' in sys.modules or args().emulated:
+        if "unittest" in sys.modules or args().emulated:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)
         else:
             self.set_mode(DriverMode.HARDWARE)
 
-
     @property
     def __name__(self):
-        return 'driver'
+        return "driver"
 
     def is_hardware(self):
         return self.mode == DriverMode.HARDWARE
@@ -47,4 +51,4 @@ class DriverWrapper:
         return getattr(self.driver, name)
 
 
-sys.modules['driver'] = DriverWrapper()
+sys.modules["driver"] = DriverWrapper()  # type: ignore

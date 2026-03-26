@@ -9,5 +9,5 @@ version = "9.0.0"
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[project.entry-points.'mlbled.plugins']
+[project.entry-points.'mlbled.bullpen.plugin']
 "standings" = "mlb_led_scoreboard_standings:load"

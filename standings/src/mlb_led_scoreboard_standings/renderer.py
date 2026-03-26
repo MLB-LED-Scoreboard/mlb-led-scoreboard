@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import bullpen
+from bullpen.renderer import center_text_position
 
 from .config import Config
 from .standings import Standings, Division, League
@@ -310,7 +311,3 @@ def render_bracket(canvas, graphics, layout, colors, league: League):
 
     # league champ
     graphics.DrawText(canvas, font["font"], champ_x + 1, champ_y, team_name_color, league.champ)
-
-
-def center_text_position(text, center_pos, font_width):
-    return abs(center_pos - ((len(text) * font_width) // 2))

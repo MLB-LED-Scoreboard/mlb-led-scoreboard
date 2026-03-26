@@ -4,13 +4,6 @@ from collections.abc import Mapping
 import debug
 
 
-def center_text_position(text, center_pos, font_width):
-    return abs(center_pos - ((len(text) * font_width) // 2))
-
-
-def split_string(string, num_chars):
-    return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]  # noqa: E203
-
 
 def args():
     parser = argparse.ArgumentParser()

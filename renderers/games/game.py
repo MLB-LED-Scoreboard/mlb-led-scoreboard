@@ -1,3 +1,5 @@
+from bullpen.renderer import scrolling_text
+
 from data import status
 from driver import graphics
 from data.config.color import Color
@@ -9,7 +11,6 @@ from data.scoreboard.inning import Inning
 from data.scoreboard.pitches import Pitches
 from data.plays import PLAY_RESULTS
 
-from renderers import scrollingtext
 from renderers.games import nohitter
 
 
@@ -17,15 +18,15 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
     pos = 0
     if not status.is_inning_break(scoreboard.inning.state):
         pos = _render_at_bat(
-                canvas,
-                layout,
-                colors,
-                scoreboard.atbat,
-                text_pos,
-                scoreboard.play_result,
-                (animation_time // 6) % 2,
-                scoreboard.pitches
-             )
+            canvas,
+            layout,
+            colors,
+            scoreboard.atbat,
+            text_pos,
+            scoreboard.play_result,
+            (animation_time // 6) % 2,
+            scoreboard.pitches,
+        )
 
         # Check if we're deep enough into a game and it's a no hitter or perfect game
         should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
@@ -91,8 +92,9 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
     font = layout.font("atbat.batter")
     bgcolor = colors.graphics_color("default.background")
     offset = coords.get("offset", 0)
-    pos = scrollingtext.render_text(
+    pos = scrolling_text(
         canvas,
+        graphics,
         coords["x"] + font["size"]["width"] * 3,
         coords["y"],
         coords["width"],
@@ -117,8 +119,9 @@ def __render_pitcher_text(canvas, layout, colors, pitcher, pitches: Pitches, tex
     if pitch_count["enabled"] and pitch_count["append_pitcher_name"]:
         pitcher += f" ({pitches.pitch_count})"
 
-    pos = scrollingtext.render_text(
+    pos = scrolling_text(
         canvas,
+        graphics,
         coords["x"] + font["size"]["width"] * 2,
         coords["y"],
         coords["width"],
@@ -283,9 +286,45 @@ def _render_due_up(canvas, layout, colors, atbat: AtBat, text_pos):
     in_hole = layout.coords("inning.break.due_up.in_hole")
     background = colors.graphics_color("default.background")
 
-    p1 = scrollingtext.render_text(canvas, leadoff["x"], leadoff["y"], leadoff["width"], batter_font, batter_color, background, atbat.batter, text_pos, center=False)
-    p2 = scrollingtext.render_text(canvas, on_deck["x"], on_deck["y"], on_deck["width"], batter_font, batter_color, background, atbat.onDeck, text_pos, center=False)
-    p3 = scrollingtext.render_text(canvas, in_hole["x"], in_hole["y"], in_hole["width"], batter_font, batter_color, background, atbat.inHole, text_pos, center=False)
+    p1 = scrolling_text(
+        canvas,
+        graphics,
+        leadoff["x"],
+        leadoff["y"],
+        leadoff["width"],
+        batter_font,
+        batter_color,
+        background,
+        atbat.batter,
+        text_pos,
+        center=False,
+    )
+    p2 = scrolling_text(
+        canvas,
+        graphics,
+        on_deck["x"],
+        on_deck["y"],
+        on_deck["width"],
+        batter_font,
+        batter_color,
+        background,
+        atbat.onDeck,
+        text_pos,
+        center=False,
+    )
+    p3 = scrolling_text(
+        canvas,
+        graphics,
+        in_hole["x"],
+        in_hole["y"],
+        in_hole["width"],
+        batter_font,
+        batter_color,
+        background,
+        atbat.inHole,
+        text_pos,
+        center=False,
+    )
 
     due_font = layout.font("inning.break.due_up.due")
     due_color = colors.graphics_color("inning.break.due_up")

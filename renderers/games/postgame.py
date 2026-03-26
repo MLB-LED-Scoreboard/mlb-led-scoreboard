@@ -3,9 +3,8 @@ from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
-from renderers import scrollingtext
 from renderers.games import nohitter
-from utils import center_text_position
+from bullpen.renderer import center_text_position, scrolling_text
 
 NORMAL_GAME_LENGTH = 9
 
@@ -36,8 +35,8 @@ def _render_decision_scroll(canvas, layout, colors, postgame, text_pos, is_playo
     if is_playoffs:
         scroll_text += "   " + postgame.series_status
 
-    return scrollingtext.render_text(
-        canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, scroll_text, text_pos
+    return scrolling_text(
+        canvas, graphics, coords["x"], coords["y"], coords["width"], font, color, bgcolor, scroll_text, text_pos
     )
 
 
