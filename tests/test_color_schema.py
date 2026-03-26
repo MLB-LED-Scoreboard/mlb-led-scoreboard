@@ -4,6 +4,7 @@ class TestColorSchema(unittest.TestCase):
 
     ERROR_LIMIT = 10
     REQUIRED_KEYS = ["home", "text", "accent"]
+    METADATA_KEYS = ["$schema", "format"]
     CITY_CONNECT_KEY = "city_connect"
 
     def setUp(self):
@@ -32,6 +33,9 @@ class TestColorSchema(unittest.TestCase):
         errors = []
         
         for team, values in self.team_colors.items():
+            if team in self.METADATA_KEYS:
+                continue
+
             errors.extend(self._validate_required_keys(values, team))
 
         if errors:
@@ -41,6 +45,9 @@ class TestColorSchema(unittest.TestCase):
         errors = []
         
         for team, values in self.team_colors.items():
+            if team in self.METADATA_KEYS:
+                continue
+
             if self.CITY_CONNECT_KEY not in values:
                 continue
             
