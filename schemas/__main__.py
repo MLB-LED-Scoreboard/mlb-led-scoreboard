@@ -7,6 +7,7 @@ coordinates/, and config.example.json from the schemas under schemas/.
 Usage:
   python -m schemas                    # regenerate all example files
   python -m schemas --overwrite        # overwrite existing files
+  python -m schemas --check            # check if a file would be changed
   python -m schemas --schema schemas/config.schema.json --output config.example.json
 """
 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
   parser.add_argument('--schema',    help='Path to a single JSON schema file')
   parser.add_argument('--output',    help='Path to write the generated config (required with --schema)')
   parser.add_argument('--overwrite', action='store_true', help='Overwrite existing output files')
-  parser.add_argument('--check',     action='store_true', help='verify existing examples are up-to-date. Exits with status 1 if false.')
+  parser.add_argument('--check',     action='store_true', help='Check if a file would be changed with --overwrite. Returns exit code 1 if so.')
   args = parser.parse_args()
 
   if args.schema:
