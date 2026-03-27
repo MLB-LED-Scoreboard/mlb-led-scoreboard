@@ -9,6 +9,7 @@
     "$schema": {
       "type": "string",
       "const": "./../schemas/colors/teams.schema.json",
+      "default": "./../schemas/colors/teams.schema.json",
       "readOnly": true,
       "x-enforceConst": true,
       "x-hidden": true
