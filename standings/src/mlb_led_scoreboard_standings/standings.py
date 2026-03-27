@@ -1,13 +1,9 @@
-import logging
 import time
 from datetime import datetime
 
 import statsapi
 
-from bullpen import UpdateStatus
-
-# TODO: avoid copying teams somehow
-from . import teams
+from bullpen import UpdateStatus, LOGGER
 
 
 from .config import Config
@@ -26,7 +22,7 @@ def get_playoff_start_date(year: int):
         dates = statsapi.get("season", {"sportId": 1, "seasonId": year})["seasons"][0]
         return datetime.strptime(dates["regularSeasonEndDate"], "%Y-%m-%d").date()
     except Exception:
-        logging.exception("Failed to get season data, defaulting playoff start date to Oct 1")
+        LOGGER.exception("Failed to get season data, defaulting playoff start date to Oct 1")
 
     return datetime(year, 10, 1).date()
 
@@ -49,7 +45,7 @@ class Standings:
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
             self.date = self.config.parse_today()
-            logging.info("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
+            LOGGER.info("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
                 if not self.is_postseason():
@@ -87,7 +83,7 @@ class Standings:
                     self.leagues["NL"] = League(postseason_data, "NL")
 
             except:
-                logging.exception("Failed to refresh standings.")
+                LOGGER.exception("Failed to refresh standings.")
                 return UpdateStatus.FAIL
             else:
 
@@ -136,7 +132,7 @@ class Division:
 
 class Team:
     def __init__(self, data, wc):
-        self.team_abbrev = teams.TEAM_ID_ABBR[data["team"]["id"]]
+        self.team_abbrev = TEAM_ID_ABBR[data["team"]["id"]]
         self.w = data["wins"]
         self.l = data["losses"]  # noqa: E741
         if wc:
@@ -214,4 +210,39 @@ class League:
 
 
 def get_abbr(id, default="TBD"):
-    return f"{teams.TEAM_ID_ABBR.get(id, default):>3}"
+    return f"{TEAM_ID_ABBR.get(id, default):>3}"
+
+
+# TODO should static data like this live in bullpen?
+TEAM_ID_ABBR = {
+    108: "LAA",
+    109: "AZ",
+    110: "BAL",
+    111: "BOS",
+    112: "CHC",
+    113: "CIN",
+    114: "CLE",
+    115: "COL",
+    116: "DET",
+    117: "HOU",
+    118: "KC",
+    119: "LAD",
+    120: "WSH",
+    121: "NYM",
+    133: "ATH",
+    134: "PIT",
+    135: "SD",
+    136: "SEA",
+    137: "SF",
+    138: "STL",
+    139: "TB",
+    140: "TEX",
+    141: "TOR",
+    142: "MIN",
+    143: "PHI",
+    144: "ATL",
+    145: "CWS",
+    146: "MIA",
+    147: "NYY",
+    158: "MIL",
+}

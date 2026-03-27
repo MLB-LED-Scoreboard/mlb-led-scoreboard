@@ -1,9 +1,8 @@
-import logging
-
 import bullpen
 
 
 DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
+
 
 class Config(bullpen.Config):
     def __init__(self, config) -> None:
@@ -13,7 +12,7 @@ class Config(bullpen.Config):
 
     def check_preferred_divisions(self):
         if not isinstance(self.preferred_divisions, str) and not isinstance(self.preferred_divisions, list):
-            logging.warning(
+            bullpen.LOGGER.warning(
                 "preferred_divisions should be an array of division names or a single division name string."
                 "Using default preferred_divisions, {}".format(DEFAULT_PREFERRED_DIVISIONS)
             )
