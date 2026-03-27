@@ -299,116 +299,6 @@
       }
     }
   },
-  "$defs": {
-    "font_name": {
-      "type": "string",
-      "description": "Font name used to render this element"
-    },
-    "desc_length": {
-      "type": "string",
-      "enum": ["short", "medium", "long"]
-    },
-    "point": {
-      "type": "object",
-      "properties": {
-        "x": { "type": "integer" },
-        "y": { "type": "integer" }
-      },
-      "required": ["x", "y"]
-    },
-    "point_width": {
-      "type": "object",
-      "properties": {
-        "x":     { "type": "integer" },
-        "y":     { "type": "integer" },
-        "width": { "type": "integer" }
-      },
-      "required": ["x", "y", "width"]
-    },
-    "named_point": {
-      "type": "object",
-      "properties": {
-        "x":         { "type": "integer" },
-        "y":         { "type": "integer" },
-        "font_name": { "$ref": "#/$defs/font_name" }
-      },
-      "required": ["x", "y"]
-    },
-    "named_point_width": {
-      "type": "object",
-      "properties": {
-        "x":         { "type": "integer" },
-        "y":         { "type": "integer" },
-        "width":     { "type": "integer" },
-        "font_name": { "$ref": "#/$defs/font_name" }
-      },
-      "required": ["x", "y", "width"]
-    },
-    "rect": {
-      "type": "object",
-      "properties": {
-        "x":      { "type": "integer" },
-        "y":      { "type": "integer" },
-        "width":  { "type": "integer" },
-        "height": { "type": "integer" }
-      },
-      "required": ["x", "y", "width", "height"]
-    },
-    "base_pos": {
-      "type": "object",
-      "properties": {
-        "x":    { "type": "integer" },
-        "y":    { "type": "integer" },
-        "size": { "type": "integer" }
-      },
-      "required": ["x", "y", "size"]
-    },
-    "out_pos": {
-      "type": "object",
-      "properties": {
-        "x":             { "type": "integer" },
-        "y":             { "type": "integer" },
-        "size":          { "type": "integer" },
-        "nohit":         { "$ref": "#/$defs/base_pos" },
-        "perfect_game":  { "$ref": "#/$defs/base_pos" }
-      },
-      "required": ["x", "y", "size"]
-    },
-    "x_pos": {
-      "type": "object",
-      "properties": {
-        "x": { "type": "integer" }
-      },
-      "required": ["x"]
-    },
-    "offset": {
-      "type": "object",
-      "properties": {
-        "x_offset": { "type": "integer" },
-        "y_offset": { "type": "integer" }
-      },
-      "required": ["x_offset", "y_offset"]
-    },
-    "play_display": {
-      "type": "object",
-      "properties": {
-        "x":           { "type": "integer" },
-        "y":           { "type": "integer" },
-        "font_name":   { "$ref": "#/$defs/font_name" },
-        "desc_length": { "$ref": "#/$defs/desc_length" },
-        "enabled":     { "type": "boolean" }
-      },
-      "required": ["x", "y"]
-    },
-    "team_pair_rect": {
-      "type": "object",
-      "properties": {
-        "away": { "$ref": "#/$defs/rect" },
-        "home": { "$ref": "#/$defs/rect" }
-      },
-      "required": ["away", "home"]
-    }
-  },
   "default": {
     "$schema": "./../schemas/coordinates/w32h32.schema.json",
     "format": 9.0,
@@ -531,5 +421,20 @@
       "background": { "width": 7, "height": 7, "x": 25, "y": 25 },
       "text":       { "x": 29, "y": 31 }
     }
+  },
+  "$defs": {
+    "font_name":         { "$ref": "./common.schema.json#/$defs/font_name" },
+    "desc_length":       { "$ref": "./common.schema.json#/$defs/desc_length" },
+    "point":             { "$ref": "./common.schema.json#/$defs/point" },
+    "point_width":       { "$ref": "./common.schema.json#/$defs/point_width" },
+    "named_point":       { "$ref": "./common.schema.json#/$defs/named_point" },
+    "named_point_width": { "$ref": "./common.schema.json#/$defs/named_point_width" },
+    "rect":              { "$ref": "./common.schema.json#/$defs/rect" },
+    "base_pos":          { "$ref": "./common.schema.json#/$defs/base_pos" },
+    "out_pos":           { "$ref": "./common.schema.json#/$defs/out_pos" },
+    "x_pos":             { "$ref": "./common.schema.json#/$defs/x_pos" },
+    "offset":            { "$ref": "./common.schema.json#/$defs/offset" },
+    "play_display":      { "$ref": "./common.schema.json#/$defs/play_display" },
+    "team_pair_rect":    { "$ref": "./common.schema.json#/$defs/team_pair_rect" }
   }
 }
