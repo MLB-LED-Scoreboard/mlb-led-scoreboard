@@ -300,7 +300,6 @@
     }
   },
   "default": {
-    "$schema": "./../schemas/coordinates/w32h32.schema.json",
     "format": 9.0,
     "defaults": {
       "font_name": "4x6"
