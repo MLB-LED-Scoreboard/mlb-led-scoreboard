@@ -5,7 +5,7 @@
   "type": "object",
   "required": ["format"],
   "properties": {
-    "$schema": {
+    "x-schema": {
       "type": "string",
       "default": "./../schemas/coordinates/w32h32.schema.json",
       "readOnly": true,

@@ -7,7 +7,7 @@
     "format"
   ],
   "properties": {
-    "$schema": {
+    "x-schema": {
       "type": "string",
       "default": "./schemas/config.schema.json",
       "readOnly": true,

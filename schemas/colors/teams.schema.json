@@ -6,9 +6,8 @@
   "type": "object",
   "required": ["format"],
   "properties": {
-    "$schema": {
+    "x-schema": {
       "type": "string",
-      "const": "./../schemas/colors/teams.schema.json",
       "default": "./../schemas/colors/teams.schema.json",
       "readOnly": true,
       "x-enforceConst": true,
@@ -111,7 +110,7 @@
     }
   },
   "default": {
-    "$schema": "./../schemas/colors/teams.schema.json",
+    "x-schema": "./../schemas/colors/teams.schema.json",
     "format": 9.0,
     "az":  {
         "home": {"r": 166, "g": 25,  "b": 46 }, "text": {"r": 217, "g": 200, "b": 157}, "accent": {"r": 0,   "g": 0,   "b": 0  },

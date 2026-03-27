@@ -5,7 +5,7 @@
   "type": "object",
   "required": ["format"],
   "properties": {
-    "$schema": {
+    "x-schema": {
       "type": "string",
       "default": "./../schemas/coordinates/w64h32.schema.json",
       "readOnly": true,
@@ -300,7 +300,7 @@
     }
   },
   "default": {
-    "$schema": "./../schemas/coordinates/w64h32.schema.json",
+    "x-schema": "./../schemas/coordinates/w64h32.schema.json",
     "format": 9.0,
     "defaults": {
       "font_name": "4x6"
