@@ -8,7 +8,7 @@
   "properties": {
     "$schema": {
       "type": "string",
-      "default": "./../schemas/colors/teams.schema.json",
+      "const": "./../schemas/colors/teams.schema.json",
       "readOnly": true,
       "x-enforceConst": true,
       "x-hidden": true
