@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Config for the MLB LED Scoreboard",
-  "x-indent": "\t",
+  "x-indent": "  ",
   "type": "object",
   "required": [
     "format"
