@@ -1,5 +1,4 @@
 {
-  "$schema": "./../schemas/coordinates/w64h64.schema.json",
   "format": 9.0,
   "defaults": {
     "font_name": "5x8"
@@ -340,5 +339,6 @@
       "x": 61,
       "y": 63
     }
-  }
+  },
+  "$schema": "./../schemas/coordinates/w64h64.schema.json"
 }

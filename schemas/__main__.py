@@ -31,6 +31,18 @@ def _preprocess(node):
     node = {k: v for k, v in node.items() if k != '$ref'}
   return {k: _preprocess(v) for k, v in node.items()}
 
+def _postprocess(node):
+  """
+  Recursively walk the schema and, wherever a node has 'x-schema', replace
+  it with '$schema'. This allows us to define editor '$schema' without
+  colliding with JSON schema keywords.
+  """
+  if not isinstance(node, dict):
+    return node
+  if 'x-schema' in node:
+    node['$schema'] = node['x-schema']
+    del node['x-schema']
+  return {k: _preprocess(v) for k, v in node.items()}
 
 def generate(args):
   if args.schema and args.output:
@@ -43,7 +55,7 @@ def _generate(schema_path, output_path, overwrite, check):
     schema = json.load(f)
 
   indent = schema.get('x-indent', '  ')
-  config = create_from(_preprocess(schema))
+  config = _postprocess(create_from(_preprocess(schema)))
 
   if not isinstance(config, dict):
     print(f"Error: could not derive any defaults from {schema_path}.", file=sys.stderr)

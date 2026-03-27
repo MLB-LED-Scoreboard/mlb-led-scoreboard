@@ -1,5 +1,4 @@
 {
-  "$schema": "./../schemas/coordinates/w32h32.schema.json",
   "format": 9.0,
   "defaults": {
     "font_name": "4x6"
@@ -369,5 +368,6 @@
       "x": 29,
       "y": 31
     }
-  }
+  },
+  "$schema": "./../schemas/w32h32.schema.json"
 }

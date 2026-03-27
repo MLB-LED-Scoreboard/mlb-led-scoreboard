@@ -1,5 +1,4 @@
 {
-  "$schema": "./../schemas/coordinates/w128h32.schema.json",
   "format": 9.0,
   "defaults": {
     "font_name": "6x12"
@@ -384,5 +383,6 @@
       "x": 125,
       "y": 31
     }
-  }
+  },
+  "$schema": "./../schemas/coordinates/w128h32.schema.json"
 }
