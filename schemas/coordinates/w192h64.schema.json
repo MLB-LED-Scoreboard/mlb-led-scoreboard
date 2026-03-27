@@ -436,18 +436,18 @@
     }
   },
   "$defs": {
-    "font_name":         { "$ref": "./common.schema.json#/$defs/font_name" },
-    "desc_length":       { "$ref": "./common.schema.json#/$defs/desc_length" },
-    "point":             { "$ref": "./common.schema.json#/$defs/point" },
-    "point_width":       { "$ref": "./common.schema.json#/$defs/point_width" },
-    "named_point":       { "$ref": "./common.schema.json#/$defs/named_point" },
-    "named_point_width": { "$ref": "./common.schema.json#/$defs/named_point_width" },
-    "rect":              { "$ref": "./common.schema.json#/$defs/rect" },
-    "base_pos":          { "$ref": "./common.schema.json#/$defs/base_pos" },
-    "out_pos":           { "$ref": "./common.schema.json#/$defs/out_pos" },
-    "x_pos":             { "$ref": "./common.schema.json#/$defs/x_pos" },
-    "offset":            { "$ref": "./common.schema.json#/$defs/offset" },
-    "play_display":      { "$ref": "./common.schema.json#/$defs/play_display" },
-    "team_pair_rect":    { "$ref": "./common.schema.json#/$defs/team_pair_rect" }
+    "font_name":         { "$ref": "./_common.schema.json#/$defs/font_name" },
+    "desc_length":       { "$ref": "./_common.schema.json#/$defs/desc_length" },
+    "point":             { "$ref": "./_common.schema.json#/$defs/point" },
+    "point_width":       { "$ref": "./_common.schema.json#/$defs/point_width" },
+    "named_point":       { "$ref": "./_common.schema.json#/$defs/named_point" },
+    "named_point_width": { "$ref": "./_common.schema.json#/$defs/named_point_width" },
+    "rect":              { "$ref": "./_common.schema.json#/$defs/rect" },
+    "base_pos":          { "$ref": "./_common.schema.json#/$defs/base_pos" },
+    "out_pos":           { "$ref": "./_common.schema.json#/$defs/out_pos" },
+    "x_pos":             { "$ref": "./_common.schema.json#/$defs/x_pos" },
+    "offset":            { "$ref": "./_common.schema.json#/$defs/offset" },
+    "play_display":      { "$ref": "./_common.schema.json#/$defs/play_display" },
+    "team_pair_rect":    { "$ref": "./_common.schema.json#/$defs/team_pair_rect" }
   }
 }
