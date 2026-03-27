@@ -6,16 +6,15 @@ A similar set of tests with stored responses may be separately added in the futu
 """
 
 import unittest
-import unittest.mock
+
 import data.config
-import data.dates
-import data.standings
+from mlb_led_scoreboard_standings import standings
+
 
 
 class TestStandings(unittest.TestCase):
     demo_config = data.config.Config("tests/data/demo-date-midseason", 32, 32)
-    dates = data.dates.Dates(2019)
-    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
+    standings = standings.Standings(demo_config)
 
     def test_standings_midseason(self):
         self.assertFalse(self.standings.is_postseason())
@@ -52,8 +51,7 @@ class TestStandings(unittest.TestCase):
 
 class TestSchedulePlayoff(unittest.TestCase):
     demo_config = data.config.Config("tests/data/demo-date-playoffs", 32, 32)
-    dates = data.dates.Dates(2024)
-    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
+    standings = standings.Standings(demo_config)
     americanBracket = """\
  KC ---|
        |---  KC ---|
@@ -75,8 +73,10 @@ HOU ---|           | --- CLE ---|
 
 class TestStandingsEndOfSeason(unittest.TestCase):
     demo_config = data.config.Config("tests/data/demo-date-end", 32, 32)
-    dates = data.dates.Dates(2024)  # Note: intentionally wrong year so that the playoff start is in the future
-    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
+    date = standings.get_playoff_start_date(2024)  # Note: intentionally wrong year so that the playoff start is in the future
+    standings = standings.Standings(demo_config)
+    standings.playoffs_start_date = date
+    standings.update(force=True)
 
     def test_standings_end(self):
         self.assertFalse(self.standings.is_postseason())

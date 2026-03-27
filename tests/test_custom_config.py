@@ -66,10 +66,6 @@ class TestCustomConfig(unittest.TestCase):
         self.assertEqual(self.custom_config.preferred_teams, ["Braves"])
         self.assertNotEqual(self.custom_config.preferred_teams, self.default_config.preferred_teams)
 
-    def test_custom_preferred_divisions_override(self):
-        self.assertEqual(self.custom_config.preferred_divisions, ["AL Central", "AL Wild Card"])
-        self.assertNotEqual(self.custom_config.preferred_divisions, self.default_config.preferred_divisions)
-
     def test_custom_debug_override(self):
         self.assertTrue(self.custom_config.debug)
         self.assertNotEqual(self.custom_config.debug, self.default_config.debug)

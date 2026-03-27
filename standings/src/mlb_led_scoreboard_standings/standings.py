@@ -22,7 +22,12 @@ API_FIELDS = (
 
 
 def get_playoff_start_date(year: int):
-    # TODO
+    try:
+        dates = statsapi.get("season", {"sportId": 1, "seasonId": year})["seasons"][0]
+        return datetime.strptime(dates["regularSeasonEndDate"], "%Y-%m-%d").date()
+    except Exception:
+        logging.exception("Failed to get season data, defaulting playoff start date to Oct 1")
+
     return datetime(year, 10, 1).date()
 
 
