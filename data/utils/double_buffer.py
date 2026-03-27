@@ -36,7 +36,7 @@ class DoubleBuffer:
         """
         if not self._reading_next and (self.items[0] == self.items[1]):
             next = getter(self.items[1])
-            if next != self.items[1]:
+            if next is not None && next != self.items[1]:
                 debug.log("Main thread: replacing 'next' with new data")
                 self.items = (self.items[0], next)
 
