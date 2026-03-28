@@ -77,18 +77,7 @@
     "$ref": "#/$defs/team_colors"
   },
   "$defs": {
-    "color": {
-      "type": "object",
-      "required": ["r", "g", "b"],
-      "properties": {
-        "r": { "type": "number", "minimum": 0, "maximum": 255 },
-        "g": { "type": "number", "minimum": 0, "maximum": 255 },
-        "b": { "type": "number", "minimum": 0, "maximum": 255 }
-      },
-      "additionalProperties": false,
-      "x-format": "custom-color",
-      "x-grid": { "columns": 4 }
-    },
+    "color": { "$ref": "./_common.schema.json#/defs/color" },
     "team_colors": {
       "type": "object",
       "x-format": "grid",
