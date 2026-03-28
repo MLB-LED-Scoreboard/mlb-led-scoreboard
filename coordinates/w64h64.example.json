@@ -1,4 +1,6 @@
 {
+  "$schema": "./../schemas/coordinates/w64h64.schema.json",
+  "format": 9.0,
   "defaults": {
     "font_name": "5x8"
   },
