@@ -19,20 +19,20 @@ class Data:
         # Games -- keeps two copies internally to let render thread move asynchronously
         self.games = DoubleBuffer(self.schedule.next_game())
 
-    def refresh_game(self):
+    def refresh_game(self) -> None:
         # handle double buffering
         self.games.producer_tick(self.schedule.next_game)
 
         # network requests
         self.__process_network_status(update.merge(g.update() for g in self.games.items))
 
-    def refresh_schedule(self):
+    def refresh_schedule(self) -> None:
         self.__process_network_status(self.schedule.update())
 
-    def refresh_plugins(self):
+    def refresh_plugins(self) -> None:
         self.__process_network_status(update.merge(plugin.update() for plugin in self.plugin_data.values()))
 
-    def __process_network_status(self, status):
+    def __process_network_status(self, status) -> None:
         if status == UpdateStatus.SUCCESS:
             self.network_issues = False
         elif status == UpdateStatus.FAIL:
