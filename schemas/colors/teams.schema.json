@@ -73,6 +73,9 @@
     "kor": { "$ref": "#/$defs/team_colors" },
     "default": { "$ref": "#/$defs/team_colors" }
   },
+  "additionalProperties": {
+    "$ref": "#/$defs/team_colors"
+  },
   "$defs": {
     "color": {
       "type": "object",
