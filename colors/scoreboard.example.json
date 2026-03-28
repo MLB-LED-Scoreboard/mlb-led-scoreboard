@@ -1,4 +1,5 @@
 {
+  "$schema": "./../schemas/colors/scoreboard.schema.json",
   "format": 9.0,
   "bases": {
     "1B": {
@@ -308,6 +309,5 @@
       "g": 14,
       "b": 25
     }
-  },
-  "$schema": "./../schemas/colors/scoreboard.schema.json"
+  }
 }

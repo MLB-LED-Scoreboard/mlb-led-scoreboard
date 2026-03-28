@@ -40,7 +40,7 @@ def _postprocess(node):
   if not isinstance(node, dict):
     return node
   if 'x-schema' in node:
-    node['$schema'] = node['x-schema']
+    node = { '$schema': node['x-schema'] } | node
     del node['x-schema']
   return {k: _preprocess(v) for k, v in node.items()}
 

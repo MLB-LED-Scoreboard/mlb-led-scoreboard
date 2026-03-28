@@ -1,4 +1,5 @@
 {
+  "$schema": "./schemas/config.schema.json",
   "format": 9.0,
   "rotation": {
     "scroll_until_finished": true,
@@ -60,6 +61,5 @@
   "api_refresh_rate": 5,
   "scrolling_speed": 2,
   "debug": false,
-  "demo_date": false,
-  "$schema": "./schemas/config.schema.json"
+  "demo_date": false
 }

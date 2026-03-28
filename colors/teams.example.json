@@ -1,4 +1,5 @@
 {
+  "$schema": "./../schemas/colors/teams.schema.json",
   "format": 9.0,
   "az": {
     "home": {
@@ -1376,6 +1377,5 @@
       "g": 255,
       "b": 255
     }
-  },
-  "$schema": "./../schemas/colors/teams.schema.json"
+  }
 }
