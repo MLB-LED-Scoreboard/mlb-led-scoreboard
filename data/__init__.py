@@ -37,10 +37,11 @@ class Data:
 
     def refresh_game(self):
         # handle double buffering
-        self.games.producer_tick(self.schedule.next_game)
+        status = self.games.producer_tick(self.schedule.next_game)
+        status = update.merge([status] + [g.update() for g in self.games.items if g is not None])
 
         # network requests
-        self.__process_network_status(update.merge(g.update() for g in self.games.items))
+        self.__process_network_status(status)
 
     def refresh_standings(self):
         self.__process_network_status(self.standings.update())
