@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$comment": "Contains common definitions for colors schemas",
-    "$defs": {
+  "$defs": {
     "color": {
       "type": "object",
       "required": ["r", "g", "b"],

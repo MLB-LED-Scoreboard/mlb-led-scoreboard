@@ -77,7 +77,7 @@
     "$ref": "#/$defs/team_colors"
   },
   "$defs": {
-    "color": { "$ref": "./_common.schema.json#/defs/color" },
+    "color": { "$ref": "./_common.schema.json#/$defs/color" },
     "team_colors": {
       "type": "object",
       "x-format": "grid",

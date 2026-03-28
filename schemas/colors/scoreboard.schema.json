@@ -195,7 +195,7 @@
     }
   },
   "$defs": {
-    "color": { "$ref": "./_common.schema.json#/defs/color" }
+    "color": { "$ref": "./_common.schema.json#/$defs/color" }
   },
   "additionalProperties": false
 }
