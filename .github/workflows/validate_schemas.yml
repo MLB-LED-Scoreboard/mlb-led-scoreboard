@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./requirements.txt
+          pip install -r ./schemas/requirements.txt
       - name: Validate examples up to date with schemas
         run: |
           python -m schemas --check
