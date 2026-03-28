@@ -3,11 +3,12 @@ import datetime
 from typing import TYPE_CHECKING, Any, Protocol, Union
 
 if TYPE_CHECKING:
-    from RGBMatrixEmulator.graphics import Color
+    from RGBMatrixEmulator.graphics import Color as GraphicsColor
 
 
 class MLBConfig(Protocol):
     scrolling_speed: float
+    time_format: str
 
     @abc.abstractmethod
     def for_plugin(self, plugin_name: str) -> dict[str, Any]: ...
@@ -34,4 +35,4 @@ class Color(abc.ABC):
     def color(self, keypath: str) -> dict[str, int]: ...
 
     @abc.abstractmethod
-    def graphics_color(self, keypath: str) -> "Color": ...
+    def graphics_color(self, keypath: str) -> "GraphicsColor": ...

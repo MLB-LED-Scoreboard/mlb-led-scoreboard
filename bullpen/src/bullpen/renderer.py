@@ -1,5 +1,5 @@
 import abc
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Protocol
 
 
 from .data import PluginData
@@ -7,7 +7,15 @@ from .config import Config, Layout, Color
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
-    from RGBMatrixEmulator import graphics, Color as GraphicsColor
+    from RGBMatrixEmulator import Color as GraphicsColor, Font
+
+
+class graphics(Protocol):
+    def DrawText(self, canvas: "Canvas", font: "Font", x: int, y: int, color: "GraphicsColor", text: str) -> int: ...
+
+    def DrawLine(self, canvas: "Canvas", x1: int, y1: int, x2: int, y2: int, color: "GraphicsColor") -> None: ...
+
+    def DrawCircle(self, canvas: "Canvas", x: int, y: int, r: int, color: "GraphicsColor") -> None: ...
 
 
 class Renderer(abc.ABC):
@@ -19,8 +27,12 @@ class Renderer(abc.ABC):
 
     @abc.abstractmethod
     def render(
-        self, data: PluginData, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int
+        self, data: PluginData, canvas: "Canvas", graphics: graphics, scrolling_text_pos: int
     ) -> Optional[int]: ...
+
+    def reset(self):
+        """Called at the end of rendering, can be used to reset state before switching off"""
+        pass
 
 
 def center_text_position(text: str, center_pos: int, font_width: int) -> int:
@@ -29,7 +41,7 @@ def center_text_position(text: str, center_pos: int, font_width: int) -> int:
 
 def scrolling_text(
     canvas: "Canvas",
-    graphics: "graphics",
+    graphics: graphics,
     x: int,
     y: int,
     width: int,
@@ -71,7 +83,6 @@ def scrolling_text(
         # if we trimmed to the left, we need to adjust the scroll position accordingly
         if left:
             scroll_pos += w * left
-
         graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, text)
 
         # draw one-letter boxes to left and right to hide previous and next letters

@@ -3,7 +3,7 @@ from datetime import datetime
 
 import statsapi
 
-from bullpen import UpdateStatus, LOGGER
+from bullpen import UpdateStatus, LOGGER, PluginData
 
 
 from .config import Config
@@ -27,7 +27,7 @@ def get_playoff_start_date(year: int):
     return datetime(year, 10, 1).date()
 
 
-class Standings:
+class Standings(PluginData):
     def __init__(self, config: Config) -> None:
         self.config = config
         self.date = self.config.parse_today()

@@ -5,7 +5,7 @@ DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config(bullpen.Config):
-    def __init__(self, config) -> None:
+    def __init__(self, config: bullpen.config.MLBConfig) -> None:
         self.preferred_divisions = config.for_plugin("standings").get("divisions", DEFAULT_PREFERRED_DIVISIONS)
         self.parse_today = config.parse_today
         self.check_preferred_divisions()

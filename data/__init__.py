@@ -1,31 +1,23 @@
-from data.headlines import Headlines
+import bullpen
+
 from data.schedule import Schedule
 from bullpen import update
 from bullpen import UpdateStatus
-from data.weather import Weather
 from data.config import Config
 from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(self, config: Config, plugin_data) -> None:
+    def __init__(self, config: Config, plugin_data: dict[str, bullpen.PluginData]) -> None:
         # Save the parsed config
         self.config: Config = config
+        self.network_issues: bool = False
         self.plugin_data = plugin_data
+
         # get schedule
         self.schedule: Schedule = Schedule(config)
-
         # Games -- keeps two copies internally to let render thread move asynchronously
         self.games = DoubleBuffer(self.schedule.next_game())
-
-        # Weather info
-        self.weather: Weather = Weather(config)
-
-        # News headlines
-        self.headlines: Headlines = Headlines(config, self.schedule.date.year)
-
-        # Network status state - we useweather condition as a sort of sentinial value
-        self.network_issues: bool = self.weather.conditions == "Error"
 
     def refresh_game(self):
         # handle double buffering
@@ -33,12 +25,6 @@ class Data:
 
         # network requests
         self.__process_network_status(update.merge(g.update() for g in self.games.items))
-
-    def refresh_weather(self):
-        self.__process_network_status(self.weather.update())
-
-    def refresh_news_ticker(self):
-        self.__process_network_status(self.headlines.update())
 
     def refresh_schedule(self):
         self.__process_network_status(self.schedule.update())

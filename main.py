@@ -97,9 +97,6 @@ def main(matrix, config_base):
                 data.refresh_plugins()
                 break
         time.sleep(0.2)
-        if data.config.screen_time_at_priority("news", data.schedule.priority):
-            data.refresh_news_ticker()
-            data.refresh_weather()
 
 
 def __render_main(matrix, data, plugins):

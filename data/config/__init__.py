@@ -7,6 +7,8 @@ from collections import defaultdict
 from typing import Any, Mapping
 from math import ceil
 
+from bullpen.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
+
 from data.config.game_screen import GameScreen, parse_game_screen
 from data.config.other_screens import TimeRule, parse_time_rule, parse_with_priority
 import debug
@@ -14,7 +16,6 @@ from data import status
 from data.config.color import Color
 from data.config.layout import Layout
 from data.paths import *
-from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
 from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -22,20 +23,11 @@ DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
-DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 
 
 class Config:
     def __init__(self, config_path, width, height):
         json = self.__get_config(config_path)
-
-        # News Ticker
-        self.preferred_teams = json["news_ticker"]["teams"]
-        self.news_ticker_traderumors = json["news_ticker"]["traderumors"]
-        self.news_ticker_mlb_news = json["news_ticker"]["mlb_news"]
-        self.news_ticker_countdowns = json["news_ticker"]["countdowns"]
-        self.news_ticker_date = json["news_ticker"]["date"]
-        self.news_ticker_date_format = os_datetime_format(json["news_ticker"]["date_format"])
 
         # Rotation
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
@@ -45,10 +37,7 @@ class Config:
             json["rotation"]["screens"]
         )
 
-        # Weather
-        self.weather_apikey = json["weather"]["apikey"]
-        self.weather_location = json["weather"]["location"]
-        self.weather_metric_units = json["weather"]["metric_units"]
+        # TODO moving this inside a 'plugin' is a bit weird?
         self.pregame_weather = json["weather"]["pregame"]
 
         # Misc config options
@@ -84,7 +73,6 @@ class Config:
 
         # Check the preferred teams and divisions are a list or a string
         self.check_time_format()
-        self.check_preferred_teams()
 
         # Check the rotation_rates to make sure it's valid and not silly
         self.check_rotate_rates()
@@ -93,17 +81,6 @@ class Config:
 
         # Set up update delay parameter
         self.sync_amount = ceil(self.sync_delay_seconds / self.api_refresh_rate)
-
-    def check_preferred_teams(self):
-        if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
-            debug.warning(
-                "preferred_teams should be an array of team names or a single team name string."
-                "Using default preferred_teams, {}".format(DEFAULT_PREFERRED_TEAMS)
-            )
-            self.preferred_teams = DEFAULT_PREFERRED_TEAMS
-        if isinstance(self.preferred_teams, str):
-            team = self.preferred_teams
-            self.preferred_teams = [team]
 
     def check_delay(self):
         if self.sync_delay_seconds < 0:

@@ -1,6 +1,8 @@
 import time
 from typing import Callable, NoReturn
 
+import bullpen
+
 
 import debug
 from data import Data, status
@@ -9,7 +11,7 @@ from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
 from data.game import Game
 
-from renderers import network, offday
+from renderers import network
 from renderers.games import game as gamerender
 from renderers.games import irregular
 from renderers.games import postgame as postgamerender
@@ -18,10 +20,12 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data, plugins) -> None:
+    def __init__(self, matrix, data: Data, plugins: dict[str, bullpen.Renderer]) -> None:
         self.matrix = matrix
         self.data = data
-        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
+        self.is_playoffs = (
+            False  # TODO # self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
+        )
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished: bool = False
@@ -33,13 +37,11 @@ class MainRenderer:
         while True:
             if self.data.schedule.num_games() > 0:
                 self.__render_games()
+
             for plugin in self.plugins:
                 if t := self.data.config.screen_time_at_priority(plugin, self.data.schedule.priority):
                     debug.log("Rotating to plugin %s for %d seconds", plugin, t)
                     self.__draw_plugin_screen(plugin, any_of(timer_cond(t), self.scrolling_finished_cond()))
-
-            if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
-                self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond()))
 
     def __render_games(self):
         seen_games = set()
@@ -142,36 +144,10 @@ class MainRenderer:
 
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
-    def __draw_news(self, cond: Callable[[], bool]):
-        """
-        Draw the news screen for as long as cond returns True
-        """
-        self.scrolling_text_pos = self.canvas.width
-        color = self.data.config.scoreboard_colors.color("default.background")
-        while cond():
-            self.canvas.Fill(color["r"], color["g"], color["b"])
-
-            self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
-            pos = offday.render_offday_screen(
-                self.canvas,
-                self.data.config.layout,
-                self.data.config.scoreboard_colors,
-                self.data.weather,
-                self.data.headlines,
-                self.data.config.time_format,
-                self.scrolling_text_pos,
-            )
-            self.__update_scrolling_text_pos(pos, self.canvas.width)
-            if self.scrolling_text_pos == self.canvas.width:
-                self.data.headlines.advance_ticker()
-            # Show network issues
-            if self.data.network_issues:
-                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
-            time.sleep(self.data.config.scrolling_speed)
-
-    def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]):
+    def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]) -> None:
         from driver import graphics
+
+        self.scrolling_text_pos = self.canvas.width
 
         renderer = self.plugins[plugin_name]
         wait_time = renderer.wait_time()
@@ -179,11 +155,14 @@ class MainRenderer:
         while cond():
             pos = renderer.render(self.data.plugin_data[plugin_name], self.canvas, graphics, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(pos, self.canvas.width)
+
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(wait_time)
+
+        renderer.reset()
 
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]

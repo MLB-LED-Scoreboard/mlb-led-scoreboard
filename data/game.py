@@ -12,7 +12,7 @@ from data.uniforms import Uniforms
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
-from data.time_formats import TIME_FORMAT_24H
+from bullpen.time_formats import TIME_FORMAT_24H
 import data.headers
 
 API_FIELDS = (

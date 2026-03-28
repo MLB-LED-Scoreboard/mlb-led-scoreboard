@@ -4,7 +4,6 @@ import bullpen
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
-    from RGBMatrixEmulator import graphics
 
 
 class Config(bullpen.Config):
@@ -17,7 +16,7 @@ class Data(bullpen.PluginData):
         self.config = config
         self.counter = 0
 
-    def update(self) -> bullpen.UpdateStatus:
+    def update(self, force: bool = False) -> bullpen.UpdateStatus:
         self.counter += 1
         return bullpen.UpdateStatus.SUCCESS
 
@@ -32,7 +31,9 @@ class Renderer(bullpen.Renderer):
     def wait_time(self) -> float:
         return self.scrolling_speed
 
-    def render(self, data: Data, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int) -> None:
+    def render(
+        self, data: Data, canvas: "Canvas", graphics: bullpen.renderer.graphics, scrolling_text_pos: int
+    ) -> None:
         canvas.Fill(255, 0, 0)
         graphics.DrawText(
             canvas,

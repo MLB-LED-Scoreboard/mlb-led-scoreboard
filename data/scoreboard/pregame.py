@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import tzlocal
 import debug
-from data.time_formats import TIME_FORMAT_12H
+from bullpen.time_formats import TIME_FORMAT_12H
 
 PITCHER_TBD = "TBD"
 

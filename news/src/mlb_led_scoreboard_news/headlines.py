@@ -1,12 +1,14 @@
 import html
 import time
 from datetime import datetime
+from typing import Any
 
 import feedparser
 
-import debug
-from data.dates import Dates
-from bullpen import UpdateStatus
+from bullpen import UpdateStatus, LOGGER
+
+from .dates import Dates
+from .config import Config
 
 HEADLINE_UPDATE_RATE = 60 * 60  # 1 hour between feed updates
 HEADLINE_MAX_FEEDS = 2  # Number of preferred team's feeds to fetch
@@ -89,19 +91,19 @@ TRADE_FEEDS = {
 
 
 class Headlines:
-    def __init__(self, config, year):
+    def __init__(self, config: Config):
         self.preferred_teams = config.preferred_teams
         self.include_mlb = config.news_ticker_mlb_news
         self.include_traderumors = config.news_ticker_traderumors
         self.include_countdowns = config.news_ticker_countdowns
         self.include_date = config.news_ticker_date
         self.date_format = config.news_ticker_date_format
-        self.feed_urls = []
-        self.feed_data = None
+        self.feed_urls: list[str] = []
+        self.feed_data: list[Any] = []
         self.starttime = time.time()
-        self.important_dates = Dates(year)
+        self.important_dates = Dates(config.year)
 
-        self.ticker = []
+        self.ticker: list[str] = []
         self.current_ticker_idx = 0
 
         self.__compile_feed_list()
@@ -110,23 +112,23 @@ class Headlines:
     def update(self, force=False) -> UpdateStatus:
         status = UpdateStatus.SUCCESS
         if force or self.__should_update():
-            debug.log("Headlines should update!")
+            LOGGER.debug("Headlines should update!")
             self.starttime = time.time()
             feeds = []
-            debug.log("%d feeds to update...", len(self.feed_urls))
+            LOGGER.debug("%d feeds to update...", len(self.feed_urls))
             feedparser.USER_AGENT = "mlb-led-scoreboard/3.0 +https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard"
             if len(self.feed_urls) > 0:
-                debug.log("Feed URLs found...")
+                LOGGER.debug("Feed URLs found...")
                 for idx, url in enumerate(self.feed_urls):
                     if idx < HEADLINE_MAX_FEEDS:  # Only parse MAX teams to prevent potential hangs
-                        debug.log("Fetching %s", url)
+                        LOGGER.debug("Fetching %s", url)
                         f = feedparser.parse(url)
                         try:
                             title = f.feed.title.encode("ascii", "ignore")
-                            debug.log("Fetched feed '%s' with %d entries.", title, len(f.entries))
+                            LOGGER.debug("Fetched feed '%s' with %d entries.", title, len(f.entries))
                             feeds.append(f)
                         except AttributeError:
-                            debug.warning("There was a problem fetching {}".format(url))
+                            LOGGER.warning("There was a problem fetching {}".format(url))
                             status = UpdateStatus.FAIL
                 self.feed_data = feeds
             ticker = self._build_ticker()
@@ -140,6 +142,7 @@ class Headlines:
         return self.ticker[self.current_ticker_idx]
 
     def advance_ticker(self):
+        LOGGER.debug("Moving to next headline")
         self.current_ticker_idx = (self.current_ticker_idx + 1) % len(self.ticker)
 
     def _build_ticker(self, max_entries=HEADLINE_MAX_ENTRIES) -> list[str]:
@@ -155,15 +158,11 @@ class Headlines:
             if countdown_string is not None:
                 ticker.append(countdown_string)
 
-        if self.feed_data is not None:
-            for feed in self.feed_data:
-                self.__strings_for_feed(feed, ticker, max_entries)
+        for feed in self.feed_data:
+            self.__strings_for_feed(feed, ticker, max_entries)
 
         # In case all of the ticker options are turned off and there's no data, return the date
         return [datetime.now().strftime(FALLBACK_DATE_FORMAT)] if len(ticker) < 1 else ticker
-
-    def available(self):
-        return self.feed_data is not None
 
     def __strings_for_feed(self, feed, ticker, max_entries):
         ticker.append(feed.feed.title)
@@ -191,7 +190,7 @@ class Headlines:
         feed_name = MLB_FEEDS.get(team_name, None)
 
         if feed_name is None:
-            debug.error(f"Failed to fetch MLB feed name for key '{team_name}', falling back to default feed.")
+            LOGGER.error(f"Failed to fetch MLB feed name for key '{team_name}', falling back to default feed.")
             feed_name = MLB_FEEDS["MLB"]
 
         return "{}/{}/{}".format(MLB_BASE, feed_name, MLB_PATH)
@@ -200,7 +199,7 @@ class Headlines:
         feed_name = TRADE_FEEDS.get(team_name, None)
 
         if feed_name is None:
-            debug.error(
+            LOGGER.error(
                 f"Failed to fetch MLB Trade Rumors feed name for key '{team_name}', falling back to default feed."
             )
             feed_name = ""

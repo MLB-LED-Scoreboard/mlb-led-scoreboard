@@ -8,7 +8,6 @@ from .standings import Standings, Division, League
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
-    from RGBMatrixEmulator import graphics
 
 
 class Renderer(bullpen.Renderer):
@@ -23,7 +22,12 @@ class Renderer(bullpen.Renderer):
     def wait_time(self) -> float:
         return 1
 
-    def render(self, data: Standings, canvas: "Canvas", graphics: "graphics", scrolling_text_pos: int) -> None:
+    def reset(self):
+        self.update = 1
+
+    def render(
+        self, data: Standings, canvas: "Canvas", graphics: bullpen.renderer.graphics, scrolling_text_pos: int
+    ) -> None:
         if data.is_postseason():
             render_bracket(
                 canvas,
