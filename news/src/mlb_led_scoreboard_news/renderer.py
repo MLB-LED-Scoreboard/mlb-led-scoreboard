@@ -85,9 +85,7 @@ def _render_clock(canvas, graphics, layout, colors, time_format):
 
 def _render_weather(canvas, graphics, layout, colors, weather):
     if weather.available():
-        image_file = weather.icon_filename()
-        weather_icon = Image.open(image_file)
-        _render_weather_icon(canvas, layout, colors, weather_icon)
+        _render_weather_icon(canvas, layout, colors, weather.icon())
         _render_weather_text(canvas, graphics, layout, colors, weather.conditions, "conditions")
         _render_weather_text(canvas, graphics, layout, colors, weather.temperature_string(), "temperature")
         _render_weather_text(canvas, graphics, layout, colors, weather.wind_speed_string(), "wind_speed")

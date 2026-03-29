@@ -1,7 +1,8 @@
-import os, time
+import time
+from importlib.resources import files
 
 import pyowm
-
+from PIL import Image
 from bullpen import UpdateStatus, LOGGER
 
 WEATHER_UPDATE_RATE = 10 * 60  # 10 minutes between weather updates
@@ -59,7 +60,7 @@ class Weather:
                         self.temperature_string(),
                         self.wind_string(),
                         self.conditions,
-                        self.icon_filename(),
+                        self.icon_name,
                     )
                     return UpdateStatus.SUCCESS
                 except pyowm.commons.exceptions.UnauthorizedError:
@@ -101,8 +102,9 @@ class Weather:
     def wind_string(self):
         return "{} {}".format(self.wind_speed_string(), self.wind_dir_string())
 
-    def icon_filename(self):
-        return os.path.abspath("./assets/weather/{}.png".format(self.icon_name))
+    def icon(self):
+        image_file = files("mlb_led_scoreboard_news.icons").joinpath(f"{self.icon_name}.png").open(mode='rb')
+        return Image.open(image_file)
 
     def __should_update(self):
         endtime = time.time()
