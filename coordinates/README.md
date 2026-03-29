@@ -5,7 +5,7 @@ These JSON files are named in correspondence to the dimensions of the LED board 
 You can edit these coordinates to display parts of the scoreboard in any way you choose. Simply copy the file corresponding to your board's dimensions to `w<cols>h<rows>.json`. This JSON file only needs to contain the parts you wish to override but it's often easier to just make a copy of the full example file and edit the values you want to change.
 
 > [!WARNING]
-> **DO NOT** edit or remove `.example` files!
+> **DO NOT** edit or remove `.example.json` or `.schema.json` files!
 >
 > These are checked by the software to determine which matrix dimensions are supported. If you remove the file, the scoreboard may fail to start.
 

@@ -1,8 +1,11 @@
-from typing import Any, Callable
+from typing import Any, Callable, Generic, Optional, TypeVar
+from data.update import UpdateStatus
 import debug
 
+T = TypeVar("T")
 
-class DoubleBuffer:
+
+class DoubleBuffer(Generic[T]):
     """
     This class is used to coordinate data that is fetched on the main thread but
     draw on the render thread (currently, games).
@@ -16,11 +19,11 @@ class DoubleBuffer:
     The result is something kind of like a double buffer from computer graphics.
     """
 
-    def __init__(self, initial_data) -> None:
+    def __init__(self, initial_data: Optional[T]) -> None:
         self.items = (initial_data, initial_data)
         self._reading_next = False
 
-    def next(self):
+    def next(self) -> Optional[T]:
         """
         Called on the render thread when it wants the next game to render.
         """
@@ -28,7 +31,7 @@ class DoubleBuffer:
         self._reading_next = True
         return self.items[1]
 
-    def producer_tick(self, getter: Callable[[Any], Any]):
+    def producer_tick(self, getter: Callable[[Optional[T]], Optional[T]]) -> UpdateStatus:
         """
         Called periodically on the main thread.
         If the render thread has moved on, this copies 'next' into 'current' on one tick,
@@ -36,11 +39,16 @@ class DoubleBuffer:
         """
         if not self._reading_next and (self.items[0] == self.items[1]):
             next = getter(self.items[1])
-            if next is not None and next != self.items[1]:
+            if next is None:
+                return UpdateStatus.FAIL
+            if next != self.items[1]:
                 debug.log("Main thread: replacing 'next' with new data")
                 self.items = (self.items[0], next)
+                return UpdateStatus.SUCCESS
 
         if self._reading_next:
             debug.log("Main thread: mirroring 'next' into 'current'")
             self.items = (self.items[1], self.items[1])
             self._reading_next = False
+
+        return UpdateStatus.DEFERRED
