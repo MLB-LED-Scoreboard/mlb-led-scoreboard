@@ -1,5 +1,7 @@
-from typing import Any, Callable, Generic, Optional, TypeVar
-from data.update import UpdateStatus
+from typing import Callable, Generic, Optional, TypeVar
+
+from bullpen import UpdateStatus
+
 import debug
 
 T = TypeVar("T")

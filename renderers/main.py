@@ -38,7 +38,7 @@ class MainRenderer:
             if self.data.schedule.num_games() > 0:
                 self.__render_games()
 
-            for plugin in self.plugins:
+            for plugin in self.data.config.rotation_screen_rules.get(self.data.schedule.priority, {}):
                 if t := self.data.config.screen_time_at_priority(plugin, self.data.schedule.priority):
                     debug.log("Rotating to plugin %s for %d seconds", plugin, t)
                     self.__draw_plugin_screen(plugin, any_of(timer_cond(t), self.scrolling_finished_cond()))

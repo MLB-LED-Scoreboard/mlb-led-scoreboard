@@ -99,11 +99,12 @@ class Config:
             self.api_refresh_rate = int(self.api_refresh_rate)
 
     def check_screens(self, plugins: list[str]):
-        for screen in self.rotation_screen_rules.keys():
-            if screen not in plugins:
-                raise ValueError(
-                    f"Screen with 'kind': '{screen}' in config does not have a corresponding plugin. Please add a plugin for this screen or remove it from the config."
-                )
+        for level in self.rotation_screen_rules.values():
+            for screen in level:
+                if screen not in plugins:
+                    raise ValueError(
+                        f"Screen with 'kind': '{screen}' in config does not have a corresponding plugin. Please add a plugin for this screen or remove it from the config."
+                    )
 
     def check_time_format(self):
         if self.time_format.lower() == "24h":
@@ -160,7 +161,7 @@ class Config:
         return today.date()
 
     def screen_time_at_priority(self, screen: str, priority: int) -> int:
-        return self.rotation_screen_rules.get(screen, {}).get(priority, 0)
+        return self.rotation_screen_rules.get(priority, {}).get(screen, 0)
 
     def for_plugin(self, plugin_name: str) -> dict[str, Any]:
         return self.config_json.get(plugin_name, {})
@@ -264,10 +265,10 @@ If you aren't sure why you're seeing this, there might not be official support f
         return isinstance(other, Config) and vars(self) == vars(other)
 
 
-def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[str, Mapping[int, int]]]:
+def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[int, Mapping[str, int]]]:
     game_rules = []
     time_rules = []
-    screen_rules: defaultdict[str, defaultdict[int, int]] = defaultdict(lambda: defaultdict(int))
+    screen_rules: defaultdict[int, defaultdict[str, int]] = defaultdict(lambda: defaultdict(int))
 
     for rule_json in json:
         if "kind" not in rule_json:
@@ -281,17 +282,17 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             if "seconds" not in rule_json:
                 raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
             for priority in parse_with_priority(rule_json):
-                screen_rules[rule_json["kind"]][priority] = rule_json["seconds"]
+                screen_rules[priority][rule_json["kind"]] = rule_json["seconds"]
 
-    if not any(screen[0] for screen in screen_rules.values()):
+    if not len(screen_rules[0]):
         raise ValueError(
             "Invalid screens config! Add at least one with with 'with_priority=0' for when no games are available."
         )
 
     for t in time_rules:
         has_matching_screen = False
-        for screen_rule in screen_rules.values():
-            if screen_rule.get(t.priority, 0) > 0:
+        for screen_rule in screen_rules[t.priority].values():
+            if screen_rule > 0:
                 has_matching_screen = True
                 break
         if not has_matching_screen:
