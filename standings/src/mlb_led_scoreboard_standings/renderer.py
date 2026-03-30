@@ -28,7 +28,7 @@ class Renderer(api.Renderer):
     def render(
         self, data: Standings, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int
     ) -> None:
-        if data.is_postseason():
+        if self.config.is_postseason():
             render_bracket(
                 canvas,
                 graphics,
@@ -46,7 +46,7 @@ class Renderer(api.Renderer):
                 self.standings_stat,
             )
 
-        if data.is_postseason():
+        if self.config.is_postseason():
             if self.update % 20 == 0:
                 if self.standings_league == "NL":
                     self.standings_league = "AL"

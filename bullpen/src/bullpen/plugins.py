@@ -18,7 +18,9 @@ def load_plugins(config: api.MLBConfig) -> dict[str, tuple[api.PluginData, api.R
         if name in plugins:
             raise ValueError(f"Duplicate plugin name detected: {name} from {entry_point.module}")
         try:
-            plugin: Callable[[], tuple[Type[api.Config], Type[api.PluginData], Type[api.Renderer]]] = entry_point.load()
+            plugin: Callable[[], tuple[Type[api.PluginConfig], Type[api.PluginData], Type[api.Renderer]]] = (
+                entry_point.load()
+            )
             cfg_class, data_class, renderer_class = plugin()
             cfg = cfg_class(config)
             data = data_class(cfg)

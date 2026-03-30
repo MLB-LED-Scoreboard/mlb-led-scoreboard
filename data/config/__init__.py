@@ -7,7 +7,9 @@ from collections import defaultdict
 from typing import Any, Mapping
 from math import ceil
 
+from bullpen.util import deep_update
 from bullpen.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
+import statsapi
 
 from data.config.game_screen import GameScreen, parse_game_screen
 from data.config.other_screens import TimeRule, parse_time_rule, parse_with_priority
@@ -16,7 +18,6 @@ from data import status
 from data.config.color import Color
 from data.config.layout import Layout
 from data.paths import *
-from utils import deep_update
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 DEFAULT_SCROLLING_SPEED = 2
@@ -48,6 +49,9 @@ class Config:
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
+
+        self.playoffs_start_date = _get_playoff_start_date(self.parse_today().year)
+
         # Make sure the scrolling speed setting is in range so we don't crash
         try:
             self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
@@ -159,6 +163,9 @@ class Config:
             if end_of_day > datetime.now():
                 today -= timedelta(days=1)
         return today.date()
+
+    def is_postseason(self):
+        return self.parse_today() > self.playoffs_start_date
 
     def screen_time_at_priority(self, screen: str, priority: int) -> int:
         return self.rotation_screen_rules.get(priority, {}).get(screen, 0)
@@ -302,3 +309,13 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             )
 
     return game_rules, time_rules, screen_rules
+
+
+def _get_playoff_start_date(year: int):
+    try:
+        dates = statsapi.get("season", {"sportId": 1, "seasonId": year})["seasons"][0]
+        return datetime.strptime(dates["regularSeasonEndDate"], "%Y-%m-%d").date()
+    except Exception:
+        debug.exception("Failed to get season data, defaulting playoff start date to Oct 1")
+
+    return datetime(year, 10, 1).date()

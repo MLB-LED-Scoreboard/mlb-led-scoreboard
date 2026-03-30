@@ -5,7 +5,7 @@ from bullpen.logging import LOGGER
 DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 
 
-class Config(api.Config):
+class Config(api.PluginConfig):
     def __init__(self, config: api.MLBConfig) -> None:
         self.date = config.parse_today()
         self.year = self.date.year

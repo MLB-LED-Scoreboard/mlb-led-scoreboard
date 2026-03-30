@@ -1,4 +1,4 @@
-from bullpen.api import update, UpdateStatus, PluginData
+from bullpen.api import UpdateStatus, PluginData
 from data.config import Config
 
 from data.schedule import Schedule
@@ -20,7 +20,7 @@ class Data:
     def refresh_game(self) -> None:
         # handle double buffering
         status = self.games.producer_tick(self.schedule.next_game)
-        status = update.merge([status] + [g.update() for g in self.games.items if g is not None])
+        status = UpdateStatus.merge([status] + [g.update() for g in self.games.items if g is not None])
 
         # network requests
         self.__process_network_status(status)
@@ -29,7 +29,7 @@ class Data:
         self.__process_network_status(self.schedule.update())
 
     def refresh_plugins(self) -> None:
-        self.__process_network_status(update.merge(plugin.update() for plugin in self.plugin_data.values()))
+        self.__process_network_status(UpdateStatus.merge(plugin.update() for plugin in self.plugin_data.values()))
 
     def __process_network_status(self, status) -> None:
         if status == UpdateStatus.SUCCESS:

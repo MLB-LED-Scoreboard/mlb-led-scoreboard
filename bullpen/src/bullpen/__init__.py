@@ -1,3 +1,3 @@
-from . import api, logging, utils
+from . import api, logging, util
 
-__all__ = ["api", "logging", "utils"]
+__all__ = ["api", "logging", "util"]

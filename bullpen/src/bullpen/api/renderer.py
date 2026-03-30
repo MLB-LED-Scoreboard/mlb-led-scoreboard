@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional, Protocol
 
 
 from .data import PluginData
-from .config import Config, Layout, Color
+from .config import PluginConfig, Layout, Color
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
@@ -20,7 +20,7 @@ class graphics(Protocol):
 
 class Renderer(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, config: Config, layout: Layout, colors: Color) -> None: ...
+    def __init__(self, config: PluginConfig, layout: Layout, colors: Color) -> None: ...
 
     @abc.abstractmethod
     def wait_time(self) -> float: ...

@@ -1,14 +1,15 @@
+from bullpen import api
 from bullpen.logging import LOGGER
-from bullpen.api import Config, MLBConfig
 
 
 DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
-class Config(Config):
-    def __init__(self, config: MLBConfig) -> None:
+class Config(api.PluginConfig):
+    def __init__(self, config: api.MLBConfig) -> None:
         self.preferred_divisions = config.for_plugin("standings").get("divisions", DEFAULT_PREFERRED_DIVISIONS)
         self.parse_today = config.parse_today
+        self.is_postseason = config.is_postseason
         self.check_preferred_divisions()
 
     def check_preferred_divisions(self):

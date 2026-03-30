@@ -1,10 +1,24 @@
 from typing import TYPE_CHECKING, Any
+from collections.abc import Mapping
 
 
 if TYPE_CHECKING:
     from .api.renderer import graphics
     from RGBMatrixEmulator.emulation.canvas import Canvas
     from RGBMatrixEmulator import Color
+
+
+def deep_update(source, overrides):
+    """Update a nested dictionary or similar mapping.
+    Modify ``source`` in place.
+    """
+    for key, value in list(overrides.items()):
+        if isinstance(value, Mapping) and value:
+            returned = deep_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
 
 
 def center_text_position(text: str, center_pos: int, font_width: int) -> int:

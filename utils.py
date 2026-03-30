@@ -1,5 +1,4 @@
 import argparse
-from collections.abc import Mapping
 
 import debug
 
@@ -176,14 +175,4 @@ def led_matrix_options(args):
     return options
 
 
-def deep_update(source, overrides):
-    """Update a nested dictionary or similar mapping.
-    Modify ``source`` in place.
-    """
-    for key, value in list(overrides.items()):
-        if isinstance(value, Mapping) and value:
-            returned = deep_update(source.get(key, {}), value)
-            source[key] = returned
-        else:
-            source[key] = overrides[key]
-    return source
+

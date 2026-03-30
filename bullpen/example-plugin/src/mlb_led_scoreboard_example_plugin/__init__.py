@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
 
 
-class Config(api.Config):
+class Config(api.PluginConfig):
     def __init__(self, base) -> None:
         self.base = base
 
@@ -31,9 +31,7 @@ class Renderer(api.Renderer):
     def wait_time(self) -> float:
         return self.scrolling_speed
 
-    def render(
-        self, data: Data, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int
-    ) -> None:
+    def render(self, data: Data, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int) -> None:
         canvas.Fill(255, 0, 0)
         graphics.DrawText(
             canvas,

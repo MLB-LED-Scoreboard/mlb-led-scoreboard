@@ -18,21 +18,10 @@ API_FIELDS = (
 )
 
 
-def get_playoff_start_date(year: int):
-    try:
-        dates = statsapi.get("season", {"sportId": 1, "seasonId": year})["seasons"][0]
-        return datetime.strptime(dates["regularSeasonEndDate"], "%Y-%m-%d").date()
-    except Exception:
-        LOGGER.exception("Failed to get season data, defaulting playoff start date to Oct 1")
-
-    return datetime(year, 10, 1).date()
-
-
 class Standings(PluginData):
     def __init__(self, config: Config) -> None:
         self.config = config
         self.date = self.config.parse_today()
-        self.playoffs_start_date = get_playoff_start_date(self.date.year)
         self.starttime = time.time()
         self.preferred_divisions = config.preferred_divisions
         self.wild_cards = any("Wild" in division for division in config.preferred_divisions)
@@ -49,7 +38,7 @@ class Standings(PluginData):
             LOGGER.info("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
-                if not self.is_postseason():
+                if not self.config.is_postseason():
 
                     season_params = {
                         "standingsTypes": "regularSeason",
@@ -99,11 +88,8 @@ class Standings(PluginData):
 
     def populated(self):
         return (bool(self.preferred_divisions) and bool(self.standings)) or (
-            bool(self.leagues) and self.is_postseason()
+            bool(self.leagues) and self.config.is_postseason()
         )
-
-    def is_postseason(self):
-        return self.date > self.playoffs_start_date
 
     def __standings_for(self, division_name):
         return next(division for division in self.standings if division.name == division_name)

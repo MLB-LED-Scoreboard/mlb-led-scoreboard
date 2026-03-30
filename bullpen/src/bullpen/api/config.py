@@ -17,8 +17,11 @@ class MLBConfig(Protocol):
     @abc.abstractmethod
     def parse_today(self) -> datetime.date: ...
 
+    @abc.abstractmethod
+    def is_postseason(self) -> bool: ...
 
-class Config(abc.ABC):
+
+class PluginConfig(abc.ABC):
     @abc.abstractmethod
     def __init__(self, base: MLBConfig) -> None: ...
 
