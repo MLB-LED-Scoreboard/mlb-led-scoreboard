@@ -33,3 +33,6 @@ class Renderer(abc.ABC):
     def reset(self):
         """Called at the end of rendering, can be used to reset state before switching off"""
         pass
+
+    def can_render(self, data: PluginData) -> bool:
+        return True

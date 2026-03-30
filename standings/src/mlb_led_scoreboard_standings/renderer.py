@@ -25,6 +25,9 @@ class Renderer(api.Renderer):
     def reset(self):
         self.update = 1
 
+    def can_render(self, data: Standings):
+        return data.populated()
+
     def render(
         self, data: Standings, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int
     ) -> None:

@@ -153,10 +153,10 @@ class MainRenderer:
         self.scrolling_text_pos = self.canvas.width
 
         renderer = self.plugins[plugin_name]
+        data = self.data.plugin_data[plugin_name]
         wait_time = renderer.wait_time()
-
-        while cond():
-            pos = renderer.render(self.data.plugin_data[plugin_name], self.canvas, graphics, self.scrolling_text_pos)
+        while renderer.can_render(data) and cond():
+            pos = renderer.render(data, self.canvas, graphics, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
             # Show network issues
