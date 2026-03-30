@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import statsapi
 
-from bullpen import LOGGER
+from bullpen.logging import LOGGER
 
 
 class Dates:

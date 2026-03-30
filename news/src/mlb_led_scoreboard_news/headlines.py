@@ -5,7 +5,8 @@ from typing import Any
 
 import feedparser
 
-from bullpen import UpdateStatus, LOGGER
+from bullpen.api import UpdateStatus
+from bullpen.logging import LOGGER
 
 from .dates import Dates
 from .config import Config

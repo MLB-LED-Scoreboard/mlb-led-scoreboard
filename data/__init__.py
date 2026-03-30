@@ -1,14 +1,12 @@
-import bullpen
+from bullpen.api import update, UpdateStatus, PluginData
+from data.config import Config
 
 from data.schedule import Schedule
-from bullpen import update
-from bullpen import UpdateStatus
-from data.config import Config
 from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(self, config: Config, plugin_data: dict[str, bullpen.PluginData]) -> None:
+    def __init__(self, config: Config, plugin_data: dict[str, PluginData]) -> None:
         # Save the parsed config
         self.config: Config = config
         self.network_issues: bool = False

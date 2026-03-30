@@ -5,9 +5,9 @@ import time
 
 from PIL import Image
 
-import bullpen
+import bullpen.api as api
 from bullpen.time_formats import TIME_FORMAT_12H
-from bullpen.renderer import center_text_position, scrolling_text
+from bullpen.util import center_text_position, scrolling_text
 
 from .config import Config
 from .weather import Weather
@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
 
 
-class Renderer(bullpen.Renderer):
-    def __init__(self, config: Config, layout: bullpen.Layout, colors: bullpen.Color):
+class Renderer(api.Renderer):
+    def __init__(self, config: Config, layout: api.Layout, colors: api.Color):
         self.config = config
         self.layout = layout
         self.colors = colors
@@ -29,9 +29,7 @@ class Renderer(bullpen.Renderer):
     def wait_time(self) -> float:
         return self.config.scrolling_speed
 
-    def render(
-        self, data: NewsData, canvas: "Canvas", graphics: bullpen.renderer.graphics, scrolling_text_pos: int
-    ) -> int:
+    def render(self, data: NewsData, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int) -> int:
         if scrolling_text_pos == canvas.width:
             if self.first:
                 self.first = False
@@ -57,8 +55,8 @@ class Renderer(bullpen.Renderer):
 def render_offday_screen(
     canvas,
     graphics,
-    layout: bullpen.Layout,
-    colors: bullpen.Color,
+    layout: api.Layout,
+    colors: api.Color,
     weather: Weather,
     headlines: Headlines,
     time_format,

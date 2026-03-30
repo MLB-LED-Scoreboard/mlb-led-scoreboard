@@ -10,7 +10,7 @@ import unittest.mock
 import data.game
 import data.config
 import data.uniforms
-from bullpen import UpdateStatus
+from bullpen.api import UpdateStatus
 
 
 class TestGame(unittest.TestCase):

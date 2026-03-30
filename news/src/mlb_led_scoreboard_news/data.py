@@ -1,5 +1,5 @@
-from bullpen import PluginData
-import bullpen.update
+from bullpen.api import PluginData
+import bullpen.api.update
 
 from .config import Config
 from .weather import Weather
@@ -15,5 +15,5 @@ class NewsData(PluginData):
         # News headlines
         self.headlines: Headlines = Headlines(config)
 
-    def update(self, force=False) -> bullpen.update.UpdateStatus:
-        return bullpen.update.merge([self.weather.update(force), self.headlines.update(force)])
+    def update(self, force=False) -> bullpen.api.update.UpdateStatus:
+        return bullpen.api.update.merge([self.weather.update(force), self.headlines.update(force)])

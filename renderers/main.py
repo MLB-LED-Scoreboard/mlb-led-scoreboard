@@ -1,7 +1,7 @@
 import time
 from typing import Callable, NoReturn
 
-import bullpen
+import bullpen.api as api
 
 
 import debug
@@ -20,7 +20,7 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data, plugins: dict[str, bullpen.Renderer]) -> None:
+    def __init__(self, matrix, data: Data, plugins: dict[str, api.Renderer]) -> None:
         self.matrix = matrix
         self.data = data
         self.is_playoffs = (

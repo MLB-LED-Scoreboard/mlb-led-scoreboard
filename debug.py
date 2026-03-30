@@ -1,9 +1,10 @@
 import logging, os
 from logging.handlers import RotatingFileHandler
+from bullpen.logging import LOGGER
 
 LOGFILE = os.path.abspath(os.path.join(__file__, "..", "logs", "mlbled.log"))
 
-logger = logging.getLogger("mlbled")
+logger = LOGGER
 
 formatter = logging.Formatter("{levelname} ({asctime}): {message}", style="{", datefmt="%H:%M:%S")
 

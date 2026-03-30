@@ -4,7 +4,7 @@ from data.config.layout import Layout
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from renderers.games import nohitter
-from bullpen.renderer import center_text_position, scrolling_text
+from bullpen.util import center_text_position, scrolling_text
 
 NORMAL_GAME_LENGTH = 9
 

@@ -3,7 +3,8 @@ from datetime import datetime
 
 import statsapi
 
-from bullpen import UpdateStatus, LOGGER, PluginData
+from bullpen.api import UpdateStatus, PluginData
+from bullpen.logging import LOGGER
 
 
 from .config import Config

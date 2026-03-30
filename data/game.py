@@ -6,7 +6,7 @@ import statsapi
 
 import debug
 from data import teams
-from bullpen import UpdateStatus
+from bullpen.api import UpdateStatus
 from data.utils.circular_queue import CircularQueue
 from data.uniforms import Uniforms
 from data.scoreboard import Scoreboard

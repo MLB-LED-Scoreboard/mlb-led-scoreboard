@@ -1,12 +1,12 @@
-import bullpen
+import bullpen.api as api
 from bullpen.time_formats import os_datetime_format
-
+from bullpen.logging import LOGGER
 
 DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 
 
-class Config(bullpen.Config):
-    def __init__(self, config: bullpen.config.MLBConfig) -> None:
+class Config(api.Config):
+    def __init__(self, config: api.MLBConfig) -> None:
         self.date = config.parse_today()
         self.year = self.date.year
         self.time_format = config.time_format
@@ -28,7 +28,7 @@ class Config(bullpen.Config):
 
     def check_preferred_teams(self):
         if not isinstance(self.preferred_teams, str) and not isinstance(self.preferred_teams, list):
-            bullpen.LOGGER.warning(
+            LOGGER.warning(
                 "preferred_teams should be an array of team names or a single team name string."
                 "Using default preferred_teams, {}".format(DEFAULT_PREFERRED_TEAMS)
             )

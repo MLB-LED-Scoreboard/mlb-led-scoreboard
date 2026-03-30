@@ -3,7 +3,8 @@ from importlib.resources import files
 
 import pyowm
 from PIL import Image
-from bullpen import UpdateStatus, LOGGER
+from bullpen.api import UpdateStatus
+from bullpen.logging import LOGGER
 
 WEATHER_UPDATE_RATE = 10 * 60  # 10 minutes between weather updates
 

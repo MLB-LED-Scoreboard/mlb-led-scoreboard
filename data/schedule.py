@@ -8,7 +8,7 @@ import statsapi
 
 import debug
 from data.game import Game
-from bullpen import UpdateStatus
+from bullpen.api import UpdateStatus
 from data.utils.circular_queue import CircularQueue
 from data.config import Config
 
@@ -78,7 +78,7 @@ class Schedule:
     def num_games(self):
         return len(self._games)
 
-    def next_game(self, unless: Optional[Game] = None):
+    def next_game(self, unless: Optional[Game] = None) -> Optional[Game]:
         self.current_idx = self.__next_game_index()
         return self.__current_game(unless)
 

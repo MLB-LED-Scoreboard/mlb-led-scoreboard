@@ -3,7 +3,7 @@ from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard.pregame import Pregame
 
-from bullpen.renderer import center_text_position, scrolling_text
+from bullpen.util import center_text_position, scrolling_text
 
 
 def render_pregame(

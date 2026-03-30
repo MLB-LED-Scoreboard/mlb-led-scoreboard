@@ -1,28 +1,28 @@
 from typing import TYPE_CHECKING
 
-import bullpen
+import bullpen.api as api
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
 
 
-class Config(bullpen.Config):
+class Config(api.Config):
     def __init__(self, base) -> None:
         self.base = base
 
 
-class Data(bullpen.PluginData):
+class Data(api.PluginData):
     def __init__(self, config: Config) -> None:
         self.config = config
         self.counter = 0
 
-    def update(self, force: bool = False) -> bullpen.UpdateStatus:
+    def update(self, force: bool = False) -> api.UpdateStatus:
         self.counter += 1
-        return bullpen.UpdateStatus.SUCCESS
+        return api.UpdateStatus.SUCCESS
 
 
-class Renderer(bullpen.Renderer):
-    def __init__(self, config: Config, layout: bullpen.Layout, colors: bullpen.Color) -> None:
+class Renderer(api.Renderer):
+    def __init__(self, config: Config, layout: api.Layout, colors: api.Color) -> None:
         self.config = config
         self.layout = layout
         self.colors = colors
@@ -32,7 +32,7 @@ class Renderer(bullpen.Renderer):
         return self.scrolling_speed
 
     def render(
-        self, data: Data, canvas: "Canvas", graphics: bullpen.renderer.graphics, scrolling_text_pos: int
+        self, data: Data, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int
     ) -> None:
         canvas.Fill(255, 0, 0)
         graphics.DrawText(

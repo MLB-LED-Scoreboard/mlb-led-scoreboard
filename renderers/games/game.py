@@ -1,4 +1,4 @@
-from bullpen.renderer import scrolling_text
+from bullpen.util import scrolling_text
 
 from data import status
 from driver import graphics

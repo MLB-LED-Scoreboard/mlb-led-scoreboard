@@ -11,5 +11,5 @@ version = "0.1.0"
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[project.entry-points.'mlbled.bullpen.plugin']
+[project.entry-points.'bullpen.mlbled.plugin']
 "example" = "mlb_led_scoreboard_example_plugin:load"

@@ -1,38 +1,10 @@
-import abc
-from typing import TYPE_CHECKING, Any, Optional, Protocol
+from typing import TYPE_CHECKING, Any
 
-
-from .data import PluginData
-from .config import Config, Layout, Color
 
 if TYPE_CHECKING:
+    from .api.renderer import graphics
     from RGBMatrixEmulator.emulation.canvas import Canvas
-    from RGBMatrixEmulator import Color as GraphicsColor, Font
-
-
-class graphics(Protocol):
-    def DrawText(self, canvas: "Canvas", font: "Font", x: int, y: int, color: "GraphicsColor", text: str) -> int: ...
-
-    def DrawLine(self, canvas: "Canvas", x1: int, y1: int, x2: int, y2: int, color: "GraphicsColor") -> None: ...
-
-    def DrawCircle(self, canvas: "Canvas", x: int, y: int, r: int, color: "GraphicsColor") -> None: ...
-
-
-class Renderer(abc.ABC):
-    @abc.abstractmethod
-    def __init__(self, config: Config, layout: Layout, colors: Color) -> None: ...
-
-    @abc.abstractmethod
-    def wait_time(self) -> float: ...
-
-    @abc.abstractmethod
-    def render(
-        self, data: PluginData, canvas: "Canvas", graphics: graphics, scrolling_text_pos: int
-    ) -> Optional[int]: ...
-
-    def reset(self):
-        """Called at the end of rendering, can be used to reset state before switching off"""
-        pass
+    from RGBMatrixEmulator import Color
 
 
 def center_text_position(text: str, center_pos: int, font_width: int) -> int:
@@ -41,13 +13,13 @@ def center_text_position(text: str, center_pos: int, font_width: int) -> int:
 
 def scrolling_text(
     canvas: "Canvas",
-    graphics: graphics,
+    graphics: "graphics",
     x: int,
     y: int,
     width: int,
     font: dict[str, Any],
-    text_color: "GraphicsColor",
-    bg_color: "GraphicsColor",
+    text_color: "Color",
+    bg_color: "Color",
     text: str,
     scroll_pos: int,
     center: bool = True,

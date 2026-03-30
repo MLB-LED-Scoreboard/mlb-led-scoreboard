@@ -3,7 +3,7 @@ from data import status
 from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard import Scoreboard
-from bullpen.renderer import center_text_position, scrolling_text
+from bullpen.util import center_text_position, scrolling_text
 
 # "Manager Challenge is too long"
 CHALLENGE_SHORTHAND = "Challenge"
@@ -42,8 +42,7 @@ def __render_scroll_text(canvas, layout, colors, scoreboard, text_pos):
     bgcolor = colors.graphics_color("default.background")
     scroll_text = scoreboard.get_text_for_reason()
     return scrolling_text(
-        canvas,
-        graphics, coords["x"], coords["y"], coords["width"], font, color, bgcolor, scroll_text, text_pos
+        canvas, graphics, coords["x"], coords["y"], coords["width"], font, color, bgcolor, scroll_text, text_pos
     )
 
 

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-import bullpen
-from bullpen.renderer import center_text_position
+import bullpen.api as api
+from bullpen.util import center_text_position
 
 from .config import Config
 from .standings import Standings, Division, League
@@ -10,8 +10,8 @@ if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
 
 
-class Renderer(bullpen.Renderer):
-    def __init__(self, config: Config, layout: bullpen.Layout, colors: bullpen.Color) -> None:
+class Renderer(api.Renderer):
+    def __init__(self, config: Config, layout: api.Layout, colors: api.Color) -> None:
         self.config = config
         self.layout = layout
         self.colors = colors
@@ -26,7 +26,7 @@ class Renderer(bullpen.Renderer):
         self.update = 1
 
     def render(
-        self, data: Standings, canvas: "Canvas", graphics: bullpen.renderer.graphics, scrolling_text_pos: int
+        self, data: Standings, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int
     ) -> None:
         if data.is_postseason():
             render_bracket(
@@ -64,9 +64,7 @@ class Renderer(bullpen.Renderer):
         self.update = (self.update + 1) % 100
 
 
-def render_standings(
-    canvas, graphics, layout: bullpen.config.Layout, colors: bullpen.config.Color, division: Division, stat
-):
+def render_standings(canvas, graphics, layout: api.config.Layout, colors: api.config.Color, division: Division, stat):
     league = division.name[:2]  # al or nl
     __fill_bg(canvas, colors, league)
     if canvas.width > 32:
