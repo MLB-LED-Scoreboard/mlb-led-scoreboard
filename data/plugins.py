@@ -7,7 +7,7 @@ from data.config import Config
 import debug
 
 
-def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.Renderer]]:
+def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRenderer]]:
 
     plugins = {}
     discovered_plugins = entry_points(group=PLUGIN_GROUP)
@@ -16,7 +16,7 @@ def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.Renderer
         if name in plugins:
             raise ValueError(f"Duplicate plugin name detected: {name} from {entry_point.module}")
         try:
-            plugin: Callable[[], tuple[Type[api.PluginConfig], Type[api.PluginData], Type[api.Renderer]]] = (
+            plugin: Callable[[], tuple[Type[api.PluginConfig], Type[api.PluginData], Type[api.PluginRenderer]]] = (
                 entry_point.load()
             )
             cfg_class, data_class, renderer_class = plugin()

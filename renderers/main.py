@@ -20,7 +20,7 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data, plugins: dict[str, api.Renderer]) -> None:
+    def __init__(self, matrix, data: Data, plugins: dict[str, api.PluginRenderer]) -> None:
         self.matrix = matrix
         self.data = data
         self.canvas = matrix.CreateFrameCanvas()

@@ -21,7 +21,7 @@ class Data(api.PluginData):
         return api.UpdateStatus.SUCCESS
 
 
-class Renderer(api.Renderer):
+class Renderer(api.PluginRenderer):
     def __init__(self, config: Config, layout: api.Layout, colors: api.Color) -> None:
         self.config = config
         self.layout = layout

@@ -18,7 +18,7 @@ class graphics(Protocol):
     def DrawCircle(self, canvas: "Canvas", x: int, y: int, r: int, color: "GraphicsColor") -> None: ...
 
 
-class Renderer(abc.ABC):
+class PluginRenderer(abc.ABC):
     @abc.abstractmethod
     def __init__(self, config: PluginConfig, layout: Layout, colors: Color) -> None: ...
 

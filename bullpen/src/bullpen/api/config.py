@@ -30,6 +30,8 @@ class MLBConfig(Protocol):
     @abc.abstractmethod
     def is_postseason(self) -> bool: ...
 
+    # TODO equivalent is_offseason?
+
 
 class PluginConfig(abc.ABC):
     @abc.abstractmethod
