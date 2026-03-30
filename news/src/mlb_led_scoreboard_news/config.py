@@ -12,18 +12,19 @@ class Config(api.PluginConfig):
         self.time_format = config.time_format
         self.scrolling_speed = config.scrolling_speed
 
-        json_weather = config.for_plugin("weather")
-        self.weather_apikey = json_weather["apikey"]
-        self.weather_location = json_weather["location"]
-        self.weather_metric_units = json_weather["metric_units"]
+        # note: we can safely do raw accesses here because we are built-in
+        # and have the .example.json files as a crutch
+        # 3rd party plugins should use .get!
+        self.weather_apikey = config.plugin_config["apikey"]
+        self.weather_location = config.plugin_config["location"]
+        self.weather_metric_units = config.plugin_config["metric_units"]
 
-        json_news = config.for_plugin("news_ticker")
-        self.preferred_teams = json_news["teams"]
-        self.news_ticker_traderumors = json_news["traderumors"]
-        self.news_ticker_mlb_news = json_news["mlb_news"]
-        self.news_ticker_countdowns = json_news["countdowns"]
-        self.news_ticker_date = json_news["date"]
-        self.news_ticker_date_format = os_datetime_format(json_news["date_format"])
+        self.preferred_teams = config.plugin_config["teams"]
+        self.news_ticker_traderumors = config.plugin_config["traderumors"]
+        self.news_ticker_mlb_news = config.plugin_config["mlb_news"]
+        self.news_ticker_countdowns = config.plugin_config["countdowns"]
+        self.news_ticker_date = config.plugin_config["date"]
+        self.news_ticker_date_format = os_datetime_format(config.plugin_config["date_format"])
         self.check_preferred_teams()
 
     def check_preferred_teams(self):

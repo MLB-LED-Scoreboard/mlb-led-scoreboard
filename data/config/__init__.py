@@ -3,10 +3,11 @@ import os
 import sys
 
 from datetime import datetime, timedelta
-from collections import defaultdict
-from typing import Any, Mapping
+from collections import defaultdict, namedtuple
+from typing import Mapping
 from math import ceil
 
+from bullpen.api.config import MLBConfig
 from bullpen.util import deep_update
 from bullpen.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H
 import statsapi
@@ -24,6 +25,12 @@ DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
 DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RATE, "pregame": DEFAULT_ROTATE_RATE}
+
+
+ConfigForPlugin = namedtuple(
+    "ConfigForPlugin",
+    ["scrolling_speed", "time_format", "debug", "plugin_config", "parse_today", "is_postseason"],
+)
 
 
 class Config:
@@ -170,8 +177,20 @@ class Config:
     def screen_time_at_priority(self, screen: str, priority: int) -> int:
         return self.rotation_screen_rules.get(priority, {}).get(screen, 0)
 
-    def for_plugin(self, plugin_name: str) -> dict[str, Any]:
-        return self.config_json.get(plugin_name, {})
+    def for_plugin(self, plugin_name: str) -> MLBConfig:
+
+        match plugin_name:
+            case "news":
+                # for legacy reasons, we let this plugin have two separate config names
+                plugin_config = self.config_json.get("news_ticker", {}) | self.config_json.get("weather")
+            case "standings":
+                plugin_config = self.config_json.get("standings", {})
+            case _:
+                plugin_config = self.config_json.get("plugins", {}).get(plugin_name, {})
+
+        return ConfigForPlugin(
+            self.scrolling_speed, self.time_format, self.debug, plugin_config, self.parse_today, self.is_postseason
+        )
 
     def read_json(self, path):
         """

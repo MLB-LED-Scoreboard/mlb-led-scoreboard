@@ -26,10 +26,11 @@ import driver
 from driver import RGBMatrix, __version__
 from utils import args, led_matrix_options
 
-from bullpen.plugins import load_plugins
 
 from data import Data
 from data.config import Config
+from data.plugins import load_plugins
+
 from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
 

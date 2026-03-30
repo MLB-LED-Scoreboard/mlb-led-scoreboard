@@ -7,12 +7,22 @@ if TYPE_CHECKING:
 
 
 class MLBConfig(Protocol):
-    scrolling_speed: float
-    time_format: str
-    debug: bool
 
+    @property
     @abc.abstractmethod
-    def for_plugin(self, plugin_name: str) -> dict[str, Any]: ...
+    def scrolling_speed(self) -> float: ...
+
+    @property
+    @abc.abstractmethod
+    def time_format(self) -> str: ...
+
+    @property
+    @abc.abstractmethod
+    def debug(self) -> bool: ...
+
+    @property
+    @abc.abstractmethod
+    def plugin_config(self) -> dict[str, Any]: ...
 
     @abc.abstractmethod
     def parse_today(self) -> datetime.date: ...
