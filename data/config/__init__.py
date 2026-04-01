@@ -29,7 +29,7 @@ DEFAULT_ROTATE_RATES = {"live": DEFAULT_ROTATE_RATE, "final": DEFAULT_ROTATE_RAT
 
 ConfigForPlugin = namedtuple(
     "ConfigForPlugin",
-    ["scrolling_speed", "time_format", "debug", "plugin_config", "parse_today", "is_postseason"],
+    ["scrolling_speed", "time_format", "plugin_config", "parse_today", "is_postseason"],
 )
 
 
@@ -191,7 +191,7 @@ class Config:
         # TODO also work out some layout/color subsetting, with defaults?
 
         return ConfigForPlugin(
-            self.scrolling_speed, self.time_format, self.debug, plugin_config, self.parse_today, self.is_postseason
+            self.scrolling_speed, self.time_format, plugin_config, self.parse_today, self.is_postseason
         )
 
     def read_json(self, path):

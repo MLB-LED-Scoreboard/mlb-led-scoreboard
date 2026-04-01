@@ -1,5 +1,5 @@
 from importlib.metadata import entry_points
-from typing import Callable, Type
+from typing import Callable
 
 from bullpen import PLUGIN_GROUP, api
 
@@ -16,9 +16,7 @@ def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRe
         if name in plugins:
             raise ValueError(f"Duplicate plugin name detected: {name} from {entry_point.module}")
         try:
-            plugin: Callable[[], tuple[Type[api.PluginConfig], Type[api.PluginData], Type[api.PluginRenderer]]] = (
-                entry_point.load()
-            )
+            plugin: Callable[[], api.PLUGIN_DEFINITION] = entry_point.load()
             cfg_class, data_class, renderer_class = plugin()
             cfg = cfg_class(config.for_plugin(name))
             data = data_class(cfg)

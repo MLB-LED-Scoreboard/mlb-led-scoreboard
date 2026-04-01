@@ -18,10 +18,6 @@ class MLBConfig(Protocol):
 
     @property
     @abc.abstractmethod
-    def debug(self) -> bool: ...
-
-    @property
-    @abc.abstractmethod
     def plugin_config(self) -> dict[str, Any]: ...
 
     @abc.abstractmethod

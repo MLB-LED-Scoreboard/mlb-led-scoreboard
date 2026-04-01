@@ -42,5 +42,5 @@ class Renderer(api.PluginRenderer):
         )
 
 
-def load() -> tuple[type[Config], type[Data], type[Renderer]]:
+def load() -> api.PLUGIN_DEFINITION:
     return Config, Data, Renderer
