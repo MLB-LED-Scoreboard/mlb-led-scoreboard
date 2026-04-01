@@ -1,4 +1,5 @@
 from bullpen.api import UpdateStatus, PluginData
+from bullpen.logging import LOGGER
 from data.config import Config
 
 from data.schedule import Schedule
@@ -29,7 +30,18 @@ class Data:
         self.__process_network_status(self.schedule.update())
 
     def refresh_plugins(self) -> None:
-        self.__process_network_status(UpdateStatus.merge(plugin.update() for plugin in self.plugin_data.values()))
+        statuses = []
+        for name, plugin in self.plugin_data.items():
+            try:
+                statuses.append(plugin.update())
+            except KeyboardInterrupt as e:
+                raise e
+            except:
+                LOGGER.exception("Failure while updating plugin %s", name)
+                statuses.append(UpdateStatus.FAIL)
+
+        status = UpdateStatus.merge(statuses)
+        self.__process_network_status(status)
 
     def __process_network_status(self, status) -> None:
         if status == UpdateStatus.SUCCESS:

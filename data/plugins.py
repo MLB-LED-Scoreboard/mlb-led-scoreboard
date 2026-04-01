@@ -24,10 +24,7 @@ def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRe
             data = data_class(cfg)
             renderer = renderer_class(cfg, config.layout, config.scoreboard_colors)
         except Exception as e:
-            if config.debug:
-                raise ValueError(f"Error loading plugin {name} from {entry_point.module}") from e
-            else:
-                debug.warning("Error loading plugin %s from %s: %s", name, entry_point.module, str(e))
+            raise ValueError(f"Error loading plugin {name} from {entry_point.module}") from e
 
         plugins[name] = (data, renderer)
 

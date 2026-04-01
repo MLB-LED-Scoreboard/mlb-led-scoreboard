@@ -188,6 +188,8 @@ class Config:
             case _:
                 plugin_config = self.config_json.get("plugins", {}).get(plugin_name, {})
 
+        # TODO also work out some layout/color subsetting, with defaults?
+
         return ConfigForPlugin(
             self.scrolling_speed, self.time_format, self.debug, plugin_config, self.parse_today, self.is_postseason
         )
