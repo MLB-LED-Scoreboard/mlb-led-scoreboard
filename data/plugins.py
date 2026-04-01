@@ -4,7 +4,7 @@ from typing import Callable
 from bullpen import PLUGIN_GROUP, api
 
 from data.config import Config
-import debug
+from bullpen.logging import LOGGER
 
 
 def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRenderer]]:
@@ -27,6 +27,6 @@ def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRe
         plugins[name] = (data, renderer)
 
     plugin_names = list(plugins.keys()) + ["news"]
-    debug.info("Loaded plugins: %s", ", ".join(plugin_names))
+    LOGGER.info("Loaded plugins: %s", ", ".join(plugin_names))
     config.check_screens(plugin_names)
     return plugins

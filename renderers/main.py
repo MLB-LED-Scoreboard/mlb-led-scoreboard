@@ -4,7 +4,7 @@ from typing import Callable, NoReturn
 import bullpen.api as api
 
 
-import debug
+from bullpen.logging import LOGGER
 from data import Data, status
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
@@ -37,7 +37,7 @@ class MainRenderer:
 
             for plugin in self.data.config.rotation_screen_rules.get(self.data.schedule.priority, {}):
                 if t := self.data.config.screen_time_at_priority(plugin, self.data.schedule.priority):
-                    debug.log("Rotating to plugin %s for %d seconds", plugin, t)
+                    LOGGER.debug("Rotating to plugin %s for %d seconds", plugin, t)
                     self.__draw_plugin_screen(plugin, any_of(timer_cond(t), self.scrolling_finished_cond()))
 
     def __render_games(self):
@@ -47,7 +47,7 @@ class MainRenderer:
 
             game = self.data.games.next()
             if game is None:
-                debug.warning("Render thread: no game to render, sleeping for a bit")
+                LOGGER.warning("Render thread: no game to render, sleeping for a bit")
                 time.sleep(1)
                 break
 
@@ -55,7 +55,7 @@ class MainRenderer:
                 break
             seen_games.add(game.game_id)
 
-            debug.log("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
+            LOGGER.debug("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
 
             cond = any_of(
                 timer_cond(self.data.config.rotate_rate_for_status(game.status())),

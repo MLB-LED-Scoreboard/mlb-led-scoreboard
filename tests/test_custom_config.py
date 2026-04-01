@@ -35,7 +35,7 @@ def make_config(config_path="nonexistent", use_layout=False, use_teams=False, us
         return original_read_json(self, path)
 
     # Patch reads, patch warning on missing files
-    with mock.patch.object(Config, "read_json", patched_read_json), mock.patch("debug.warning"):
+    with mock.patch.object(Config, "read_json", patched_read_json), mock.patch("bullpen.logging.LOGGER.warning"):
         return Config(config_path, 32, 32)
 
 

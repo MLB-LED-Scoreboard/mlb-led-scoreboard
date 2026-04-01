@@ -14,7 +14,7 @@ import statsapi
 
 from data.config.game_screen import GameScreen, parse_game_screen
 from data.config.other_screens import TimeRule, parse_time_rule, parse_with_priority
-import debug
+from bullpen.logging import LOGGER
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
@@ -63,7 +63,7 @@ class Config:
         try:
             self.scrolling_speed = SCROLLING_SPEEDS[json["scrolling_speed"]]
         except IndexError:
-            debug.warning(
+            LOGGER.warning(
                 "Scrolling speed should be an integer between 0 and 6. Using default value of {}".format(
                     DEFAULT_SCROLLING_SPEED
                 )
@@ -95,18 +95,18 @@ class Config:
 
     def check_delay(self):
         if self.sync_delay_seconds < 0:
-            debug.warning("sync_delay_seconds should be a positive integer. Using default value of 0")
+            LOGGER.warning("sync_delay_seconds should be a positive integer. Using default value of 0")
             self.sync_delay_seconds = 0
         if self.sync_delay_seconds != int(self.sync_delay_seconds):
-            debug.warning("sync_delay_seconds should be an integer." f" Truncating to {int(self.sync_delay_seconds)}")
+            LOGGER.warning("sync_delay_seconds should be an integer." f" Truncating to {int(self.sync_delay_seconds)}")
             self.sync_delay_seconds = int(self.sync_delay_seconds)
 
     def check_api_refresh_rate(self):
         if self.api_refresh_rate < 3:
-            debug.warning("api_refresh_rate should be a positive integer greater than 2. Using default value of 10")
+            LOGGER.warning("api_refresh_rate should be a positive integer greater than 2. Using default value of 10")
             self.api_refresh_rate = 10
         if self.api_refresh_rate != int(self.api_refresh_rate):
-            debug.warning("api_refresh_rate should be an integer." f" Truncating to {int(self.api_refresh_rate)}")
+            LOGGER.warning("api_refresh_rate should be an integer." f" Truncating to {int(self.api_refresh_rate)}")
             self.api_refresh_rate = int(self.api_refresh_rate)
 
     def check_screens(self, plugins: list[str]):
@@ -131,7 +131,7 @@ class Config:
                 self.rotation_rates[key] = rate
             except:
                 # Use the default rotate rate if it fails
-                debug.warning(
+                LOGGER.warning(
                     'Unable to convert rotate_rates["{}"] to a Float. Using default value. ({})'.format(
                         key, DEFAULT_ROTATE_RATE
                     )
@@ -139,7 +139,7 @@ class Config:
                 self.rotation_rates[key] = DEFAULT_ROTATE_RATE
 
             if self.rotation_rates[key] < MINIMUM_ROTATE_RATE:
-                debug.warning(
+                LOGGER.warning(
                     'rotate_rates["{}"] is too low. Please set it greater than {}. Using default value. ({})'.format(
                         key, MINIMUM_ROTATE_RATE, DEFAULT_ROTATE_RATE
                     )
@@ -201,7 +201,7 @@ class Config:
         Exception if json invalid.
         """
         if not os.path.isfile(path):
-            debug.warning("Config file %s not found. Using default values for this file.", path)
+            LOGGER.warning("Config file %s not found. Using default values for this file.", path)
             return {}
 
         with open(path) as f:
@@ -217,7 +217,7 @@ class Config:
         reference_config = self.read_json(reference_path)
         custom_config = self.read_json(path)
         if not reference_config:
-            debug.critical(
+            LOGGER.critical(
                 f"""\
 Invalid example configuration. Make sure {reference_filename} exists in root directory.
 You should not edit or move this file!
@@ -229,7 +229,7 @@ You should not edit or move this file!
             if "format" in reference_config and (
                 "format" not in custom_config or custom_config["format"] != reference_config["format"]
             ):
-                debug.error(
+                LOGGER.error(
                     "Config format version {} does not match expected format version {}. Please update your config file.".format(
                         custom_config.get("format"), reference_config["format"]
                     )
@@ -245,7 +245,7 @@ You should not edit or move this file!
         reference_path = COLORS_DIRECTORY / reference_filename
         reference_colors = self.read_json(reference_path)
         if not reference_colors:
-            debug.critical(
+            LOGGER.critical(
                 f"""\
 Invalid reference color file. Make sure {reference_filename} exists in colors/.
 You should not edit or move this file!"
@@ -255,7 +255,7 @@ You should not edit or move this file!"
 
         custom_colors = self.read_json(filename)
         if custom_colors:
-            debug.info("Custom '%s.json' colors found. Merging with default reference colors.", base_filename)
+            LOGGER.info("Custom '%s.json' colors found. Merging with default reference colors.", base_filename)
             new_colors = deep_update(reference_colors, custom_colors)
             return new_colors
         return reference_colors
@@ -270,7 +270,7 @@ You should not edit or move this file!"
             supported_dimensions = sorted(
                 [file.name.split(".")[0] for file in COORDINATES_DIRECTORY.glob("*.example.json")], reverse=True
             )
-            debug.critical(
+            LOGGER.critical(
                 f"""\
 Invalid reference layout file. Make sure {reference_filename} exists in coordinates/
 You should not edit or move this file!
@@ -284,7 +284,7 @@ If you aren't sure why you're seeing this, there might not be official support f
         # Load and merge any layout customizations
         custom_layout = self.read_json(filename)
         if custom_layout:
-            debug.info("Custom '%dx%d.json' found. Merging with default reference layout.", width, height)
+            LOGGER.info("Custom '%dx%d.json' found. Merging with default reference layout.", width, height)
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
@@ -337,6 +337,6 @@ def _get_playoff_start_date(year: int):
         dates = statsapi.get("season", {"sportId": 1, "seasonId": year})["seasons"][0]
         return datetime.strptime(dates["regularSeasonEndDate"], "%Y-%m-%d").date()
     except Exception:
-        debug.exception("Failed to get season data, defaulting playoff start date to Oct 1")
+        LOGGER.exception("Failed to get season data, defaulting playoff start date to Oct 1")
 
     return datetime(year, 10, 1).date()
