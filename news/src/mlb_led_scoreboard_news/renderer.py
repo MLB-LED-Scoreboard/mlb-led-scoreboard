@@ -24,6 +24,23 @@ class Renderer(api.PluginRenderer):
         self.layout = layout
         self.colors = colors
 
+        self.bg = colors.graphics_color("default.background")
+
+        time_format = config.time_format
+        self.time_fmt_str = "{}:%M".format(time_format)
+        if time_format == TIME_FORMAT_12H:
+            self.time_fmt_str += "%p"
+        self.time_coords = layout.coords("offday.time")
+        self.time_font = layout.font("offday.time")
+        self.time_color = colors.graphics_color("offday.time")
+
+        self.scroll_coords = layout.coords("offday.scrolling_text")
+        self.scroll_font = layout.font("offday.scrolling_text")
+        self.scroll_color = colors.graphics_color("offday.scrolling_text")
+
+        self.icon_coords = layout.coords("offday.weather_icon")
+        self.icon_color = colors.color("offday.weather_icon")
+
         self.first = True
 
     def wait_time(self) -> float:
@@ -36,59 +53,66 @@ class Renderer(api.PluginRenderer):
             else:
                 data.headlines.advance_ticker()
 
-        color = self.colors.color("default.background")
-        canvas.Fill(color["r"], color["g"], color["b"])
+        canvas.Fill(self.bg.red, self.bg.green, self.bg.blue)
 
-        pos = render_offday_screen(
+        text_len = self._render_news_ticker(canvas, graphics, data.headlines, scrolling_text_pos)
+        self._render_clock(canvas, graphics)
+        self._render_weather(canvas, graphics, self.layout, self.colors, data.weather)
+
+        return text_len
+
+    def _render_clock(self, canvas, graphics):
+
+        time_text = time.strftime(self.time_fmt_str)
+
+        text_x = center_text_position(time_text, self.time_coords["x"], self.time_font["size"]["width"])
+        graphics.DrawText(canvas, self.time_font["font"], text_x, self.time_coords["y"], self.time_color, time_text)
+
+    def _render_weather(self, canvas, graphics, layout, colors, weather: Weather):
+        if weather.available():
+            self._render_weather_icon(canvas, weather.icon())
+            _render_weather_text(canvas, graphics, layout, colors, weather.conditions, "conditions")
+            _render_weather_text(canvas, graphics, layout, colors, weather.temperature_string(), "temperature")
+            _render_weather_text(canvas, graphics, layout, colors, weather.wind_speed_string(), "wind_speed")
+            _render_weather_text(canvas, graphics, layout, colors, weather.wind_dir_string(), "wind_dir")
+            _render_weather_text(canvas, graphics, layout, colors, weather.wind_string(), "wind")
+
+    def _render_weather_icon(self, canvas, weather_icon):
+
+        resize = self.icon_coords.get("rescale_icon")
+
+        if resize:
+            weather_icon = weather_icon.resize(
+                (weather_icon.width * resize, weather_icon.height * resize), Image.NEAREST
+            )
+        for x in range(weather_icon.width):
+            for y in range(weather_icon.height):
+                pixel = weather_icon.getpixel((x, y))
+                if pixel[3] > 0:
+                    canvas.SetPixel(
+                        self.icon_coords["x"] + x,
+                        self.icon_coords["y"] + y,
+                        self.icon_color["r"],
+                        self.icon_color["g"],
+                        self.icon_color["b"],
+                    )
+
+    def _render_news_ticker(self, canvas: "Canvas", graphics, headlines: Headlines, text_pos):
+
+        ticker_text = headlines.ticker_string()
+        return scrolling_text(
             canvas,
             graphics,
-            self.layout,
-            self.colors,
-            data.weather,
-            data.headlines,
-            self.config.time_format,
-            scrolling_text_pos,
+            self.scroll_coords["x"],
+            self.scroll_coords["y"],
+            self.scroll_coords["width"],
+            self.scroll_font,
+            self.scroll_color,
+            self.bg,
+            ticker_text,
+            text_pos,
+            force_scroll=True,
         )
-        return pos
-
-
-def render_offday_screen(
-    canvas,
-    graphics,
-    layout: api.Layout,
-    colors: api.Color,
-    weather: Weather,
-    headlines: Headlines,
-    time_format,
-    text_pos,
-):
-    text_len = _render_news_ticker(canvas, graphics, layout, colors, headlines, text_pos)
-    _render_clock(canvas, graphics, layout, colors, time_format)
-    _render_weather(canvas, graphics, layout, colors, weather)
-
-    return text_len
-
-
-def _render_clock(canvas, graphics, layout, colors, time_format):
-    time_format_str = "{}:%M".format(time_format)
-    if time_format == TIME_FORMAT_12H:
-        time_format_str += "%p"
-    time_text = time.strftime(time_format_str)
-    coords = layout.coords("offday.time")
-    font = layout.font("offday.time")
-    color = colors.graphics_color("offday.time")
-    text_x = center_text_position(time_text, coords["x"], font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, time_text)
-
-
-def _render_weather(canvas, graphics, layout, colors, weather):
-    if weather.available():
-        _render_weather_icon(canvas, layout, colors, weather.icon())
-        _render_weather_text(canvas, graphics, layout, colors, weather.conditions, "conditions")
-        _render_weather_text(canvas, graphics, layout, colors, weather.temperature_string(), "temperature")
-        _render_weather_text(canvas, graphics, layout, colors, weather.wind_speed_string(), "wind_speed")
-        _render_weather_text(canvas, graphics, layout, colors, weather.wind_dir_string(), "wind_dir")
-        _render_weather_text(canvas, graphics, layout, colors, weather.wind_string(), "wind")
 
 
 def _render_weather_text(canvas, graphics, layout, colors, text, keyname):
@@ -97,38 +121,3 @@ def _render_weather_text(canvas, graphics, layout, colors, text, keyname):
     color = colors.graphics_color("offday.{}".format(keyname))
     text_x = center_text_position(text, coords["x"], font["size"]["width"])
     graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
-
-
-def _render_weather_icon(canvas, layout, colors, weather_icon):
-    coords = layout.coords("offday.weather_icon")
-    color = colors.color("offday.weather_icon")
-    resize = coords.get("rescale_icon")
-
-    if resize:
-        weather_icon = weather_icon.resize((weather_icon.width * resize, weather_icon.height * resize), Image.NEAREST)
-    for x in range(weather_icon.width):
-        for y in range(weather_icon.height):
-            pixel = weather_icon.getpixel((x, y))
-            if pixel[3] > 0:
-                canvas.SetPixel(coords["x"] + x, coords["y"] + y, color["r"], color["g"], color["b"])
-
-
-def _render_news_ticker(canvas, graphics, layout, colors, headlines, text_pos):
-    coords = layout.coords("offday.scrolling_text")
-    font = layout.font("offday.scrolling_text")
-    color = colors.graphics_color("offday.scrolling_text")
-    bgcolor = colors.graphics_color("default.background")
-    ticker_text = headlines.ticker_string()
-    return scrolling_text(
-        canvas,
-        graphics,
-        coords["x"],
-        coords["y"],
-        coords["width"],
-        font,
-        color,
-        bgcolor,
-        ticker_text,
-        text_pos,
-        force_scroll=True,
-    )

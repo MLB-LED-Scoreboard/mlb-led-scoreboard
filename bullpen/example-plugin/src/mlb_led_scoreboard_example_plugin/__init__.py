@@ -24,17 +24,19 @@ class Data(api.PluginData):
 class Renderer(api.PluginRenderer):
     def __init__(self, config: Config, layout: api.Layout, colors: api.Color) -> None:
         self.config = config
-        self.layout = layout
         self.colors = colors
+
+        self.font = layout.font("example.font")
+        self.bg = (255, 0, 0)
 
     def wait_time(self) -> float:
         return 0.5
 
     def render(self, data: Data, canvas: "Canvas", graphics: api.renderer.graphics, scrolling_text_pos: int) -> None:
-        canvas.Fill(255, 0, 0)
+        canvas.Fill(*self.bg)
         graphics.DrawText(
             canvas,
-            self.layout.font("example")["font"],
+            self.font["font"],
             0,
             10,
             graphics.Color(255, 255, 255),
