@@ -7,9 +7,6 @@
     "format"
   ],
   "properties": {
-    "$schema": {
-      "type": "string"
-    },
     "x-schema": {
       "type": "string",
       "default": "./schemas/config.schema.json",
