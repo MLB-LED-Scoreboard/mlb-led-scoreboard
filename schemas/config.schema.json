@@ -6,6 +6,9 @@
   "required": [
     "format"
   ],
+  "patternProperties": {
+    "^\\$schema$": { "type": "string" }
+  },
   "properties": {
     "x-schema": {
       "type": "string",
