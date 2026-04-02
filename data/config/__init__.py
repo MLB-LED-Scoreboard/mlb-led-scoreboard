@@ -354,7 +354,7 @@ def _matrix_options(json, clargs):
 
     for flag, setting in vars(clargs).items():
         if flag in sys.argv or flag not in args:
-            args.__setattr__(flag, setting)
+            setattr(args, flag, setting)
 
     from driver import RGBMatrixOptions
 

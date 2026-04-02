@@ -14,7 +14,7 @@ def make_test_config(**kwargs):
     clargs = ScoreboardCLI().default_arguments()
 
     for flag, value in kwargs.items():
-        clargs.__setattr__(flag, value)
+        setattr(clargs, flag, value)
 
     if kwargs.get("config", None) is None:
         clargs.config = TEST_CONFIG_PATH
