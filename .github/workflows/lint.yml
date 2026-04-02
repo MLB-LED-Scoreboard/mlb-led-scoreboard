@@ -20,7 +20,7 @@ jobs:
           pip install -r requirements.dev.txt
       - name: Lint
         run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
+          git fetch origin ${{ github.base_ref }}
           CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.py$' || true)
           if [ -n "$CHANGED" ]; then
             black --check --diff $CHANGED
