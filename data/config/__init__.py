@@ -70,7 +70,9 @@ class Config:
             )
             self.scrolling_speed = SCROLLING_SPEEDS[DEFAULT_SCROLLING_SPEED]
 
-        self.config_json = json
+        self.standings_json = json.get("standings", {})
+        self.news_json = json.get("news_ticker", {}) | json.get("weather")
+        self.plugin_json = json.get("plugins", {})
 
         # Get the layout info
         json = self.__get_layout(width, height)
@@ -182,13 +184,11 @@ class Config:
         match plugin_name:
             case "news":
                 # for legacy reasons, we let this plugin have two separate config names
-                plugin_config = self.config_json.get("news_ticker", {}) | self.config_json.get("weather")
+                plugin_config = self.news_json
             case "standings":
-                plugin_config = self.config_json.get("standings", {})
+                plugin_config = self.standings_json
             case _:
-                plugin_config = self.config_json.get("plugins", {}).get(plugin_name, {})
-
-        # TODO also work out some layout/color subsetting, with defaults?
+                plugin_config = self.plugin_json.get(plugin_name, {})
 
         return ConfigForPlugin(
             self.scrolling_speed, self.time_format, plugin_config, self.parse_today, self.is_postseason

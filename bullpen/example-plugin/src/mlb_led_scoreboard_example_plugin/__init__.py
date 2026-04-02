@@ -34,10 +34,10 @@ class Renderer(api.PluginRenderer):
         canvas.Fill(255, 0, 0)
         graphics.DrawText(
             canvas,
-            self.layout.font("network")["font"],
+            self.layout.font("example")["font"],
             0,
             10,
-            self.colors.graphics_color("network.text"),
+            graphics.Color(255, 255, 255),
             f"Counter: {data.counter}",
         )
 

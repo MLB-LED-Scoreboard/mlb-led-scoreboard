@@ -35,6 +35,9 @@ class PluginConfig(abc.ABC):
 
 
 class Layout(abc.ABC):
+    width: int
+    height: int
+
     @abc.abstractmethod
     def font(self, keypath: str) -> dict[str, Any]: ...
 
