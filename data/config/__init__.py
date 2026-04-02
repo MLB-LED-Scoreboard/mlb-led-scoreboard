@@ -294,6 +294,9 @@ If you aren't sure why you're seeing this, there might not be official support f
         return reference_layout
 
     def __eq__(self, other):
+        if not isinstance(other, Config):
+            return False
+
         self_keys = { k: v for k, v in vars(self).items() if k != 'matrix_options' }
         other_keys = { k: v for k, v in vars(other).items() if k != 'matrix_options' }
 
@@ -302,7 +305,7 @@ If you aren't sure why you're seeing this, there might not be official support f
         # Spot check matrix options. These don't need strict equality, for config we only care about size.
         options_match = self.matrix_options.cols == other.matrix_options.cols and self.matrix_options.rows == other.matrix_options.rows
 
-        return isinstance(other, Config) and keys_match and options_match
+        return keys_match and options_match
 
 
 def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[str, Mapping[int, int]]]:
