@@ -2,13 +2,13 @@ import argparse
 import sys
 
 
-class ScoreboardCLI():
+class ScoreboardCLI:
     def __init__(self):
         self.parser = self.__make_parser()
 
     def arguments(self) -> argparse.Namespace:
         """Returns the parsed CLI arguments as a Namespace."""
-        if 'unittest' in sys.modules:
+        if "unittest" in sys.modules:
             # If in test and instantiate a config, only parse the known flags to avoid crashes.
             args, _ = self.parser.parse_known_args()
             return args
@@ -58,7 +58,9 @@ class ScoreboardCLI():
         parser.add_argument(
             "--led-cols", action="store", help="Panel columns. Typically 32 or 64. (Default: 32)", default=32, type=int
         )
-        parser.add_argument("--led-chain", action="store", help="Daisy-chained boards. (Default: 1)", default=1, type=int)
+        parser.add_argument(
+            "--led-chain", action="store", help="Daisy-chained boards. (Default: 1)", default=1, type=int
+        )
         parser.add_argument(
             "--led-parallel",
             action="store",
@@ -143,7 +145,11 @@ class ScoreboardCLI():
             type=int,
         )
         parser.add_argument(
-            "--led-pwm-dither-bits", action="store", help="Time dithering of lower bits (Default: 0)", default=0, type=int,
+            "--led-pwm-dither-bits",
+            action="store",
+            help="Time dithering of lower bits (Default: 0)",
+            default=0,
+            type=int,
         )
         parser.add_argument(
             "--config",
@@ -156,10 +162,12 @@ class ScoreboardCLI():
             "--emulated",
             action="store_const",
             help="Force using emulator mode over default matrix display.",
-            const=True
+            const=True,
         )
         parser.add_argument(
-            "--drop-privileges", action="store_true", help="Force the matrix driver to drop root privileges after setup."
+            "--drop-privileges",
+            action="store_true",
+            help="Force the matrix driver to drop root privileges after setup.",
         )
 
         return parser
