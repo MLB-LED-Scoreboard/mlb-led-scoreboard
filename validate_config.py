@@ -2,9 +2,17 @@ import copy, json, os
 
 from data.paths import *
 
+MODIFIER = "-"
+IGNORE_SUBPATHS = "*"
+
+def make_modifier(mod):
+  return MODIFIER + mod
+
 VALIDATIONS = {
   ROOT_DIRECTORY: {
-    "ignored_keys": [],
+    "ignored_keys": [
+      "matrix" + make_modifier(IGNORE_SUBPATHS)
+    ],
     "renamed_keys": {},
   },
   COORDINATES_DIRECTORY: {
@@ -125,6 +133,14 @@ def reversible(d):
   
   return o
 
+def get_modifiers(key):
+  parts = key.split(MODIFIER)
+
+  if len(parts) == 1:
+    return parts[0], []
+  
+  return parts[0], parts[1:]
+
 def upsert_config(config, schema, options={}, result=None, changeset=None, path=None):
   '''
   Recursively updates deeply nested configuration against a given schema.
@@ -147,13 +163,20 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
 
   dirty = False
 
-  ignored_keys = options.get("ignored_keys", [])
+  ignored_keys = [get_modifiers(key) for key in options.get("ignored_keys", [])]
   renamed_keys = reversible(options.get("renamed_keys", {}))
 
   for kind in [config, schema]:
     for key in kind.keys():
-      if ignored_keys and key in ignored_keys and kind == config:
-        continue
+      if ignored_keys:
+        ignore = False
+        for ignored_key, modifiers in ignored_keys:
+          if ignored_key == key:
+            ignore = kind == config or IGNORE_SUBPATHS in modifiers
+            break
+        
+        if ignore:
+          continue
 
       if key in config and key in schema and key in result:
         if isinstance(result[key], dict):

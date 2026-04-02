@@ -8,12 +8,12 @@ A similar set of tests with stored responses may be separately added in the futu
 import unittest
 import unittest.mock
 import data.schedule
-import data.config
-from data.game import Game
+
+from tests.helpers import make_test_config
 
 
 class TestSchedule(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-midseason", 32, 32)
+    demo_config = make_test_config(config="tests/data/demo-date-midseason", led_cols=32, led_rows=32)
     schedule = data.schedule.Schedule(demo_config)
 
     def test_schedule_midseason(self):
@@ -35,7 +35,7 @@ class TestSchedule(unittest.TestCase):
 
 
 class TestSchedulePlayoff(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-playoffs", 32, 32)
+    demo_config = make_test_config(config="tests/data/demo-date-playoffs", led_cols=32, led_rows=32)
     schedule = data.schedule.Schedule(demo_config)
 
     def test_schedule_playoff(self):
@@ -45,7 +45,7 @@ class TestSchedulePlayoff(unittest.TestCase):
 
 
 class TestScheduleOffday(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-offday", 32, 32)
+    demo_config = make_test_config(config="tests/data/demo-date-offday", led_cols=32, led_rows=32)
     schedule = data.schedule.Schedule(demo_config)
 
     def test_schedule_offday(self):

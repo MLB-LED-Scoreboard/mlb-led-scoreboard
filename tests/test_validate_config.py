@@ -112,6 +112,9 @@ class TestValidateConfigMethods(unittest.TestCase):
       with mock.patch("os.path.isfile") as mocked_isfile:
         mocked_isfile.side_effect = lambda file: "config.example.json" in file
 
+        ROOT_IGNORED_KEYS = [
+          "matrix-*"
+        ]
         COORDINATES_IGNORED_KEYS = [
           "font_name",
           "no_hitter",
@@ -124,7 +127,7 @@ class TestValidateConfigMethods(unittest.TestCase):
         self.assertEqual(
           custom_config_files(),
           [
-            (ROOT_DIRECTORY, "config.json", { "ignored_keys": [], "renamed_keys": {} }),
+            (ROOT_DIRECTORY, "config.json", { "ignored_keys": ROOT_IGNORED_KEYS, "renamed_keys": {} }),
             (COORDINATES_DIRECTORY, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {} }),
             (COLORS_DIRECTORY, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {} }),
           ]
@@ -436,6 +439,29 @@ class TestValidateConfigMethods(unittest.TestCase):
         "add": [
           { "that": { "those": False } }
         ],
+        "delete": [],
+        "rename": []
+      }
+    )
+
+  def test_config_with_ignore_subpath_keys_in_config(self):
+    '''
+    Subkeys in the IGNORE_SUBPATH modifier section are not removed.
+    '''
+    config = { "subset1": { "subset2": { "subset3": 1 } } }
+    schema = { "subset1": {} }
+
+    options = { "ignored_keys": ["subset1-*"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertFalse(changed)
+    self.assertNotEqual(schema, result)
+    self.assertEqual(result, config)
+    self.assertEqual(
+      changes,
+      {
+        "add": [],
         "delete": [],
         "rename": []
       }

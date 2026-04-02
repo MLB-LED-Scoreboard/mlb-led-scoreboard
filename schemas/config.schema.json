@@ -7,6 +7,9 @@
     "format"
   ],
   "properties": {
+    "$schema": {
+      "type": "string"
+    },
     "x-schema": {
       "type": "string",
       "default": "./schemas/config.schema.json",
@@ -19,6 +22,10 @@
       "const": 9.0,
       "default": 9.0,
       "x-hidden": true
+    },
+    "matrix": {
+      "description": "Matrix driver options. Identical to command line arguments.",
+      "default": {}
     },
     "rotation": {
       "type": "object",

@@ -32,10 +32,7 @@ from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
 
 
-def main(matrix, config_base):
-
-    # Read scoreboard options from config.json if it exists
-    config = Config(config_base, matrix.width, matrix.height)
+def main(matrix, config):
     # Set the scoreboard logger
     logger = logging.getLogger("mlbled")
     if config.debug:
@@ -97,18 +94,16 @@ def __render_main(matrix, data):
 
 
 if __name__ == "__main__":
-    # Check for led configuration arguments
-    clargs = args()
-    matrixOptions = led_matrix_options(clargs)
+    config = Config(args())
 
     if driver.is_emulated():
-        matrixOptions.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
-        matrixOptions.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
+        config.matrix_options.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
+        config.matrix_options.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
 
-    # Initialize the matrix
-    matrix = RGBMatrix(options=matrixOptions)
+    matrix = RGBMatrix(options=config.matrix_options)
+
     try:
-        main(matrix, clargs.config)
+        main(matrix, config)
     except:
         debug.exception("Untrapped error in main!")
         sys.exit(1)

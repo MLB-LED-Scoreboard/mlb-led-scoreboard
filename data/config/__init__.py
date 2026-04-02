@@ -2,6 +2,7 @@ import json
 import os
 import sys
 
+from argparse import Namespace
 from datetime import datetime, timedelta
 from collections import defaultdict
 from typing import Mapping
@@ -27,8 +28,11 @@ DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config:
-    def __init__(self, config_path, width, height):
-        json = self.__get_config(config_path)
+    def __init__(self, clargs):
+        json = self.__get_config(clargs.config)
+
+        # Matrix options (merged with CLI args)
+        self.matrix_options = _matrix_options(json['matrix'], clargs)
 
         # News Ticker
         self.preferred_teams = json["news_ticker"]["teams"]
@@ -75,6 +79,8 @@ class Config:
             self.scrolling_speed = SCROLLING_SPEEDS[DEFAULT_SCROLLING_SPEED]
 
         # Get the layout info
+        width = self.matrix_options.cols
+        height = self.matrix_options.rows
         json = self.__get_layout(width, height)
         self.layout = Layout(json, width, height)
 
@@ -288,7 +294,15 @@ If you aren't sure why you're seeing this, there might not be official support f
         return reference_layout
 
     def __eq__(self, other):
-        return isinstance(other, Config) and vars(self) == vars(other)
+        self_keys = { k: v for k, v in vars(self).items() if k != 'matrix_options' }
+        other_keys = { k: v for k, v in vars(other).items() if k != 'matrix_options' }
+
+        keys_match = self_keys == other_keys
+
+        # Spot check matrix options. These don't need strict equality, for config we only care about size.
+        options_match = self.matrix_options.cols == other.matrix_options.cols and self.matrix_options.rows == other.matrix_options.rows
+
+        return isinstance(other, Config) and keys_match and options_match
 
 
 def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[str, Mapping[int, int]]]:
@@ -334,3 +348,59 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             )
 
     return game_rules, time_rules, screen_rules
+
+def _matrix_options(json, clargs):
+    args = Namespace(**json)
+
+    for flag, setting in vars(clargs).items():
+        if flag in sys.argv or flag not in args:
+            args.__setattr__(flag, setting)
+
+    from driver import RGBMatrixOptions
+
+    options = RGBMatrixOptions()
+
+    if args.led_gpio_mapping is not None:
+        options.hardware_mapping = args.led_gpio_mapping
+
+    options.rows = args.led_rows
+    options.cols = args.led_cols
+    options.chain_length = args.led_chain
+    options.parallel = args.led_parallel
+    options.row_address_type = args.led_row_addr_type
+    options.multiplexing = args.led_multiplexing
+    options.pwm_bits = args.led_pwm_bits
+    options.brightness = args.led_brightness
+    options.scan_mode = args.led_scan_mode
+    options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
+    options.led_rgb_sequence = args.led_rgb_sequence
+    options.drop_privileges = args.drop_privileges
+
+    try:
+        options.pixel_mapper_config = args.led_pixel_mapper
+    except AttributeError:
+        debug.warning("Your compiled RGB Matrix Library is out of date.")
+        debug.warning("The --led-pixel-mapper argument will not work until it is updated.")
+
+    try:
+        options.pwm_dither_bits = args.led_pwm_dither_bits
+    except AttributeError:
+        debug.warning("Your compiled RGB Matrix Library is out of date.")
+        debug.warning("The --led-pwm-dither-bits argument will not work until it is updated.")
+
+    try:
+        options.limit_refresh_rate_hz = args.led_limit_refresh
+    except AttributeError:
+        debug.warning("Your compiled RGB Matrix Library is out of date.")
+        debug.warning("The --led-limit-refresh argument will not work until it is updated.")
+
+    if args.led_show_refresh:
+        options.show_refresh_rate = 1
+
+    if args.led_slowdown_gpio is not None:
+        options.gpio_slowdown = args.led_slowdown_gpio
+
+    if args.led_no_hardware_pulse:
+        options.disable_hardware_pulsing = True
+
+    return options
