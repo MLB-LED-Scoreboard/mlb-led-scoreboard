@@ -1,16 +1,50 @@
 import argparse
+import sys
+
 
 class ScoreboardCLI():
     def __init__(self):
         self.parser = self.__make_parser()
 
-    def arguments(self):
+    def arguments(self) -> argparse.Namespace:
+        """Returns the parsed CLI arguments as a Namespace."""
+        if 'unittest' in sys.modules:
+            # If in test and instantiate a config, only parse the known flags to avoid crashes.
+            args, _ = self.parser.parse_known_args()
+            return args
+
         return self.parser.parse_args()
 
-    def default_arguments(self):
+    def canonical_arguments(self, json_data: dict = {}) -> argparse.Namespace:
+        """
+        Creates arguments in priority order:
+            user-specified CLI flags > JSON configuration flags > CLI defaults.
+
+        `json_data` should have keys corresponding to normalized CLI flag names (i.e. `--flag-name=123` -> `flag_name`).
+        Any key present there overrides the parser default. Any flag explicitly passed on the command line wins over both.
+
+        Returns arguments as a Namespace.
+        """
+        defaults = vars(self.default_arguments())
+        clargs = vars(self.arguments())
+
+        argv_flags = {self.__normalize(f) for f in sys.argv}
+
+        config_flags = {flag: json_data[flag] for flag in defaults if flag in json_data}
+        explicit_flags = {flag: clargs[flag] for flag in defaults if flag in argv_flags}
+
+        return argparse.Namespace(**(defaults | config_flags | explicit_flags))
+
+    def default_arguments(self) -> argparse.Namespace:
+        """Returns a Namespace populated entirely with parser defaults, ignoring sys.argv."""
         return self.parser.parse_args([])
 
-    def __make_parser(self):
+    @staticmethod
+    def __normalize(flag) -> str:
+        """Converts a flag `--flag-name=123` into a normalized `flag_name`"""
+        return flag.strip("-").split("=")[0].replace("-", "_")
+
+    def __make_parser(self) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser()
 
         # Options for the rpi-rgb-led-matrix library
@@ -127,5 +161,5 @@ class ScoreboardCLI():
         parser.add_argument(
             "--drop-privileges", action="store_true", help="Force the matrix driver to drop root privileges after setup."
         )
-        
+
         return parser

@@ -17,6 +17,8 @@ from data.config.layout import Layout
 from data.paths import *
 from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
 from utils import deep_update
+from cli import ScoreboardCLI
+from driver import RGBMatrixOptions
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 DEFAULT_SCROLLING_SPEED = 2
@@ -32,7 +34,7 @@ class Config:
         json = self.__get_config(clargs.config)
 
         # Matrix options (merged with CLI args)
-        self.matrix_options = _matrix_options(json['matrix'], clargs)
+        self.matrix_options = _matrix_options(json['matrix'])
 
         # News Ticker
         self.preferred_teams = json["news_ticker"]["teams"]
@@ -352,14 +354,9 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
 
     return game_rules, time_rules, screen_rules
 
-def _matrix_options(json, clargs):
-    args = Namespace(**json)
-
-    for flag, setting in vars(clargs).items():
-        if flag in sys.argv or flag not in args:
-            setattr(args, flag, setting)
-
-    from driver import RGBMatrixOptions
+def _matrix_options(json):
+    cli = ScoreboardCLI()
+    args = cli.canonical_arguments(json)
 
     options = RGBMatrixOptions()
 
