@@ -24,8 +24,8 @@ from pathlib import Path
 # Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
 from driver import RGBMatrix, __version__
-from utils import args, led_matrix_options
 
+from cli import ScoreboardCLI
 from data import Data
 from data.config import Config
 from renderers.main import MainRenderer
@@ -94,7 +94,8 @@ def __render_main(matrix, data):
 
 
 if __name__ == "__main__":
-    config = Config(args())
+    cli = ScoreboardCLI()
+    config = Config(cli.arguments())
 
     if driver.is_emulated():
         config.matrix_options.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"

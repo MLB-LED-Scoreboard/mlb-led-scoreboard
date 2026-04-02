@@ -1,6 +1,6 @@
 import sys
 
-from utils import args
+from cli import ScoreboardCLI
 from driver.mode import DriverMode
 
 class DriverWrapper:
@@ -8,7 +8,8 @@ class DriverWrapper:
         self.hardware_load_failed = False
         self.mode = None
 
-        if 'unittest' in sys.modules or args().emulated:
+        cli = ScoreboardCLI()
+        if 'unittest' in sys.modules or cli.arguments().emulated:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)
         else:
             self.set_mode(DriverMode.HARDWARE)
