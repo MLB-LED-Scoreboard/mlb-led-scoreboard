@@ -8,8 +8,7 @@ class DriverWrapper:
         self.hardware_load_failed = False
         self.mode = None
 
-        cli = ScoreboardCLI()
-        if 'unittest' in sys.modules or cli.arguments().emulated:
+        if 'unittest' in sys.modules:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)
         else:
             self.set_mode(DriverMode.HARDWARE)

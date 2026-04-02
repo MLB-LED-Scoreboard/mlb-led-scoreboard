@@ -29,11 +29,15 @@ DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config:
-    def __init__(self, clargs):
-        json = self.__get_config(clargs.config)
+    def __init__(self, cli):
+        clargs = cli.arguments()
+        self.config_path = clargs.config
+        self.emulated = clargs.emulated
+
+        json = self.__get_config(self.config_path)
 
         # Matrix options (merged with CLI args)
-        self.matrix_options = _matrix_options(json['matrix'])
+        self.matrix_options = self.__matrix_options(json['matrix'])
 
         # News Ticker
         self.preferred_teams = json["news_ticker"]["teams"]
@@ -293,6 +297,59 @@ If you aren't sure why you're seeing this, there might not be official support f
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
+    
+    def __matrix_options(self, json):
+        cli = ScoreboardCLI()
+        args = cli.canonical_arguments(json)
+
+        self.emulated = args.emulated
+
+        options = RGBMatrixOptions()
+
+        if args.led_gpio_mapping is not None:
+            options.hardware_mapping = args.led_gpio_mapping
+
+        options.rows = args.led_rows
+        options.cols = args.led_cols
+        options.chain_length = args.led_chain
+        options.parallel = args.led_parallel
+        options.row_address_type = args.led_row_addr_type
+        options.multiplexing = args.led_multiplexing
+        options.pwm_bits = args.led_pwm_bits
+        options.brightness = args.led_brightness
+        options.scan_mode = args.led_scan_mode
+        options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
+        options.led_rgb_sequence = args.led_rgb_sequence
+        options.drop_privileges = args.drop_privileges
+
+        try:
+            options.pixel_mapper_config = args.led_pixel_mapper
+        except AttributeError:
+            debug.warning("Your compiled RGB Matrix Library is out of date.")
+            debug.warning("The --led-pixel-mapper argument will not work until it is updated.")
+
+        try:
+            options.pwm_dither_bits = args.led_pwm_dither_bits
+        except AttributeError:
+            debug.warning("Your compiled RGB Matrix Library is out of date.")
+            debug.warning("The --led-pwm-dither-bits argument will not work until it is updated.")
+
+        try:
+            options.limit_refresh_rate_hz = args.led_limit_refresh
+        except AttributeError:
+            debug.warning("Your compiled RGB Matrix Library is out of date.")
+            debug.warning("The --led-limit-refresh argument will not work until it is updated.")
+
+        if args.led_show_refresh:
+            options.show_refresh_rate = 1
+
+        if args.led_slowdown_gpio is not None:
+            options.gpio_slowdown = args.led_slowdown_gpio
+
+        if args.led_no_hardware_pulse:
+            options.disable_hardware_pulsing = True
+
+        return options
 
     def __eq__(self, other):
         if not isinstance(other, Config):
@@ -352,54 +409,3 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             )
 
     return game_rules, time_rules, screen_rules
-
-def _matrix_options(json):
-    cli = ScoreboardCLI()
-    args = cli.canonical_arguments(json)
-
-    options = RGBMatrixOptions()
-
-    if args.led_gpio_mapping is not None:
-        options.hardware_mapping = args.led_gpio_mapping
-
-    options.rows = args.led_rows
-    options.cols = args.led_cols
-    options.chain_length = args.led_chain
-    options.parallel = args.led_parallel
-    options.row_address_type = args.led_row_addr_type
-    options.multiplexing = args.led_multiplexing
-    options.pwm_bits = args.led_pwm_bits
-    options.brightness = args.led_brightness
-    options.scan_mode = args.led_scan_mode
-    options.pwm_lsb_nanoseconds = args.led_pwm_lsb_nanoseconds
-    options.led_rgb_sequence = args.led_rgb_sequence
-    options.drop_privileges = args.drop_privileges
-
-    try:
-        options.pixel_mapper_config = args.led_pixel_mapper
-    except AttributeError:
-        debug.warning("Your compiled RGB Matrix Library is out of date.")
-        debug.warning("The --led-pixel-mapper argument will not work until it is updated.")
-
-    try:
-        options.pwm_dither_bits = args.led_pwm_dither_bits
-    except AttributeError:
-        debug.warning("Your compiled RGB Matrix Library is out of date.")
-        debug.warning("The --led-pwm-dither-bits argument will not work until it is updated.")
-
-    try:
-        options.limit_refresh_rate_hz = args.led_limit_refresh
-    except AttributeError:
-        debug.warning("Your compiled RGB Matrix Library is out of date.")
-        debug.warning("The --led-limit-refresh argument will not work until it is updated.")
-
-    if args.led_show_refresh:
-        options.show_refresh_rate = 1
-
-    if args.led_slowdown_gpio is not None:
-        options.gpio_slowdown = args.led_slowdown_gpio
-
-    if args.led_no_hardware_pulse:
-        options.disable_hardware_pulsing = True
-
-    return options

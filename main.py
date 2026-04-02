@@ -21,9 +21,7 @@ import time
 from PIL import Image
 from pathlib import Path
 
-# Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
-from driver import RGBMatrix, __version__
 
 from cli import ScoreboardCLI
 from data import Data
@@ -95,11 +93,15 @@ def __render_main(matrix, data):
 
 if __name__ == "__main__":
     cli = ScoreboardCLI()
-    config = Config(cli.arguments())
+    config = Config(cli)
 
-    if driver.is_emulated():
+    if config.emulated:
+        driver.set_mode(driver.DriverMode.SOFTWARE_EMULATION)
+
         config.matrix_options.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
         config.matrix_options.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
+
+    from driver import RGBMatrix, __version__
 
     matrix = RGBMatrix(options=config.matrix_options)
 
