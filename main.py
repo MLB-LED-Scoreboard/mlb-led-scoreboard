@@ -23,7 +23,6 @@ from pathlib import Path
 
 import driver
 
-from cli import ScoreboardCLI
 from data import Data
 from data.config import Config
 from renderers.main import MainRenderer
@@ -92,8 +91,7 @@ def __render_main(matrix, data):
 
 
 if __name__ == "__main__":
-    cli = ScoreboardCLI()
-    config = Config(cli)
+    config = Config()
 
     if config.emulated:
         driver.set_mode(driver.DriverMode.SOFTWARE_EMULATION)

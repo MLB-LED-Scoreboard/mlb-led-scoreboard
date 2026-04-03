@@ -16,7 +16,7 @@ from data.config.layout import Layout
 from data.paths import *
 from data.time_formats import TIME_FORMAT_12H, TIME_FORMAT_24H, os_datetime_format
 from utils import deep_update
-from cli import ScoreboardCLI
+import cli
 from driver import RGBMatrixOptions
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
@@ -29,10 +29,11 @@ DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 
 class Config:
-    def __init__(self, cli):
-        clargs = cli.arguments()
-        self.config_path = clargs.config
-        self.emulated = clargs.emulated
+    def __init__(self):
+        args = cli.arguments()
+
+        self.config_path = args.config
+        self.emulated = args.emulated
 
         json = self.__get_config(self.config_path)
 
@@ -298,9 +299,8 @@ If you aren't sure why you're seeing this, there might not be official support f
             return new_layout
         return reference_layout
     
-    def __matrix_options(self, json):
-        cli = ScoreboardCLI()
-        args = cli.canonical_arguments(json)
+    def __matrix_options(self, overrides):
+        args = cli.arguments(overrides=overrides)
 
         self.emulated = args.emulated
 

@@ -1,6 +1,5 @@
 import sys
 
-from cli import ScoreboardCLI
 from driver.mode import DriverMode
 
 class DriverWrapper:
