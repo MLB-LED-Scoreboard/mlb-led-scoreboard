@@ -172,7 +172,7 @@ def upsert_config(config, schema, options={}, result=None, changeset=None, path=
         ignore = False
         for ignored_key, modifiers in ignored_keys:
           if ignored_key == key:
-            ignore = kind == config or IGNORE_SUBPATHS in modifiers
+            ignore = kind == config or (IGNORE_SUBPATHS in modifiers and key in config)
             break
         
         if ignore:

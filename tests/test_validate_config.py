@@ -467,6 +467,29 @@ class TestValidateConfigMethods(unittest.TestCase):
       }
     )
 
+  def test_config_with_ignore_subpath_section_not_in_config(self):
+    '''
+    IGNORE_SUBPATH modifier section itself is added if not already present.
+    '''
+    config = { }
+    schema = { "subset1": {} }
+
+    options = { "ignored_keys": ["subset1-*"] }
+
+    (changed, result, changes) = upsert_config(config, schema, options)
+
+    self.assertTrue(changed)
+    self.assertEqual(schema, result)
+    self.assertNotEqual(result, config)
+    self.assertEqual(
+      changes,
+      {
+        "add": [{ "subset1": {} }],
+        "delete": [],
+        "rename": []
+      }
+    )
+
   def test_upsert_config_with_renamed_keys_in_config(self):
     '''
     Keys in the rename list are renamed instead of added or deleted and preserve their values.
