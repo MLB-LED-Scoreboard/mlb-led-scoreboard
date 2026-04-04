@@ -5,13 +5,13 @@ from unittest import mock
 
 from data.config import Config
 from data.paths import COORDINATES_DIRECTORY, COLORS_DIRECTORY
+from tests.helpers import make_test_config
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
 CUSTOM_CONFIG_PATH = FIXTURES / "config.json"
 
-
-def make_config(config_path="nonexistent", use_layout=False, use_teams=False, use_scoreboard=False):
+def make_config(config_path=None, use_layout=False, use_teams=False, use_scoreboard=False):
     """
     Instantiate a real Config, optionally redirecting custom layout/color reads to
     fixture files. Config reads custom layout/color files by bare filename (e.g.
@@ -28,15 +28,16 @@ def make_config(config_path="nonexistent", use_layout=False, use_teams=False, us
 
     original_read_json = Config.read_json
 
+    # Patch reads to redirect to secondary configs
+    # TODO: We should support this via CLI like primary config.
     def patched_read_json(self, path):
         path = Path(str(path))
         if path in redirects:
             path = redirects[path]
         return original_read_json(self, path)
 
-    # Patch reads, patch warning on missing files
-    with mock.patch.object(Config, "read_json", patched_read_json), mock.patch("bullpen.logging.LOGGER.warning"):
-        return Config(config_path, 32, 32)
+    with mock.patch.object(Config, "read_json", patched_read_json):
+        return make_test_config(config=config_path, led_cols=32, led_rows=32)
 
 
 def flatten(d, prefix=""):

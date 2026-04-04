@@ -396,5 +396,8 @@
         "text":       { "$ref": "#/$defs/point" }
       }
     }
+  },
+  "patternProperties": {
+    "^\\$schema$": { "type": "string" }
   }
 }

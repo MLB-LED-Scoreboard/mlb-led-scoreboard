@@ -13,7 +13,6 @@ if statsapi_version < (1, 9, 0):
     LOGGER.error("We require MLB-StatsAPI 1.9.0 or higher. You may need to re-run install.sh")
     sys.exit(1)
 
-import logging
 import os
 import threading
 import time
@@ -21,10 +20,8 @@ import time
 from PIL import Image
 from pathlib import Path
 
-# Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
-from driver import RGBMatrix, __version__
-from utils import setup_logger, args, led_matrix_options
+from utils import setup_logger
 
 
 from data import Data
@@ -35,10 +32,7 @@ from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
 
 
-def main(matrix, config_base):
-
-    # Read scoreboard options from config.json if it exists
-    config = Config(config_base, matrix.width, matrix.height)
+def main(matrix, config):
     # Set the scoreboard logger
     setup_logger(config.debug)
 
@@ -99,18 +93,20 @@ def __render_main(matrix, data, plugins):
 
 
 if __name__ == "__main__":
-    # Check for led configuration arguments
-    clargs = args()
-    matrixOptions = led_matrix_options(clargs)
+    config = Config()
 
-    if driver.is_emulated():
-        matrixOptions.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
-        matrixOptions.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
+    if config.emulated:
+        driver.set_mode(driver.DriverMode.SOFTWARE_EMULATION)
 
-    # Initialize the matrix
-    matrix = RGBMatrix(options=matrixOptions)
+        config.matrix_options.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
+        config.matrix_options.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
+
+    from driver import RGBMatrix, __version__
+
+    matrix = RGBMatrix(options=config.matrix_options)
+
     try:
-        main(matrix, clargs.config)
+        main(matrix, config)
     except:
         LOGGER.exception("Untrapped error in main!")
         sys.exit(1)

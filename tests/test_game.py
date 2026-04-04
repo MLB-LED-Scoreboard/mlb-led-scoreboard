@@ -6,9 +6,7 @@ A similar set of tests with stored responses may be separately added in the futu
 """
 
 import unittest
-import unittest.mock
 import data.game
-import data.config
 import data.uniforms
 from bullpen.api import UpdateStatus
 

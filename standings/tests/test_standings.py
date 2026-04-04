@@ -6,14 +6,17 @@ A similar set of tests with stored responses may be separately added in the futu
 """
 
 import unittest
-
-import data.config
+import data.dates
+import data.standings
 from mlb_led_scoreboard_standings import standings
+from tests.helpers import make_test_config
 
 
 class TestStandings(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-midseason", 32, 32)
-    standings = standings.Standings(demo_config)
+    demo_config = make_test_config(config="tests/data/demo-date-midseason", led_cols=32, led_rows=32)
+    
+    dates = data.dates.Dates(2019)
+    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 
     def test_standings_midseason(self):
         self.assertFalse(self.demo_config.is_postseason())
@@ -49,8 +52,9 @@ class TestStandings(unittest.TestCase):
 
 
 class TestSchedulePlayoff(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-playoffs", 32, 32)
-    standings = standings.Standings(demo_config)
+    demo_config = make_test_config(config="tests/data/demo-date-playoffs", led_cols=32, led_rows=32)
+    dates = data.dates.Dates(2024)
+    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
     americanBracket = """\
  KC ---|
        |---  KC ---|
@@ -71,13 +75,9 @@ HOU ---|           | --- CLE ---|
 
 
 class TestStandingsEndOfSeason(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-end", 32, 32)
-    date = standings.get_playoff_start_date(
-        2024
-    )  # Note: intentionally wrong year so that the playoff start is in the future
-    demo_config.playoffs_start_date = date
-
-    standings = standings.Standings(demo_config)
+    demo_config = make_test_config(config="tests/data/demo-date-end", led_cols=32, led_rows=32)
+    dates = data.dates.Dates(2024)  # Note: intentionally wrong year so that the playoff start is in the future
+    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 
     def test_standings_end(self):
         self.assertFalse(self.demo_config.is_postseason())

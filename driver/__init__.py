@@ -1,7 +1,6 @@
 import sys
 from typing import TYPE_CHECKING
 
-from utils import args
 from driver.mode import DriverMode
 
 if TYPE_CHECKING:
@@ -13,7 +12,7 @@ class DriverWrapper:
         self.hardware_load_failed = False
         self.mode = None
 
-        if "unittest" in sys.modules or args().emulated:
+        if 'unittest' in sys.modules:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)
         else:
             self.set_mode(DriverMode.HARDWARE)
