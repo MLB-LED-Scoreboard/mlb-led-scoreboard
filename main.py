@@ -98,6 +98,7 @@ if __name__ == "__main__":
     if config.emulated:
         driver.set_mode(driver.DriverMode.SOFTWARE_EMULATION)
 
+    if driver.is_emulated():
         config.matrix_options.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
         config.matrix_options.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
 
