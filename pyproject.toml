@@ -3,7 +3,7 @@ line-length = 120
 
 [tool.mypy]
 python_version = "3.13"
-exclude = ["venv/"]
+exclude = ["venv/", "build/"]
 warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = true

@@ -40,7 +40,7 @@ def scrolling_text(
 ) -> int:
     if force_scroll or __text_should_scroll(text, font, width):
 
-        w = font["size"]["width"]
+        w: int = font["size"]["width"]
         total_width = w * len(text)
 
         # if the text is long enough to scroll, we can trim it to only the visible

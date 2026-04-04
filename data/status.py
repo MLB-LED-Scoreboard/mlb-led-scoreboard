@@ -381,34 +381,34 @@ GAME_STATE_IRREGULAR = [
 ]
 
 
-def is_pregame(status: str):
+def is_pregame(status: str) -> bool:
     """Returns whether the game is in a pregame state"""
     return status in GAME_STATE_PREGAME
 
 
-def is_complete(status: str):
+def is_complete(status: str) -> bool:
     """Returns whether the game has been completed"""
     return status in GAME_STATE_COMPLETE
 
 
-def is_live(status: str):
+def is_live(status: str) -> bool:
     """Returns whether the game is currently live"""
     return status in GAME_STATE_LIVE
 
 
-def is_irregular(status: str):
+def is_irregular(status: str) -> bool:
     """Returns whether game is in an irregular state, such as delayed, postponed, cancelled,
     or in a challenge."""
     return status in GAME_STATE_IRREGULAR
 
 
-def is_fresh(status: str):
+def is_fresh(status: str) -> bool:
     """Returns whether the game is in progress or is very recently complete. Game Over
     comes between In Progress and Final and allows a few minutes to see the final outcome before
     the rotation kicks in."""
     return status in GAME_STATE_FRESH
 
 
-def is_inning_break(inning_state: str):
+def is_inning_break(inning_state: str) -> bool:
     """Returns whether a game is in an inning break (mid/end). Pass in the inning state."""
     return inning_state not in GAME_STATE_INNING_LIVE

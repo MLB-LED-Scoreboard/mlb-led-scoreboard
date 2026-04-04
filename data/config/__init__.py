@@ -189,7 +189,8 @@ class Config:
         return self.parse_today() > self.playoffs_start_date
 
     def screen_time_at_priority(self, screen: str, priority: int) -> int:
-        return self.rotation_screen_rules.get(priority, {}).get(screen, 0)
+        t: int = self.rotation_screen_rules.get(priority, {}).get(screen, 0)
+        return t
 
     def for_plugin(self, plugin_name: str) -> MLBConfig:
 

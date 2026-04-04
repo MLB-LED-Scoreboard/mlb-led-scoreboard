@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
 
 
-class Renderer(api.PluginRenderer):
+class Renderer(api.PluginRenderer["NewsData"]):
     def __init__(self, config: Config, layout: api.Layout, colors: api.Color):
         self.config = config
         self.layout = layout
@@ -97,7 +97,7 @@ class Renderer(api.PluginRenderer):
                         self.icon_color["b"],
                     )
 
-    def _render_news_ticker(self, canvas: "Canvas", graphics, headlines: Headlines, text_pos):
+    def _render_news_ticker(self, canvas: "Canvas", graphics, headlines: Headlines, text_pos) -> int:
 
         ticker_text = headlines.ticker_string()
         return scrolling_text(
