@@ -2,8 +2,8 @@ from driver import graphics
 from data.config.color import Color
 from data.config.layout import Layout
 from data.scoreboard.pregame import Pregame
-from renderers import scrollingtext
-from utils import center_text_position
+
+from bullpen.util import center_text_position, scrolling_text
 
 
 def render_pregame(
@@ -51,6 +51,15 @@ def _render_pregame_info(canvas, layout, colors, pregame: Pregame, probable_star
     if is_playoffs:
         pitchers_text += "   " + pregame.series_status
 
-    return scrollingtext.render_text(
-        canvas, coords["x"], coords["y"], coords["width"], font, color, bgcolor, pitchers_text, probable_starter_pos
+    return scrolling_text(
+        canvas,
+        graphics,
+        coords["x"],
+        coords["y"],
+        coords["width"],
+        font,
+        color,
+        bgcolor,
+        pitchers_text,
+        probable_starter_pos,
     )

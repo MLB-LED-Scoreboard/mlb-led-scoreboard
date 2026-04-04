@@ -1,15 +1,37 @@
 import argparse
-from collections.abc import Mapping
+import os
+import logging
 
-import debug
+from logging.handlers import RotatingFileHandler
+
+from bullpen.logging import LOGGER
 
 
-def center_text_position(text, center_pos, font_width):
-    return abs(center_pos - ((len(text) * font_width) // 2))
+def setup_logger(verbose):
+    LOGFILE = os.path.abspath(os.path.join(__file__, "..", "logs", "mlbled.log"))
 
+    formatter = logging.Formatter("{levelname} ({asctime}): {message}", style="{", datefmt="%H:%M:%S")
 
-def split_string(string, num_chars):
-    return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]  # noqa: E203
+    # Log to stdout
+    sh = logging.StreamHandler()
+    sh.setFormatter(formatter)
+
+    # Log to a file, handling rotation at 1MB
+    fh = RotatingFileHandler(LOGFILE, maxBytes=0x100000, backupCount=5)
+    fh.setFormatter(formatter)
+
+    LOGGER.addHandler(sh)
+    LOGGER.addHandler(fh)
+
+    LOGGER.propagate = False
+    if verbose:
+        if verbose == "with-statsapi":
+            import statsapi
+
+            # Assign the scoreboard logger to statsapi
+            statsapi.logger = LOGGER
+    else:
+        LOGGER.setLevel(logging.WARNING)
 
 
 def args():
@@ -111,7 +133,11 @@ def args():
         type=int,
     )
     parser.add_argument(
-        "--led-pwm-dither-bits", action="store", help="Time dithering of lower bits (Default: 0)", default=0, type=int,
+        "--led-pwm-dither-bits",
+        action="store",
+        help="Time dithering of lower bits (Default: 0)",
+        default=0,
+        type=int,
     )
     parser.add_argument(
         "--config",
@@ -121,10 +147,7 @@ def args():
         type=str,
     )
     parser.add_argument(
-        "--emulated",
-        action="store_const",
-        help="Force using emulator mode over default matrix display.",
-        const=True
+        "--emulated", action="store_const", help="Force using emulator mode over default matrix display.", const=True
     )
     parser.add_argument(
         "--drop-privileges", action="store_true", help="Force the matrix driver to drop root privileges after setup."
@@ -156,20 +179,20 @@ def led_matrix_options(args):
     try:
         options.pixel_mapper_config = args.led_pixel_mapper
     except AttributeError:
-        debug.warning("Your compiled RGB Matrix Library is out of date.")
-        debug.warning("The --led-pixel-mapper argument will not work until it is updated.")
+        LOGGER.warning("Your compiled RGB Matrix Library is out of date.")
+        LOGGER.warning("The --led-pixel-mapper argument will not work until it is updated.")
 
     try:
         options.pwm_dither_bits = args.led_pwm_dither_bits
     except AttributeError:
-        debug.warning("Your compiled RGB Matrix Library is out of date.")
-        debug.warning("The --led-pwm-dither-bits argument will not work until it is updated.")
+        LOGGER.warning("Your compiled RGB Matrix Library is out of date.")
+        LOGGER.warning("The --led-pwm-dither-bits argument will not work until it is updated.")
 
     try:
         options.limit_refresh_rate_hz = args.led_limit_refresh
     except AttributeError:
-        debug.warning("Your compiled RGB Matrix Library is out of date.")
-        debug.warning("The --led-limit-refresh argument will not work until it is updated.")
+        LOGGER.warning("Your compiled RGB Matrix Library is out of date.")
+        LOGGER.warning("The --led-limit-refresh argument will not work until it is updated.")
 
     if args.led_show_refresh:
         options.show_refresh_rate = 1
@@ -181,16 +204,3 @@ def led_matrix_options(args):
         options.disable_hardware_pulsing = True
 
     return options
-
-
-def deep_update(source, overrides):
-    """Update a nested dictionary or similar mapping.
-    Modify ``source`` in place.
-    """
-    for key, value in list(overrides.items()):
-        if isinstance(value, Mapping) and value:
-            returned = deep_update(source.get(key, {}), value)
-            source[key] = returned
-        else:
-            source[key] = overrides[key]
-    return source

@@ -1,61 +1,49 @@
-from typing import Optional
-
-
-from data.game import Game
-from data.headlines import Headlines
-from data.schedule import Schedule
-from data.standings import Standings
-from data import update
-from data.update import UpdateStatus
-from data.weather import Weather
+from bullpen.api import UpdateStatus, PluginData
+from bullpen.logging import LOGGER
 from data.config import Config
+
+from data.schedule import Schedule
 from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, plugin_data: dict[str, PluginData]) -> None:
         # Save the parsed config
         self.config: Config = config
+        self.network_issues: bool = False
+        self.plugin_data = plugin_data
 
         # get schedule
         self.schedule: Schedule = Schedule(config)
-
         # Games -- keeps two copies internally to let render thread move asynchronously
         self.games = DoubleBuffer(self.schedule.next_game())
 
-        # Weather info
-        self.weather: Weather = Weather(config)
-
-        # News headlines
-        self.headlines: Headlines = Headlines(config, self.schedule.date.year)
-
-        # Fetch all standings data for today
-        self.standings: Standings = Standings(config, self.headlines.important_dates.playoffs_start_date)
-
-        # Network status state - we useweather condition as a sort of sentinial value
-        self.network_issues: bool = self.weather.conditions == "Error"
-
-    def refresh_game(self):
+    def refresh_game(self) -> None:
         # handle double buffering
         status = self.games.producer_tick(self.schedule.next_game)
-        status = update.merge([status] + [g.update() for g in self.games.items if g is not None])
+        status = UpdateStatus.merge([status] + [g.update() for g in self.games.items if g is not None])
 
         # network requests
         self.__process_network_status(status)
 
-    def refresh_standings(self):
-        self.__process_network_status(self.standings.update())
-
-    def refresh_weather(self):
-        self.__process_network_status(self.weather.update())
-
-    def refresh_news_ticker(self):
-        self.__process_network_status(self.headlines.update())
-
-    def refresh_schedule(self):
+    def refresh_schedule(self) -> None:
         self.__process_network_status(self.schedule.update())
 
-    def __process_network_status(self, status):
+    def refresh_plugins(self) -> None:
+        statuses = []
+        for name, plugin in self.plugin_data.items():
+            try:
+                statuses.append(plugin.update())
+            except KeyboardInterrupt as e:
+                raise e
+            except:
+                LOGGER.exception("Failure while updating plugin %s", name)
+                statuses.append(UpdateStatus.FAIL)
+
+        status = UpdateStatus.merge(statuses)
+        self.__process_network_status(status)
+
+    def __process_network_status(self, status) -> None:
         if status == UpdateStatus.SUCCESS:
             self.network_issues = False
         elif status == UpdateStatus.FAIL:

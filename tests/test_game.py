@@ -5,13 +5,12 @@ Note: we do **NOT** mock statsapi here, as we want to test the actual data retur
 A similar set of tests with stored responses may be separately added in the future.
 """
 
-
 import unittest
 import unittest.mock
 import data.game
 import data.config
 import data.uniforms
-from data.update import UpdateStatus
+from bullpen.api import UpdateStatus
 
 
 class TestGame(unittest.TestCase):
@@ -75,10 +74,9 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.inning_number(), 1)
         self.assertEqual(game.current_play_result(), "")
         self.assertEqual(game.batter(), "Yelich")
-        self.assertFalse(game.man_on('first'))
-        self.assertEqual(game.last_pitch(), (83.5, 'FS', 'Splitter'))
+        self.assertFalse(game.man_on("first"))
+        self.assertEqual(game.last_pitch(), (83.5, "FS", "Splitter"))
         self.assertEqual(game.current_pitcher_pitch_count(), 11)
-
 
         # Now we force the second 'live' update
         # (it doesn't matter that this fetch will be at the end of the game!)
@@ -87,17 +85,16 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.status(), "In Progress")
         self.assertEqual(game.inning_number(), 1)
         self.assertEqual(game.current_play_result(), "single")
-        self.assertTrue(game.man_on('first'))
-        self.assertEqual(game.last_pitch(), (88.6, 'FC', 'Cutter'))
+        self.assertTrue(game.man_on("first"))
+        self.assertEqual(game.last_pitch(), (88.6, "FC", "Cutter"))
         self.assertEqual(game.current_pitcher_pitch_count(), 12)
-
 
     def test_special_status_game(self):
         # https://www.mlb.com/news/tigers-nearly-combine-for-no-hitter-against-orioles
         game_data = {
             "game_id": 746423,
             "game_date": "2024-09-13",
-            }
+        }
         game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10)
         self.assertIsNotNone(game)
         # DET was wearing city connects
@@ -118,7 +115,7 @@ class TestGame(unittest.TestCase):
         self.assertFalse(game.is_perfect_game())
         self.assertTrue(game.is_no_hitter())
         self.assertEqual(game.current_play_result(), "walk")
-        self.assertTrue(game.man_on('first'))
+        self.assertTrue(game.man_on("first"))
 
         # giving up a triple to Gunnar Henderson
         self.assertEqual(game.update(force=True, testing_params={"timecode": "20240914_005908"}), UpdateStatus.SUCCESS)
@@ -133,8 +130,8 @@ class TestGame(unittest.TestCase):
     def test_weather_delays(self):
         # https://www.northjersey.com/story/sports/mlb/2024/06/26/mets-yankees-subway-series-game-delayed-weather-new-york-postponed/74226587007/
         game_data = {
-            'game_id': 745808,
-            'game_date': "2024-06-26",
+            "game_id": 745808,
+            "game_date": "2024-06-26",
         }
         game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10)
         self.assertIsNotNone(game)

@@ -1,4 +1,4 @@
-import debug
+from bullpen.logging import LOGGER
 
 
 # avoids spamming the logs with errors about the same color every time
@@ -34,6 +34,6 @@ class Team:
             return default_colors | colors
 
         except KeyError:
-            debug.exception("No color found for team: {}".format(self.abbrev))
+            LOGGER.exception("No color found for team: {}".format(self.abbrev))
             _IGNORED_TEAMS.add(self.abbrev)
             return default_colors

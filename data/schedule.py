@@ -6,9 +6,9 @@ from math import ceil
 
 import statsapi
 
-import debug
+from bullpen.logging import LOGGER
 from data.game import Game
-from data.update import UpdateStatus
+from bullpen.api import UpdateStatus
 from data.utils.circular_queue import CircularQueue
 from data.config import Config
 
@@ -33,13 +33,13 @@ class Schedule:
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
             self.date = self.config.parse_today()
-            debug.log("Updating schedule for %s", self.date)
+            LOGGER.debug("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
                 # add sportId=51 to additionally get WBC games
                 all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId="1,51")
             except:
-                debug.exception("Networking error while refreshing schedule")
+                LOGGER.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
             else:
 
@@ -58,7 +58,7 @@ class Schedule:
 
                 self._games = games
                 self.priority = priority
-                debug.log(
+                LOGGER.debug(
                     "Schedule updated with %d games (priority %d) (current delay %d)",
                     len(self._games),
                     priority,
@@ -78,7 +78,7 @@ class Schedule:
     def num_games(self):
         return len(self._games)
 
-    def next_game(self, unless: Optional[Game] = None):
+    def next_game(self, unless: Optional[Game] = None) -> Optional[Game]:
         self.current_idx = self.__next_game_index()
         return self.__current_game(unless)
 
@@ -87,7 +87,7 @@ class Schedule:
         if counter >= len(self._games):
             counter = 0
         if counter != self.current_idx:
-            debug.log("Schedule: going to game index %d", counter)
+            LOGGER.debug("Schedule: going to game index %d", counter)
         return counter
 
     def __current_game(self, unless: Optional[Game] = None):

@@ -1,5 +1,6 @@
 from driver import graphics
-from utils import center_text_position
+
+from bullpen.util import center_text_position
 
 NETWORK_ERROR_TEXT = "!"
 

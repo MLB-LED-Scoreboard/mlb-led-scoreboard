@@ -1,16 +1,16 @@
 import sys
 
-import debug
+from bullpen.logging import LOGGER
 
 if sys.version_info < (3, 10):
-    debug.error("Please run with Python >= 3.10")
+    LOGGER.error("Please run with Python >= 3.10")
     sys.exit(1)
 
 import statsapi
 
 statsapi_version = tuple(map(int, statsapi.__version__.split(".")))
 if statsapi_version < (1, 9, 0):
-    debug.error("We require MLB-StatsAPI 1.9.0 or higher. You may need to re-run install.sh")
+    LOGGER.error("We require MLB-StatsAPI 1.9.0 or higher. You may need to re-run install.sh")
     sys.exit(1)
 
 import logging
@@ -24,10 +24,13 @@ from pathlib import Path
 # Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
 from driver import RGBMatrix, __version__
-from utils import args, led_matrix_options
+from utils import setup_logger, args, led_matrix_options
+
 
 from data import Data
 from data.config import Config
+from data.plugins import load_plugins
+
 from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
 
@@ -37,25 +40,18 @@ def main(matrix, config_base):
     # Read scoreboard options from config.json if it exists
     config = Config(config_base, matrix.width, matrix.height)
     # Set the scoreboard logger
-    logger = logging.getLogger("mlbled")
-    if config.debug:
-        logger.setLevel(logging.DEBUG)
-        if config.debug == "with-statsapi":
-            # Assign the scoreboard logger to statsapi
-            statsapi.logger = logger
-    else:
-        logger.setLevel(logging.WARNING)
+    setup_logger(config.debug)
 
     # Print some basic info on startup
-    debug.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
+    LOGGER.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
 
     if driver.is_emulated():
         if driver.hardware_load_failed:
-            debug.log("rgbmatrix not installed, falling back to emulator!")
+            LOGGER.debug("rgbmatrix not installed, falling back to emulator!")
 
-        debug.log("Using RGBMatrixEmulator version %s", __version__)
+        LOGGER.debug("Using RGBMatrixEmulator version %s", __version__)
     else:
-        debug.log("Using rgbmatrix version %s", __version__)
+        LOGGER.debug("Using rgbmatrix version %s", __version__)
 
     # Draw startup screen
     logo_filename = "mlb-w{}h{}.png".format(matrix.width, matrix.height)
@@ -68,12 +64,19 @@ def main(matrix, config_base):
         matrix.SetImage(logo.convert("RGB"))
         logo.close()
 
+    plugins = load_plugins(config)
+
+    plugin_data = {name: data for name, (data, _) in plugins.items()}
+
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
-    data = Data(config)
+    data = Data(config, plugin_data)
 
     # create render thread
-    render = threading.Thread(target=__render_main, args=[matrix, data], name="render_thread", daemon=True)
+    plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
+    render = threading.Thread(
+        target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
+    )
     time.sleep(1)
     render.start()
 
@@ -84,16 +87,15 @@ def main(matrix, config_base):
         if data.schedule.num_games():
             data.refresh_game()
         time.sleep(0.1)
-        if data.config.screen_time_at_priority("standings", data.schedule.priority):
-            data.refresh_standings()
+        for plugin in plugin_data:
+            if data.config.screen_time_at_priority(plugin, data.schedule.priority):
+                data.refresh_plugins()
+                break
         time.sleep(0.2)
-        if data.config.screen_time_at_priority("news", data.schedule.priority):
-            data.refresh_news_ticker()
-            data.refresh_weather()
 
 
-def __render_main(matrix, data):
-    MainRenderer(matrix, data).render()
+def __render_main(matrix, data, plugins):
+    MainRenderer(matrix, data, plugins).render()
 
 
 if __name__ == "__main__":
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     try:
         main(matrix, clargs.config)
     except:
-        debug.exception("Untrapped error in main!")
+        LOGGER.exception("Untrapped error in main!")
         sys.exit(1)
     finally:
         matrix.Clear()

@@ -10,6 +10,7 @@ from data.paths import COORDINATES_DIRECTORY, COLORS_DIRECTORY
 FIXTURES = Path(__file__).parent / "fixtures"
 CUSTOM_CONFIG_PATH = FIXTURES / "config.json"
 
+
 def make_config(config_path="nonexistent", use_layout=False, use_teams=False, use_scoreboard=False):
     """
     Instantiate a real Config, optionally redirecting custom layout/color reads to
@@ -34,7 +35,7 @@ def make_config(config_path="nonexistent", use_layout=False, use_teams=False, us
         return original_read_json(self, path)
 
     # Patch reads, patch warning on missing files
-    with mock.patch.object(Config, "read_json", patched_read_json), mock.patch("debug.warning"):
+    with mock.patch.object(Config, "read_json", patched_read_json), mock.patch("bullpen.logging.LOGGER.warning"):
         return Config(config_path, 32, 32)
 
 
@@ -46,6 +47,7 @@ def flatten(d, prefix=""):
             yield from flatten(value, keypath)
         else:
             yield keypath, value
+
 
 class TestCustomConfig(unittest.TestCase):
     """Custom config.json overrides are applied on top of config.example.json defaults."""
@@ -62,21 +64,9 @@ class TestCustomConfig(unittest.TestCase):
     def test_custom_config_priority(self):
         self.assertNotEqual(self.custom_config, self.default_config)
 
-    def test_custom_preferred_teams_override(self):
-        self.assertEqual(self.custom_config.preferred_teams, ["Braves"])
-        self.assertNotEqual(self.custom_config.preferred_teams, self.default_config.preferred_teams)
-
-    def test_custom_preferred_divisions_override(self):
-        self.assertEqual(self.custom_config.preferred_divisions, ["AL Central", "AL Wild Card"])
-        self.assertNotEqual(self.custom_config.preferred_divisions, self.default_config.preferred_divisions)
-
     def test_custom_debug_override(self):
         self.assertTrue(self.custom_config.debug)
         self.assertNotEqual(self.custom_config.debug, self.default_config.debug)
-
-    def test_custom_weather_location_override(self):
-        self.assertEqual(self.custom_config.weather_location, "New York,ny,us")
-        self.assertNotEqual(self.custom_config.weather_location, self.default_config.weather_location)
 
     def test_custom_rotation_rates_override(self):
         self.assertEqual(self.custom_config.rotation_rates_live, 20.0)
@@ -86,11 +76,13 @@ class TestCustomConfig(unittest.TestCase):
 
     def test_custom_scrolling_speed_override(self):
         from data.config import SCROLLING_SPEEDS
+
         self.assertEqual(self.custom_config.scrolling_speed, SCROLLING_SPEEDS[1])
         self.assertNotEqual(self.custom_config.scrolling_speed, self.default_config.scrolling_speed)
 
     def test_custom_time_format_override(self):
-        from data.time_formats import TIME_FORMAT_24H
+        from bullpen.time_formats import TIME_FORMAT_24H
+
         self.assertEqual(self.custom_config.time_format, TIME_FORMAT_24H)
         self.assertNotEqual(self.custom_config.time_format, self.default_config.time_format)
 

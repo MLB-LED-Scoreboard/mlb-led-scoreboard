@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlb-led-scoreboard-news"
+version = "9.0.0"
+dependencies = [
+    "feedparser>=6.0.11",
+    "pyowm==3.5.0",
+    "MLB_StatsAPI>=1.9.0",
+    "Pillow>=10.0.1,<12.0.0",
+]
+
+[tool.setuptools.package-data]
+"mlb_led_scoreboard_news.icons" = ["*.png"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.entry-points.'bullpen.mlbled.plugin']
+"news" = "mlb_led_scoreboard_news:load"

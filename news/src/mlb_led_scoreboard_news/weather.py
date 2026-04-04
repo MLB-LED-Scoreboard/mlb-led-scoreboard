@@ -1,15 +1,18 @@
-import os, time
+import time
+from importlib.resources import files
 
 import pyowm
-
-import debug
-from data.update import UpdateStatus
+from PIL import Image
+from bullpen.api import UpdateStatus
+from bullpen.logging import LOGGER
 
 WEATHER_UPDATE_RATE = 10 * 60  # 10 minutes between weather updates
 
+from .config import Config
+
 
 class Weather:
-    def __init__(self, config):
+    def __init__(self, config: Config):
         self.apikey = config.weather_apikey
         self.location = config.weather_location
         self.metric = config.weather_metric_units
@@ -40,10 +43,10 @@ class Weather:
     # Pass True if you need to ignore the update rate (like for our first update)
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            debug.log("Weather should update!")
+            LOGGER.debug("Weather should update!")
             self.starttime = time.time()
             if self.apikey_valid:
-                debug.log("API Key hasn't been flagged as bad yet")
+                LOGGER.debug("API Key hasn't been flagged as bad yet")
                 try:
                     observation = self.client.weather_at_place(self.location)
                     weather = observation.weather
@@ -53,33 +56,35 @@ class Weather:
                     self.wind_dir = wind.get("deg", 0)
                     self.conditions = weather.status
                     self.icon_name = weather.weather_icon_name
-                    debug.log(
+                    LOGGER.debug(
                         "Weather: %s; Wind: %s; %s (%s)",
                         self.temperature_string(),
                         self.wind_string(),
                         self.conditions,
-                        self.icon_filename(),
+                        self.icon_name,
                     )
                     return UpdateStatus.SUCCESS
                 except pyowm.commons.exceptions.UnauthorizedError:
-                    debug.warning(
+                    LOGGER.warning(
                         "[WEATHER] The API key provided doesn't appear to be valid. Please check your config.json."
                     )
-                    debug.warning(
+                    LOGGER.warning(
                         "[WEATHER] You can get a free API key by visiting https://home.openweathermap.org/users/sign_up"
                     )
                     self.apikey_valid = False
                     return UpdateStatus.DEFERRED
                 except pyowm.commons.exceptions.APIRequestError:
-                    debug.warning("[WEATHER] Fetching weather information failed from a connection issue.")
-                    debug.exception("[WEATHER] Error Message:")
+                    LOGGER.warning("[WEATHER] Fetching weather information failed from a connection issue.")
+                    LOGGER.exception("[WEATHER] Error Message:")
                     self.__set_fail_state_defaults()
                     return UpdateStatus.FAIL
                 except pyowm.commons.exceptions.NotFoundError:
-                    debug.warning("[WEATHER] Fetching weather information failed from a not found error.")
-                    debug.warning("[WEATHER] The 'weather.location' config is likely not formatted correctly.")
-                    debug.warning("[WEATHER] The correct format is '<city>,<state>,<country>' (example: 'Chicago,il,us')")
-                    debug.exception("[WEATHER] Error Message:")
+                    LOGGER.warning("[WEATHER] Fetching weather information failed from a not found error.")
+                    LOGGER.warning("[WEATHER] The 'weather.location' config is likely not formatted correctly.")
+                    LOGGER.warning(
+                        "[WEATHER] The correct format is '<city>,<state>,<country>' (example: 'Chicago,il,us')"
+                    )
+                    LOGGER.exception("[WEATHER] Error Message:")
                     self.__set_fail_state_defaults()
                     return UpdateStatus.FAIL
 
@@ -98,8 +103,9 @@ class Weather:
     def wind_string(self):
         return "{} {}".format(self.wind_speed_string(), self.wind_dir_string())
 
-    def icon_filename(self):
-        return os.path.abspath("./assets/weather/{}.png".format(self.icon_name))
+    def icon(self):
+        image_file = files("mlb_led_scoreboard_news.icons").joinpath(f"{self.icon_name}.png").open(mode='rb')
+        return Image.open(image_file)
 
     def __should_update(self):
         endtime = time.time()
