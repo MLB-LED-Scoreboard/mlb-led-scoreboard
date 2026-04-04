@@ -2,7 +2,6 @@ import data.pitches
 
 from typing import TYPE_CHECKING
 
-
 if TYPE_CHECKING:
     from data.game import Game
 

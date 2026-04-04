@@ -7,9 +7,9 @@ from data.config import Config
 from data.paths import COORDINATES_DIRECTORY, COLORS_DIRECTORY
 from tests.helpers import make_test_config
 
-
 FIXTURES = Path(__file__).parent / "fixtures"
 CUSTOM_CONFIG_PATH = FIXTURES / "config.json"
+
 
 def make_config(config_path=None, use_layout=False, use_teams=False, use_scoreboard=False):
     """

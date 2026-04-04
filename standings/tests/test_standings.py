@@ -14,7 +14,7 @@ from tests.helpers import make_test_config
 
 class TestStandings(unittest.TestCase):
     demo_config = make_test_config(config="tests/data/demo-date-midseason", led_cols=32, led_rows=32)
-    
+
     dates = data.dates.Dates(2019)
     standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 

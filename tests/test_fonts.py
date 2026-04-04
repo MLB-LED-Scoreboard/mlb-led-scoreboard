@@ -1,21 +1,15 @@
 import os, re, unittest
 from data.config.layout import Layout, FONTNAME_DEFAULT, FONTNAME_KEY, DIR_FONT_PATCHED
 
+
 class TestLayout(unittest.TestCase):
 
     def test_get_font_object_structure(self):
-        layout = Layout({
-            "defaults": {
-                FONTNAME_KEY: FONTNAME_DEFAULT
-            },
-            "test": {
-                FONTNAME_KEY: "4x6"
-            }
-        }, 32, 32)
+        layout = Layout({"defaults": {FONTNAME_KEY: FONTNAME_DEFAULT}, "test": {FONTNAME_KEY: "4x6"}}, 32, 32)
 
         font_dict = layout.font("test")
 
-        self.assertEqual(font_dict["size"], { "width": 4, "height": 6 })
+        self.assertEqual(font_dict["size"], {"width": 4, "height": 6})
 
         # Will be an absolute path, OS-dependent
         font_path = str(os.path.abspath("assets/fonts/patched/4x6.bdf"))
@@ -37,15 +31,12 @@ class TestLayout(unittest.TestCase):
                 y = res.group(3)
 
                 with self.subTest(font=font):
-                    layout = Layout({
-                        "defaults": {
-                            FONTNAME_KEY: FONTNAME_DEFAULT
-                        },
-                        "test": {
-                            FONTNAME_KEY: fn.split(".bdf")[0]
-                        }
-                    }, 32, 32)
+                    layout = Layout(
+                        {"defaults": {FONTNAME_KEY: FONTNAME_DEFAULT}, "test": {FONTNAME_KEY: fn.split(".bdf")[0]}},
+                        32,
+                        32,
+                    )
 
                     font_dict = layout.font("test")
 
-                    self.assertEqual(font_dict["size"], { "width": int(x), "height": int(y) })
+                    self.assertEqual(font_dict["size"], {"width": int(x), "height": int(y)})

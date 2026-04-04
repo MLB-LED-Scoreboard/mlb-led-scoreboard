@@ -45,7 +45,7 @@ class Config:
         json = self.__get_config(self.config_path)
 
         # Matrix options (merged with CLI args)
-        self.matrix_options = self.__matrix_options(json['matrix'])
+        self.matrix_options = self.__matrix_options(json["matrix"])
 
         # Rotation
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
@@ -229,12 +229,10 @@ class Config:
         reference_config = self.read_json(reference_path)
         custom_config = self.read_json(path)
         if not reference_config:
-            LOGGER.critical(
-                f"""\
+            LOGGER.critical(f"""\
 Invalid example configuration. Make sure {reference_filename} exists in root directory.
 You should not edit or move this file!
-"""
-            )
+""")
             sys.exit(1)
 
         if custom_config:
@@ -257,12 +255,10 @@ You should not edit or move this file!
         reference_path = COLORS_DIRECTORY / reference_filename
         reference_colors = self.read_json(reference_path)
         if not reference_colors:
-            LOGGER.critical(
-                f"""\
+            LOGGER.critical(f"""\
 Invalid reference color file. Make sure {reference_filename} exists in colors/.
 You should not edit or move this file!"
-"""
-            )
+""")
             sys.exit(1)
 
         custom_colors = self.read_json(filename)
@@ -282,15 +278,13 @@ You should not edit or move this file!"
             supported_dimensions = sorted(
                 [file.name.split(".")[0] for file in COORDINATES_DIRECTORY.glob("*.example.json")], reverse=True
             )
-            LOGGER.critical(
-                f"""\
+            LOGGER.critical(f"""\
 Invalid reference layout file. Make sure {reference_filename} exists in coordinates/
 You should not edit or move this file!
 
 Supported dimensions are: {', '.join(supported_dimensions)}
 If you aren't sure why you're seeing this, there might not be official support for your matrix dimensions yet.
-"""
-            )
+""")
             sys.exit(1)
 
         # Load and merge any layout customizations
@@ -300,7 +294,7 @@ If you aren't sure why you're seeing this, there might not be official support f
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout
-    
+
     def __matrix_options(self, overrides):
         args = cli.arguments(overrides=overrides)
 
@@ -357,13 +351,16 @@ If you aren't sure why you're seeing this, there might not be official support f
         if not isinstance(other, Config):
             return False
 
-        self_keys = { k: v for k, v in vars(self).items() if k != 'matrix_options' }
-        other_keys = { k: v for k, v in vars(other).items() if k != 'matrix_options' }
+        self_keys = {k: v for k, v in vars(self).items() if k != "matrix_options"}
+        other_keys = {k: v for k, v in vars(other).items() if k != "matrix_options"}
 
         keys_match = self_keys == other_keys
 
         # Spot check matrix options. These don't need strict equality, for config we only care about size.
-        options_match = self.matrix_options.cols == other.matrix_options.cols and self.matrix_options.rows == other.matrix_options.rows
+        options_match = (
+            self.matrix_options.cols == other.matrix_options.cols
+            and self.matrix_options.rows == other.matrix_options.rows
+        )
 
         return keys_match and options_match
 

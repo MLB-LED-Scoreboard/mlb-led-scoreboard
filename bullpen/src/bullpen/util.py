@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Any
 from collections.abc import Mapping
 
-
 if TYPE_CHECKING:
     from .api.renderer import graphics
     from RGBMatrixEmulator.emulation.canvas import Canvas
