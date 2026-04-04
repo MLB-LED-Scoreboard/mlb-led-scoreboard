@@ -1,9 +1,44 @@
-from driver import graphics
+from typing import TYPE_CHECKING, Any
+from collections.abc import Mapping
 
-from utils import center_text_position
+
+if TYPE_CHECKING:
+    from .api.renderer import graphics
+    from RGBMatrixEmulator.emulation.canvas import Canvas
+    from RGBMatrixEmulator import Color
 
 
-def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_pos, center=True, force_scroll=False):
+def deep_update(source, overrides):
+    """Update a nested dictionary or similar mapping.
+    Modify ``source`` in place.
+    """
+    for key, value in list(overrides.items()):
+        if isinstance(value, Mapping) and value:
+            returned = deep_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
+
+
+def center_text_position(text: str, center_pos: int, font_width: int) -> int:
+    return abs(center_pos - ((len(text) * font_width) // 2))
+
+
+def scrolling_text(
+    canvas: "Canvas",
+    graphics: "graphics",
+    x: int,
+    y: int,
+    width: int,
+    font: dict[str, Any],
+    text_color: "Color",
+    bg_color: "Color",
+    text: str,
+    scroll_pos: int,
+    center: bool = True,
+    force_scroll: bool = False,
+) -> int:
     if force_scroll or __text_should_scroll(text, font, width):
 
         w = font["size"]["width"]
@@ -34,7 +69,6 @@ def render_text(canvas, x, y, width, font, text_color, bg_color, text, scroll_po
         # if we trimmed to the left, we need to adjust the scroll position accordingly
         if left:
             scroll_pos += w * left
-
         graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, text)
 
         # draw one-letter boxes to left and right to hide previous and next letters

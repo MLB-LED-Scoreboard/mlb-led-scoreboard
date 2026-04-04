@@ -1,4 +1,4 @@
-import debug
+from bullpen.logging import LOGGER
 
 
 from typing import TYPE_CHECKING
@@ -26,7 +26,7 @@ class Postgame:
                 self.winning_pitcher_wins = game.pitcher_stat(winner, "wins", winner_side)
                 self.winning_pitcher_losses = game.pitcher_stat(winner, "losses", winner_side)
             except:
-                debug.exception("Error getting winning pitcher stats")
+                LOGGER.exception("Error getting winning pitcher stats")
 
         self.save_pitcher = None
         self.save_pitcher_saves = None
@@ -37,7 +37,7 @@ class Postgame:
                 self.save_pitcher = game.full_name(save)
                 self.save_pitcher_saves = game.pitcher_stat(save, "saves", winner_side)
             except:
-                debug.exception("Error getting save pitcher stats")
+                LOGGER.exception("Error getting save pitcher stats")
 
         self.losing_pitcher = PITCHER_UNKNOWN
         self.losing_pitcher_wins = 0
@@ -50,7 +50,7 @@ class Postgame:
                 self.losing_pitcher_wins = game.pitcher_stat(loser, "wins", loser_side)
                 self.losing_pitcher_losses = game.pitcher_stat(loser, "losses", loser_side)
             except:
-                debug.exception("Error getting losing pitcher stats")
+                LOGGER.exception("Error getting losing pitcher stats")
 
         self.series_status = game.series_status()
 

@@ -47,7 +47,7 @@ class Layout:
         '''
         d = self.coords(keypath)
         try:
-            return self.__get_font_object(d[FONTNAME_KEY])
+            return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
         except KeyboardInterrupt as e:
             raise e
         except:
@@ -141,3 +141,17 @@ class Layout:
             and self.width == other.width
             and self.height == other.height
         )
+
+    def for_plugin(self, plugin_name: str) -> "Layout":
+
+        match plugin_name:
+            # TODO easiest work around for existing behavior
+            case "news" | "standings":
+                plugin_layout = self
+            case _:
+                plugin = self.json.get("plugins", {}).get(plugin_name, {})
+                json = {plugin_name: plugin}
+                json["defaults"] = self.json["defaults"]
+                plugin_layout = Layout(json, self.width, self.height)
+
+        return plugin_layout

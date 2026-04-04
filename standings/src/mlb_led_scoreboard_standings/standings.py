@@ -3,10 +3,11 @@ from datetime import datetime
 
 import statsapi
 
-import debug
-from data import teams
-from data.update import UpdateStatus
-import data.headers
+from bullpen.api import UpdateStatus, PluginData
+from bullpen.logging import LOGGER
+
+
+from .config import Config
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
@@ -17,11 +18,10 @@ API_FIELDS = (
 )
 
 
-class Standings:
-    def __init__(self, config, playoffs_start_date: datetime):
+class Standings(PluginData):
+    def __init__(self, config: Config) -> None:
         self.config = config
         self.date = self.config.parse_today()
-        self.playoffs_start_date = playoffs_start_date.date()
         self.starttime = time.time()
         self.preferred_divisions = config.preferred_divisions
         self.wild_cards = any("Wild" in division for division in config.preferred_divisions)
@@ -32,14 +32,13 @@ class Standings:
 
         self.update(True)
 
-
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
             self.date = self.config.parse_today()
-            debug.log("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
+            LOGGER.info("Refreshing standings for %s", self.date.strftime("%m/%d/%Y"))
             self.starttime = time.time()
             try:
-                if not self.is_postseason():
+                if not self.config.is_postseason():
 
                     season_params = {
                         "standingsTypes": "regularSeason",
@@ -51,12 +50,12 @@ class Standings:
                     if self.date != datetime.today().date():
                         season_params["date"] = self.date.strftime("%m/%d/%Y")
 
-                    divisons_data = statsapi.get("standings", season_params, request_kwargs={"headers": data.headers.API_HEADERS})
+                    divisons_data = statsapi.get("standings", season_params)
                     standings = [Division(division_data) for division_data in divisons_data["records"]]
 
                     if self.wild_cards:
                         season_params["standingsTypes"] = "wildCard"
-                        wc_data = statsapi.get("standings", season_params, request_kwargs={"headers": data.headers.API_HEADERS})
+                        wc_data = statsapi.get("standings", season_params)
                         standings += [Division(data, wc=True) for data in wc_data["records"]]
 
                     self.standings = standings
@@ -69,13 +68,12 @@ class Standings:
                             "hydrate": "league,team",
                             "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
                         },
-                        request_kwargs={"headers": data.headers.API_HEADERS}
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")
                     self.leagues["NL"] = League(postseason_data, "NL")
 
             except:
-                debug.exception("Failed to refresh standings.")
+                LOGGER.exception("Failed to refresh standings.")
                 return UpdateStatus.FAIL
             else:
 
@@ -89,10 +87,9 @@ class Standings:
         return time_delta >= STANDINGS_UPDATE_RATE
 
     def populated(self):
-        return (bool(self.preferred_divisions) and bool(self.standings)) or (bool(self.leagues) and self.is_postseason())
-
-    def is_postseason(self):
-        return self.date > self.playoffs_start_date
+        return (bool(self.preferred_divisions) and bool(self.standings)) or (
+            bool(self.leagues) and self.config.is_postseason()
+        )
 
     def __standings_for(self, division_name):
         return next(division for division in self.standings if division.name == division_name)
@@ -122,7 +119,7 @@ class Division:
 
 class Team:
     def __init__(self, data, wc):
-        self.team_abbrev = teams.TEAM_ID_ABBR[data["team"]["id"]]
+        self.team_abbrev = TEAM_ID_ABBR[data["team"]["id"]]
         self.w = data["wins"]
         self.l = data["losses"]  # noqa: E741
         if wc:
@@ -132,42 +129,40 @@ class Team:
         self.clinched = data.get("clinched", False)
         self.elim = data.get("wildCardEliminationNumber", "") == "E"
 
-NL_IDS = {'wc36': 'F_3', 'wc45': 'F_4', 'dsA': 'D_3', 'dsB': 'D_4', 'cs': 'L_2' }
-AL_IDS = {'wc36': 'F_1', 'wc45': 'F_2', 'dsA': 'D_1', 'dsB': 'D_2', 'cs': 'L_1' }
+
+NL_IDS = {"wc36": "F_3", "wc45": "F_4", "dsA": "D_3", "dsB": "D_4", "cs": "L_2"}
+AL_IDS = {"wc36": "F_1", "wc45": "F_2", "dsA": "D_1", "dsB": "D_2", "cs": "L_1"}
+
 
 class League:
     """Grabs postseason bracket info for one league based on the schedule"""
 
     def __init__(self, data, league):
         self.name = league
-        if league == 'NL':
+        if league == "NL":
             ids = NL_IDS
         else:
             ids = AL_IDS
 
-        self.wc3, self.wc6 = self.get_seeds(data, ids['wc36'])
-        self.wc4, self.wc5 = self.get_seeds(data, ids['wc45'])
+        self.wc3, self.wc6 = self.get_seeds(data, ids["wc36"])
+        self.wc4, self.wc5 = self.get_seeds(data, ids["wc45"])
 
-        self.ds_A_bye, _ = self.get_seeds(data, ids['dsA'])
-        self.ds_B_bye, _ = self.get_seeds(data, ids['dsB'])
+        self.ds_A_bye, _ = self.get_seeds(data, ids["dsA"])
+        self.ds_B_bye, _ = self.get_seeds(data, ids["dsB"])
 
-        self.wc36_winner = self.get_series_winner(data,  ids['wc36'])
-        self.wc45_winner = self.get_series_winner(data,  ids['wc45'])
-        self.l_two = self.get_series_winner(data, ids['dsA'])
-        self.l_one = self.get_series_winner(data, ids['dsB'])
-        self.champ = self.get_series_winner(data, ids['cs'])
+        self.wc36_winner = self.get_series_winner(data, ids["wc36"])
+        self.wc45_winner = self.get_series_winner(data, ids["wc45"])
+        self.l_two = self.get_series_winner(data, ids["dsA"])
+        self.l_one = self.get_series_winner(data, ids["dsB"])
+        self.champ = self.get_series_winner(data, ids["cs"])
 
     def get_series_winner(self, data, ID):
-        series = next(
-            s
-            for s in data["series"]
-            if s["series"]["id"] == ID
-        )
+        series = next(s for s in data["series"] if s["series"]["id"] == ID)
         game = series["games"][-1]
         if "L" in ID:
             champ = f"{self.name}C"
-        elif 'F' in ID:
-            if '3' in ID or '1' in ID:
+        elif "F" in ID:
+            if "3" in ID or "1" in ID:
                 champ = "W36"
             else:
                 champ = "W45"
@@ -181,11 +176,7 @@ class League:
 
     @staticmethod
     def get_seeds(data, ID):
-        series = next(
-            s
-            for s in data["series"]
-            if s["series"]["id"] == ID
-        )
+        series = next(s for s in data["series"] if s["series"]["id"] == ID)
         higher, lower = (
             series["games"][0]["teams"]["home"]["team"]["id"],
             series["games"][0]["teams"]["away"]["team"]["id"],
@@ -206,4 +197,39 @@ class League:
 
 
 def get_abbr(id, default="TBD"):
-    return f"{teams.TEAM_ID_ABBR.get(id, default):>3}"
+    return f"{TEAM_ID_ABBR.get(id, default):>3}"
+
+
+# TODO should static data like this live in bullpen?
+TEAM_ID_ABBR = {
+    108: "LAA",
+    109: "AZ",
+    110: "BAL",
+    111: "BOS",
+    112: "CHC",
+    113: "CIN",
+    114: "CLE",
+    115: "COL",
+    116: "DET",
+    117: "HOU",
+    118: "KC",
+    119: "LAD",
+    120: "WSH",
+    121: "NYM",
+    133: "ATH",
+    134: "PIT",
+    135: "SD",
+    136: "SEA",
+    137: "SF",
+    138: "STL",
+    139: "TB",
+    140: "TEX",
+    141: "TOR",
+    142: "MIN",
+    143: "PHI",
+    144: "ATL",
+    145: "CWS",
+    146: "MIA",
+    147: "NYY",
+    158: "MIL",
+}

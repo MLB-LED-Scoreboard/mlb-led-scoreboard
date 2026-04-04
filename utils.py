@@ -1,12 +1,38 @@
 from collections.abc import Mapping
 
+import os
+import logging
 
-def center_text_position(text, center_pos, font_width):
-    return abs(center_pos - ((len(text) * font_width) // 2))
+from logging.handlers import RotatingFileHandler
+
+from bullpen.logging import LOGGER
 
 
-def split_string(string, num_chars):
-    return [(string[i : i + num_chars]).strip() for i in range(0, len(string), num_chars)]  # noqa: E203
+def setup_logger(verbose):
+    LOGFILE = os.path.abspath(os.path.join(__file__, "..", "logs", "mlbled.log"))
+
+    formatter = logging.Formatter("{levelname} ({asctime}): {message}", style="{", datefmt="%H:%M:%S")
+
+    # Log to stdout
+    sh = logging.StreamHandler()
+    sh.setFormatter(formatter)
+
+    # Log to a file, handling rotation at 1MB
+    fh = RotatingFileHandler(LOGFILE, maxBytes=0x100000, backupCount=5)
+    fh.setFormatter(formatter)
+
+    LOGGER.addHandler(sh)
+    LOGGER.addHandler(fh)
+
+    LOGGER.propagate = False
+    if verbose:
+        if verbose == "with-statsapi":
+            import statsapi
+
+            # Assign the scoreboard logger to statsapi
+            statsapi.logger = LOGGER
+    else:
+        LOGGER.setLevel(logging.WARNING)
 
 
 def deep_update(source, overrides):

@@ -1,15 +1,17 @@
 import time
 from typing import Callable, NoReturn
 
+import bullpen.api as api
 
-import debug
+
+from bullpen.logging import LOGGER
 from data import Data, status
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
 from data.game import Game
 
-from renderers import network, offday, standings
+from renderers import network
 from renderers.games import game as gamerender
 from renderers.games import irregular
 from renderers.games import postgame as postgamerender
@@ -18,26 +20,25 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data) -> None:
+    def __init__(self, matrix, data: Data, plugins: dict[str, api.PluginRenderer]) -> None:
         self.matrix = matrix
         self.data = data
-        self.is_playoffs = self.data.schedule.date > self.data.headlines.important_dates.playoffs_start_date.date()
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished: bool = False
+        self.plugins = plugins
 
         self.animation_time = 0
-        self.standings_stat = "w"
-        self.standings_league = "NL"
 
     def render(self) -> NoReturn:
         while True:
             if self.data.schedule.num_games() > 0:
                 self.__render_games()
-            if t := self.data.config.screen_time_at_priority("standings", self.data.schedule.priority):
-                self.__draw_standings(timer_cond(t))
-            if t := self.data.config.screen_time_at_priority("news", self.data.schedule.priority):
-                self.__draw_news(any_of(timer_cond(t), self.scrolling_finished_cond()))
+
+            for plugin in self.data.config.rotation_screen_rules.get(self.data.schedule.priority, {}):
+                if t := self.data.config.screen_time_at_priority(plugin, self.data.schedule.priority):
+                    LOGGER.debug("Rotating to plugin %s for %d seconds", plugin, t)
+                    self.__draw_plugin_screen(plugin, any_of(timer_cond(t), self.scrolling_finished_cond()))
 
     def __render_games(self):
         seen_games = set()
@@ -46,7 +47,7 @@ class MainRenderer:
 
             game = self.data.games.next()
             if game is None:
-                debug.warning("Render thread: no game to render, sleeping for a bit")
+                LOGGER.warning("Render thread: no game to render, sleeping for a bit")
                 time.sleep(1)
                 break
 
@@ -54,7 +55,7 @@ class MainRenderer:
                 break
             seen_games.add(game.game_id)
 
-            debug.log("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
+            LOGGER.debug("Render thread: showing game %d / %d", len(seen_games), self.data.schedule.num_games())
 
             cond = any_of(
                 timer_cond(self.data.config.rotate_rate_for_status(game.status())),
@@ -83,7 +84,7 @@ class MainRenderer:
                 pregame,
                 self.scrolling_text_pos,
                 self.data.config.pregame_weather,
-                self.is_playoffs,
+                self.data.config.is_postseason(),
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
@@ -91,7 +92,13 @@ class MainRenderer:
             self.__max_scroll_x(layout.coords("final.scrolling_text"))
             final = Postgame(game)
             pos = postgamerender.render_postgame(
-                self.canvas, layout, colors, final, scoreboard, self.scrolling_text_pos, self.is_playoffs
+                self.canvas,
+                layout,
+                colors,
+                final,
+                scoreboard,
+                self.scrolling_text_pos,
+                self.data.config.is_postseason(),
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
@@ -140,84 +147,25 @@ class MainRenderer:
 
         self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
-    def __draw_news(self, cond: Callable[[], bool]):
-        """
-        Draw the news screen for as long as cond returns True
-        """
-        self.scrolling_text_pos = self.canvas.width
-        color = self.data.config.scoreboard_colors.color("default.background")
-        while cond():
-            self.canvas.Fill(color["r"], color["g"], color["b"])
+    def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]) -> None:
+        from driver import graphics
 
-            self.__max_scroll_x(self.data.config.layout.coords("offday.scrolling_text"))
-            pos = offday.render_offday_screen(
-                self.canvas,
-                self.data.config.layout,
-                self.data.config.scoreboard_colors,
-                self.data.weather,
-                self.data.headlines,
-                self.data.config.time_format,
-                self.scrolling_text_pos,
-            )
+        self.scrolling_text_pos = self.canvas.width
+
+        renderer = self.plugins[plugin_name]
+        data = self.data.plugin_data[plugin_name]
+        wait_time = renderer.wait_time()
+        while renderer.can_render(data) and cond():
+            pos = renderer.render(data, self.canvas, graphics, self.scrolling_text_pos)
             self.__update_scrolling_text_pos(pos, self.canvas.width)
-            if self.scrolling_text_pos == self.canvas.width:
-                self.data.headlines.advance_ticker()
+
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
-            time.sleep(self.data.config.scrolling_speed)
+            time.sleep(wait_time)
 
-    def __draw_standings(self, cond: Callable[[], bool]):
-        """
-        Draw the standings screen for as long as cond returns True
-        """
-        if not self.data.standings.populated():
-            return
-
-        if self.data.standings.is_postseason() and self.canvas.width <= 32:
-            return
-
-        update = 1
-        while cond():
-            if self.data.standings.is_postseason():
-                standings.render_bracket(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.standings.leagues[self.standings_league],
-                )
-            else:
-                standings.render_standings(
-                    self.canvas,
-                    self.data.config.layout,
-                    self.data.config.scoreboard_colors,
-                    self.data.standings.current_standings(),
-                    self.standings_stat,
-                )
-
-            if self.data.network_issues:
-                network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
-
-            self.canvas = self.matrix.SwapOnVSync(self.canvas)
-
-            if self.data.standings.is_postseason():
-                if update % 20 == 0:
-                    if self.standings_league == "NL":
-                        self.standings_league = "AL"
-                    else:
-                        self.standings_league = "NL"
-            elif self.canvas.width == 32 and update % 5 == 0:
-                if self.standings_stat == "w":
-                    self.standings_stat = "l"
-                else:
-                    self.standings_stat = "w"
-                    self.data.standings.advance_to_next_standings()
-            elif self.canvas.width > 32 and update % 10 == 0:
-                self.data.standings.advance_to_next_standings()
-
-            time.sleep(1)
-            update = (update + 1) % 100
+        renderer.reset()
 
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
@@ -225,6 +173,9 @@ class MainRenderer:
 
     def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of scrolling text"""
+        if new_pos is None:
+            self.scrolling_finished = True
+            return
         pos_after_scroll = self.scrolling_text_pos - 1
         if pos_after_scroll + new_pos < 0:
             self.scrolling_finished = True

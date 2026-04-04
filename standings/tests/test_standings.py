@@ -8,6 +8,7 @@ A similar set of tests with stored responses may be separately added in the futu
 import unittest
 import data.dates
 import data.standings
+from mlb_led_scoreboard_standings import standings
 from tests.helpers import make_test_config
 
 
@@ -18,7 +19,7 @@ class TestStandings(unittest.TestCase):
     standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 
     def test_standings_midseason(self):
-        self.assertFalse(self.standings.is_postseason())
+        self.assertFalse(self.demo_config.is_postseason())
         self.assertTrue(self.standings.populated())
 
         east = self.standings.current_standings()
@@ -65,7 +66,7 @@ HOU ---|           | --- CLE ---|
             NYY ---|"""
 
     def test_standings_playoffs(self):
-        self.assertTrue(self.standings.is_postseason())
+        self.assertTrue(self.demo_config.is_postseason())
         self.assertTrue(self.standings.populated())
 
         AL = self.standings.leagues["AL"]
@@ -79,7 +80,7 @@ class TestStandingsEndOfSeason(unittest.TestCase):
     standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 
     def test_standings_end(self):
-        self.assertFalse(self.standings.is_postseason())
+        self.assertFalse(self.demo_config.is_postseason())
         self.assertTrue(self.standings.populated())
 
         # east

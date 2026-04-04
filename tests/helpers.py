@@ -18,8 +18,8 @@ def make_test_config(**test_overrides):
         merged = {**overrides, **test_overrides}
         if merged.get("config", None) is None:
             merged["config"] = TEST_CONFIG_PATH
-        return _arguments(overrides=merged)
+        return _arguments(overrides=merged)        
 
     with mock.patch.object(cli, "arguments", patched_arguments):
-        with mock.patch("debug.warning"):
+        with mock.patch("bullpen.logging.LOGGER.warning"):
             return Config()

@@ -1,7 +1,6 @@
 import sys
 import json
-from utils import deep_update
-
+from bullpen.util import deep_update
 
 OLD_EXAMPLE = """
 {

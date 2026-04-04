@@ -1,6 +1,8 @@
-from typing import Any, Callable, Generic, Optional, TypeVar
-from data.update import UpdateStatus
-import debug
+from typing import Callable, Generic, Optional, TypeVar
+
+from bullpen.api import UpdateStatus
+
+from bullpen.logging import LOGGER
 
 T = TypeVar("T")
 
@@ -27,7 +29,7 @@ class DoubleBuffer(Generic[T]):
         """
         Called on the render thread when it wants the next game to render.
         """
-        debug.log("Render thread: reading 'next'")
+        LOGGER.debug("Render thread: reading 'next'")
         self._reading_next = True
         return self.items[1]
 
@@ -42,12 +44,12 @@ class DoubleBuffer(Generic[T]):
             if next is None:
                 return UpdateStatus.FAIL
             if next != self.items[1]:
-                debug.log("Main thread: replacing 'next' with new data")
+                LOGGER.debug("Main thread: replacing 'next' with new data")
                 self.items = (self.items[0], next)
                 return UpdateStatus.SUCCESS
 
         if self._reading_next:
-            debug.log("Main thread: mirroring 'next' into 'current'")
+            LOGGER.debug("Main thread: mirroring 'next' into 'current'")
             self.items = (self.items[1], self.items[1])
             self._reading_next = False
 
