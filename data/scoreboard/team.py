@@ -1,6 +1,5 @@
 from bullpen.logging import LOGGER
 
-
 # avoids spamming the logs with errors about the same color every time
 _IGNORED_TEAMS = set()
 

@@ -1,5 +1,6 @@
 import json, os, unittest
 
+
 class TestColorSchema(unittest.TestCase):
 
     ERROR_LIMIT = 10
@@ -21,17 +22,17 @@ class TestColorSchema(unittest.TestCase):
         return errors
 
     def _msg(self, errors):
-        displayed = errors[:self.ERROR_LIMIT]
+        displayed = errors[: self.ERROR_LIMIT]
         msg = "Schema contains errors:\n\t" + "\n\t".join(displayed)
 
         if len(errors) > self.ERROR_LIMIT:
             msg += f"\n\n\t... and {len(errors) - self.ERROR_LIMIT} more"
 
         return msg
-    
+
     def test_team_base_schema(self):
         errors = []
-        
+
         for team, values in self.team_colors.items():
             if team in self.METADATA_KEYS:
                 continue
@@ -43,14 +44,14 @@ class TestColorSchema(unittest.TestCase):
 
     def test_team_city_connect_schema(self):
         errors = []
-        
+
         for team, values in self.team_colors.items():
             if team in self.METADATA_KEYS:
                 continue
 
             if self.CITY_CONNECT_KEY not in values:
                 continue
-            
+
             values = values[self.CITY_CONNECT_KEY]
             context = f"{team}.{self.CITY_CONNECT_KEY}"
 

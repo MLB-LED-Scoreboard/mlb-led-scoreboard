@@ -12,7 +12,7 @@ class DriverWrapper:
         self.hardware_load_failed = False
         self.mode = None
 
-        if 'unittest' in sys.modules:
+        if "unittest" in sys.modules:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)
         else:
             self.set_mode(DriverMode.HARDWARE)

@@ -104,7 +104,7 @@ class Weather:
         return "{} {}".format(self.wind_speed_string(), self.wind_dir_string())
 
     def icon(self):
-        image_file = files("mlb_led_scoreboard_news.icons").joinpath(f"{self.icon_name}.png").open(mode='rb')
+        image_file = files("mlb_led_scoreboard_news.icons").joinpath(f"{self.icon_name}.png").open(mode="rb")
         return Image.open(image_file)
 
     def __should_update(self):

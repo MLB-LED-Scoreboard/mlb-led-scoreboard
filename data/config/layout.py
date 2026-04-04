@@ -32,7 +32,7 @@ class Layout:
         self.__get_font_object(self.default_font_name)
 
     def font(self, keypath):
-        '''
+        """
         Returns a dictionary with font properties. The font object resides under the "font" key.
 
         {
@@ -44,7 +44,7 @@ class Layout:
                 "height": int
             }
         }
-        '''
+        """
         d = self.coords(keypath)
         try:
             return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
@@ -105,11 +105,7 @@ class Layout:
 
         font_paths = [DIR_FONT_PATCHED, DIR_FONT_DRIVER]
         for font_path in font_paths:
-            abs_path = os.path.abspath(
-                os.path.join(
-                    __file__, "../../..", f"{font_path}/{font_name}.bdf"
-                )
-            )
+            abs_path = os.path.abspath(os.path.join(__file__, "../../..", f"{font_path}/{font_name}.bdf"))
 
             if os.path.isfile(abs_path):
                 font = graphics.Font()
@@ -125,13 +121,7 @@ class Layout:
     def __get_font_bdf_properties(self, path):
         bdf = bdfparser.Font(path)
 
-        return {
-            "bdf_headers": bdf.headers,
-            "size": {
-                "width": bdf.headers["fbbx"],
-                "height": bdf.headers["fbby"]
-            }
-        }
+        return {"bdf_headers": bdf.headers, "size": {"width": bdf.headers["fbbx"], "height": bdf.headers["fbby"]}}
 
     def __eq__(self, other):
 

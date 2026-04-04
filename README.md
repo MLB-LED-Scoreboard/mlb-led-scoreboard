@@ -446,11 +446,28 @@ The scoreboard updates frequently, but it cannot retrieve information that MLB h
 ## Help and Contributing
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
-### Run Unit Tests
+### Installing Dev Dependencies
 
-PRs require passing unit tests in order to merge. You can run tests from the project root as follows:
 ```sh
+# Ideally within a venv
+python -m pip install -r requirements.dev.txt
+```
+
+### Checks
+
+Good unit tests, linting, and typechecking are greatly appreciated on new features. PRs require passing unit tests at minimum in order to merge.
+
+You can run dev tooling from the project root as follows:
+
+```sh
+# Unit tests
 python -m unittest
+
+# Lint
+black .
+
+# Typechecking
+mypy .
 ```
 
 ## Licensing

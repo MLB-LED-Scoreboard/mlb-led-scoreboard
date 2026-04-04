@@ -27,8 +27,8 @@ class Standings(PluginData):
         self.wild_cards = any("Wild" in division for division in config.preferred_divisions)
         self.current_division_index = 0
 
-        self.standings = []
-        self.leagues = {}
+        self.standings: list[Division] = []
+        self.leagues: dict[str, League] = {}
 
         self.update(True)
 

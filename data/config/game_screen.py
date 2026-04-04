@@ -16,7 +16,7 @@ class Requirements(Enum):
         return self.value
 
     @staticmethod
-    def from_str(label):
+    def from_str(label: str) -> Optional["Requirements"]:
         for requirement in Requirements:
             if requirement.value == label:
                 return requirement

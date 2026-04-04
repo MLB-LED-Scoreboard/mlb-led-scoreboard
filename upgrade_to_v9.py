@@ -132,7 +132,7 @@ if __name__ == "__main__":
     with open(config_path, "r") as f:
         config = json.load(f)
 
-    if 'format' in config and config["format"] == 9:
+    if "format" in config and config["format"] == 9:
         print("Config is already in format 9, no upgrade needed.")
         sys.exit(0)
 

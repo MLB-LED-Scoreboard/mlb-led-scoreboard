@@ -53,7 +53,7 @@ PITCH_SHORT = {
     "SI": "SI",
     "SL": "SL",
     "SV": "SV",
-    "ST": "SW", # MLB default is "ST"
+    "ST": "SW",  # MLB default is "ST"
     "UN": "UN",
 }
 

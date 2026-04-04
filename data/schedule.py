@@ -90,7 +90,7 @@ class Schedule:
             LOGGER.debug("Schedule: going to game index %d", counter)
         return counter
 
-    def __current_game(self, unless: Optional[Game] = None):
+    def __current_game(self, unless: Optional[Game] = None) -> Optional[Game]:
         try:
             scheduled_game = self._games[self.current_idx]
             if unless and scheduled_game["game_id"] == unless.game_id:

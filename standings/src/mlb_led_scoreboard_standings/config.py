@@ -1,7 +1,6 @@
 from bullpen import api
 from bullpen.logging import LOGGER
 
-
 DEFAULT_PREFERRED_DIVISIONS = ["NL Central"]
 
 

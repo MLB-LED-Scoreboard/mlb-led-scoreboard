@@ -1,9 +1,10 @@
 import abc
-from typing import TYPE_CHECKING, Optional, Protocol
-
+from typing import TYPE_CHECKING, Generic, Optional, Protocol, TypeVar
 
 from .data import PluginData
 from .config import PluginConfig, Layout, Color
+
+_PluginData = TypeVar("_PluginData", bound=PluginData)
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.emulation.canvas import Canvas
@@ -20,7 +21,7 @@ class graphics(Protocol):
     def DrawCircle(self, canvas: "Canvas", x: int, y: int, r: int, color: "GraphicsColor") -> None: ...
 
 
-class PluginRenderer(abc.ABC):
+class PluginRenderer(abc.ABC, Generic[_PluginData]):
     @abc.abstractmethod
     def __init__(self, config: PluginConfig, layout: Layout, colors: Color) -> None: ...
 
@@ -29,12 +30,12 @@ class PluginRenderer(abc.ABC):
 
     @abc.abstractmethod
     def render(
-        self, data: PluginData, canvas: "Canvas", graphics: graphics, scrolling_text_pos: int
+        self, data: _PluginData, canvas: "Canvas", graphics: graphics, scrolling_text_pos: int
     ) -> Optional[int]: ...
 
     def reset(self):
         """Called at the end of rendering, can be used to reset state before switching off"""
         pass
 
-    def can_render(self, data: PluginData) -> bool:
+    def can_render(self, data: _PluginData) -> bool:
         return True
