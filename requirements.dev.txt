@@ -1,4 +1,5 @@
 -r requirements.txt
 
+jsonschema-default==1.8.1
 black>=24.0
 mypy>=1.8
