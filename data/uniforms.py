@@ -1,7 +1,7 @@
 import time
 import statsapi
 
-import debug
+from bullpen.logging import LOGGER
 import data.headers
 
 API_FIELDS = "uniforms,home,away,uniformAssets,uniformAssetText"
@@ -38,21 +38,21 @@ class Uniforms:
             return
 
         try:
-            data_u = statsapi.get("game_uniforms", {"gamePks": self.game_id, "fields": API_FIELDS}, request_kwargs={"headers": data.headers.API_HEADERS})["uniforms"][0]
+            data_u = statsapi.get(
+                "game_uniforms",
+                {"gamePks": self.game_id, "fields": API_FIELDS},
+                request_kwargs={"headers": data.headers.API_HEADERS},
+            )["uniforms"][0]
             for uniform, special_check in SPECIAL_UNIFORMS.items():
                 home_uniforms = data_u.get("home", {}).get("uniformAssets", [])
                 away_uniforms = data_u.get("away", {}).get("uniformAssets", [])
 
-                if not self.home_special and any(
-                    special_check(asset["uniformAssetText"]) for asset in home_uniforms
-                ):
+                if not self.home_special and any(special_check(asset["uniformAssetText"]) for asset in home_uniforms):
                     self.home_special = uniform
-                if not self.away_special and any(
-                    special_check(asset["uniformAssetText"]) for asset in away_uniforms
-                ):
+                if not self.away_special and any(special_check(asset["uniformAssetText"]) for asset in away_uniforms):
                     self.away_special = uniform
         except Exception:
-            debug.exception(f"Error while fetching game {self.game_id} uniform data")
+            LOGGER.exception(f"Error while fetching game {self.game_id} uniform data")
 
     def __should_update(self):
         endtime = time.time()

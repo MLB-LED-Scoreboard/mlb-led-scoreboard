@@ -6,19 +6,20 @@ A similar set of tests with stored responses may be separately added in the futu
 """
 
 import unittest
-import unittest.mock
-import data.config
 import data.dates
 import data.standings
+from mlb_led_scoreboard_standings import standings
+from tests.helpers import make_test_config
 
 
 class TestStandings(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-midseason", 32, 32)
+    demo_config = make_test_config(config="tests/data/demo-date-midseason", led_cols=32, led_rows=32)
+    
     dates = data.dates.Dates(2019)
     standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 
     def test_standings_midseason(self):
-        self.assertFalse(self.standings.is_postseason())
+        self.assertFalse(self.demo_config.is_postseason())
         self.assertTrue(self.standings.populated())
 
         east = self.standings.current_standings()
@@ -51,7 +52,7 @@ class TestStandings(unittest.TestCase):
 
 
 class TestSchedulePlayoff(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-playoffs", 32, 32)
+    demo_config = make_test_config(config="tests/data/demo-date-playoffs", led_cols=32, led_rows=32)
     dates = data.dates.Dates(2024)
     standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
     americanBracket = """\
@@ -65,7 +66,7 @@ HOU ---|           | --- CLE ---|
             NYY ---|"""
 
     def test_standings_playoffs(self):
-        self.assertTrue(self.standings.is_postseason())
+        self.assertTrue(self.demo_config.is_postseason())
         self.assertTrue(self.standings.populated())
 
         AL = self.standings.leagues["AL"]
@@ -74,12 +75,12 @@ HOU ---|           | --- CLE ---|
 
 
 class TestStandingsEndOfSeason(unittest.TestCase):
-    demo_config = data.config.Config("tests/data/demo-date-end", 32, 32)
+    demo_config = make_test_config(config="tests/data/demo-date-end", led_cols=32, led_rows=32)
     dates = data.dates.Dates(2024)  # Note: intentionally wrong year so that the playoff start is in the future
     standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
 
     def test_standings_end(self):
-        self.assertFalse(self.standings.is_postseason())
+        self.assertFalse(self.demo_config.is_postseason())
         self.assertTrue(self.standings.populated())
 
         # east

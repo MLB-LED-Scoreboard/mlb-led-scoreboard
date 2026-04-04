@@ -2,9 +2,6 @@ from datetime import time, datetime
 from typing import Optional
 
 
-VALID_NON_GAME_SCREEN_TYPES = ["news", "standings"]
-
-
 class TimeRule:
     # TODO(bmw): extend to day of week?
     def __init__(

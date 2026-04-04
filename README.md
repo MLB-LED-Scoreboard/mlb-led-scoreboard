@@ -245,6 +245,8 @@ A default [`config.example.json`](config.example.json) file is included for refe
 See [`config.schema.json`](config.schema.json) for a schema for configuration files.
 
 ```
+"matrix":
+  <CLI flags>                     Any     See the `Flags` section.
 "news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
   "teams"                         Array   Teams you'd like to pull down headlines for.
   "traderumors"                   Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
@@ -260,7 +262,7 @@ See [`config.schema.json`](config.schema.json) for a schema for configuration fi
   "scroll_until_finished"         Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
   "rates"                         Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
 
-  "screens"                       Array    See the next section.
+  "screens"                       Array   See the next section.
 
 "weather":                                Options for retrieving the weather
   "apikey"                        String  An API key is required to use the weather service.
@@ -378,9 +380,44 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 --led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
 --led-pwm-dither-bits     Time dithering of lower bits (Default: 0)
---config                  Specify a configuration file name other, omitting json xtn (Default: config)
---emulated                Force the scoreboard to run in software emulation mode.
 --drop-privileges         Force the matrix driver to drop root privileges after setup. (Default: true)
+
+# The following are specific to mlb-led-scoreboard
+--emulated                Force the scoreboard to run in software emulation mode.
+--config                  Specify a configuration file name other, omitting json xtn (Default: config)
+```
+
+### Saving Flags in `config.json`
+
+For convenience, you can store any of the above flags in the `matrix` section of `config.json` to make it easier to start the scoreboard. The only flag that CANNOT be added to a config file is `config`, since it's used to find the config file in the first place.
+
+Valid flags will remove the double dash prefix (`--`) and convert the name from kebab-case (`flag-name`) to snake-case (`flag_name`).
+
+#### Example
+
+Given a startup command:
+
+```sh
+sudo ./main.py --led-cols=128 --led-rows=64 --led-gpio-mapping=adafruit-hat-pwm --led-brightness=80
+```
+
+Add the flags to `config.json`:
+
+```json
+{
+  "matrix": {
+    "led_cols": 128,
+    "led_rows": 64,
+    "led_gpio_mapping": "adafruit-hat-pwm",
+    "led_brightness": 80
+  }
+}
+```
+
+Your startup command then becomes:
+
+```sh
+sudo ./main.py
 ```
 
 ## Personalization

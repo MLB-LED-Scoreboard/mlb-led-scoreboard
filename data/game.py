@@ -4,15 +4,15 @@ from typing import Any, Optional
 
 import statsapi
 
-import debug
+from bullpen.logging import LOGGER
 from data import teams
-from data.update import UpdateStatus
+from bullpen.api import UpdateStatus
 from data.utils.circular_queue import CircularQueue
 from data.uniforms import Uniforms
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
-from data.time_formats import TIME_FORMAT_24H
+from bullpen.time_formats import TIME_FORMAT_24H
 import data.headers
 
 API_FIELDS = (
@@ -60,7 +60,7 @@ class Game:
         if force or self.__should_update():
             self.starttime = time.time()
             try:
-                debug.log("Fetching data for game %s", str(self.game_id))
+                LOGGER.debug("Fetching data for game %s", str(self.game_id))
                 live_data = statsapi.get(
                     "game",
                     {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params,
@@ -73,7 +73,7 @@ class Game:
                 self._status = self._current_data["gameData"]["status"]
                 if live_data["gameData"]["datetime"]["officialDate"] > self.date:
                     # this is odd, but if a game is postponed then the 'game' endpoint gets the rescheduled game
-                    debug.log("Getting game status from schedule for game with strange date!")
+                    LOGGER.debug("Getting game status from schedule for game with strange date!")
                     try:
                         scheduled = statsapi.get(
                             "schedule",
@@ -84,13 +84,13 @@ class Game:
                             g["games"][0]["status"] for g in scheduled["dates"] if g["date"] == self.date
                         )
                     except:
-                        debug.error("Failed to get game status from schedule")
+                        LOGGER.error("Failed to get game status from schedule")
 
                 self._uniform_data.update()
                 self.print_game_data_debug()
                 return UpdateStatus.SUCCESS
             except:
-                debug.exception("Networking Error while refreshing the current game data.")
+                LOGGER.exception("Networking Error while refreshing the current game data.")
                 return UpdateStatus.FAIL
         return UpdateStatus.DEFERRED
 
@@ -367,8 +367,8 @@ class Game:
         return False
 
     def print_game_data_debug(self):
-        debug.log("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
-        debug.log("Game is %d seconds behind", self.current_delay())
-        debug.log("Pre: %s", Pregame(self, TIME_FORMAT_24H))
-        debug.log("Live: %s", Scoreboard(self))
-        debug.log("Final: %s", Postgame(self))
+        LOGGER.debug("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
+        LOGGER.debug("Game is %d seconds behind", self.current_delay())
+        LOGGER.debug("Pre: %s", Pregame(self, TIME_FORMAT_24H))
+        LOGGER.debug("Live: %s", Scoreboard(self))
+        LOGGER.debug("Final: %s", Postgame(self))

@@ -1,6 +1,7 @@
 {
   "$schema": "./schemas/config.schema.json",
   "format": 9.0,
+  "matrix": {},
   "rotation": {
     "scroll_until_finished": true,
     "rates": {

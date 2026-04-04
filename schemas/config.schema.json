@@ -6,6 +6,9 @@
   "required": [
     "format"
   ],
+  "patternProperties": {
+    "^\\$schema$": { "type": "string" }
+  },
   "properties": {
     "x-schema": {
       "type": "string",
@@ -19,6 +22,10 @@
       "const": 9.0,
       "default": 9.0,
       "x-hidden": true
+    },
+    "matrix": {
+      "description": "Matrix driver options. Identical to command line arguments.",
+      "default": {}
     },
     "rotation": {
       "type": "object",

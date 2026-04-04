@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
 import tzlocal
-import debug
-from data.time_formats import TIME_FORMAT_12H
+from bullpen.logging import LOGGER
+from bullpen.time_formats import TIME_FORMAT_12H
 
 PITCHER_TBD = "TBD"
 
@@ -35,7 +35,7 @@ class Pregame:
                 era = game.pitcher_stat(away_id, "era", "away")
                 self.away_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
             except:
-                debug.exception("Error getting away starter stats")
+                LOGGER.exception("Error getting away starter stats")
 
         self.home_starter = PITCHER_TBD
         home_id = game.probable_pitcher_id("home")
@@ -47,7 +47,7 @@ class Pregame:
                 era = game.pitcher_stat(home_id, "era", "home")
                 self.home_starter = "{} ({}-{} {} ERA)".format(name, wins, losses, era)
             except:
-                debug.exception("Error getting away starter stats")
+                LOGGER.exception("Error getting away starter stats")
 
         self.national_broadcasts = game.broadcasts()
         self.series_status = game.series_status()
