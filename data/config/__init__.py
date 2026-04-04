@@ -19,7 +19,6 @@ from data import status
 from data.config.color import Color
 from data.config.layout import Layout
 from data.paths import *
-from utils import deep_update
 import cli
 from driver import RGBMatrixOptions
 
