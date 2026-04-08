@@ -108,7 +108,7 @@ A sample bill of materials (BOM) is located [here](https://www.adafruit.com/wish
 ### Software Installation
 #### Requirements
 You need Git for cloning this repo and PIP for installing the scoreboard software.
-```
+```sh
 sudo apt-get update
 sudo apt-get install git python3-pip
 ```
@@ -116,7 +116,7 @@ sudo apt-get install git python3-pip
 #### Installing the scoreboard software
 This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
 
-```
+```sh
 git clone https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard.git
 cd mlb-led-scoreboard/
 sudo ./install.sh
@@ -140,39 +140,39 @@ It will also install the following python libraries that are required for certai
 Additional flags are available for customizing your install:
 
 ```
--a, --skip-all          Skip all dependencies and config installation (equivalent to -c -p -m).
--c, --skip-config       Skip updating JSON configuration files.
--m, --skip-matrix       Skip building matrix driver dependency. Video display will default to emulator mode.
--p, --skip-python       Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
+-a, --skip-all              Skip all dependencies and config installation (equivalent to -c -o -p).
+-c, --skip-config           Skip updating JSON configuration files.
+-o, --skip-optimizations    Skip optimizations for matrix display.
+-p, --skip-python           Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
 
--v, --no-venv           Do not create a virtual environment for the dependencies.
--e, --emulator-only     Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
--d, --driver            Specify a branch name or commit SHA for the rpi-rgb-led-matrix library. (Optional. Defaults may change.)
+-v, --no-venv               Do not create a virtual environment for the dependencies.
+-s, --no-sudo               Do not install dependencies under sudo. Useful for emulation-only installation.
+-e, --emulator-only         Do not install RPI matrix drivers. Video display will default to software emulation.
 
--f, --force             Try to skip most errors and force install. May be able to recover from previous installer errors.
+-f, --force                 Try to skip most errors and force install. May be able to recover from previous installer errors.
 
--h, --help              Display this help message
+-h, --help                  Display this help message
 ```
 
 #### Installation on Non-Raspberry Pi Hardware
 
 The installation script is designed for physical hardware. When attempting to install it on other platforms, you should not use `sudo` to install the dependencies. In addition, you can pass the `--emulator-only` argument to skip installation steps that aren't required.
 
-```
-sh install.sh --emulator-only
+```sh
+sh install.sh --no-sudo --emulator-only
 ```
 
 #### Updating
 
 A basic update is simple, just pull down the new code:
 
-```
+```sh
 git pull
 ```
 
 However, it is a good idea to re-run the installation script, following prompts as necessary. This will install latest versions of software packages such as the matrix driver library, MLB APIs, and other dependencies. Additionally, custom configuration can be updated through this installer.
 
-```
+```sh
 sudo ./install.sh
 ```
 
