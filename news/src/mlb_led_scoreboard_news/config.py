@@ -8,7 +8,6 @@ DEFAULT_PREFERRED_TEAMS = ["Cubs"]
 class Config(api.PluginConfig):
     def __init__(self, config: api.MLBConfig) -> None:
         self.date = config.parse_today()
-        self.year = self.date.year
         self.time_format = config.time_format
         self.scrolling_speed = config.scrolling_speed
 
@@ -25,6 +24,7 @@ class Config(api.PluginConfig):
         self.news_ticker_countdowns = config.plugin_config["countdowns"]
         self.news_ticker_date = config.plugin_config["date"]
         self.news_ticker_date_format = os_datetime_format(config.plugin_config["date_format"])
+        self.custom_countdowns = config.plugin_config.get("events", [])
         self.check_preferred_teams()
 
     def check_preferred_teams(self):

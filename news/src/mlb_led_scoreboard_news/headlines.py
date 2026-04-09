@@ -102,7 +102,7 @@ class Headlines:
         self.feed_urls: list[str] = []
         self.feed_data: list[Any] = []
         self.starttime = time.time()
-        self.important_dates = Dates(config.year)
+        self.important_dates = Dates(config.custom_countdowns, config.date)
 
         self.ticker: list[str] = []
         self.current_ticker_idx = 0

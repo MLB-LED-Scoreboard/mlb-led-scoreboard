@@ -252,6 +252,7 @@ See [`config.schema.json`](config.schema.json) for a schema for configuration fi
   "traderumors"                   Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
   "mlb_news"                      Bool    Include MLB's frontpage news.
   "countdowns"                    Bool    Include various countdowns in the ticker.
+  "events"                        Array   Custom events to add to the countdown. Each entry is an object with 'date' and 'text' keys.
   "date"                          Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
   "date_format"                   String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
 

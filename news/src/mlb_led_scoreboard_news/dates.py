@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 import statsapi
 
@@ -6,7 +6,9 @@ from bullpen.logging import LOGGER
 
 
 class Dates:
-    def __init__(self, year: int):
+    def __init__(self, dates, today: date):
+        self.today = today
+        year = today.year
         try:
             data_d = statsapi.get("season", {"sportId": 1, "seasonId": year})
             end_date = self.__parse_important_dates(data_d["seasons"][0], year)
@@ -17,19 +19,28 @@ class Dates:
         except:
             LOGGER.exception("Failed to refresh important dates")
             self.important_dates = [{"text": "None", "date": datetime(3000, 1, 1), "max_days": 1}]
+        try:
+            for date in dates:
+                d = date["date"]
+                if d.count("-") == 1:
+                    d = f"{year}-{d}"
+                self.__add_date(d, date["text"], date.get("max_days", 365))
+        except:
+            LOGGER.exception("Failed to parse important dates from config")
+
+        LOGGER.debug("Important dates: %s", self.important_dates)
 
     def next_important_date_string(self):
-        today = datetime.today()
         date = self.next_important_date()
-        days = (date["date"] - today).days
+        days = (date["date"] - self.today).days
         if days < date["max_days"]:
-            return "{} days until {}!".format(days, date["text"])
+            plural = "s" if days > 1 else ""
+            return f"{days} day{plural} until {date['text']}!"
 
     def next_important_date(self):
-        today = datetime.today()
         return min(
             self.important_dates,
-            key=lambda date: date["date"] - today if (date["date"] - today).days > 0 else timedelta.max,
+            key=lambda date: date["date"] - self.today if (date["date"] - self.today).days > 0 else timedelta.max,
         )
 
     def __parse_important_dates(self, dates, year):
@@ -43,7 +54,7 @@ class Dates:
         return datetime.strptime(dates["postSeasonEndDate"], "%Y-%m-%d")
 
     def __add_date(self, date, text, max_days_to_count=999):
-        if date != "":
+        if date and text:
             self.important_dates.append(
-                {"text": text, "date": datetime.strptime(date, "%Y-%m-%d"), "max_days": max_days_to_count}
+                {"text": text, "date": datetime.strptime(date, "%Y-%m-%d").date(), "max_days": max_days_to_count}
             )
