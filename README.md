@@ -436,6 +436,31 @@ You can find the signup page for OpenWeatherMaps at [https://home.openweathermap
 
 You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurements, set the `"metric"` option to `true`.
 
+### Plugins
+
+As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md] for details
+on writing them -- the 'news' and 'standings' screens are themselves built on top of this API.
+
+As a user, installing a plugin is relatively easy. Lets take the [mta-board plugin](https://github.com/WardBrian/mta-board.git) as an example.
+To install the code, you just need to use `pip`:
+
+```bash
+sudo ./venv/bin/pip install git+https://github.com/WardBrian/mta-board
+```
+
+To actually see the plugin, you will at a minimum need to add an entry to your
+[`screens` config](#controlling-what-shows-on-the-board-rotationscreens),
+but many plugins also require additional information to be added to the `plugins`
+key of the coordinates, colors, and config files.
+
+The plugin author should provide information on which configs are required. If a plugin fails to load,
+we will stop the board at startup with extra information.
+
+To remove a plugin, you just need to uninstall it
+```bash
+sudo ./venv/bin/pip uninstall mta-board
+```
+
 ## Sources
 This project relies on two libraries:
 [MLB-StatsAPI](https://pypi.org/project/MLB-StatsAPI/) is the Python library used for retrieving live game data.

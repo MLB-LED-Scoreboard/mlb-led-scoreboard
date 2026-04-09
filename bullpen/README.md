@@ -12,9 +12,11 @@ on top of our code, showing such information as [Disney Park wait times](https:/
 
 `bullpen` is our framework to allow easier creation of these kinds of non-baseball-game displays.
 
+If you build a plugin, please let us know about it!
+
 ## For users
 
-We recommend reading the "plugins" section of the top-level README. TODO.
+We recommend reading the ["plugins" section of the top-level README](../README.md#plugins).
 
 ## For developers
 
@@ -68,6 +70,14 @@ There are also two optional methods:
 - `can_render` takes in your Data class and returns a bool. If this function returns false, the plugin will be skipped in that rotation.
 - `reset` is called when your board is being rotated away from at the end of its turn, and can be used to reset any internal state
 
+### Registering your plugin
+
+To actually have the scoreboard software register your plugin, you need to define a function
+(that we usually call `load()`) that returns a tuple of your config, data, and renderer **classes**
+(the type `bullpen.api.PLUGIN_DEFINITION`).
+
+Then, expose this function as an entrypoint under the `'bullpen.mlbled.plugin'` key.
+See `example-plugin/pyproject.toml` for the full syntax.
 
 
 ### Utilities
@@ -80,4 +90,4 @@ Bullpen provides a few helpers
 
 #### Scrolling text
 
-`bullpen.util.scrolling_text` is our utility for rendering text that is too large to fit on the screen. 
+`bullpen.util.scrolling_text` is our utility for rendering text that is too large to fit on the screen.
