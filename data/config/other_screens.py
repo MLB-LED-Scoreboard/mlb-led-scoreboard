@@ -2,7 +2,6 @@ from datetime import time, datetime
 from typing import Optional
 import calendar
 
-
 WEEKDAYS = {day.lower(): n for n, day in enumerate(calendar.day_abbr)} | {
     day.lower(): n for n, day in enumerate(calendar.day_name)
 }
