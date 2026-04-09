@@ -444,8 +444,7 @@ As a user, installing a plugin is relatively easy. Lets take the [mta-board plug
 To install the code, you just need to use `pip`:
 
 ```bash
-source ./venv/bin/activate
-python -m pip install git+https://github.com/WardBrian/mta-board
+sudo ./venv/bin/pip install git+https://github.com/WardBrian/mta-board
 ```
 
 To actually see the plugin, you will at a minimum need to add an entry to your
@@ -458,8 +457,7 @@ we will stop the board at startup with extra information.
 
 To remove a plugin, you just need to uninstall it
 ```bash
-source ./venv/bin/activate
-python -m pip uninstall mta-board
+sudo ./venv/bin/pip uninstall mta-board
 ```
 
 ## Sources
