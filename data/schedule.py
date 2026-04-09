@@ -108,7 +108,7 @@ class Schedule:
         highest = 0
 
         for rule in self.config.rotation_time_rules:
-            priority = rule.matches(datetime.datetime.now().time())
+            priority = rule.matches(datetime.datetime.now())
             if priority:
                 highest = max(highest, priority)
 
