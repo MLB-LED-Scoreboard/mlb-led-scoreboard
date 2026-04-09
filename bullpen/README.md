@@ -12,9 +12,11 @@ on top of our code, showing such information as [Disney Park wait times](https:/
 
 `bullpen` is our framework to allow easier creation of these kinds of non-baseball-game displays.
 
+If you build a plugin, please let us know about it!
+
 ## For users
 
-We recommend reading the "plugins" section of the top-level README. TODO.
+We recommend reading the ["plugins" section of the top-level README](../README.md#plugins).
 
 ## For developers
 
@@ -80,4 +82,4 @@ Bullpen provides a few helpers
 
 #### Scrolling text
 
-`bullpen.util.scrolling_text` is our utility for rendering text that is too large to fit on the screen. 
+`bullpen.util.scrolling_text` is our utility for rendering text that is too large to fit on the screen.
