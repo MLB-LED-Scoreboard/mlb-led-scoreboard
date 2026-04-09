@@ -41,6 +41,13 @@
     "traderumors": true,
     "mlb_news": true,
     "countdowns": true,
+    "events": [
+      {
+        "text": "New Year's Day",
+        "date": "12-31",
+        "max_days": 30
+      }
+    ],
     "date": true,
     "date_format": "%A, %B %-d"
   },

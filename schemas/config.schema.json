@@ -277,6 +277,38 @@
           "default": true,
           "x-format": "checkbox"
         },
+        "events": {
+          "description": "Custom dates to show in a countdown",
+          "type": "array",
+          "default": [
+            {
+              "text": "New Year's Day",
+              "date": "12-31",
+              "max_days": 30
+            }
+          ],
+          "items": {
+            "type": "object",
+            "required": ["text", "date"],
+            "properties": {
+              "text": {
+                "type": "string",
+                "description": "Text to show alongside the countdown"
+              },
+              "date": {
+                "type": "string",
+                "description": "Date of the event. Can be in MM-DD format, in which case the current year will be assumed. Otherwise, should be in YYYY-MM-DD format.",
+                "pattern": "^(\\d{4}-)?\\d{2}-\\d{2}$"
+              },
+              "max_days": {
+                "type": "number",
+                "description": "Maximum number of days before the event to start showing the countdown",
+                "default": 365,
+                "minimum": 1
+              }
+            }
+          }
+        },
         "date": {
           "description": "Should we display the current date",
           "type": "boolean",
