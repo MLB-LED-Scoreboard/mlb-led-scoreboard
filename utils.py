@@ -26,6 +26,7 @@ def setup_logger(verbose):
 
     LOGGER.propagate = False
     if verbose:
+        LOGGER.setLevel(logging.DEBUG)
         if verbose == "with-statsapi":
             import statsapi
 
