@@ -3,9 +3,7 @@
   "title": "Config for the MLB LED Scoreboard",
   "x-indent": "  ",
   "type": "object",
-  "required": [
-    "format"
-  ],
+  "required": ["format"],
   "patternProperties": {
     "^\\$schema$": { "type": "string" }
   },
@@ -62,19 +60,11 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "kind"
-            ],
+            "required": ["kind"],
             "properties": {
               "kind": {
                 "type": "string",
-                "enum": [
-                  "game",
-                  "secondary_game",
-                  "news",
-                  "standings",
-                  "time"
-                ],
+                "enum": ["game", "secondary_game", "news", "standings", "time"],
                 "description": "What type of screen this rule applies to"
               }
             },
@@ -82,9 +72,7 @@
               {
                 "title": "Game rule",
                 "type": "object",
-                "required": [
-                  "priority"
-                ],
+                "required": ["priority"],
                 "properties": {
                   "kind": {
                     "const": "game",
@@ -116,9 +104,7 @@
                 "title": "Time of day rule",
                 "description": "Does not directly add a screen to show, just introduces a priority level at certain times of day",
                 "type": "object",
-                "required": [
-                  "priority"
-                ],
+                "required": ["priority"],
                 "properties": {
                   "kind": {
                     "const": "time",
@@ -130,6 +116,16 @@
                   "priority": {
                     "type": "number",
                     "minimum": 0
+                  },
+                  "weekdays": {
+                    "description": "Days of the week for this rule to match. Empty list or omitting this key means any day.",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/weekdays"
+                    },
+                    "uniqueItems": true,
+                    "default": [],
+                    "x-format": "choices"
                   },
                   "start_time": {
                     "$ref": "#/$defs/time",
@@ -145,9 +141,7 @@
                 "title": "Additional game rule",
                 "description": "Does not introduce a new priority level, but can add games to one",
                 "type": "object",
-                "required": [
-                  "with_priority"
-                ],
+                "required": ["with_priority"],
                 "properties": {
                   "kind": {
                     "const": "secondary_game",
@@ -178,10 +172,7 @@
               {
                 "title": "News rule",
                 "type": "object",
-                "required": [
-                  "with_priority",
-                  "seconds"
-                ],
+                "required": ["with_priority", "seconds"],
                 "properties": {
                   "kind": {
                     "const": "news",
@@ -205,10 +196,7 @@
               {
                 "title": "Standings rule",
                 "type": "object",
-                "required": [
-                  "with_priority",
-                  "seconds"
-                ],
+                "required": ["with_priority", "seconds"],
                 "properties": {
                   "kind": {
                     "const": "standings",
@@ -238,9 +226,7 @@
               "kind": "game",
               "priority": 2,
               "required_status": "live",
-              "teams": [
-                "Cubs"
-              ]
+              "teams": ["Cubs"]
             },
             {
               "kind": "game",
@@ -269,9 +255,7 @@
           "items": {
             "$ref": "#/$defs/team"
           },
-          "default": [
-            "Cubs"
-          ],
+          "default": ["Cubs"],
           "uniqueItems": true,
           "x-format": "choices"
         },
@@ -308,10 +292,7 @@
     },
     "weather": {
       "type": "object",
-      "required": [
-        "apikey",
-        "location"
-      ],
+      "required": ["apikey", "location"],
       "properties": {
         "apikey": {
           "type": "string",
@@ -344,10 +325,7 @@
           "items": {
             "$ref": "#/$defs/division"
           },
-          "default": [
-            "NL Central",
-            "NL Wild Card"
-          ],
+          "default": ["NL Central", "NL Wild Card"],
           "uniqueItems": true,
           "x-format": "choices"
         }
@@ -356,10 +334,7 @@
     "time_format": {
       "description": "Whether times should be displayed in 12-hour or 24-hour format",
       "type": "string",
-      "enum": [
-        "12h",
-        "24h"
-      ],
+      "enum": ["12h", "24h"],
       "default": "12h"
     },
     "end_of_day": {
@@ -413,12 +388,7 @@
   "$defs": {
     "required_status": {
       "type": "string",
-      "enum": [
-        "live",
-        "live_in_inning",
-        "pregame",
-        "game_over"
-      ],
+      "enum": ["live", "live_in_inning", "pregame", "game_over"],
       "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
       "meta:enum": {
         "live": "Game is currently in progress",
@@ -451,6 +421,19 @@
       "type": "string",
       "pattern": "^\\d{2}:\\d{2}$",
       "description": "Time in 24-hour format. For example, 19:30 for 7:30pm"
+    },
+    "weekdays": {
+      "title": "Days of the week",
+      "type": "string",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ]
     },
     "division": {
       "title": "MLB division or wildcard group",
