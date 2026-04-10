@@ -43,7 +43,7 @@
     "countdowns": true,
     "events": [
       {
-        "text": "New Year's Day",
+        "text": "New Year's Eve",
         "date": "12-31",
         "max_days": 30
       }
