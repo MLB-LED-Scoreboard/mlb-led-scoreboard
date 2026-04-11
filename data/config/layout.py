@@ -133,14 +133,14 @@ class Layout:
 
     def for_plugin(self, plugin_name: str) -> "Layout":
 
-        match plugin_name:
-            # TODO easiest work around for existing behavior
-            case "news" | "standings":
-                plugin_layout = self
-            case _:
-                plugin = self.json.get("plugins", {}).get(plugin_name, {})
-                json = {plugin_name: plugin}
-                json["defaults"] = self.json["defaults"]
-                plugin_layout = Layout(json, self.width, self.height)
+        plugins = self.json.get("plugins", {})
+        if plugin_name in ("news", "standings"):
+            # legacy workaround
+            plugins = self.json
+
+        plugin = plugins.get(plugin_name, {})
+        json = {plugin_name: plugin}
+        json["defaults"] = self.json["defaults"]
+        plugin_layout = Layout(json, self.width, self.height)
 
         return plugin_layout

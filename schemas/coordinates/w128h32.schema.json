@@ -25,7 +25,7 @@
     "standings":    { "$ref": "./_common.schema.json#/$defs/standings" },
     "status":       { "$ref": "./_common.schema.json#/$defs/status" },
     "teams":        { "$ref": "./_common.schema.json#/$defs/teams" },
-    "offday":       { "$ref": "./_common.schema.json#/$defs/offday" },
+    "news":         { "$ref": "./_common.schema.json#/$defs/news" },
     "plugins":      { "$ref": "./_common.schema.json#/$defs/plugins" },
     "network":      { "$ref": "./_common.schema.json#/$defs/network" }
   },
@@ -146,7 +146,7 @@
         "spacing": 3
       }
     },
-    "offday": {
+    "news": {
       "scrolling_text": { "x": 0,   "y": 30, "width": 128 },
       "time":           { "x": 64,  "y": 9  },
       "conditions":     { "x": 100, "y": 22 },

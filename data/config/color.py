@@ -24,14 +24,12 @@ class Color:
 
     def for_plugin(self, plugin_name: str) -> "Color":
 
-        match plugin_name:
-            # TODO easiest work around for existing behavior
-            case "news" | "standings":
-                plugin_colors = self
-            case _:
-                plugin = self.json.get("plugins", {}).get(plugin_name, {})
-                json = {plugin_name: plugin}
-                json["default"] = self.json["default"]
-                plugin_colors = Color(json)
+        plugins = self.json.get("plugins", {})
+        if plugin_name in ("news", "standings"):
+            # legacy workaround
+            plugins = self.json
 
-        return plugin_colors
+        plugin = plugins.get(plugin_name, {})
+        json = {plugin_name: plugin}
+        json["default"] = self.json["default"]
+        return Color(json)
