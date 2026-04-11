@@ -29,18 +29,16 @@ class Data:
     def refresh_schedule(self) -> None:
         self.__process_network_status(self.schedule.update())
 
-    def refresh_plugins(self) -> None:
-        statuses = []
-        for name, plugin in self.plugin_data.items():
-            try:
-                statuses.append(plugin.update())
-            except KeyboardInterrupt as e:
-                raise e
-            except:
-                LOGGER.exception("Failure while updating plugin %s", name)
-                statuses.append(UpdateStatus.FAIL)
+    def refresh_plugin(self, name: str) -> None:
+        plugin = self.plugin_data[name]
+        status = UpdateStatus.FAIL
+        try:
+            status = plugin.update()
+        except KeyboardInterrupt as e:
+            raise e
+        except:
+            LOGGER.exception("Failure while updating plugin %s", name)
 
-        status = UpdateStatus.merge(statuses)
         self.__process_network_status(status)
 
     def __process_network_status(self, status) -> None:

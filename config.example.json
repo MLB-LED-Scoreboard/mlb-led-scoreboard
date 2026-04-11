@@ -63,6 +63,7 @@
       "NL Wild Card"
     ]
   },
+  "plugins": {},
   "time_format": "12h",
   "end_of_day": "00:00",
   "sync_delay_seconds": 0,

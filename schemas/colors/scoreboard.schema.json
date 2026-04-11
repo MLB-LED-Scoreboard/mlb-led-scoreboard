@@ -185,6 +185,16 @@
       },
       "additionalProperties": false
     },
+    "plugins": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/$defs/color"
+        }
+      },
+      "default": {}
+    },
     "default": {
       "type": "object",
       "x-format": "grid",

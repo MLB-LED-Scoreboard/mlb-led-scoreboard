@@ -343,6 +343,7 @@
       "height": 15
     }
   },
+  "plugins": {},
   "network": {
     "font_name": "4x6",
     "background": {

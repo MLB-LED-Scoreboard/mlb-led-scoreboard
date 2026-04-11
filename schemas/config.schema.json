@@ -363,6 +363,13 @@
         }
       }
     },
+    "plugins": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      },
+      "default": {}
+    },
     "time_format": {
       "description": "Whether times should be displayed in 12-hour or 24-hour format",
       "type": "string",
@@ -518,6 +525,7 @@
       ]
     }
   },
+
   "additionalProperties": false,
   "x-enforceEnum": true,
   "x-enforceConst": true
