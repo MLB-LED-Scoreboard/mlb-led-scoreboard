@@ -30,16 +30,16 @@ class Renderer(api.PluginRenderer["NewsData"]):
         self.time_fmt_str = "{}:%M".format(time_format)
         if time_format == TIME_FORMAT_12H:
             self.time_fmt_str += "%p"
-        self.time_coords = layout.coords("offday.time")
-        self.time_font = layout.font("offday.time")
-        self.time_color = colors.graphics_color("offday.time")
+        self.time_coords = layout.coords("news.time")
+        self.time_font = layout.font("news.time")
+        self.time_color = colors.graphics_color("news.time")
 
-        self.scroll_coords = layout.coords("offday.scrolling_text")
-        self.scroll_font = layout.font("offday.scrolling_text")
-        self.scroll_color = colors.graphics_color("offday.scrolling_text")
+        self.scroll_coords = layout.coords("news.scrolling_text")
+        self.scroll_font = layout.font("news.scrolling_text")
+        self.scroll_color = colors.graphics_color("news.scrolling_text")
 
-        self.icon_coords = layout.coords("offday.weather_icon")
-        self.icon_color = colors.color("offday.weather_icon")
+        self.icon_coords = layout.coords("news.weather_icon")
+        self.icon_color = colors.color("news.weather_icon")
 
         self.first = True
 
@@ -116,8 +116,8 @@ class Renderer(api.PluginRenderer["NewsData"]):
 
 
 def _render_weather_text(canvas, graphics, layout, colors, text, keyname):
-    coords = layout.coords("offday.{}".format(keyname))
-    font = layout.font("offday.{}".format(keyname))
-    color = colors.graphics_color("offday.{}".format(keyname))
+    coords = layout.coords("news.{}".format(keyname))
+    font = layout.font("news.{}".format(keyname))
+    color = colors.graphics_color("news.{}".format(keyname))
     text_x = center_text_position(text, coords["x"], font["size"]["width"])
     graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)

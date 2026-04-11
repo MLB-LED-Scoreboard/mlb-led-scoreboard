@@ -160,7 +160,7 @@
       },
       "additionalProperties": false
     },
-    "offday": {
+    "news": {
       "type": "object",
       "x-format": "grid",
       "properties": {

@@ -365,7 +365,7 @@
         }
       }
     },
-    "offday": {
+    "news": {
       "type": "object",
       "properties": {
         "scrolling_text": { "$ref": "#/$defs/point_width" },
