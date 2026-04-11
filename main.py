@@ -83,8 +83,7 @@ def main(matrix, config):
         time.sleep(0.1)
         for plugin in plugin_data:
             if data.config.screen_time_at_priority(plugin, data.schedule.priority):
-                data.refresh_plugins()
-                break
+                data.refresh_plugin(plugin)
         time.sleep(0.2)
 
 

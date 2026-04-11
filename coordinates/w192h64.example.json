@@ -353,6 +353,7 @@
       "rescale_icon": 2
     }
   },
+  "plugins": {},
   "network": {
     "font_name": "4x6",
     "background": {

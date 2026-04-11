@@ -303,6 +303,7 @@
       "b": 255
     }
   },
+  "plugins": {},
   "default": {
     "background": {
       "r": 7,

@@ -26,6 +26,7 @@
     "status":       { "$ref": "./_common.schema.json#/$defs/status" },
     "teams":        { "$ref": "./_common.schema.json#/$defs/teams" },
     "offday":       { "$ref": "./_common.schema.json#/$defs/offday" },
+    "plugins":      { "$ref": "./_common.schema.json#/$defs/plugins" },
     "network":      { "$ref": "./_common.schema.json#/$defs/network" }
   },
   "default": {
@@ -158,6 +159,7 @@
       "wind":           { "x": 80, "y": 44 },
       "weather_icon":   { "x": 6,  "y": 2, "width": 30, "height": 30, "rescale_icon": 2 }
     },
+    "plugins": {},
     "network": {
       "font_name":  "4x6",
       "background": { "width": 7, "height": 7, "x": 121, "y": 57 },

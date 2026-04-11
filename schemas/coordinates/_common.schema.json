@@ -388,6 +388,12 @@
         }
       }
     },
+    "plugins": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
     "network": {
       "type": "object",
       "properties": {
