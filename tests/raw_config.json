@@ -1,0 +1,34 @@
+{
+    "_comment": "This config is used specifically to test RGBME via the raw adapter",
+    "pixel_outline": 2,
+    "pixel_size": 24,
+    "pixel_style": "real",
+    "pixel_glow": 16,
+    "display_adapter": "raw",
+    "allow_adapter_fallback": false,
+    "icon_path": null,
+    "emulator_title": null,
+    "suppress_font_warnings": false,
+    "browser": {
+        "_comment": "For use with the browser adapter only.",
+        "port": 8888,
+        "target_fps": 60,
+        "fps_display": true,
+        "quality": 70,
+        "image_border": true,
+        "debug_text": true,
+        "image_format": "JPEG",
+        "open_immediately": false
+    },
+    "pi5": {
+        "_comment": "For use with the pi5 adapter only.",
+        "pinout": "AdafruitMatrixBonnet",
+        "n_addr_lines": 4,
+        "rotation": "Normal",
+        "n_planes": 10,
+        "n_temporal_planes": 4,
+        "n_lanes": 1,
+        "led_rgb_sequence": "RGB"
+    },
+    "log_level": "debug"
+}
