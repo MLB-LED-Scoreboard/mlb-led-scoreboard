@@ -17,8 +17,8 @@ from data.uniforms import CITY_CONNECT
 from renderers.games.teams import render_team_banner
 
 RAW_CONFIG = pathlib.Path(__file__).parent / "raw_config.json"
-HEIGHT = 170
-WIDTH = 155
+HEIGHT = 132
+WIDTH = 208
 
 
 def make_layout(x, y):
@@ -55,7 +55,7 @@ def draw_teams(canvas, config):
         team_default = Team(team, 0, "", 0, 0, "", None)
         team_cc = Team(team, 0, "", 0, 0, "", CITY_CONNECT)
 
-        col, row = divmod(i, 6)
+        col, row = divmod(i, 8)
         layout = make_layout(row * 26, col * 19)
         render_team_banner(canvas, layout, config.team_colors, team_cc, team_default, False)
 
