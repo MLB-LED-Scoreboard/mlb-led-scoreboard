@@ -394,9 +394,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 - "some": {
     "arbitrary": "change"
   }
-""".strip(
-                "\n"
-            ),
+""".strip("\n"),
         )
 
     def test_format_change_with_small_indent(self):
@@ -408,9 +406,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 - "some": {
    "arbitrary": "change"
   }
-""".strip(
-                "\n"
-            ),
+""".strip("\n"),
         )
 
     def test_format_change_with_large_indent(self):
@@ -422,9 +418,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 - "some": {
         "arbitrary": "change"
   }
-""".strip(
-                "\n"
-            ),
+""".strip("\n"),
         )
 
     def test_format_change_with_more_indents(self):
@@ -436,9 +430,7 @@ class TestValidateConfigMethods(unittest.TestCase):
     - "some": {
         "arbitrary": "change"
       }
-""".strip(
-                "\n"
-            ),
+""".strip("\n"),
         )
 
     def test_format_change_with_different_delimiter(self):
@@ -450,9 +442,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 * "some": {
     "arbitrary": "change"
   }
-""".strip(
-                "\n"
-            ),
+""".strip("\n"),
         )
 
     def test_format_change_with_color(self):
@@ -538,9 +528,7 @@ Fetching custom config files...
         - Backup located at {path}.bak
         - Updating {path}...
       Finished updating {path}!
-""".lstrip(
-            "\n"
-        )
+""".lstrip("\n")
 
     def _assert_config_changes(self, config):
         ### Spot checks: ###
