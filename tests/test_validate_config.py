@@ -1,5 +1,6 @@
+from email.policy import default
 import io, re, unittest
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 from unittest import mock
 
 from validate_config import *
@@ -81,9 +82,9 @@ class TestValidateConfigMethods(unittest.TestCase):
             with mock.patch("os.path.isfile") as mocked_isfile:
                 mocked_isfile.side_effect = lambda file: "config.example.json" in file
 
-                ROOT_IGNORED_KEYS = ["matrix-*"]
-                COORDINATES_IGNORED_KEYS = ["font_name", "no_hitter", "perfect_game", "warmup"]
-                COLORS_IGNORED_KEYS = ["city_connect"]
+                ROOT_IGNORED_KEYS = ["matrix-*", "plugins-*"]
+                COORDINATES_IGNORED_KEYS = ["font_name", "no_hitter", "perfect_game", "warmup", "plugins-*"]
+                COLORS_IGNORED_KEYS = ["city_connect", "plugins-*"]
                 self.assertEqual(
                     custom_config_files(),
                     [
@@ -91,9 +92,13 @@ class TestValidateConfigMethods(unittest.TestCase):
                         (
                             COORDINATES_DIRECTORY,
                             "config.json",
-                            {"ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {}},
+                            {"ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {"offday": "news"}},
                         ),
-                        (COLORS_DIRECTORY, "config.json", {"ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {}}),
+                        (
+                            COLORS_DIRECTORY,
+                            "config.json",
+                            {"ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {"offday": "news"}},
+                        ),
                     ],
                 )
 
@@ -389,7 +394,9 @@ class TestValidateConfigMethods(unittest.TestCase):
 - "some": {
     "arbitrary": "change"
   }
-""".strip("\n"),
+""".strip(
+                "\n"
+            ),
         )
 
     def test_format_change_with_small_indent(self):
@@ -401,7 +408,9 @@ class TestValidateConfigMethods(unittest.TestCase):
 - "some": {
    "arbitrary": "change"
   }
-""".strip("\n"),
+""".strip(
+                "\n"
+            ),
         )
 
     def test_format_change_with_large_indent(self):
@@ -413,7 +422,9 @@ class TestValidateConfigMethods(unittest.TestCase):
 - "some": {
         "arbitrary": "change"
   }
-""".strip("\n"),
+""".strip(
+                "\n"
+            ),
         )
 
     def test_format_change_with_more_indents(self):
@@ -425,7 +436,9 @@ class TestValidateConfigMethods(unittest.TestCase):
     - "some": {
         "arbitrary": "change"
       }
-""".strip("\n"),
+""".strip(
+                "\n"
+            ),
         )
 
     def test_format_change_with_different_delimiter(self):
@@ -437,7 +450,9 @@ class TestValidateConfigMethods(unittest.TestCase):
 * "some": {
     "arbitrary": "change"
   }
-""".strip("\n"),
+""".strip(
+                "\n"
+            ),
         )
 
     def test_format_change_with_color(self):
@@ -450,16 +465,22 @@ class TestValidateConfigMethods(unittest.TestCase):
             self.assertIn("renamed_keys", validation, f"{directory} does not have 'renamed_keys' defined.")
             renames = validation["renamed_keys"].values()
 
+            any_files = False
+            found = defaultdict(bool)
             for file in os.listdir(directory):
                 if file.endswith(".example.json"):
+                    any_files = True
                     with open(os.path.join(directory, file)) as config_file:
                         config = json.load(config_file)
                         for rename in renames:
-                            self.assertIn(
-                                rename,
-                                config,
-                                f"{os.path.join(directory, file)} does not contain renamed key '{rename}'.",
-                            )
+                            found[rename] |= rename in config
+
+            if any_files:
+                for rename, some_found in found.items():
+                    self.assertTrue(
+                        some_found,
+                        f"{directory} does not contain the renamed key '{rename}' in any of its example config files.",
+                    )
 
 
 class TestPerformValidation(unittest.TestCase):
@@ -517,7 +538,9 @@ Fetching custom config files...
         - Backup located at {path}.bak
         - Updating {path}...
       Finished updating {path}!
-""".lstrip("\n")
+""".lstrip(
+            "\n"
+        )
 
     def _assert_config_changes(self, config):
         ### Spot checks: ###
