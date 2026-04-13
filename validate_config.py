@@ -12,16 +12,22 @@ def make_modifier(mod):
 
 VALIDATIONS = {
     ROOT_DIRECTORY: {
-        "ignored_keys": ["matrix" + make_modifier(IGNORE_SUBPATHS)],
+        "ignored_keys": ["matrix" + make_modifier(IGNORE_SUBPATHS), "plugins" + make_modifier(IGNORE_SUBPATHS)],
         "renamed_keys": {},
     },
     COORDINATES_DIRECTORY: {
-        "ignored_keys": ["font_name", "no_hitter", "perfect_game", "warmup"],
-        "renamed_keys": {},
+        "ignored_keys": [
+            "font_name",
+            "no_hitter",
+            "perfect_game",
+            "warmup",
+            "plugins" + make_modifier(IGNORE_SUBPATHS),
+        ],
+        "renamed_keys": {"offday": "news"},
     },
     COLORS_DIRECTORY: {
-        "ignored_keys": ["city_connect"],
-        "renamed_keys": {},
+        "ignored_keys": ["city_connect", "plugins" + make_modifier(IGNORE_SUBPATHS)],
+        "renamed_keys": {"offday": "news"},
     },
 }
 
