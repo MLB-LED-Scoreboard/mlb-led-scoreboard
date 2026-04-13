@@ -1,6 +1,9 @@
 import sys
 
-from bullpen.logging import LOGGER
+from pathlib import Path
+from bullpen.logging import LOGGER, set_log_directory
+
+set_log_directory(Path(__file__).parent / "logs" / "bullpen.log")
 
 if sys.version_info < (3, 10):
     LOGGER.error("Please run with Python >= 3.10")
