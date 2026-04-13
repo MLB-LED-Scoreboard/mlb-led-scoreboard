@@ -126,8 +126,10 @@ colors/*.json
 submodules/
 configs/
 
-
 # Ignore logs
 logs.txt
 logs/
 team_colors.jpg
+
+# Editors
+.vscode/
