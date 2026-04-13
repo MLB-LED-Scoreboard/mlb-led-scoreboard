@@ -350,9 +350,9 @@ If you aren't sure why you're seeing this, there might not be official support f
             options.disable_hardware_pulsing = True
 
         return options
-    
+
     def __set_log_level(self, json):
-        debug = json['debug']
+        debug = json["debug"]
         if debug:
             LOGGER.setLevel(logging.DEBUG)
             if debug == "with-statsapi":
