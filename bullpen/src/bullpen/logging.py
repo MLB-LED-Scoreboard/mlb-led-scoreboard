@@ -14,6 +14,7 @@ LOGGER.addHandler(sh)
 
 LOGGER.propagate = False
 
+
 def set_log_directory(path):
     # Log to a file, handling rotation at 1MB
     fh = RotatingFileHandler(path, maxBytes=0x100000, backupCount=5)
