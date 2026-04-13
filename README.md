@@ -176,7 +176,7 @@ However, it is a good idea to re-run the installation script, following prompts 
 sudo ./install.sh
 ```
 
-The team makes a best attempt to make sure new scoreboard versions are forward and backward compatible with other versions of the software, however this is not guaranteed. Additional guidance for installing certain versions (such as migrating from version 7 to version 8) will be provided in this README and the release notes where applicable.
+The team makes a best attempt to make sure new scoreboard versions are forward and backward compatible with other versions of the software, however this is not guaranteed. Additional guidance for installing certain versions (such as migrating from version 8 to version 9) will be provided in the README, wiki, or release notes where applicable.
 
 #### Updating with Custom Configuration
 
