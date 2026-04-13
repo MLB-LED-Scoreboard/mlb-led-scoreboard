@@ -1,6 +1,9 @@
 import sys
 
-from bullpen.logging import LOGGER
+from pathlib import Path
+from bullpen.logging import LOGGER, set_log_directory
+
+set_log_directory(Path(__file__).parent / "logs" / "bullpen.log")
 
 if sys.version_info < (3, 10):
     LOGGER.error("Please run with Python >= 3.10")
@@ -21,7 +24,6 @@ from PIL import Image
 from pathlib import Path
 
 import driver
-from utils import setup_logger
 
 
 from data import Data
@@ -33,9 +35,6 @@ from version import SCRIPT_NAME, SCRIPT_VERSION
 
 
 def main(matrix, config):
-    # Set the scoreboard logger
-    setup_logger(config.debug)
-
     # Print some basic info on startup
     LOGGER.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
 

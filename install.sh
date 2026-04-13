@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Redirect output to a logfile
-exec > >(tee -a logs/mlbled.log) 2>&1
+exec > >(tee -a logs/install.log) 2>&1
 
 SKIP_PYTHON=false
 SKIP_CONFIG=false
