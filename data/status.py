@@ -5,6 +5,7 @@ the status data comes from. https://statsapi.mlb.com/api/v1/gameStatus/ statsapi
 
 CANCELLED = "Cancelled"  # Final
 CANCELLED_COLD = "Cancelled: Cold"  # Final
+CANCELLED_EMERGENCY = "Cancelled: Emergency"  # Final
 CANCELLED_FOG = "Cancelled: Fog"  # Final
 CANCELLED_COVID19 = "Cancelled: COVID-19"  # Final
 CANCELLED_INCLEMENT_WEATHER = "Cancelled: Inclement Weather"  # Final
@@ -20,6 +21,7 @@ CANCELLED_WIND = "Cancelled: Wind"  # Final
 COMPLETED_EARLY = "Completed Early"  # Final
 COMPLETED_EARLY_COVID19 = "Completed Early: COVID-19"  # Final
 COMPLETED_EARLY_COLD = "Completed Early: Cold"  # Final
+COMPLETED_EARLY_EMERGENCY = "Completed Early: Emergency"  # Final
 COMPLETED_EARLY_FOG = "Completed Early: Fog"  # Final
 COMPLETED_EARLY_INCLEMENT_WEATHER = "Completed Early: Inclement Weather"  # Final
 COMPLETED_EARLY_LIGHTNING = "Completed Early: Lightning"  # Final
@@ -37,6 +39,7 @@ DELAYED_ABOUT_TO_RESUME = "Delayed: About to Resume"  # Live
 DELAYED_CEREMONY = "Delayed: Ceremony"  # Live
 DELAYED_COLD = "Delayed: Cold"  # Live
 DELAYED_COVID19 = "Delayed: COVID-19"  # Live
+DELAYED_EMERGENCY = "Delayed: Emergency"  # Live
 DELAYED_FOG = "Delayed: Fog"  # Live
 DELAYED_INCLEMENT_WEATHER = "Delayed: Inclement Weather"  # Live
 DELAYED_LIGHTNING = "Delayed: Lightning"  # Live
@@ -48,6 +51,7 @@ DELAYED_START = "Delayed Start"  # Preview
 DELAYED_START_CEREMONY = "Delayed Start: Ceremony"  # Preview
 DELAYED_START_COLD = "Delayed Start: Cold"  # Preview
 DELAYED_START_COVID19 = "Delayed Start: COVID-19"  # Preview
+DELAYED_START_EMERGENCY = "Delayed Start: Emergency"  # Preview
 DELAYED_START_FOG = "Delayed Start: Fog"  # Preview
 DELAYED_START_INCLEMENT_WEATHER = "Delayed Start: Inclement Weather"  # Preview
 DELAYED_START_LIGHTNING = "Delayed Start: Lightning"  # Preview
@@ -105,6 +109,7 @@ MANAGER_CHALLENGE_TRAP_PLAY_IN_OUTFIELD = "Manager challenge: Trap play in outfi
 POSTPONED = "Postponed"  # Final
 POSTPONED_COLD = "Postponed: Cold"  # Final
 POSTPONED_COVID19 = "Postponed: COVID-19"  # Final
+POSTPONED_EMERGENCY = "Postponed: Emergency"  # Final
 POSTPONED_FOG = "Postponed: Fog"  # Final
 POSTPONED_INCLEMENT_WEATHER = "Postponed: Inclement Weather"  # Final
 POSTPONED_LIGHTNING = "Postponed: Lightning"  # Final
@@ -118,11 +123,13 @@ POSTPONED_WET_GROUNDS = "Postponed: Wet Grounds"  # Final
 POSTPONED_WIND = "Postponed: Wind"  # Final
 PREGAME = "Pre-Game"  # Preview
 SCHEDULED = "Scheduled"  # Preview
+SCHEDULED_COVID19 = "Scheduled: COVID-19"  # Preview
 SUSPENDED = "Suspended"  # Live
 SUSPENDED_ABOUT_TO_RESUME = "Suspended: About to Resume"  # Live
 SUSPENDED_APPEAL_UPHELD = "Suspended: Appeal Upheld"  # Live
 SUSPENDED_COLD = "Suspended: Cold"  # Live
 SUSPENDED_COVID19 = "Suspended: COVID-19"  # Live
+SUSPENDED_EMERGENCY = "Suspended: Emergency"  # Live
 SUSPENDED_FOG = "Suspended: Fog"  # Live
 SUSPENDED_INCLEMENT_WEATHER = "Suspended: Inclement Weather"  # Live
 SUSPENDED_LIGHTNING = "Suspended: Lightning"  # Live
@@ -217,11 +224,12 @@ GAME_STATE_LIVE = [
     PLAYER_CHALLENGE_PITCH_RESULT,
 ]
 
-GAME_STATE_PREGAME = [SCHEDULED, PREGAME, WARMUP]
+GAME_STATE_PREGAME = [SCHEDULED, SCHEDULED_COVID19, PREGAME, WARMUP]
 
 GAME_STATE_COMPLETE = [
     COMPLETED_EARLY,
     COMPLETED_EARLY_COLD,
+    COMPLETED_EARLY_EMERGENCY,
     COMPLETED_EARLY_FOG,
     COMPLETED_EARLY_INCLEMENT_WEATHER,
     COMPLETED_EARLY_LIGHTNING,
@@ -249,6 +257,7 @@ GAME_STATE_IRREGULAR = [
     CANCELLED,
     CANCELLED_COLD,
     CANCELLED_COVID19,
+    CANCELLED_EMERGENCY,
     CANCELLED_FOG,
     CANCELLED_INCLEMENT_WEATHER,
     CANCELLED_LIGHTNING,
@@ -265,6 +274,7 @@ GAME_STATE_IRREGULAR = [
     DELAYED_CEREMONY,
     DELAYED_COLD,
     DELAYED_COVID19,
+    DELAYED_EMERGENCY,
     DELAYED_FOG,
     DELAYED_INCLEMENT_WEATHER,
     DELAYED_LIGHTNING,
@@ -276,6 +286,7 @@ GAME_STATE_IRREGULAR = [
     DELAYED_START_CEREMONY,
     DELAYED_START_COLD,
     DELAYED_START_COVID19,
+    DELAYED_START_EMERGENCY,
     DELAYED_START_AIR_QUALITY,
     DELAYED_START_FOG,
     DELAYED_START_INCLEMENT_WEATHER,
@@ -325,6 +336,7 @@ GAME_STATE_IRREGULAR = [
     POSTPONED,
     POSTPONED_COLD,
     POSTPONED_COVID19,
+    POSTPONED_EMERGENCY,
     POSTPONED_FOG,
     POSTPONED_INCLEMENT_WEATHER,
     POSTPONED_LIGHTNING,
@@ -341,6 +353,7 @@ GAME_STATE_IRREGULAR = [
     SUSPENDED_APPEAL_UPHELD,
     SUSPENDED_COLD,
     SUSPENDED_COVID19,
+    SUSPENDED_EMERGENCY,
     SUSPENDED_FOG,
     SUSPENDED_INCLEMENT_WEATHER,
     SUSPENDED_LIGHTNING,
