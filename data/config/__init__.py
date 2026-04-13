@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import logging
 
 from datetime import datetime, timedelta
 from collections import defaultdict, namedtuple
@@ -43,6 +44,8 @@ class Config:
         self.emulated = args.emulated
 
         json = self.__get_config(self.config_path)
+
+        self.__set_log_level(json)
 
         # Matrix options (merged with CLI args)
         self.matrix_options = self.__matrix_options(json["matrix"])
@@ -347,6 +350,18 @@ If you aren't sure why you're seeing this, there might not be official support f
             options.disable_hardware_pulsing = True
 
         return options
+    
+    def __set_log_level(self, json):
+        debug = json['debug']
+        if debug:
+            LOGGER.setLevel(logging.DEBUG)
+            if debug == "with-statsapi":
+                import statsapi
+
+                # Assign the scoreboard logger to statsapi
+                statsapi.logger = LOGGER
+        else:
+            LOGGER.setLevel(logging.INFO)
 
     def __eq__(self, other):
         if not isinstance(other, Config):

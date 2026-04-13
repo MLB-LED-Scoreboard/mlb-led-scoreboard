@@ -21,7 +21,6 @@ from PIL import Image
 from pathlib import Path
 
 import driver
-from utils import setup_logger
 
 
 from data import Data
@@ -33,9 +32,6 @@ from version import SCRIPT_NAME, SCRIPT_VERSION
 
 
 def main(matrix, config):
-    # Set the scoreboard logger
-    setup_logger(config.debug)
-
     # Print some basic info on startup
     LOGGER.info("%s - v%s (%sx%s)", SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height)
 
