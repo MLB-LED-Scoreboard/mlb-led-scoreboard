@@ -15,6 +15,10 @@ jobs:
     steps:
       # Note: don't check out or run any user code in this workflow
       # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+      - uses: actions/checkout@v6
+        with:
+          ref: master
+
       - name: Comment on PR with team colors image
         env:
           GH_TOKEN: ${{ github.token }}
