@@ -1,4 +1,4 @@
-name: Show Team Colors
+name: Generate Team Colors Image
 
 on:
   pull_request:
@@ -27,14 +27,7 @@ jobs:
           python ./tests/display_team_colors.py save
 
       - name: Upload team colors image
-        id: upload
         uses: actions/upload-artifact@v7
         with:
-          path: team_colors.jpg
+          path: team_colors_${{ github.event.number }}.jpg
           archive: false
-
-      - name: Comment on PR with team colors image
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body "Team colors changed in this PR! Preview: ![Team Colors](${{ steps.upload.outputs.artifact-url }})"

@@ -1,0 +1,26 @@
+name: Comment team colors image on PR
+
+on:
+  workflow_run:
+    workflows: ["Generate Team Colors Image"]
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      # Note: don't check out or run any user code in this workflow
+      # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+      - name: Comment on PR with team colors image
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2026-03-10"  /repos/MLB-LED-Scoreboard/mlb-led-scoreboard/actions/runs/${{ github.event.workflow_run.id }}/artifacts > artifacts.json
+          pr=$(jq -r '.artifacts[0].name' artifacts.json | cut -d'_' -f3 | cut -d'.' -f1)
+          id=$(jq -r '.artifacts[0].id' artifacts.json)
+          link="https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/actions/runs/${{github.event.workflow_run.id }}/artifacts/$id"
+          gh pr comment $pr --edit-last --create-if-none --body "Team colors changed in this PR! Preview: [Team Colors]($link)"
