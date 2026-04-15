@@ -24,7 +24,6 @@ from pathlib import Path
 
 # Important! Import the driver first to initialize it, then import submodules as needed.
 import driver
-from driver import RGBMatrix, __version__
 from utils import args, led_matrix_options
 
 from data import Data
@@ -54,9 +53,11 @@ def main(matrix, config_base):
         if driver.hardware_load_failed:
             debug.log("rgbmatrix not installed, falling back to emulator!")
 
-        debug.log("Using RGBMatrixEmulator version %s", __version__)
+        debug.log("Using RGBMatrixEmulator version %s", getattr(driver, '__version__', 'unknown'))
     else:
-        debug.log("Using rgbmatrix version %s", __version__)
+        debug.log("Using %s driver version %s", 
+                  "Pi 5 (PioMatter)" if driver.is_pi5() else "rgbmatrix",
+                  getattr(driver, '__version__', 'unknown'))
 
     # Draw startup screen
     logo_filename = "mlb-w{}h{}.png".format(matrix.width, matrix.height)
@@ -164,8 +165,8 @@ if __name__ == "__main__":
         matrixOptions.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
         matrixOptions.icon_path = (Path(__file__).parent / "assets" / "mlb-emulator-icon.png").resolve()
 
-    # Initialize the matrix
-    matrix = RGBMatrix(options=matrixOptions)
+    # Initialize the matrix using the driver factory method
+    matrix = driver.RGBMatrix(options=matrixOptions)
     try:
         main(matrix, clargs.config)
     except:

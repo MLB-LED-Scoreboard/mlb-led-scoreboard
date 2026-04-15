@@ -1,0 +1,10 @@
+# Raspberry Pi 5 specific requirements
+# Install these in addition to main requirements.txt when using Pi 5
+
+# Adafruit Blinka PioMatter for Pi 5 RGB Matrix support
+adafruit-blinka>=8.0.0
+Adafruit-Blinka-Raspberry-Pi5-Piomatter>=0.1.0
+
+# Image processing (already in main requirements but included for completeness)
+Pillow>=9.0.0
+numpy>=1.20.0

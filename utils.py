@@ -127,6 +127,12 @@ def args():
         const=True
     )
     parser.add_argument(
+        "--pi5",
+        action="store_const",
+        help="Use Raspberry Pi 5 driver (Adafruit PioMatter). Required for Pi 5.",
+        const=True
+    )
+    parser.add_argument(
         "--drop-privileges", action="store_true", help="Force the matrix driver to drop root privileges after setup."
     )
     return parser.parse_args()
