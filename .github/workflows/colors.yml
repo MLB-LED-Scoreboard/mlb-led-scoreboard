@@ -25,6 +25,7 @@ jobs:
       - name: Generate team colors image
         run: |
           python ./tests/display_team_colors.py save
+          mv team_colors.jpg team_colors_${{ github.event.number }}.jpg
 
       - name: Upload team colors image
         uses: actions/upload-artifact@v7
