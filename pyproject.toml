@@ -1,2 +1,16 @@
 [tool.black]
 line-length = 120
+
+[tool.mypy]
+python_version = "3.13"
+exclude = ["venv/", "build/"]
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_reexport = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "RGBMatrixEmulator.*"
+no_implicit_reexport = false

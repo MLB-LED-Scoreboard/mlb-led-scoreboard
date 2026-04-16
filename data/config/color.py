@@ -20,6 +20,16 @@ class Color:
         return rv
 
     def __eq__(self, other):
-        if not isinstance(other, Color):
-            return NotImplemented
-        return self.json == other.json
+        return isinstance(other, Color) and self.json == other.json
+
+    def for_plugin(self, plugin_name: str) -> "Color":
+
+        plugins = self.json.get("plugins", {})
+        if plugin_name in ("news", "standings"):
+            # legacy workaround
+            plugins = self.json
+
+        plugin = plugins.get(plugin_name, {})
+        json = {plugin_name: plugin}
+        json["default"] = self.json["default"]
+        return Color(json)

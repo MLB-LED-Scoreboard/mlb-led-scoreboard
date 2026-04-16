@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Team Colors",
+  "description": "Per-team RGB color overrides. Keys are team abbreviations (e.g. 'nyy', 'lad') or 'default'.",
+  "x-indent": "  ",
+  "type": "object",
+  "required": ["format"],
+  "properties": {
+    "x-schema": {
+      "type": "string",
+      "default": "./../schemas/colors/teams.schema.json",
+      "readOnly": true,
+      "x-enforceConst": true,
+      "x-hidden": true
+    },
+    "format": {
+      "type": "number",
+      "const": 9.0,
+      "default": 9.0,
+      "x-hidden": true
+    },
+    "az":  { "$ref": "#/$defs/team_colors" },
+    "atl": { "$ref": "#/$defs/team_colors" },
+    "bal": { "$ref": "#/$defs/team_colors" },
+    "bos": { "$ref": "#/$defs/team_colors" },
+    "chc": { "$ref": "#/$defs/team_colors" },
+    "cws": { "$ref": "#/$defs/team_colors" },
+    "cin": { "$ref": "#/$defs/team_colors" },
+    "cle": { "$ref": "#/$defs/team_colors" },
+    "col": { "$ref": "#/$defs/team_colors" },
+    "det": { "$ref": "#/$defs/team_colors" },
+    "hou": { "$ref": "#/$defs/team_colors" },
+    "kc":  { "$ref": "#/$defs/team_colors" },
+    "laa": { "$ref": "#/$defs/team_colors" },
+    "lad": { "$ref": "#/$defs/team_colors" },
+    "mia": { "$ref": "#/$defs/team_colors" },
+    "mil": { "$ref": "#/$defs/team_colors" },
+    "min": { "$ref": "#/$defs/team_colors" },
+    "nym": { "$ref": "#/$defs/team_colors" },
+    "nyy": { "$ref": "#/$defs/team_colors" },
+    "ath": { "$ref": "#/$defs/team_colors" },
+    "phi": { "$ref": "#/$defs/team_colors" },
+    "pit": { "$ref": "#/$defs/team_colors" },
+    "sd":  { "$ref": "#/$defs/team_colors" },
+    "sf":  { "$ref": "#/$defs/team_colors" },
+    "sea": { "$ref": "#/$defs/team_colors" },
+    "stl": { "$ref": "#/$defs/team_colors" },
+    "tb":  { "$ref": "#/$defs/team_colors" },
+    "tex": { "$ref": "#/$defs/team_colors" },
+    "tor": { "$ref": "#/$defs/team_colors" },
+    "wsh": { "$ref": "#/$defs/team_colors" },
+    "nl":  { "$ref": "#/$defs/team_colors" },
+    "al":  { "$ref": "#/$defs/team_colors" },
+    "aus": { "$ref": "#/$defs/team_colors" },
+    "bra": { "$ref": "#/$defs/team_colors" },
+    "can": { "$ref": "#/$defs/team_colors" },
+    "tpe": { "$ref": "#/$defs/team_colors" },
+    "cba": { "$ref": "#/$defs/team_colors" },
+    "cub": { "$ref": "#/$defs/team_colors" },
+    "cze": { "$ref": "#/$defs/team_colors" },
+    "dr":  { "$ref": "#/$defs/team_colors" },
+    "gbr": { "$ref": "#/$defs/team_colors" },
+    "isr": { "$ref": "#/$defs/team_colors" },
+    "ita": { "$ref": "#/$defs/team_colors" },
+    "jpn": { "$ref": "#/$defs/team_colors" },
+    "mex": { "$ref": "#/$defs/team_colors" },
+    "nca": { "$ref": "#/$defs/team_colors" },
+    "ned": { "$ref": "#/$defs/team_colors" },
+    "pan": { "$ref": "#/$defs/team_colors" },
+    "pr":  { "$ref": "#/$defs/team_colors" },
+    "usa": { "$ref": "#/$defs/team_colors" },
+    "ven": { "$ref": "#/$defs/team_colors" },
+    "kor": { "$ref": "#/$defs/team_colors" },
+    "default": { "$ref": "#/$defs/team_colors" }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/team_colors"
+  },
+  "$defs": {
+    "color": { "$ref": "./_common.schema.json#/$defs/color" },
+    "team_colors": {
+      "type": "object",
+      "x-format": "grid",
+      "required": ["home", "text", "accent"],
+      "properties": {
+        "home":   { "$ref": "#/$defs/color" },
+        "text":   { "$ref": "#/$defs/color" },
+        "accent": { "$ref": "#/$defs/color" },
+        "city_connect": {
+          "type": "object",
+          "x-format": "grid",
+          "required": ["home", "text", "accent"],
+          "properties": {
+            "home":   { "$ref": "#/$defs/color" },
+            "text":   { "$ref": "#/$defs/color" },
+            "accent": { "$ref": "#/$defs/color" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "default": {
+    "x-schema": "./../schemas/colors/teams.schema.json",
+    "format": 9.0,
+    "az":  {
+        "home": {"r": 166, "g": 25,  "b": 46 }, "text": {"r": 217, "g": 200, "b": 157}, "accent": {"r": 0,   "g": 0,   "b": 0  },
+			"city_connect": {
+        "home": {"r": 91,  "g": 74,  "b": 170}, "text": {"r": 61,  "g": 186, "b": 206}, "accent": {"r": 37,  "g": 32,  "b": 55 }
+      }
+    },
+    "atl": {
+        "home": {"r": 12,  "g": 35,  "b": 64 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 186, "g": 12,  "b": 47 },
+			"city_connect": {
+        "home": {"r": 127, "g": 179, "b" : 236}, "text": {"r": 255, "g": 255, "b" : 255}, "accent": {"r": 241, "g": 37, "b" : 60}
+      }
+    },
+    "bal": {
+        "home": {"r": 252, "g": 76,  "b": 2  }, "text": {"r": 0,   "g": 0,   "b": 0  }, "accent": {"r": 255, "g": 255, "b": 255},
+			"city_connect": {
+        "home": {"r": 251, "g": 239, "b" : 217}, "text": {"r": 53, "g": 75, "b" : 73}, "accent": {"r": 254, "g": 149, "b" : 61}
+      }
+    },
+    "bos": {
+        "home": {"r": 200, "g": 16,  "b": 46 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 12,  "g": 35,  "b": 64 },
+			"city_connect": {
+        "home": {"r": 83,  "g": 119, "b": 107}, "text": {"r": 250, "g": 250, "b": 250}, "accent": {"r": 163, "g": 83,  "b": 76 }
+      }
+    },
+    "chc": {
+        "home": {"r": 0,   "g": 47,  "b": 108}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 200, "g": 16,  "b": 46 },
+			"city_connect": {
+        "home": {"r": 49,  "g": 55,  "b": 77 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 110, "g": 151, "b": 201}
+      }
+    },
+    "cws": {
+        "home": {"r": 0,   "g": 0,   "b": 0  }, "text": {"r": 141, "g": 144, "b": 147}, "accent": {"r": 255, "g": 255, "b": 255},
+			"city_connect": {
+        "home": {"r": 196, "g": 5,   "b": 31 }, "text": {"r": 0,   "g": 0,   "b": 0  }, "accent": {"r": 255, "g": 255, "b": 255}
+      }
+    },
+    "cin": {
+        "home": {"r": 186, "g": 12,  "b": 47 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 0,   "b": 0  },
+			"city_connect": {
+        "home": {"r": 196, "g": 37, "b" : 59},  "text": {"r": 31, "g": 32, "b" : 26},  "accent": {"r": 239, "g": 239, "b" : 237}
+      }
+    },
+    "cle": {
+      "home": {"r": 227, "g": 227, "b": 239}, "text": {"r": 204, "g": 0, "b": 46 }, "accent": {"r": 11, "g": 34, "b": 63 },
+			"city_connect": {
+        "home": {"r": 6,   "g": 36,  "b": 64 }, "text": {"r": 240, "g": 227, "b": 183}, "accent": {"r": 117, "g": 40,  "b": 48 }
+      }
+    },
+    "col": {
+        "home": {"r": 51,  "g": 0,   "b": 114}, "text": {"r": 141, "g": 144, "b": 147}, "accent": {"r": 0,   "g": 0,   "b": 0  },
+			"city_connect": {
+        "home": {"r": 140, "g": 184, "b": 229}, "text": {"r": 75,  "g": 77,  "b": 194}, "accent": {"r": 255, "g": 161, "b": 0  }
+      }
+    },
+    "det": {
+        "home": {"r": 12,  "g": 35,  "b": 64 }, "text": {"r": 250, "g": 70,  "b": 22 }, "accent": {"r": 250, "g": 70,  "b": 22 },
+			"city_connect": {
+        "home": {"r": 40,  "g": 57,  "b": 108}, "text": {"r": 221, "g": 221, "b": 221}, "accent": {"r": 18,  "g": 21,  "b": 31 }
+      }
+    },
+    "hou": {
+        "home": {"r": 4,   "g": 30,  "b": 66 }, "text": {"r": 207, "g": 69,  "b": 32 }, "accent": {"r": 229, "g": 114, "b": 0  },
+			"city_connect": {
+        "home": {"r": 229, "g": 231, "b": 243}, "text": {"r": 45,  "g": 50,  "b": 79 }, "accent": {"r": 243, "g": 85,  "b": 58 }
+      }
+    },
+    "kc":  {
+        "home": {"r": 0,   "g": 45,  "b": 114}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 137, "g": 115, "b": 76 },
+			"city_connect": {
+        "home": {"r": 222, "g": 225, "b" : 234},  "text": {"r": 122, "g": 73, "b" : 178}, "accent": {"r": 49, "g": 103, "b" : 176}
+      }
+    },
+    "laa": {
+        "home": {"r": 186, "g": 12,  "b": 47 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 12,  "g": 35,  "b": 64 },
+			"city_connect": {
+        "home": {"r": 239, "g": 217, "b": 176}, "text": {"r": 193, "g": 31,  "b": 52 }, "accent": {"r": 163, "g": 166, "b": 173}
+      }
+    },
+    "lad": {
+        "home": {"r": 0,   "g": 47,  "b": 108}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 145, "g": 157, "b": 157},
+			"city_connect": {
+        "home": {"r": 253, "g": 246, "b": 238}, "text": {"r": 51,  "g": 56,  "b": 76 }, "accent": {"r": 2,   "g": 102, "b": 196}
+      }
+    },
+    "mia": {
+        "home": {"r": 0,   "g": 0,   "b": 0  }, "text": {"r": 0,   "g": 163, "b": 224}, "accent": {"r": 239, "g": 51,  "b": 64 },
+			"city_connect": {
+        "home": {"r": 27,  "g": 27,  "b": 27 }, "text": {"r": 0,   "g": 165, "b": 179}, "accent": {"r": 255, "g": 70,  "b": 147}
+      }
+    },
+    "mil": {
+        "home": {"r": 19,  "g": 41,  "b": 75 }, "text": {"r": 255, "g": 199, "b": 44 }, "accent": {"r": 0,   "g": 61,  "b": 165},
+			"city_connect": {
+        "home": {"r": 8, "g": 134, "b" : 198}, "text": {"r": 255, "g": 128, "b" : 110},  "accent": {"r": 246, "g": 246, "b" : 246}
+      }
+    },
+    "min": {
+        "home": {"r": 12,  "g": 35,  "b": 64 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 186, "g": 12,  "b": 47 },
+			"city_connect": {
+        "home": {"r": 6,   "g": 41,  "b": 125}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 251, "g": 230, "b": 2  }
+      }
+    },
+    "nym": {
+        "home": {"r": 0,   "g": 45,  "b": 114}, "text": {"r": 252, "g": 76,  "b": 2  }, "accent": {"r": 255, "g": 255, "b": 255},
+			"city_connect": {
+        "home": {"r": 96,  "g": 97,  "b": 101}, "text": {"r": 34,  "g": 39,  "b": 42 }, "accent": {"r": 110, "g": 54,  "b": 96 }
+      }
+    },
+    "nyy": {
+        "home": {"r": 12,  "g": 35,  "b": 64 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 255, "g": 255, "b": 255} },
+    "ath": {
+        "home": {"r": 2,   "g": 70,  "b": 56 }, "text": {"r": 255, "g": 184, "b": 28 }, "accent": {"r": 255, "g": 184, "b": 28 } },
+    "phi": {
+        "home": {"r": 186, "g": 12,  "b": 47 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 45,  "b": 114},
+			"city_connect": {
+        "home": {"r": 1,   "g": 149, "b": 214}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 26,  "g": 46,  "b": 80 }
+      }
+    },
+    "pit": {
+        "home": {"r": 0,   "g": 0,   "b": 0  }, "text": {"r": 255, "g": 199, "b": 44 }, "accent": {"r": 255, "g": 199, "b": 44 },
+			"city_connect": {
+        "home": {"r": 252, "g": 169, "b": 37 }, "text": {"r": 200, "g": 200, "b": 200}, "accent": {"r": 33,  "g": 32,  "b": 28 }
+      }
+    },
+    "sd":  {
+        "home": {"r": 62,  "g": 52,  "b": 47 }, "text": {"r": 255, "g": 199, "b": 44 }, "accent": {"r": 183, "g": 169, "b": 154},
+			"city_connect": {
+        "home": {"r": 73, "g": 76, "b" : 85}, "text": {"r": 101, "g": 207, "b": 192}, "accent": {"r": 239, "g": 150, "b" : 64}
+      }
+    },
+    "sf":  {
+        "home": {"r": 250, "g": 70,  "b": 22 }, "text": {"r": 0,   "g": 0,   "b": 0  }, "accent": {"r": 239, "g": 209, "b": 159},
+			"city_connect": {
+        "home": {"r": 22,  "g": 23,  "b": 25 }, "text": {"r": 238, "g": 234, "b": 233}, "accent": {"r": 103, "g": 59,  "b": 147}
+      }
+    },
+    "sea": {
+        "home": {"r": 12,  "g": 44,  "b": 86 }, "text": {"r": 141, "g": 144, "b": 147}, "accent": {"r": 0,   "g": 104, "b": 94 },
+			"city_connect": {
+        "home": {"r": 0,   "g": 39,  "b": 120}, "text": {"r": 255, "g": 197, "b": 46 }, "accent": {"r": 244, "g": 130, "b": 32 }
+      }
+    },
+    "stl": {
+        "home": {"r": 186, "g": 12,  "b": 47 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 12,  "g": 35,  "b": 64 },
+			"city_connect": {
+        "home": {"r": 186, "g": 12,  "b": 47 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 186, "g": 12,  "b": 47 }
+      }
+    },
+    "tb":  {
+        "home": {"r": 4,   "g": 30,  "b": 66 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 105, "g": 179, "b": 231},
+			"city_connect": {
+        "home": {"r": 57,  "g": 61,  "b": 64 }, "text": {"r": 103, "g": 192, "b": 69 }, "accent": {"r": 101, "g": 82,  "b": 161}
+      }
+    },
+    "tex": {
+        "home": {"r": 0,   "g": 45,  "b": 114}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 186, "g": 12,  "b": 47 },
+			"city_connect": {
+        "home": {"r": 210, "g": 4, "b" : 23}, "text": {"r": 240, "g": 240, "b" : 240},  "accent": {"r": 210, "g": 4, "b" : 23}
+      }
+    },
+    "tor": {
+        "home": {"r": 0,   "g": 61,  "b": 165}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 108, "g": 172, "b": 228},
+			"city_connect": {
+        "home": {"r": 20,  "g": 24,  "b": 35 }, "text": {"r": 237, "g": 26,  "b": 62 }, "accent": {"r": 55,  "g": 76,  "b": 158}
+      }
+    },
+    "wsh": {
+        "home": {"r": 186, "g": 12,  "b": 47 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 4,   "g": 30,  "b": 66 },
+			"city_connect": {
+        "home": {"r": 92,  "g": 130, "b": 166}, "text": {"r": 231, "g": 231, "b": 235}, "accent": {"r": 255, "g": 189, "b": 171}
+      }
+    },
+    "nl":  { "home": {"r": 158, "g": 31,  "b": 22 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 20,  "g": 34,  "b": 88 } },
+    "al":  { "home": {"r": 20,  "g": 34,  "b": 88 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 158, "g": 31,  "b": 22 } },
+    "aus": { "home": {"r": 2,   "g": 70,  "b": 56 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 255, "g": 184, "b": 28 } },
+    "bra": { "home": {"r": 254, "g": 221, "b": 0  }, "text": {"r": 0,   "g": 39,  "b": 118}, "accent": {"r": 0,   "g": 156, "b": 59 } },
+    "can": { "home": {"r": 222, "g": 41,  "b": 16 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 255, "g": 255, "b": 255} },
+    "tpe": { "home": {"r": 222, "g": 41,  "b": 16 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 56,  "b": 147} },
+    "cba": { "home": {"r": 255, "g": 209, "b": 0  }, "text": {"r": 0,   "g": 56,  "b": 168}, "accent": {"r": 218, "g": 41,  "b": 28 } },
+    "cub": { "home": {"r": 211, "g": 10,  "b": 40 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 82,  "b": 147} },
+    "cze": { "home": {"r": 0,   "g": 33,  "b": 71 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 206, "g": 17,  "b": 38 } },
+    "dr":  { "home": {"r": 206, "g": 17,  "b": 38 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 40,  "b": 104} },
+    "gbr": { "home": {"r": 1,   "g": 33,  "b": 105}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 200, "g": 16,  "b": 46 } },
+    "isr": { "home": {"r": 0,   "g": 56,  "b": 168}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 141, "g": 144, "b": 147} },
+    "ita": { "home": {"r": 255, "g": 255, "b": 255}, "text": {"r": 205, "g": 33,  "b": 42 }, "accent": {"r": 0,   "g": 140, "b": 69 } },
+    "jpn": { "home": {"r": 255, "g": 255, "b": 255}, "text": {"r": 188, "g": 0,   "b": 20 }, "accent": {"r": 255, "g": 255, "b": 255} },
+    "mex": { "home": {"r": 0,   "g": 104, "b": 71 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 206, "g": 17,  "b": 38 } },
+    "nca": { "home": {"r": 0,   "g": 102, "b": 204}, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 255, "g": 255, "b": 255} },
+    "ned": { "home": {"r": 255, "g": 96,  "b": 0  }, "text": {"r": 0,   "g": 32,  "b": 91 }, "accent": {"r": 255, "g": 255, "b": 255} },
+    "pan": { "home": {"r": 206, "g": 17,  "b": 38 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 40,  "b": 104} },
+    "pr":  { "home": {"r": 207, "g": 20,  "b": 43 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 0,   "g": 40,  "b": 104} },
+    "usa": { "home": {"r": 0,   "g": 34,  "b": 68 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 206, "g": 17,  "b": 38 } },
+    "ven": { "home": {"r": 255, "g": 223, "b": 0  }, "text": {"r": 0,   "g": 56,  "b": 168}, "accent": {"r": 206, "g": 17,  "b": 38 } },
+    "kor": { "home": {"r": 255, "g": 255, "b": 255}, "text": {"r": 0,   "g": 57,  "b": 166}, "accent": {"r": 213, "g": 43,  "b": 30 } },
+    "default": { "home": {"r": 7,   "g": 14,  "b": 25 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 255, "g": 255, "b": 255} }
+  }
+}

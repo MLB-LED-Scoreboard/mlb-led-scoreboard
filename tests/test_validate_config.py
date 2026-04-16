@@ -1,629 +1,477 @@
+from email.policy import default
 import io, re, unittest
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 from unittest import mock
 
 from validate_config import *
 
+
 class TestValidateConfigMethods(unittest.TestCase):
-  
-  def test_colorize(self):
-    text = "OUTPUT"
-    color_code = 99
-    
-    self.assertEqual(
-      colorize(text, color_code),
-      f"\033[{color_code}m{text}\033[0m"
-    )
 
-  def test_indent_string(self):
-    text = "OUTPUT"
+    def test_colorize(self):
+        text = "OUTPUT"
+        color_code = 99
 
-    self.assertEqual(indent_string(text, 1, " "), " OUTPUT")
-    self.assertEqual(indent_string(text, 2, " "), "  OUTPUT")
-    self.assertEqual(indent_string(text, 5, " "), "     OUTPUT")
-    self.assertEqual(indent_string(text, 1, "-"), "-OUTPUT")
-    self.assertEqual(indent_string(text, 3, "-"), "---OUTPUT")
-    self.assertEqual(indent_string(text, 0),      "OUTPUT")
-    self.assertEqual(indent_string(text, 1),      "  OUTPUT")
-    self.assertEqual(indent_string(text, 5),      "          OUTPUT")
+        self.assertEqual(colorize(text, color_code), f"\033[{color_code}m{text}\033[0m")
 
-  def test_output(self):
-    OutputTest = namedtuple("OutputTest", ["text", "options", "expected"])
+    def test_indent_string(self):
+        text = "OUTPUT"
 
-    tests = [
-      OutputTest("OUTPUT", {}, "OUTPUT\n"),
-      OutputTest("OUTPUT", { "indent": 1 }, "  OUTPUT\n"),
-      OutputTest("OUTPUT", { "color": TermColor.RED }, "\033[31mOUTPUT\033[0m\n"),
-      OutputTest("OUTPUT", { "indent": 2, "color": TermColor.GREEN }, "    \033[32mOUTPUT\033[0m\n"),
-      OutputTest("OUTPUT", { "indent": 0, "color": TermColor.YELLOW }, "\033[33mOUTPUT\033[0m\n"),
-    ]
+        self.assertEqual(indent_string(text, 1, " "), " OUTPUT")
+        self.assertEqual(indent_string(text, 2, " "), "  OUTPUT")
+        self.assertEqual(indent_string(text, 5, " "), "     OUTPUT")
+        self.assertEqual(indent_string(text, 1, "-"), "-OUTPUT")
+        self.assertEqual(indent_string(text, 3, "-"), "---OUTPUT")
+        self.assertEqual(indent_string(text, 0), "OUTPUT")
+        self.assertEqual(indent_string(text, 1), "  OUTPUT")
+        self.assertEqual(indent_string(text, 5), "          OUTPUT")
 
-    for test in tests:
-      with mock.patch('sys.stdout', new=io.StringIO()) as mocked_stdout:
-        output(test.text, **test.options)
+    def test_output(self):
+        OutputTest = namedtuple("OutputTest", ["text", "options", "expected"])
 
-        self.assertEqual(mocked_stdout.getvalue(), test.expected)
-
-  def test_deep_pop_with_simple_pop(self):
-    d = { "simple": "dict" }
-
-    self.assertEqual(
-      deep_pop(d, "simple"),
-      {}
-    )
-
-  def test_deep_pop_with_nested_pop(self):
-    d = {
-      "deeply": { "nested": "dict" },
-      "second": { "nested": "dict" } 
-    }
-
-    self.assertEqual(
-      deep_pop(d, "nested", path=["deeply"]),
-      {
-        "deeply": {},
-        "second": { "nested": "dict" }
-      }
-    )
-
-  def test_deep_set_with_simple_set(self):
-    d = {}
-
-    self.assertEqual(
-      deep_set(d, "simple", "set"),
-      { "simple": "set" }
-    )
-  
-  def test_deep_set_with_nested_set(self):
-    d = {
-      "deeply": { "nested": "dict" },
-      "second": {} 
-    }
-
-    self.assertEqual(
-      deep_set(d, "nested", "dict", path=["second"]),
-      {
-        "deeply": { "nested": "dict" },
-        "second": { "nested": "dict" }
-      }
-    )
-
-  def test_generate_change(self):
-    source = { "three": 4 }
-    
-    self.assertEqual(
-      generate_change(source, "three", ["one", "two"]),
-      { "one": { "two": { "three": 4 } } }
-    )
-
-  def test_custom_config_files(self):
-    # Remove the maxDiff limit to see the full output in case of failure
-    self.maxDiff = None
-
-    with mock.patch("os.listdir") as mocked_listdir:
-      files = [
-        "config.json",
-        "config.example.json",
-        "config_INVALID.json"
-      ]
-      mocked_listdir.return_value = files
-
-      # Checking whether a schema exists for the custom config
-      with mock.patch("os.path.isfile") as mocked_isfile:
-        mocked_isfile.side_effect = lambda file: "config.example.json" in file
-
-        COORDINATES_IGNORED_KEYS = [
-          "font_name",
-          "no_hitter",
-          "perfect_game",
-          "warmup"
+        tests = [
+            OutputTest("OUTPUT", {}, "OUTPUT\n"),
+            OutputTest("OUTPUT", {"indent": 1}, "  OUTPUT\n"),
+            OutputTest("OUTPUT", {"color": TermColor.RED}, "\033[31mOUTPUT\033[0m\n"),
+            OutputTest("OUTPUT", {"indent": 2, "color": TermColor.GREEN}, "    \033[32mOUTPUT\033[0m\n"),
+            OutputTest("OUTPUT", {"indent": 0, "color": TermColor.YELLOW}, "\033[33mOUTPUT\033[0m\n"),
         ]
-        COLORS_IGNORED_KEYS = [
-          "city_connect"
-        ]
+
+        for test in tests:
+            with mock.patch("sys.stdout", new=io.StringIO()) as mocked_stdout:
+                output(test.text, **test.options)
+
+                self.assertEqual(mocked_stdout.getvalue(), test.expected)
+
+    def test_deep_pop_with_simple_pop(self):
+        d = {"simple": "dict"}
+
+        self.assertEqual(deep_pop(d, "simple"), {})
+
+    def test_deep_pop_with_nested_pop(self):
+        d = {"deeply": {"nested": "dict"}, "second": {"nested": "dict"}}
+
+        self.assertEqual(deep_pop(d, "nested", path=["deeply"]), {"deeply": {}, "second": {"nested": "dict"}})
+
+    def test_deep_set_with_simple_set(self):
+        d = {}
+
+        self.assertEqual(deep_set(d, "simple", "set"), {"simple": "set"})
+
+    def test_deep_set_with_nested_set(self):
+        d = {"deeply": {"nested": "dict"}, "second": {}}
+
         self.assertEqual(
-          custom_config_files(),
-          [
-            (ROOT_DIRECTORY, "config.json", { "ignored_keys": [], "renamed_keys": {"preferred_game_update_delay_in_10s_of_seconds": "preferred_game_delay_multiplier"} }),
-            (COORDINATES_DIRECTORY, "config.json", { "ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {} }),
-            (COLORS_DIRECTORY, "config.json", { "ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {} }),
-          ]
+            deep_set(d, "nested", "dict", path=["second"]), {"deeply": {"nested": "dict"}, "second": {"nested": "dict"}}
         )
 
-  def test_upsert_config_with_no_diff(self):
-    config = { "some": { "dict": { "with": { "deeply": { "nested": "keys" } } } } }
-    schema = copy.deepcopy(config)
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-    self.assertEqual(changes, { "add": [], "delete": [], "rename": [] })
-
-  def test_upsert_config_with_simple_addition(self):
-    config = {}
-    schema = { "should": "be added" }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { "should": "be added" }
-        ],
-        "delete": [],
-        "rename": []
-      }
-    )
-  
-  def test_upsert_config_with_simple_deletion(self):
-    config = { "should": "be deleted" }
-    schema = {}
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [
-          { "should": "be deleted" }
-        ],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_simple_addition_and_deletion(self):
-    config = { "needs to be": "deleted" }
-    schema = { "should be": "added" }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { "should be": "added" }
-        ],
-        "delete": [
-          { "needs to be": "deleted" }
-        ],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_nested_addition(self):
-    config = { "already": { "has": "this one" } }
-    schema = { "already": { "has": "this one", "but": "not this one" } }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { 
-            "already": { "but": "not this one" }
-          }
-        ],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_nested_deletion(self):
-    config = { "already": { "has": "this one", "and": "an extra" } }
-    schema = { "already": { "has": "this one" } }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [
-          {
-            "already": { "and": "an extra" }
-          }
-        ],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_nested_addition_to_same_key(self):
-    config = { "should": { "already": "exist" } }
-    schema = { "should": { "already": "exist", "be": "added" } }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { "should": { "be": "added" } }
-        ],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_nested_deletion_to_same_key(self):
-    config = { "should": { "continue": "existing", "be": "deleted" } }
-    schema = { "should": { "continue": "existing" } }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [
-          {
-            "should": { "be": "deleted" }
-          }
-        ],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_preserves_dict_values(self):
-    config = { "this": { "is true": True } }
-    schema = { "this": { "is true": False } }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_preserves_non_dict_values(self):
-    config = { "this": True }
-    schema = { "this": { "is true": False } }
-
-    (changed, result, changes) = upsert_config(config, schema)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_ignored_keys_in_config(self):
-    '''
-    Keys that are extra in the config but not in the schema are ignored if they are in the ignored_keys list.
-    '''
-    config = { "this": True, "that": False }
-    schema = { "this": True }
-
-    options = { "ignored_keys": ["that"] }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_ignored_keys_with_subkeys_in_config(self):
-    '''
-    Keys in the ignore list ignore all subkeys.
-    '''
-    config = { "this": True, "that": { "those": False } }
-    schema = { "this": True }
-
-    options = { "ignored_keys": ["that"] }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertFalse(changed)
-    self.assertEqual(config, result)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_ignored_keys_as_extra_subkey_in_config(self):
-    '''
-    Keys in the ignore list as a subkey of a deletable key are not ignored.
-    '''
-    config = { "this": True, "those": { "that": False } }
-    schema = { "this": True }
-
-    options = { "ignored_keys": ["that"] }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [
-          { "those": { "that": False } }
-        ],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_ignored_keys_in_schema(self):
-    '''
-    Keys that are extra in the schema but not in the config are ALWAYS placed in the add changeset.
-    '''
-    config = { "this": True }
-    schema = { "this": True, "that": False }
-
-    options = { "ignored_keys": ["that"] }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { "that": False }
-        ],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_ignored_keys_with_subkeys_in_schema(self):
-    '''
-    Keys in the ignore list still add all subkeys.
-    '''
-    config = { "this": True }
-    schema = { "this": True, "that": { "those": False } }
-
-    options = { "ignored_keys": ["that"] }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { "that": { "those": False } }
-        ],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_renamed_keys_in_config(self):
-    '''
-    Keys in the rename list are renamed instead of added or deleted and preserve their values.
-    '''
-    config = { "this": True }
-    schema = { "that": False }
-
-    options = { "renamed_keys": { "this": "that" } }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, { "that": True })
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [],
-        "rename": [
-          (
-            { "this": True },
-            { "that": True }
-          )
-        ]
-      }
-    )
-
-  def test_upsert_config_with_nested_renamed_keys_in_config(self):
-    '''
-    Keys in the rename list are renamed instead of added or deleted and preserve their values.
-    '''
-    config = { "this": { "that": True } }
-    schema = { "this": { "those": False } }
-
-    options = { "renamed_keys": { "that": "those" } }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertNotEqual(config, result)
-    self.assertEqual(result, { "this": { "those": True } })
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [],
-        "rename": [
-          (
-            { "this": { "that": True } },
-            { "this": { "those": True } }
-          )
-        ]
-      }
-    )
-
-  def test_upsert_config_with_renamed_keys_not_in_config(self):
-    '''
-    Keys in the rename list that are not present in the config are added.
-    '''
-    config = {}
-    schema = { "that": False }
-
-    options = { "renamed_keys": { "this": "that" } }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [
-          { "that": False }
-        ],
-        "delete": [],
-        "rename": []
-      }
-    )
-
-  def test_upsert_config_with_renamed_keys_not_in_schema(self):
-    '''
-    Keys in the rename list that are not present in the schema are deleted.
-    '''
-    config = { "this": False }
-    schema = {}
-
-    options = { "renamed_keys": { "this": "that" } }
-
-    (changed, result, changes) = upsert_config(config, schema, options)
-
-    self.assertTrue(changed)
-    self.assertEqual(result, schema)
-    self.assertEqual(
-      changes,
-      {
-        "add": [],
-        "delete": [
-          { "this": False }
-        ],
-        "rename": []
-      }
-    )
-
-  def test_format_change(self):
-    change = { "some": { "arbitrary": "change" } }
-
-    self.assertEqual(
-      format_change(change),
-'''
+    def test_generate_change(self):
+        source = {"three": 4}
+
+        self.assertEqual(generate_change(source, "three", ["one", "two"]), {"one": {"two": {"three": 4}}})
+
+    def test_custom_config_files(self):
+        # Remove the maxDiff limit to see the full output in case of failure
+        self.maxDiff = None
+
+        with mock.patch("os.listdir") as mocked_listdir:
+            files = ["config.json", "config.example.json", "config_INVALID.json"]
+            mocked_listdir.return_value = files
+
+            # Checking whether a schema exists for the custom config
+            with mock.patch("os.path.isfile") as mocked_isfile:
+                mocked_isfile.side_effect = lambda file: "config.example.json" in file
+
+                ROOT_IGNORED_KEYS = ["matrix-*", "plugins-*"]
+                COORDINATES_IGNORED_KEYS = ["font_name", "no_hitter", "perfect_game", "warmup", "plugins-*"]
+                COLORS_IGNORED_KEYS = ["city_connect", "plugins-*"]
+                self.assertEqual(
+                    custom_config_files(),
+                    [
+                        (ROOT_DIRECTORY, "config.json", {"ignored_keys": ROOT_IGNORED_KEYS, "renamed_keys": {}}),
+                        (
+                            COORDINATES_DIRECTORY,
+                            "config.json",
+                            {"ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {"offday": "news"}},
+                        ),
+                        (
+                            COLORS_DIRECTORY,
+                            "config.json",
+                            {"ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {"offday": "news"}},
+                        ),
+                    ],
+                )
+
+    def test_upsert_config_with_no_diff(self):
+        config = {"some": {"dict": {"with": {"deeply": {"nested": "keys"}}}}}
+        schema = copy.deepcopy(config)
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertFalse(changed)
+        self.assertEqual(config, result)
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": []})
+
+    def test_upsert_config_with_simple_addition(self):
+        config = {}
+        schema = {"should": "be added"}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [{"should": "be added"}], "delete": [], "rename": []})
+
+    def test_upsert_config_with_simple_deletion(self):
+        config = {"should": "be deleted"}
+        schema = {}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [], "delete": [{"should": "be deleted"}], "rename": []})
+
+    def test_upsert_config_with_simple_addition_and_deletion(self):
+        config = {"needs to be": "deleted"}
+        schema = {"should be": "added"}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(
+            changes, {"add": [{"should be": "added"}], "delete": [{"needs to be": "deleted"}], "rename": []}
+        )
+
+    def test_upsert_config_with_nested_addition(self):
+        config = {"already": {"has": "this one"}}
+        schema = {"already": {"has": "this one", "but": "not this one"}}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [{"already": {"but": "not this one"}}], "delete": [], "rename": []})
+
+    def test_upsert_config_with_nested_deletion(self):
+        config = {"already": {"has": "this one", "and": "an extra"}}
+        schema = {"already": {"has": "this one"}}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [], "delete": [{"already": {"and": "an extra"}}], "rename": []})
+
+    def test_upsert_config_with_nested_addition_to_same_key(self):
+        config = {"should": {"already": "exist"}}
+        schema = {"should": {"already": "exist", "be": "added"}}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [{"should": {"be": "added"}}], "delete": [], "rename": []})
+
+    def test_upsert_config_with_nested_deletion_to_same_key(self):
+        config = {"should": {"continue": "existing", "be": "deleted"}}
+        schema = {"should": {"continue": "existing"}}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [], "delete": [{"should": {"be": "deleted"}}], "rename": []})
+
+    def test_upsert_config_preserves_dict_values(self):
+        config = {"this": {"is true": True}}
+        schema = {"this": {"is true": False}}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertFalse(changed)
+        self.assertEqual(config, result)
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": []})
+
+    def test_upsert_config_preserves_non_dict_values(self):
+        config = {"this": True}
+        schema = {"this": {"is true": False}}
+
+        changed, result, changes = upsert_config(config, schema)
+
+        self.assertFalse(changed)
+        self.assertEqual(config, result)
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": []})
+
+    def test_upsert_config_with_ignored_keys_in_config(self):
+        """
+        Keys that are extra in the config but not in the schema are ignored if they are in the ignored_keys list.
+        """
+        config = {"this": True, "that": False}
+        schema = {"this": True}
+
+        options = {"ignored_keys": ["that"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertFalse(changed)
+        self.assertEqual(config, result)
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": []})
+
+    def test_upsert_config_with_ignored_keys_with_subkeys_in_config(self):
+        """
+        Keys in the ignore list ignore all subkeys.
+        """
+        config = {"this": True, "that": {"those": False}}
+        schema = {"this": True}
+
+        options = {"ignored_keys": ["that"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertFalse(changed)
+        self.assertEqual(config, result)
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": []})
+
+    def test_upsert_config_with_ignored_keys_as_extra_subkey_in_config(self):
+        """
+        Keys in the ignore list as a subkey of a deletable key are not ignored.
+        """
+        config = {"this": True, "those": {"that": False}}
+        schema = {"this": True}
+
+        options = {"ignored_keys": ["that"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [], "delete": [{"those": {"that": False}}], "rename": []})
+
+    def test_upsert_config_with_ignored_keys_in_schema(self):
+        """
+        Keys that are extra in the schema but not in the config are ALWAYS placed in the add changeset.
+        """
+        config = {"this": True}
+        schema = {"this": True, "that": False}
+
+        options = {"ignored_keys": ["that"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [{"that": False}], "delete": [], "rename": []})
+
+    def test_upsert_config_with_ignored_keys_with_subkeys_in_schema(self):
+        """
+        Keys in the ignore list still add all subkeys.
+        """
+        config = {"this": True}
+        schema = {"this": True, "that": {"those": False}}
+
+        options = {"ignored_keys": ["that"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [{"that": {"those": False}}], "delete": [], "rename": []})
+
+    def test_config_with_ignore_subpath_keys_in_config(self):
+        """
+        Subkeys in the IGNORE_SUBPATH modifier section are not removed.
+        """
+        config = {"subset1": {"subset2": {"subset3": 1}}}
+        schema = {"subset1": {}}
+
+        options = {"ignored_keys": ["subset1-*"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertFalse(changed)
+        self.assertNotEqual(schema, result)
+        self.assertEqual(result, config)
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": []})
+
+    def test_config_with_ignore_subpath_section_not_in_config(self):
+        """
+        IGNORE_SUBPATH modifier section itself is added if not already present.
+        """
+        config = {}
+        schema = {"subset1": {}}
+
+        options = {"ignored_keys": ["subset1-*"]}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertEqual(schema, result)
+        self.assertNotEqual(result, config)
+        self.assertEqual(changes, {"add": [{"subset1": {}}], "delete": [], "rename": []})
+
+    def test_upsert_config_with_renamed_keys_in_config(self):
+        """
+        Keys in the rename list are renamed instead of added or deleted and preserve their values.
+        """
+        config = {"this": True}
+        schema = {"that": False}
+
+        options = {"renamed_keys": {"this": "that"}}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, {"that": True})
+        self.assertEqual(changes, {"add": [], "delete": [], "rename": [({"this": True}, {"that": True})]})
+
+    def test_upsert_config_with_nested_renamed_keys_in_config(self):
+        """
+        Keys in the rename list are renamed instead of added or deleted and preserve their values.
+        """
+        config = {"this": {"that": True}}
+        schema = {"this": {"those": False}}
+
+        options = {"renamed_keys": {"that": "those"}}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertNotEqual(config, result)
+        self.assertEqual(result, {"this": {"those": True}})
+        self.assertEqual(
+            changes, {"add": [], "delete": [], "rename": [({"this": {"that": True}}, {"this": {"those": True}})]}
+        )
+
+    def test_upsert_config_with_renamed_keys_not_in_config(self):
+        """
+        Keys in the rename list that are not present in the config are added.
+        """
+        config = {}
+        schema = {"that": False}
+
+        options = {"renamed_keys": {"this": "that"}}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [{"that": False}], "delete": [], "rename": []})
+
+    def test_upsert_config_with_renamed_keys_not_in_schema(self):
+        """
+        Keys in the rename list that are not present in the schema are deleted.
+        """
+        config = {"this": False}
+        schema = {}
+
+        options = {"renamed_keys": {"this": "that"}}
+
+        changed, result, changes = upsert_config(config, schema, options)
+
+        self.assertTrue(changed)
+        self.assertEqual(result, schema)
+        self.assertEqual(changes, {"add": [], "delete": [{"this": False}], "rename": []})
+
+    def test_format_change(self):
+        change = {"some": {"arbitrary": "change"}}
+
+        self.assertEqual(
+            format_change(change),
+            """
 - "some": {
     "arbitrary": "change"
   }
-'''.strip("\n")
-    )
+""".strip("\n"),
+        )
 
-  def test_format_change_with_small_indent(self):
-    change = { "some": { "arbitrary": "change" } }
+    def test_format_change_with_small_indent(self):
+        change = {"some": {"arbitrary": "change"}}
 
-    self.assertEqual(
-      format_change(change, indent = " "),
-'''
+        self.assertEqual(
+            format_change(change, indent=" "),
+            """
 - "some": {
    "arbitrary": "change"
   }
-'''.strip("\n")
-    )
+""".strip("\n"),
+        )
 
-  def test_format_change_with_large_indent(self):
-    change = { "some": { "arbitrary": "change" } }
+    def test_format_change_with_large_indent(self):
+        change = {"some": {"arbitrary": "change"}}
 
-    self.assertEqual(
-      format_change(change, indent = "  " * 3),
-'''
+        self.assertEqual(
+            format_change(change, indent="  " * 3),
+            """
 - "some": {
         "arbitrary": "change"
   }
-'''.strip("\n")
-    )
+""".strip("\n"),
+        )
 
-  def test_format_change_with_more_indents(self):
-    change = { "some": { "arbitrary": "change" } }
+    def test_format_change_with_more_indents(self):
+        change = {"some": {"arbitrary": "change"}}
 
-    self.assertEqual(
-      format_change(change, indents=2),
-'''
+        self.assertEqual(
+            format_change(change, indents=2),
+            """
     - "some": {
         "arbitrary": "change"
       }
-'''.strip("\n")
-    )
+""".strip("\n"),
+        )
 
-  def test_format_change_with_different_delimiter(self):
-    change = { "some": { "arbitrary": "change" } }
+    def test_format_change_with_different_delimiter(self):
+        change = {"some": {"arbitrary": "change"}}
 
-    self.assertEqual(
-      format_change(change, delimiter="*"),
-'''
+        self.assertEqual(
+            format_change(change, delimiter="*"),
+            """
 * "some": {
     "arbitrary": "change"
   }
-'''.strip("\n")
-    )
+""".strip("\n"),
+        )
 
-  def test_format_change_with_color(self):
-    change = { "some": { "arbitrary": "change" } }
+    def test_format_change_with_color(self):
+        change = {"some": {"arbitrary": "change"}}
 
-    self.assertRegex(
-      format_change(change, color=TermColor.RED),
-      re.compile(fr'\033\[{TermColor.RED}.+\033\[0m')
-    )
+        self.assertRegex(format_change(change, color=TermColor.RED), re.compile(rf"\033\[{TermColor.RED}.+\033\[0m"))
 
-  def test_renamed_keys_present_in_schema(self):
-    for directory, validation in VALIDATIONS.items():
-      self.assertIn("renamed_keys", validation, f"{directory} does not have 'renamed_keys' defined.")
-      renames = validation["renamed_keys"].values()
+    def test_renamed_keys_present_in_schema(self):
+        for directory, validation in VALIDATIONS.items():
+            self.assertIn("renamed_keys", validation, f"{directory} does not have 'renamed_keys' defined.")
+            renames = validation["renamed_keys"].values()
 
-      for file in os.listdir(directory):
-        if file.endswith(".example.json"):
-          with open(os.path.join(directory, file)) as config_file:
-            config = json.load(config_file)
-            for rename in renames:
-              self.assertIn(rename, config, f"{os.path.join(directory, file)} does not contain renamed key '{rename}'.")
+            any_files = False
+            found = defaultdict(bool)
+            for file in os.listdir(directory):
+                if file.endswith(".example.json"):
+                    any_files = True
+                    with open(os.path.join(directory, file)) as config_file:
+                        config = json.load(config_file)
+                        for rename in renames:
+                            found[rename] |= rename in config
+
+            if any_files:
+                for rename, some_found in found.items():
+                    self.assertTrue(
+                        some_found,
+                        f"{directory} does not contain the renamed key '{rename}' in any of its example config files.",
+                    )
+
 
 class TestPerformValidation(unittest.TestCase):
 
@@ -639,10 +487,7 @@ class TestPerformValidation(unittest.TestCase):
     @mock.patch("validate_config.custom_config_files")
     @mock.patch("validate_config.colorize")
     def test_perform_validation_end_to_end(self, mock_colorize, mock_custom_files):
-        options = {
-          "ignored_keys": ["ignored_key"],
-          "renamed_keys": { "old_key": "new_key" }
-        }
+        options = {"ignored_keys": ["ignored_key"], "renamed_keys": {"old_key": "new_key"}}
         mock_custom_files.return_value = [(os.path.join("tests", "fixtures"), "config.json", options)]
         mock_colorize.side_effect = lambda text, _: text  # Strip coloring
 
@@ -659,7 +504,7 @@ class TestPerformValidation(unittest.TestCase):
 
     def _get_expected_output(self):
         path = self.config_fixture_path
-        return f'''
+        return f"""
 Fetching custom config files...
   - Found custom configuration at {path}!
     Adding missing keys and deleting unused configuration options...
@@ -683,7 +528,7 @@ Fetching custom config files...
         - Backup located at {path}.bak
         - Updating {path}...
       Finished updating {path}!
-'''.lstrip("\n")
+""".lstrip("\n")
 
     def _assert_config_changes(self, config):
         ### Spot checks: ###
@@ -693,11 +538,8 @@ Fetching custom config files...
         self.assertNotIn("deprecated_option", config["test_config"])
         # 3. Check that values are not overwritten
         self.assertEqual(
-            config["preferred"],
-            {
-              "teams": ["Braves"],
-              "divisions": ["AL Central", "AL Wild Card"]
-            }
+            config["rotation"]["screens"][0],
+            {"kind": "game", "priority": 2, "required_status": "live", "teams": ["Braves"]},
         )
         # 4. Check that an ignored key is still present
         self.assertIn("ignored_key", config["test_config"])
@@ -706,4 +548,4 @@ Fetching custom config files...
 
 
 if __name__ == "__main__":
-  unittest.main()
+    unittest.main()

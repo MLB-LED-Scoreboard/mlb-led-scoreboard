@@ -1,3 +1,4 @@
+from data import status
 from driver import graphics
 
 import os.path
@@ -26,12 +27,12 @@ class Layout:
         self.default_font_name = self.coords("defaults.font_name")
 
         self.font_cache = {}
-        
+
         # Cache the default font to start
         self.__get_font_object(self.default_font_name)
 
     def font(self, keypath):
-        '''
+        """
         Returns a dictionary with font properties. The font object resides under the "font" key.
 
         {
@@ -43,10 +44,9 @@ class Layout:
                 "height": int
             }
         }
-        '''
-        d = self.coords(keypath)
+        """
         try:
-            return self.__get_font_object(d[FONTNAME_KEY])
+            return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
         except KeyboardInterrupt as e:
             raise e
         except:
@@ -72,6 +72,19 @@ class Layout:
         else:
             self.state = None
 
+    def state_for_game(self, game):
+        new_state = None
+        if game.status() == status.WARMUP:
+            new_state = LAYOUT_STATE_WARMUP
+
+        if game.is_no_hitter():
+            new_state = LAYOUT_STATE_NOHIT
+
+        if game.is_perfect_game():
+            new_state = LAYOUT_STATE_PERFECT
+
+        self.set_state(new_state)
+
     def state_is_warmup(self):
         return self.state == LAYOUT_STATE_WARMUP
 
@@ -91,11 +104,7 @@ class Layout:
 
         font_paths = [DIR_FONT_PATCHED, DIR_FONT_DRIVER]
         for font_path in font_paths:
-            abs_path = os.path.abspath(
-                os.path.join(
-                    __file__, "../../..", f"{font_path}/{font_name}.bdf"
-                )
-            )
+            abs_path = os.path.abspath(os.path.join(__file__, "../../..", f"{font_path}/{font_name}.bdf"))
 
             if os.path.isfile(abs_path):
                 font = graphics.Font()
@@ -107,19 +116,31 @@ class Layout:
                 } | self.__get_font_bdf_properties(abs_path)
 
                 return self.font_cache[font_name]
-            
+
     def __get_font_bdf_properties(self, path):
         bdf = bdfparser.Font(path)
 
-        return {
-            "bdf_headers": bdf.headers,
-            "size": {
-                "width": bdf.headers["fbbx"],
-                "height": bdf.headers["fbby"]
-            }
-        }
+        return {"bdf_headers": bdf.headers, "size": {"width": bdf.headers["fbbx"], "height": bdf.headers["fbby"]}}
 
     def __eq__(self, other):
-        if not isinstance(other, Layout):
-            return NotImplemented
-        return self.json == other.json and self.width == other.width and self.height == other.height
+
+        return (
+            isinstance(other, Layout)
+            and self.json == other.json
+            and self.width == other.width
+            and self.height == other.height
+        )
+
+    def for_plugin(self, plugin_name: str) -> "Layout":
+
+        plugins = self.json.get("plugins", {})
+        if plugin_name in ("news", "standings"):
+            # legacy workaround
+            plugins = self.json
+
+        plugin = plugins.get(plugin_name, {})
+        json = {plugin_name: plugin}
+        json["defaults"] = self.json["defaults"]
+        plugin_layout = Layout(json, self.width, self.height)
+
+        return plugin_layout

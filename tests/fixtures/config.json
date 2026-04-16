@@ -1,57 +1,67 @@
 {
-  "preferred": {
-    "teams": [
-      "Braves"
-    ],
-    "divisions": [
-      "AL Central",
-      "AL Wild Card"
-    ]
-  },
-  "news_ticker": {
-    "team_offday": true,
-    "always_display": false,
-    "preferred_teams": true,
-    "traderumors": true,
-    "mlb_news": false,
-    "countdowns": false,
-    "date": true,
-    "date_format": "%A, %B %-d"
-  },
-  "standings": {
-    "team_offday": false,
-    "mlb_offday": true,
-    "always_display": false,
-    "display_no_games_live": true
-  },
+  "format": 9.0,
+  "matrix": {},
   "rotation": {
-    "enabled": true,
     "scroll_until_finished": true,
-    "only_preferred": false,
-    "only_live": true,
     "rates": {
       "live": 20.0,
       "final": 20.0,
       "pregame": 20.0
     },
-    "while_preferred_team_live": {
-      "enabled": true,
-      "during_inning_breaks": true
-    }
+    "screens": [
+      {
+        "kind": "game",
+        "priority": 2,
+        "required_status": "live",
+        "teams": [
+          "Braves"
+        ]
+      },
+      {
+        "kind": "game",
+        "priority": 1
+      },
+      {
+        "kind": "standings",
+        "seconds": 60,
+        "with_priority": 0
+      },
+      {
+        "kind": "news",
+        "seconds": 60,
+        "with_priority": 0
+      }
+    ]
+  },
+  "news_ticker": {
+    "teams": [
+      "Braves"
+    ],
+    "traderumors": true,
+    "mlb_news": true,
+    "countdowns": true,
+    "date": true,
+    "date_format": "%A, %B %-d"
+  },
+  "standings": {
+    "divisions": [
+      "AL Central",
+      "AL Wild Card"
+    ]
   },
   "weather": {
     "apikey": "SUPER SECRET DON'T LOOK",
     "location": "New York,ny,us",
-    "metric_units": false
+    "metric_units": false,
+    "pregame": true
   },
   "time_format": "24h",
   "end_of_day": "20:00",
-  "full_team_names": true,
-  "short_team_names_for_runs_hits": false,
-  "pregame_weather": true,
+  "api_refresh_rate": 5,
+  "sync_delay_seconds": 0,
   "scrolling_speed": 1,
   "debug": true,
-  "demo_date": true,
+  "demo_date": false,
   "test_config": {
     "balks_enabled": true,
     "pitch_clock_enabled": true,

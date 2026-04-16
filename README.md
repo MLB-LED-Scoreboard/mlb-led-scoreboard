@@ -1,6 +1,6 @@
 # mlb-led-scoreboard
 
-![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) ![](https://img.shields.io/badge/python-3.9+-blue)
+![Current Version](https://img.shields.io/github/v/release/MLB-LED-Scoreboard/MLB-LED-Scoreboard) ![](https://img.shields.io/badge/python-3.10+-blue)
 
 [![Join Discord](https://img.shields.io/badge/discord-join-green.svg)](https://discord.gg/FdD6ec9fdt)
 
@@ -9,8 +9,8 @@
 </a>
 
 ---------------
-> [!IMPORTANT]  
-> If you are upgrading from v7 to v8, please be sure to read the [Usage](#usage) section, as the startup commands have changed!
+> [!IMPORTANT]
+> If you are upgrading to v9.0, please be sure to read the [Upgrading to v9.0 wiki page](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki/Upgrading-to-v9.0) for details on how to convert your custom configurations!
 ---------------
 
 An LED scoreboard for Major League Baseball. Displays a live scoreboard for your team's game on that day.
@@ -108,7 +108,7 @@ A sample bill of materials (BOM) is located [here](https://www.adafruit.com/wish
 ### Software Installation
 #### Requirements
 You need Git for cloning this repo and PIP for installing the scoreboard software.
-```
+```sh
 sudo apt-get update
 sudo apt-get install git python3-pip
 ```
@@ -116,7 +116,7 @@ sudo apt-get install git python3-pip
 #### Installing the scoreboard software
 This installation process will take about 10-15 minutes. Raspberry Pis aren't the fastest of computers, so be patient!
 
-```
+```sh
 git clone https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard.git
 cd mlb-led-scoreboard/
 sudo ./install.sh
@@ -131,7 +131,7 @@ It will also install the following python libraries that are required for certai
 
 * [tzlocal](https://github.com/regebro/tzlocal): Timezone libraries. These allow the scoreboard to convert times to your local timezone
 * [feedparser](https://pypi.org/project/feedparser/): Used to fetch and parse RSS feeds. The scoreboard uses this to show news headlines.
-* [pyowm](https://github.com/csparpa/pyowm): OpenWeatherMap API interactions. We use this to get the local weather for display on the offday screen. For more information on how to finish setting up the weather, visit the [weather section](#weather) of this README.
+* [pyowm](https://github.com/csparpa/pyowm): OpenWeatherMap API interactions. We use this to get the local weather for display on the news screen. For more information on how to finish setting up the weather, visit the [weather section](#weather) of this README.
 * [MLB-StatsAPI](https://pypi.org/project/MLB-StatsAPI/): The main library that fetches and parses all of the actual MLB data being displayed
 * [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator): The emulation library for the matrix display. Useful for running on MacOS or Linux, or for development.
 
@@ -140,43 +140,43 @@ It will also install the following python libraries that are required for certai
 Additional flags are available for customizing your install:
 
 ```
--a, --skip-all          Skip all dependencies and config installation (equivalent to -c -p -m).
--c, --skip-config       Skip updating JSON configuration files.
--m, --skip-matrix       Skip building matrix driver dependency. Video display will default to emulator mode.
--p, --skip-python       Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
+-a, --skip-all              Skip all dependencies and config installation (equivalent to -c -o -p).
+-c, --skip-config           Skip updating JSON configuration files.
+-o, --skip-optimizations    Skip optimizations for matrix display.
+-p, --skip-python           Skip Python 3 installation. Requires manual Python 3 setup if not already installed.
 
--v, --no-venv           Do not create a virtual environment for the dependencies.
--e, --emulator-only     Do not install dependencies under sudo. Skips building matrix dependencies (equivalent to -m)
--d, --driver            Specify a branch name or commit SHA for the rpi-rgb-led-matrix library. (Optional. Defaults may change.)
+-v, --no-venv               Do not create a virtual environment for the dependencies.
+-s, --no-sudo               Do not install dependencies under sudo. Useful for emulation-only installation.
+-e, --emulator-only         Do not install RPI matrix drivers. Video display will default to software emulation.
 
--f, --force             Try to skip most errors and force install. May be able to recover from previous installer errors.
+-f, --force                 Try to skip most errors and force install. May be able to recover from previous installer errors.
 
--h, --help              Display this help message
+-h, --help                  Display this help message
 ```
 
 #### Installation on Non-Raspberry Pi Hardware
 
 The installation script is designed for physical hardware. When attempting to install it on other platforms, you should not use `sudo` to install the dependencies. In addition, you can pass the `--emulator-only` argument to skip installation steps that aren't required.
 
-```
-sh install.sh --emulator-only
+```sh
+sh install.sh --no-sudo --emulator-only
 ```
 
 #### Updating
 
 A basic update is simple, just pull down the new code:
 
-```
+```sh
 git pull
 ```
 
 However, it is a good idea to re-run the installation script, following prompts as necessary. This will install latest versions of software packages such as the matrix driver library, MLB APIs, and other dependencies. Additionally, custom configuration can be updated through this installer.
 
-```
+```sh
 sudo ./install.sh
 ```
 
-The team makes a best attempt to make sure new scoreboard versions are forward and backward compatible with other versions of the software, however this is not guaranteed. Additional guidance for installing certain versions (such as migrating from version 7 to version 8) will be provided in this README and the release notes where applicable.
+The team makes a best attempt to make sure new scoreboard versions are forward and backward compatible with other versions of the software, however this is not guaranteed. Additional guidance for installing certain versions (such as migrating from version 8 to version 9) will be provided in the README, wiki, or release notes where applicable.
 
 #### Updating with Custom Configuration
 
@@ -241,40 +241,29 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 
 ### Configuration
 
-A default `config.example.json` file is included for reference. Copy this file to `config.json` and modify the values as needed.
+A default [`config.example.json`](config.example.json) file is included for reference. Copy this file to `config.json` and modify the values as needed.
+See [`config.schema.json`](config.schema.json) for a schema for configuration files.
 
 ```
-"preferred":                              Options for team and division preference
-  "teams"                         Array   An array of preferred teams. The first team in the list will be used as your 'favorite' team. Example: ["Cubs", "Brewers"]
-  "divisions"                     Array   An array of preferred divisions that will be rotated through in the order they are entered. Example: ["NL Central", "AL Central"]
-
+"matrix":
+  <CLI flags>                     Any     See the `Flags` section.
 "news_ticker":                            Options for displaying a nice clock/weather/news ticker screen
-  "always_display"                Bool    Display the news ticker screen at all times. Supercedes the standings setting.
-  "team_offday"                   Bool    Display the news ticker when your prefered team is on an offday.
-  "preferred_teams"               Bool    Include headlines from your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
-  "display_no_games_live"         Bool    Display news and weather when none of your games are currently live.
+  "teams"                         Array   Teams you'd like to pull down headlines for.
   "traderumors"                   Bool    Include headlines from mlbtraderumors.com for your list of preferred teams. Will only use the first 3 teams listed in your preferred teams.
   "mlb_news"                      Bool    Include MLB's frontpage news.
   "countdowns"                    Bool    Include various countdowns in the ticker.
+  "events"                        Array   Custom events to add to the countdown. Each entry is an object with 'date' and 'text' keys.
   "date"                          Bool    Display today's date to start the ticker. This will always be enabled if no other ticker options are.
   "date_format"                   String  Display the date with a given format. You can check all of the date formatting options at https://strftime.org
 
 "standings":                              Options for displaying standings for a division
-  "always_display"                Bool    Display standings for your preferred divisions.
-  "mlb_offday"                    Bool    Display standings for your preferred divisions when there are no games on the current day.
-  "team_offday"                   Bool    Display standings for your preferred divisions when the one of your preferred teams is not playing on the current day.
-  "display_no_games_live"         Bool    Display standings when none of your games are currently live.
+  "divisions"                     Array   Names of divisions you'd like to show on the standings screen
 
 "rotation":                               Options for rotation through the day's games
-  "enabled"                       Bool    Rotate through each game of the day according to the configured `rates`.
   "scroll_until_finished"         Bool    If scrolling text takes longer than the rotation rate, wait to rotate until scrolling is done.
-  "only_preferred"                Bool    Only rotate through games in your preferred teams.
-  "only_live"                     Bool    Only rotate through games which are currently playing. Can be composed with `only_preferred`.
   "rates"                         Dict    Dictionary of Floats. Each type of screen can use a different rotation rate. Valid types: "live", "pregame", "final".
 
-  "while_preferred_team_live":            Options for rotating between screens while one of your preferred teams is live
-    "enabled"                     Bool    Enable rotation while a preferred team is live.
-    "during_inning_breaks"        Bool    Enable rotation while a preferred team is live during an inning break.
+  "screens"                       Array   See the next section.
 
 "weather":                                Options for retrieving the weather
   "apikey"                        String  An API key is required to use the weather service.
@@ -283,28 +272,87 @@ A default `config.example.json` file is included for reference. Copy this file t
                                           Check out the OpenWeather documentation (https://openweathermap.org/current#name) for more info.
                                           Ex: `"Chicago,il,us"`
   "metric_units"                  Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
+  "pregame"                       Bool    If enabled, will display the weather for the game's location on the pregame screen.
 
 "time_format"                     String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
-"full_team_names"                 Bool    If enabled on a board width >= 64, displays the full team name on the scoreboard instead of their abbreviation. This config option is ignored on 32-wide boards.
-"short_team_names_for_runs_hits"  Bool    If full_team_names is enabled, will use abreviated team names when runs or hits > 9 to prevent overflow of long names into RHE.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
-"preferred_game_delay_multiplier" Integer This value multiplied by api_refresh_rate determines the preferred team update delay in seconds. Must be 0 or greater.
-"api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds.  Must be at least 3, default is 10.
-"pregame_weather"                 Bool    If enabled, will display the weather for the game's location on the pregame screen.
+"sync_delay_seconds"              Integer Delays game updates to sychronize with broadcasts. May introduce delay before rendering live games. Must be at least 0, defaults to 0 (no delay).
+"api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds. Must be at least 3, default is 10.
 "debug"                           Bool    Game and other debug data is written to your console.
 "demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
 ```
 
-### Delaying Board Update
-* The "preferred_game_delay_multiplier" will delay the update of your LED board to allow you to synchronize with the boroadcast feed.
-* This value is MULTIPLIED times the api_refresh_rate value to determine the delay.  For example, preferred_game_delay_multiplier=2 with api_refresh_rate=5 will delay the game updates by 10 seconds.
-* There appears to be a lot of variability in broadcast delays across networks/teams/CDN's.
-* Please note, that if restarting the service with a delay, it will take the value of cycles set for the board to be in sync.  
-* If you set the * preferred_game_delay_multiplier=10 with api_refresh_rate=3, it will take 30-40 seconds for the buffer to fill and the board to delay.
+
+### Controlling what shows on the board: `rotation.screens`
+
+What the board shows at any given time is controlled by an internal `priority` number.
+The highest active priority at any moment wins. By default, when no other rules are active,
+the priority level is `0`.
+
+There are two kinds of things that can *set* the current priority: `time` rules, which match
+certain times of day, and `game` rules, which can match MLB games of certain teams or in certain statuses.
+
+For example, you can create a priority level `5` that is triggered in the morning with the following `screens` rule:
+```json
+{"kind":"time", "priority": 5, "start_time": "07:00", "end_time": "09:05"}
+```
+Similarly, you can create a priority level `4` whenever a Cubs game is actively being played:
+```json
+{
+  "kind": "game",
+  "priority": 4,
+  "required_status": "live",
+  "teams": ["Cubs"]
+}
+```
+
+There are three kinds of things that can be *added* to a specific priority level:
+`news`, the news screen, `standings`, the divisional standings, and `secondary_game` screens, which
+are just like game screens except for they don't create any rules on their own.
+
+For example, here's a config that:
+- First, prioritizes showing the Cubs game if it is live.
+- If the Cubs are not live, it shows any games that are **plus** the standings, and the pre/post game of the Cubs if they play that day.
+- If no team is live, shows the news and standings alternatingly.
+
+```json
+{
+  "kind": "game",
+  "priority": 2,
+  "required_status": "live",
+  "teams": ["Cubs"]
+},
+{
+  "kind": "game",
+  "required_status": "live",
+  "priority": 1
+},
+{ "kind": "secondary_game", "with_priority": 1, "teams": ["Cubs"] },
+{
+  "kind": "standings",
+  "seconds": 30,
+  "with_priority": [0, 1]
+},
+{
+  "kind": "news",
+  "seconds": 60,
+  "with_priority": 0
+}
+```
+
+These rules are powerful but we know they can be confusing. Feel free to reach out on our Discord if you
+want help crafting something specific!
+
+
+### Synchronizing with Broadcasts
+
+You can manually delay live game updates to synchronize the scoreboard to live broadcasts. The API is typically faster than video feeds, so you may wish to delay the scoreboard to compensate. You may specify the total delay via the `sync_delay_seconds` config option.
+
+Note that the actual delay may be slightly higher than your specified setting since it is dependent on the API refresh rate. Therefore you may want to slightly **decrease** the sync delay to compensate.
 
 ### Additional Features
-* Runs/Hits/Errors - Runs are always shown on the games screen, but you can enable or adjust spacing of a "runs, hits, errors" display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
+* Line score (RHE) - Runs are always shown on the games screen, but you can enable or adjust spacing of the line score display.  Take a look at the [coordinates readme file](/coordinates/README.md) for details.
 
 * Pitch Data - Pitch data can be shown on the game screen, See the [coordinates readme file](/coordinates/README.md) for details. In addition, the `short` and `long` pitch description can be changed in data/pitches.py
 
@@ -333,9 +381,44 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 --led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
 --led-pwm-dither-bits     Time dithering of lower bits (Default: 0)
---config                  Specify a configuration file name other, omitting json xtn (Default: config)
---emulated                Force the scoreboard to run in software emulation mode.
 --drop-privileges         Force the matrix driver to drop root privileges after setup. (Default: true)
+
+# The following are specific to mlb-led-scoreboard
+--emulated                Force the scoreboard to run in software emulation mode.
+--config                  Specify a configuration file name other, omitting json xtn (Default: config)
+```
+
+### Saving Flags in `config.json`
+
+For convenience, you can store any of the above flags in the `matrix` section of `config.json` to make it easier to start the scoreboard. The only flag that CANNOT be added to a config file is `config`, since it's used to find the config file in the first place.
+
+Valid flags will remove the double dash prefix (`--`) and convert the name from kebab-case (`flag-name`) to snake-case (`flag_name`).
+
+#### Example
+
+Given a startup command:
+
+```sh
+sudo ./main.py --led-cols=128 --led-rows=64 --led-gpio-mapping=adafruit-hat-pwm --led-brightness=80
+```
+
+Add the flags to `config.json`:
+
+```json
+{
+  "matrix": {
+    "led_cols": 128,
+    "led_rows": 64,
+    "led_gpio_mapping": "adafruit-hat-pwm",
+    "led_brightness": 80
+  }
+}
+```
+
+Your startup command then becomes:
+
+```sh
+sudo ./main.py
 ```
 
 ## Personalization
@@ -347,11 +430,36 @@ You have the ability to customize the way things are placed on the board (maybe 
 You have the ability to customize the colors of everything on the board. See the `colors/` directory for more information.
 
 ### Weather
-This scoreboard will use a weather API to gather weather information at various times. This information is displayed on your teams' offdays for your area and also displayed during each game's pregame information. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
+This scoreboard will use a weather API to gather weather information at various times. The weather API we use is from OpenWeatherMaps. OpenWeatherMaps API requires an API key to fetch this data so you will need to take a quick minute to sign up for an account and copy your own API key into your `config.json`.
 
 You can find the signup page for OpenWeatherMaps at [https://home.openweathermap.org/users/sign_up](https://home.openweathermap.org/users/sign_up). Once logged in, you'll find an `API keys` tab where you'll find a default key was already created for you. You can copy this key and paste it into the `config.json` under `"weather"`, `"apikey"`.
 
 You can change the location used by entering your city, state, and country code separated by commas. If you wish to use metric measurements, set the `"metric"` option to `true`.
+
+### Plugins
+
+As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md] for details
+on writing them -- the 'news' and 'standings' screens are themselves built on top of this API.
+
+As a user, installing a plugin is relatively easy. Lets take the [mta-board plugin](https://github.com/WardBrian/mta-board.git) as an example.
+To install the code, you just need to use `pip`:
+
+```bash
+sudo ./venv/bin/pip install git+https://github.com/WardBrian/mta-board
+```
+
+To actually see the plugin, you will at a minimum need to add an entry to your
+[`screens` config](#controlling-what-shows-on-the-board-rotationscreens),
+but many plugins also require additional information to be added to the `plugins`
+key of the coordinates, colors, and config files.
+
+The plugin author should provide information on which configs are required. If a plugin fails to load,
+we will stop the board at startup with extra information.
+
+To remove a plugin, you just need to uninstall it
+```bash
+sudo ./venv/bin/pip uninstall mta-board
+```
 
 ## Sources
 This project relies on two libraries:
@@ -364,11 +472,28 @@ The scoreboard updates frequently, but it cannot retrieve information that MLB h
 ## Help and Contributing
 If you run into any issues and have steps to reproduce, open an issue. If you have a feature request, open an issue. If you want to contribute a small to medium sized change, open a pull request. If you want to contribute a new feature, open an issue first before opening a PR.
 
-### Run Unit Tests
+### Installing Dev Dependencies
 
-PRs require passing unit tests in order to merge. You can run tests from the project root as follows:
 ```sh
+# Ideally within a venv
+python -m pip install -r requirements.dev.txt
+```
+
+### Checks
+
+Good unit tests, linting, and typechecking are greatly appreciated on new features. PRs require passing unit tests at minimum in order to merge.
+
+You can run dev tooling from the project root as follows:
+
+```sh
+# Unit tests
 python -m unittest
+
+# Lint
+black .
+
+# Typechecking
+mypy .
 ```
 
 ## Licensing

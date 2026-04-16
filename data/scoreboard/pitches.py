@@ -1,9 +1,13 @@
-from data.game import Game
 import data.pitches
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from data.game import Game
 
 
 class Pitches:
-    def __init__(self, game: Game):
+    def __init__(self, game: "Game"):
         self.balls = game.balls()
         self.strikes = game.strikes()
         self.pitch_count = game.current_pitcher_pitch_count()

@@ -1,4 +1,6 @@
 {
+  "$schema": "./../schemas/coordinates/w128h32.schema.json",
+  "format": 9.0,
   "defaults": {
     "font_name": "6x12"
   },
@@ -287,7 +289,8 @@
       "home": {
         "x": 4,
         "y": 18
-      }
+      },
+      "full": true
     },
     "accent": {
       "away": {
@@ -317,12 +320,7 @@
         "y": 17
       }
     },
-    "runs": {
-      "runs_hits_errors": {
-        "show": false,
-        "compress_digits": false,
-        "spacing": 3
-      },
+    "line_score": {
       "away": {
         "x": 63,
         "y": 8
@@ -330,10 +328,14 @@
       "home": {
         "x": 63,
         "y": 18
-      }
+      },
+      "show_hits_and_errors": false,
+      "compress_digits": false,
+      "shorten_team_name_on_high_line_score": true,
+      "spacing": 3
     }
   },
-  "offday": {
+  "news": {
     "scrolling_text": {
       "x": 0,
       "y": 30,
@@ -370,6 +372,7 @@
       "height": 15
     }
   },
+  "plugins": {},
   "network": {
     "font_name": "4x6",
     "background": {

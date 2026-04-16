@@ -1,0 +1,213 @@
+import html
+import time
+from datetime import datetime
+from typing import Any
+
+import feedparser
+
+from bullpen.api import UpdateStatus
+from bullpen.logging import LOGGER
+
+from .dates import Dates
+from .config import Config
+
+HEADLINE_UPDATE_RATE = 60 * 60  # 1 hour between feed updates
+HEADLINE_MAX_FEEDS = 2  # Number of preferred team's feeds to fetch
+HEADLINE_MAX_ENTRIES = 7  # Number of headlines per feed
+FALLBACK_DATE_FORMAT = "%A, %B %d"
+
+
+MLB_BASE = "https://www.mlb.com"
+MLB_PATH = "feeds/news/rss.xml"
+MLB_FEEDS = {
+    "MLB": "",
+    "Angels": "angels",
+    "Astros": "astros",
+    "Athletics": "athletics",
+    "Blue Jays": "bluejays",
+    "Guardians": "guardians",
+    "Mariners": "mariners",
+    "Orioles": "orioles",
+    "Rangers": "rangers",
+    "Rays": "rays",
+    "Red Sox": "redsox",
+    "Royals": "royals",
+    "Tigers": "tigers",
+    "Twins": "twins",
+    "White Sox": "whitesox",
+    "Yankees": "yankees",
+    "Braves": "braves",
+    "Brewers": "brewers",
+    "Cardinals": "cardinals",
+    "Cubs": "cubs",
+    "Diamondbacks": "dbacks",
+    "D-backs": "dbacks",
+    "Dodgers": "dodgers",
+    "Giants": "giants",
+    "Marlins": "marlins",
+    "Mets": "mets",
+    "Nationals": "nationals",
+    "Padres": "padres",
+    "Phillies": "phillies",
+    "Pirates": "pirates",
+    "Reds": "reds",
+    "Rockies": "rockies",
+}
+
+TRADE_BASE = "https://www.mlbtraderumors.com"
+TRADE_PATH = "feed/atom"
+TRADE_FEEDS = {
+    "Angels": "los-angeles-angels-of-anaheim",
+    "Astros": "houston-astros",
+    "Athletics": "oakland-athletics",
+    "Blue Jays": "toronto-blue-jays",
+    "Guardians": "cleveland-guardians",
+    "Mariners": "seattle-mariners",
+    "Orioles": "baltimore-orioles",
+    "Rangers": "texas-rangers",
+    "Rays": "tampa-bay-devil-rays",
+    "Red Sox": "boston-red-sox",
+    "Royals": "kansas-city-royals",
+    "Tigers": "detroit-tigers",
+    "Twins": "minnesota-twins",
+    "White Sox": "chicago-white-sox",
+    "Yankees": "new-york-yankees",
+    "Braves": "atlanta-braves",
+    "Brewers": "milwaukee-brewers",
+    "Cardinals": "st-louis-cardinals",
+    "Cubs": "chicago-cubs",
+    "Diamondbacks": "arizona-diamondbacks",
+    "D-backs": "arizona-diamondbacks",
+    "Dodgers": "los-angeles-dodgers",
+    "Giants": "san-francisco-giants",
+    "Marlins": "florida-marlins",
+    "Mets": "new-york-mets",
+    "Nationals": "washington-nationals",
+    "Padres": "san-diego-padres",
+    "Phillies": "philadelphia-phillies",
+    "Pirates": "pittsburgh-pirates",
+    "Reds": "cincinnati-reds",
+    "Rockies": "colorado-rockies",
+}
+
+
+class Headlines:
+    def __init__(self, config: Config):
+        self.preferred_teams = config.preferred_teams
+        self.include_mlb = config.news_ticker_mlb_news
+        self.include_traderumors = config.news_ticker_traderumors
+        self.include_countdowns = config.news_ticker_countdowns
+        self.include_date = config.news_ticker_date
+        self.date_format = config.news_ticker_date_format
+        self.feed_urls: list[str] = []
+        self.feed_data: list[Any] = []
+        self.starttime = time.time()
+        self.important_dates = Dates(config.custom_countdowns, config.date)
+
+        self.ticker: list[str] = []
+        self.current_ticker_idx = 0
+
+        self.__compile_feed_list()
+        self.update(True)
+
+    def update(self, force=False) -> UpdateStatus:
+        status = UpdateStatus.SUCCESS
+        if force or self.__should_update():
+            LOGGER.debug("Headlines should update!")
+            self.starttime = time.time()
+            feeds = []
+            LOGGER.debug("%d feeds to update...", len(self.feed_urls))
+            feedparser.USER_AGENT = "mlb-led-scoreboard/3.0 +https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard"
+            if len(self.feed_urls) > 0:
+                LOGGER.debug("Feed URLs found...")
+                for idx, url in enumerate(self.feed_urls):
+                    if idx < HEADLINE_MAX_FEEDS:  # Only parse MAX teams to prevent potential hangs
+                        LOGGER.debug("Fetching %s", url)
+                        f = feedparser.parse(url)
+                        try:
+                            title = f.feed.title.encode("ascii", "ignore")
+                            LOGGER.debug("Fetched feed '%s' with %d entries.", title, len(f.entries))
+                            feeds.append(f)
+                        except AttributeError:
+                            LOGGER.warning("There was a problem fetching {}".format(url))
+                            status = UpdateStatus.FAIL
+                self.feed_data = feeds
+            ticker = self._build_ticker()
+            self.current_ticker_idx = self.current_ticker_idx % len(ticker)
+            self.ticker = ticker
+        else:
+            status = UpdateStatus.DEFERRED
+        return status
+
+    def ticker_string(self):
+        return self.ticker[self.current_ticker_idx]
+
+    def advance_ticker(self):
+        LOGGER.debug("Moving to next headline")
+        self.current_ticker_idx = (self.current_ticker_idx + 1) % len(self.ticker)
+
+    def _build_ticker(self, max_entries=HEADLINE_MAX_ENTRIES) -> list[str]:
+        ticker: list[str] = []
+        if self.include_date:
+            date_string = datetime.now().strftime(self.date_format)
+            ticker.append(date_string)
+
+        if self.include_countdowns:
+            countdown_string = self.important_dates.next_important_date_string()
+
+            # If we get None back from this method, we don't have an important date coming soon
+            if countdown_string is not None:
+                ticker.append(countdown_string)
+
+        for feed in self.feed_data:
+            self.__strings_for_feed(feed, ticker, max_entries)
+
+        # In case all of the ticker options are turned off and there's no data, return the date
+        return [datetime.now().strftime(FALLBACK_DATE_FORMAT)] if len(ticker) < 1 else ticker
+
+    def __strings_for_feed(self, feed, ticker, max_entries):
+        ticker.append(feed.feed.title)
+
+        for idx, entry in enumerate(feed.entries):
+            if idx < max_entries:
+                # TODO(BMW): also remove non-ascii -- look into https://github.com/anyascii/anyascii/tree/master
+                text = html.unescape(entry.title)
+                ticker.append(text)
+
+    def __compile_feed_list(self):
+        if self.include_mlb:
+            self.feed_urls.append(self.__mlb_url_for_team("MLB"))
+
+        if len(self.preferred_teams) > 0:
+            for team in self.preferred_teams:
+                self.feed_urls.append(self.__mlb_url_for_team(team))
+
+        if self.include_traderumors:
+            if len(self.preferred_teams) > 0:
+                for team in self.preferred_teams:
+                    self.feed_urls.append(self.__traderumors_url_for_team(team))
+
+    def __mlb_url_for_team(self, team_name):
+        feed_name = MLB_FEEDS.get(team_name, None)
+
+        if feed_name is None:
+            LOGGER.error(f"Failed to fetch MLB feed name for key '{team_name}', falling back to default feed.")
+            feed_name = MLB_FEEDS["MLB"]
+
+        return "{}/{}/{}".format(MLB_BASE, feed_name, MLB_PATH)
+
+    def __traderumors_url_for_team(self, team_name):
+        feed_name = TRADE_FEEDS.get(team_name, None)
+
+        if feed_name is None:
+            LOGGER.error(
+                f"Failed to fetch MLB Trade Rumors feed name for key '{team_name}', falling back to default feed."
+            )
+            feed_name = ""
+
+        return "{}/{}/{}".format(TRADE_BASE, feed_name, TRADE_PATH)
+
+    def __should_update(self):
+        endtime = time.time()
+        time_delta = endtime - self.starttime
+        return time_delta >= HEADLINE_UPDATE_RATE

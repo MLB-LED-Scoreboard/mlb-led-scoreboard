@@ -1,4 +1,6 @@
 {
+  "$schema": "./../schemas/colors/scoreboard.schema.json",
+  "format": 9.0,
   "bases": {
     "1B": {
       "r": 255,
@@ -242,7 +244,7 @@
       "b": 59
     }
   },
-  "offday": {
+  "news": {
     "scrolling_text": {
       "r": 255,
       "g": 235,
@@ -301,6 +303,7 @@
       "b": 255
     }
   },
+  "plugins": {},
   "default": {
     "background": {
       "r": 7,

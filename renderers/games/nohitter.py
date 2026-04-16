@@ -1,6 +1,6 @@
 from driver import graphics
 import data.config.layout as cfglayout
-import debug
+from bullpen.logging import LOGGER
 
 NOHITTER_TEXT = "N.H"
 PERFECT_GAME_TEXT = "P.G"
@@ -23,5 +23,5 @@ def _get_nohitter_text(layout):
         return PERFECT_GAME_TEXT
 
     # If we get this far, the nohitter renderer probably shouldn't have been rendered.
-    debug.log("No Hitter text is renderering with an unknown state.")
+    LOGGER.debug("No Hitter text is renderering with an unknown state.")
     return UNKNOWN_TEXT
