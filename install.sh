@@ -244,7 +244,7 @@ else
 
     echo
     if [ "$answer" != "${answer#[Yy]}" ] ;then
-        python3 validate_config.py
+        "$PYTHON" validate_config.py
     fi
     echo
 fi
