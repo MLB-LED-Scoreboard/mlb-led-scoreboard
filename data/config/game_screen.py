@@ -99,8 +99,13 @@ def parse_game_screen(rule_json) -> list[GameScreen]:
     if rule_json["kind"] == "game":
         if "priority" not in rule_json:
             raise ValueError("Invalid game rule in config, missing 'priority' field. Rule: {}".format(rule_json))
+        priority = rule_json["priority"]
+        if priority == 0:
+            raise ValueError(
+                "Invalid game rule in config, priority cannot be 0 (reserved for no games). Rule: {}".format(rule_json)
+            )
         rule = GameScreen(
-            priority=rule_json["priority"],
+            priority=priority,
             requirement=requirement,
             passive=False,
             teams=teams,
@@ -109,6 +114,12 @@ def parse_game_screen(rule_json) -> list[GameScreen]:
     elif rule_json["kind"] == "secondary_game":
         game_rules = []
         for priority in parse_with_priority(rule_json):
+            if priority == 0:
+                raise ValueError(
+                    "Invalid game rule in config, priority cannot be 0 (reserved for no games). Rule: {}".format(
+                        rule_json
+                    )
+                )
             rule = GameScreen(
                 priority=priority,
                 requirement=requirement,
