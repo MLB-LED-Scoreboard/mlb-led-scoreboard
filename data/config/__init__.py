@@ -87,9 +87,9 @@ class Config:
         self.news_json = json.get("news_ticker", {}) | json.get("weather")
         self.plugin_json = json.get("plugins", {})
 
-        # Get the layout info
-        width = self.matrix_options.cols
-        height = self.matrix_options.rows
+        # Get the layout info. This can differ from panel dimensions if chaining multiple panels together.
+        width = self.matrix_options.cols * self.matrix_options.chain_length
+        height = self.matrix_options.rows * self.matrix_options.parallel
         json = self.__get_layout(width, height)
         self.layout = Layout(json, width, height)
 

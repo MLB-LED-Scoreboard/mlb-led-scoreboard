@@ -494,7 +494,14 @@ black .
 
 # Typechecking
 mypy .
+
+# Config schema validation
+python -m schemas --check
 ```
+
+### Editing Config Schemas
+
+Please do not edit `*.example.json` files directly. Instead, add types and defaults to schema files via the [`schemas`](/schemas/) package. Please see the README for more information.
 
 ## Licensing
 This project as of v1.1.0 uses the GNU Public License. If you intend to sell these, the code must remain open source.
