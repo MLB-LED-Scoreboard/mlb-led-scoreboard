@@ -274,7 +274,8 @@
         "font_name": "4x6",
         "x": 18,
         "y": 17
-      }
+      },
+      "hide_record_on_high_line_score": true
     },
     "line_score": {
       "away": {

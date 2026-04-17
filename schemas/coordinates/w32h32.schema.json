@@ -125,7 +125,8 @@
         "enabled":  false,
         "position": "absolute",
         "away": { "x": 4, "y": 6  },
-        "home": { "x": 4, "y": 13 }
+        "home": { "x": 4, "y": 13 },
+        "hide_record_on_high_line_score": true
       },
       "line_score": {
         "away": { "x": 31, "y": 6  },

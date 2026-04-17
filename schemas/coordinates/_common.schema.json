@@ -345,10 +345,11 @@
         "record": {
           "type": "object",
           "properties": {
-            "enabled":  { "type": "boolean" },
-            "position": { "type": "string" },
-            "away":     { "$ref": "#/$defs/named_point" },
-            "home":     { "$ref": "#/$defs/named_point" }
+            "enabled":                        { "type": "boolean" },
+            "position":                       { "type": "string" },
+            "away":                           { "$ref": "#/$defs/named_point" },
+            "home":                           { "$ref": "#/$defs/named_point" },
+            "hide_record_on_high_line_score": { "type": "boolean" }
           }
         },
         "line_score": {

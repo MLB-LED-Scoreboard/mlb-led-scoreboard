@@ -296,7 +296,8 @@
       "home": {
         "x": 30,
         "y": 29
-      }
+      },
+      "hide_record_on_high_line_score": false
     },
     "line_score": {
       "away": {

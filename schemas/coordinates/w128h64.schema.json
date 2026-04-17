@@ -138,7 +138,8 @@
         "enabled":  false,
         "position": "absolute",
         "away": { "x": 30, "y": 13 },
-        "home": { "x": 30, "y": 29 }
+        "home": { "x": 30, "y": 29 },
+        "hide_record_on_high_line_score": false
       },
       "line_score": {
         "away": { "font_name": "9x18B", "x": 126, "y": 13 },

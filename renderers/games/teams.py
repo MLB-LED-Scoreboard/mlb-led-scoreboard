@@ -37,8 +37,9 @@ def render_team_banner(
     away_name_end_pos = __render_team_text(canvas, layout, away_colors["text"], away_team, "away", use_full_team_names)
     home_name_end_pos = __render_team_text(canvas, layout, home_colors["text"], home_team, "home", use_full_team_names)
 
-    __render_record_text(canvas, layout, away_colors["text"], away_team, "away", away_name_end_pos)
-    __render_record_text(canvas, layout, home_colors["text"], home_team, "home", home_name_end_pos)
+    if can_show_record_text(layout, [home_team, away_team]):
+        __render_record_text(canvas, layout, away_colors["text"], away_team, "away", away_name_end_pos)
+        __render_record_text(canvas, layout, home_colors["text"], home_team, "home", home_name_end_pos)
 
     if show_score:
         # Number of characters in each score.
@@ -74,6 +75,29 @@ def can_use_full_team_names(layout, teams):
     return True
 
 
+def can_show_record_text(layout, teams):
+    record_coords = layout.coords("teams.record")
+
+    # Global setting is disabled
+    if not record_coords.get("enabled", False):
+        return False
+
+    # Setting for hiding if a line score contains more than 3 total digits (i.e. R, H, or E >= 10)
+    if record_coords.get("hide_record_on_high_line_score", False):
+
+        # For each team, check digits for each line score item. Disable full names if any exceed a single digit.
+        # A 10 error game would be rough, but the edge case is covered...
+        for team in teams:
+            if team.runs > 9 or team.hits > 9 or team.errors > 9:
+                return False
+
+        # No line score column has overflowed
+        return True
+
+    # Global setting is enabled
+    return True
+
+
 def __render_team_text(canvas, layout, text_color, team, homeaway, full_team_names):
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     coords = layout.coords("teams.name.{}".format(homeaway))
@@ -88,8 +112,6 @@ def __render_team_text(canvas, layout, text_color, team, homeaway, full_team_nam
 
 def __render_record_text(canvas, layout, text_color, team, homeaway, origin):
     if "losses" not in team.record or "wins" not in team.record:
-        return
-    if not layout.coords("teams.record").get("enabled", False):
         return
 
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
