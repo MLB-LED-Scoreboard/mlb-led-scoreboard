@@ -303,7 +303,8 @@
       "home": {
         "x": 4,
         "y": 13
-      }
+      },
+      "hide_record_on_high_line_score": true
     },
     "line_score": {
       "away": {
