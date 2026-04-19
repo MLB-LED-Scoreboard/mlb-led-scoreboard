@@ -47,6 +47,12 @@ class TimeRule:
 def parse_time_rule(rule_json) -> TimeRule:
     if "priority" not in rule_json:
         raise ValueError(f"Invalid time rule in config, missing 'priority' field. Rule: {rule_json}")
+    priority = rule_json["priority"]
+    if priority == 0:
+        raise ValueError(
+            "Invalid time rule in config, priority cannot be 0 (reserved for no games). Rule: {}".format(rule_json)
+        )
+
     start_time = None
     end_time = None
     weekdays = []
@@ -72,7 +78,7 @@ def parse_time_rule(rule_json) -> TimeRule:
         raise ValueError(
             f"Invalid time rule in config, need at least one of 'start_time', 'end_time', or 'weekdays' fields. Rule: {rule_json}"
         )
-    return TimeRule(priority=rule_json["priority"], start_time=start_time, end_time=end_time, weekdays=weekdays)
+    return TimeRule(priority=priority, start_time=start_time, end_time=end_time, weekdays=weekdays)
 
 
 def parse_with_priority(json) -> list[int]:
