@@ -53,14 +53,13 @@ def render_team_banner(
 
 
 def can_use_full_team_names(layout, teams):
-    name_coords = layout.coords("teams.name")
 
     # Global setting is disabled
-    if not name_coords.get("full", False):
+    if not layout.coords("teams.name").get("full", False):
         return False
 
     # Setting for abbreviating if a line score contains more than 3 total digits (i.e. R, H, or E >= 10)
-    if name_coords.get("shorten_team_name_on_high_line_score", False):
+    if layout.coords("teams.record").get("shorten_team_name_on_high_line_score", False):
 
         # For each team, check digits for each line score item. Disable full names if any exceed a single digit.
         # A 10 error game would be rough, but the edge case is covered...
