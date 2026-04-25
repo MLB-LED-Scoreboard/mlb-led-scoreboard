@@ -24,6 +24,22 @@ import cli
 from driver import RGBMatrixOptions
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
+
+_STANDARD_COLOR_KEYS = {"home", "text", "accent"}
+
+
+def _extract_uniform_types(teams_json: dict) -> dict:
+    uniform_types = {}
+    for team_data in teams_json.values():
+        if not isinstance(team_data, dict):
+            continue
+        for key, value in team_data.items():
+            if key in _STANDARD_COLOR_KEYS or not isinstance(value, dict):
+                continue
+            if key not in uniform_types:
+                detect = key.replace("_", " ").title()
+                uniform_types[key] = detect
+    return uniform_types
 DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
@@ -96,6 +112,7 @@ class Config:
         # Store color information
         json = self.__get_colors("teams")
         self.team_colors = Color(json)
+        self.uniform_types = _extract_uniform_types(json)
         json = self.__get_colors("scoreboard")
         self.scoreboard_colors = Color(json)
 

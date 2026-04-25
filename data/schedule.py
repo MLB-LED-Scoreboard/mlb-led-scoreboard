@@ -95,7 +95,7 @@ class Schedule:
             scheduled_game = self._games[self.current_idx]
             if unless and scheduled_game["game_id"] == unless.game_id:
                 return unless
-            return Game.from_scheduled(scheduled_game, self.config.sync_amount, self.config.api_refresh_rate)
+            return Game.from_scheduled(scheduled_game, self.config.sync_amount, self.config.api_refresh_rate, self.config.uniform_types)
         except IndexError:
             return None
 

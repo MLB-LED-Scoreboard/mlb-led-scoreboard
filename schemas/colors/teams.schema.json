@@ -85,20 +85,19 @@
       "properties": {
         "home":   { "$ref": "#/$defs/color" },
         "text":   { "$ref": "#/$defs/color" },
-        "accent": { "$ref": "#/$defs/color" },
-        "city_connect": {
-          "type": "object",
-          "x-format": "grid",
-          "required": ["home", "text", "accent"],
-          "properties": {
-            "home":   { "$ref": "#/$defs/color" },
-            "text":   { "$ref": "#/$defs/color" },
-            "accent": { "$ref": "#/$defs/color" }
-          },
-          "additionalProperties": false
-        }
+        "accent": { "$ref": "#/$defs/color" }
       },
-      "additionalProperties": false
+      "additionalProperties": {
+        "type": "object",
+        "x-format": "grid",
+        "required": ["home", "text", "accent"],
+        "properties": {
+          "home":   { "$ref": "#/$defs/color" },
+          "text":   { "$ref": "#/$defs/color" },
+          "accent": { "$ref": "#/$defs/color" }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "default": {

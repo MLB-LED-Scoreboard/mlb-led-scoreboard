@@ -1,4 +1,5 @@
 import copy, json, os
+from pathlib import Path
 
 from data.paths import *
 
@@ -8,6 +9,25 @@ IGNORE_SUBPATHS = "*"
 
 def make_modifier(mod):
     return MODIFIER + mod
+
+
+def _colors_ignored_keys():
+    """Collect user-defined uniform type keys from colors/teams.json so the validator doesn't flag them."""
+    standard = {"home", "text", "accent"}
+    keys = set()
+    try:
+        path = COLORS_DIRECTORY / "teams.json"
+        if path.exists():
+            with open(path) as f:
+                teams = json.load(f)
+            for team_data in teams.values():
+                if isinstance(team_data, dict):
+                    for k, v in team_data.items():
+                        if k not in standard and isinstance(v, dict):
+                            keys.add(k)
+    except Exception:
+        pass
+    return list(keys) + ["plugins" + make_modifier(IGNORE_SUBPATHS)]
 
 
 VALIDATIONS = {
@@ -26,7 +46,7 @@ VALIDATIONS = {
         "renamed_keys": {"offday": "news"},
     },
     COLORS_DIRECTORY: {
-        "ignored_keys": ["city_connect", "plugins" + make_modifier(IGNORE_SUBPATHS)],
+        "ignored_keys": _colors_ignored_keys(),
         "renamed_keys": {"offday": "news"},
     },
 }
