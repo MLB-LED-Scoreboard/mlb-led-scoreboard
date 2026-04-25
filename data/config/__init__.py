@@ -37,8 +37,7 @@ def _extract_uniform_types(teams_json: dict) -> dict:
             if key in _STANDARD_COLOR_KEYS or not isinstance(value, dict):
                 continue
             if key not in uniform_types:
-                detect = key.replace("_", " ").title()
-                uniform_types[key] = detect
+                uniform_types[key] = key.replace("_", " ").title()
     return uniform_types
 DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
