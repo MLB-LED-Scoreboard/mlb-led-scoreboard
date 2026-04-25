@@ -1,6 +1,7 @@
 import sys
 import json
 
+
 def deep_update(source, overrides):
     """Update a nested dictionary or similar mapping.
     Modify ``source`` in place.
@@ -12,6 +13,7 @@ def deep_update(source, overrides):
         else:
             source[key] = overrides[key]
     return source
+
 
 OLD_EXAMPLE = """
 {
