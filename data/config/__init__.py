@@ -33,9 +33,7 @@ def _extract_uniform_types(teams_json: dict) -> dict:
     for team_data in teams_json.values():
         if not isinstance(team_data, dict):
             continue
-        for key, value in team_data.items():
-            if key in _STANDARD_COLOR_KEYS or not isinstance(value, dict):
-                continue
+        for key in team_data.get("special_uniforms", {}):
             if key not in uniform_types:
                 uniform_types[key] = key.replace("_", " ").title()
     return uniform_types

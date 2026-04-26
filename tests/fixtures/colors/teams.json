@@ -18,21 +18,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -52,21 +54,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -86,21 +90,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -120,21 +126,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -154,21 +162,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -188,21 +198,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -222,38 +234,40 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      }
-    },
-    "cincy": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+      "cincy": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -273,21 +287,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -307,21 +323,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -341,21 +359,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -375,21 +395,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -409,21 +431,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -443,21 +467,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -477,21 +503,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -511,21 +539,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -545,21 +575,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -579,21 +611,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -613,21 +647,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -681,21 +717,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -715,21 +753,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -749,21 +789,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -783,21 +825,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -817,21 +861,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -851,21 +897,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -885,21 +933,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -919,21 +969,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -953,21 +1005,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
@@ -987,21 +1041,23 @@
       "g": 2,
       "b": 3
     },
-    "city_connect": {
-      "home": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "text": {
-        "r": 1,
-        "g": 2,
-        "b": 3
-      },
-      "accent": {
-        "r": 1,
-        "g": 2,
-        "b": 3
+    "special_uniforms": {
+      "city_connect": {
+        "home": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "text": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        },
+        "accent": {
+          "r": 1,
+          "g": 2,
+          "b": 3
+        }
       }
     }
   },
