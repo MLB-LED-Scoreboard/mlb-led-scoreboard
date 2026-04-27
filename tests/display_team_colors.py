@@ -16,7 +16,7 @@ from data.scoreboard.team import Team
 from data.uniforms import CITY_CONNECT
 from renderers.games.teams import render_team_banner
 
-RAW_CONFIG = pathlib.Path(__file__).parent / "raw_config.json"
+RAW_CONFIG = pathlib.Path(__file__).parent / "fixtures" / "emulator_raw_config.json"
 HEIGHT = 132
 WIDTH = 208
 
