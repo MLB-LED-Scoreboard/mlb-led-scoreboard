@@ -33,7 +33,7 @@ def make_layout(x, y):
                 "away": {"width": 2, "height": 9, "x": x, "y": y},
                 "home": {"width": 2, "height": 9, "x": x, "y": y + 9},
             },
-            "record": {}
+            "record": {},
         },
         "defaults": {"font_name": "4x6"},
     }
