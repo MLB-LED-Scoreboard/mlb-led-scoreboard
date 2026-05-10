@@ -149,6 +149,8 @@ def __render_score_component(canvas, layout, text_color, homeaway, coords, compo
 def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacing):
     coords = layout.coords(f"teams.line_score.{homeaway}").copy()
     if layout.coords("teams.line_score")["show_hits_and_errors"]:
+        __render_score_component(canvas, layout, text_color, homeaway, coords, team.errors, score_spacing["errors"])
+        __render_score_component(canvas, layout, text_color, homeaway, coords, team.hits, score_spacing["hits"])
     __render_score_component(canvas, layout, text_color, homeaway, coords, team.runs, score_spacing["runs"])
 
 
