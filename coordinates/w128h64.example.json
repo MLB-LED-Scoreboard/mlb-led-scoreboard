@@ -354,7 +354,22 @@
       "rescale_icon": 2
     }
   },
-  "plugins": {},
+  "plugins": {
+    "powerwall": {
+      "solar_label": { "x": 2, "y": 8, "font_name": "5x7" },
+      "solar_value": { "x": 32, "y": 8, "font_name": "5x7" },
+      "home_label": { "x": 2, "y": 22, "font_name": "5x7" },
+      "home_value": { "x": 32, "y": 22, "font_name": "5x7" },
+      "grid_label": { "x": 66, "y": 8, "font_name": "5x7" },
+      "grid_value": { "x": 92, "y": 8, "font_name": "5x7" },
+      "battery_label": { "x": 66, "y": 22, "font_name": "5x7" },
+      "battery_value": { "x": 92, "y": 22, "font_name": "5x7" },
+      "mode": { "x": 2, "y": 36, "font_name": "5x7", "max_chars": 14 },
+      "grid_status": { "x": 80, "y": 36, "font_name": "5x7", "max_chars": 9 },
+      "battery_bar": { "x": 2, "y": 50, "width": 100, "height": 8 },
+      "battery_pct": { "x": 105, "y": 57, "font_name": "5x7" }
+    }
+  },
   "network": {
     "font_name": "4x6",
     "background": {

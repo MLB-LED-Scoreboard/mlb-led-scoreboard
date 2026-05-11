@@ -303,7 +303,24 @@
       "b": 255
     }
   },
-  "plugins": {},
+  "plugins": {
+    "powerwall": {
+      "background": { "r": 0, "g": 0, "b": 0 },
+      "solar_label": { "r": 255, "g": 200, "b": 50 },
+      "solar_value": { "r": 255, "g": 235, "b": 59 },
+      "home_label": { "r": 200, "g": 200, "b": 200 },
+      "home_value": { "r": 255, "g": 255, "b": 255 },
+      "grid_label": { "r": 100, "g": 180, "b": 255 },
+      "grid_value": { "r": 150, "g": 200, "b": 255 },
+      "battery_label": { "r": 80, "g": 200, "b": 120 },
+      "battery_value": { "r": 120, "g": 230, "b": 150 },
+      "mode": { "r": 200, "g": 200, "b": 200 },
+      "grid_status": { "r": 80, "g": 200, "b": 120 },
+      "battery_bar": { "r": 80, "g": 200, "b": 120 },
+      "battery_bar_bg": { "r": 30, "g": 60, "b": 40 },
+      "battery_pct": { "r": 255, "g": 255, "b": 255 }
+    }
+  },
   "default": {
     "background": {
       "r": 7,

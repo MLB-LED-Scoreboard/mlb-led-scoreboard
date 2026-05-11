@@ -6,3 +6,4 @@ bdfparser
 ./bullpen
 ./standings
 ./news
+./powerwall
