@@ -28,14 +28,14 @@ TEAMS_COLORS_EXAMPLE_FILE = ROOT / "colors" / "teams.example.json"
 
 SERVICE_NAME = "mlb-scoreboard"
 
-# ── MLB data ───────────────────────────────────────────────────────────────────
+# ── MLB data (matches schemas/config.schema.json $defs) ────────────────────────
 MLB_TEAMS_BY_DIVISION = {
     "AL East":    ["Yankees", "Red Sox", "Blue Jays", "Rays", "Orioles"],
     "AL Central": ["White Sox", "Guardians", "Tigers", "Royals", "Twins"],
     "AL West":    ["Astros", "Angels", "Athletics", "Mariners", "Rangers"],
     "NL East":    ["Braves", "Marlins", "Mets", "Phillies", "Nationals"],
     "NL Central": ["Cubs", "Reds", "Brewers", "Pirates", "Cardinals"],
-    "NL West":    ["Diamondbacks", "Rockies", "Dodgers", "Padres", "Giants"],
+    "NL West":    ["D-backs", "Rockies", "Dodgers", "Padres", "Giants"],
 }
 
 DIVISIONS = [
@@ -43,6 +43,12 @@ DIVISIONS = [
     "NL East", "NL Central", "NL West",
     "AL Wild Card", "NL Wild Card",
 ]
+
+WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+REQUIRED_STATUS_VALUES = ["live", "live_in_inning", "pregame", "game_over"]
+
+BUILTIN_SCREEN_KINDS = ["game", "time", "secondary_game", "news", "standings"]
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -103,7 +109,7 @@ def unflatten_colors(flat):
 
 # ── HTML builders ──────────────────────────────────────────────────────────────
 
-def build_team_checkboxes(selected_teams):
+def build_team_checkboxes(selected_teams, form_name):
     sel = set(selected_teams)
     parts = []
     for div_name, teams in MLB_TEAMS_BY_DIVISION.items():
@@ -112,7 +118,7 @@ def build_team_checkboxes(selected_teams):
             chk = "checked" if team in sel else ""
             parts.append(
                 f'<label class="cb-item">'
-                f'<input type="checkbox" name="preferred__teams" value="{team}" {chk}>'
+                f'<input type="checkbox" name="{form_name}" value="{team}" {chk}>'
                 f'<span>{team}</span></label>'
             )
     return "\n".join(parts)
@@ -125,7 +131,7 @@ def build_division_checkboxes(selected_divs):
         chk = "checked" if div in sel else ""
         parts.append(
             f'<label class="cb-item">'
-            f'<input type="checkbox" name="preferred__divisions" value="{div}" {chk}>'
+            f'<input type="checkbox" name="standings__divisions" value="{div}" {chk}>'
             f'<span>{div}</span></label>'
         )
     return "\n".join(parts)
@@ -233,11 +239,11 @@ button:active{transform:scale(.98)}
 .btn-danger{background:#c53030;color:white}.btn-danger:hover{opacity:.85}
 .note{font-size:.78rem;color:#718096;margin-top:10px}
 
-SHELL_JS = """\
+SHELL_JS = r"""
 function showTab(id) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === id));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === id));
-  history.replaceState(null,'','?tab='+id);
+  history.replaceState(null, '', '?tab=' + id);
 }
 const initTab = new URLSearchParams(location.search).get('tab') || 'config';
 showTab(initTab);
@@ -248,15 +254,210 @@ function toggleDemoDate(enabled) {
   picker.style.display = enabled ? 'block' : 'none';
   dateInput.disabled = !enabled;
   if (enabled && !dateInput.value) {
-    // Default to today
     dateInput.value = new Date().toISOString().slice(0, 10);
   }
 }
-// Disable the date input on load if toggle is off, so it won't be submitted
+
+// ── Screens editor (rotation.screens) ────────────────────────────────────────
+const SCREENS = window.SCREENS || [];
+const BUILTIN_KINDS = window.BUILTIN_KINDS || [];
+const TEAMS_BY_DIV = window.TEAMS_BY_DIV || {};
+const WEEKDAYS_LIST = window.WEEKDAYS_LIST || [];
+const REQUIRED_STATUS = window.REQUIRED_STATUS || [];
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function classifyKind(kind) {
+  return BUILTIN_KINDS.includes(kind) ? kind : 'plugin';
+}
+
+function priorityString(p) {
+  if (Array.isArray(p)) return p.join(',');
+  if (p === undefined || p === null) return '';
+  return String(p);
+}
+
+function parsePriorityField(s) {
+  s = String(s);
+  if (s.includes(',')) {
+    return s.split(',').map(x => Number(x.trim())).filter(x => !Number.isNaN(x));
+  }
+  const n = Number(s.trim());
+  return Number.isNaN(n) ? 0 : n;
+}
+
+function renderTeamCheckboxes(idx, teams) {
+  const sel = new Set(teams || []);
+  const parts = [];
+  for (const div of Object.keys(TEAMS_BY_DIV)) {
+    parts.push('<div class="cb-group-label">' + esc(div) + '</div>');
+    for (const t of TEAMS_BY_DIV[div]) {
+      const chk = sel.has(t) ? 'checked' : '';
+      parts.push('<label class="cb-item"><input type="checkbox" ' + chk +
+        ' onchange="toggleScreenTeam(' + idx + ', \'' + esc(t) + '\', this.checked)">' +
+        '<span>' + esc(t) + '</span></label>');
+    }
+  }
+  return parts.join('');
+}
+
+function renderWeekdayCheckboxes(idx, days) {
+  const sel = new Set(days || []);
+  return WEEKDAYS_LIST.map(d => {
+    const chk = sel.has(d) ? 'checked' : '';
+    return '<label class="cb-item"><input type="checkbox" ' + chk +
+      ' onchange="toggleScreenWeekday(' + idx + ', \'' + d + '\', this.checked)">' +
+      '<span>' + d + '</span></label>';
+  }).join('');
+}
+
+function renderRequiredStatusSelect(idx, current) {
+  const cur = current || '';
+  const opts = ['<option value="">(any)</option>'].concat(
+    REQUIRED_STATUS.map(s => '<option value="' + s + '"' + (cur === s ? ' selected' : '') + '>' + s + '</option>')
+  ).join('');
+  return '<select onchange="setScreenField(' + idx + ', \'required_status\', this.value || undefined)" ' +
+    'style="background:#2d3748;border:1px solid #4a5568;border-radius:6px;color:#e2e8f0;padding:6px 10px;font-size:.85rem">' +
+    opts + '</select>';
+}
+
+function screenFields(idx, s) {
+  const k = classifyKind(s.kind);
+  const num = (v, fallback) => (v === undefined || v === null ? fallback : v);
+  if (k === 'game') {
+    return ''
+      + fieldRow('Priority', '<input type="number" min="0" value="' + esc(num(s.priority, 0)) +
+        '" onchange="setScreenField(' + idx + ', \'priority\', Number(this.value))" style="max-width:120px">')
+      + fieldRow('Required status', renderRequiredStatusSelect(idx, s.required_status))
+      + fieldRowFullWidth('Teams (any match)', '<div class="cb-grid">' + renderTeamCheckboxes(idx, s.teams) + '</div>');
+  }
+  if (k === 'time') {
+    return ''
+      + fieldRow('Priority', '<input type="number" min="0" value="' + esc(num(s.priority, 0)) +
+        '" onchange="setScreenField(' + idx + ', \'priority\', Number(this.value))" style="max-width:120px">')
+      + fieldRow('Start (HH:MM)', '<input type="text" value="' + esc(s.start_time || '00:00') +
+        '" onchange="setScreenField(' + idx + ', \'start_time\', this.value)" style="max-width:120px">')
+      + fieldRow('End (HH:MM)', '<input type="text" value="' + esc(s.end_time || '') +
+        '" onchange="setScreenField(' + idx + ', \'end_time\', this.value || undefined)" placeholder="(optional)" style="max-width:120px">')
+      + fieldRowFullWidth('Weekdays (empty = any)', '<div class="cb-grid">' + renderWeekdayCheckboxes(idx, s.weekdays) + '</div>');
+  }
+  if (k === 'secondary_game') {
+    return ''
+      + fieldRow('With priority', '<input type="text" value="' + esc(priorityString(s.with_priority)) +
+        '" onchange="setScreenField(' + idx + ', \'with_priority\', parsePriorityField(this.value))" placeholder="0 or 0,1,2" style="max-width:160px">')
+      + fieldRow('Required status', renderRequiredStatusSelect(idx, s.required_status))
+      + fieldRowFullWidth('Teams', '<div class="cb-grid">' + renderTeamCheckboxes(idx, s.teams) + '</div>');
+  }
+  if (k === 'news' || k === 'standings') {
+    return ''
+      + fieldRow('With priority', '<input type="text" value="' + esc(priorityString(s.with_priority)) +
+        '" onchange="setScreenField(' + idx + ', \'with_priority\', parsePriorityField(this.value))" placeholder="0 or 0,1,2" style="max-width:160px">')
+      + fieldRow('Seconds', '<input type="number" min="5" value="' + esc(num(s.seconds, 20)) +
+        '" onchange="setScreenField(' + idx + ', \'seconds\', Number(this.value))" style="max-width:120px">');
+  }
+  // plugin (any other kind)
+  return ''
+    + fieldRow('Plugin name (kind)', '<input type="text" value="' + esc(s.kind) +
+      '" onchange="setScreenField(' + idx + ', \'kind\', this.value); renderScreens()" style="max-width:240px">')
+    + fieldRow('With priority', '<input type="text" value="' + esc(priorityString(s.with_priority)) +
+      '" onchange="setScreenField(' + idx + ', \'with_priority\', parsePriorityField(this.value))" placeholder="0 or 0,1,2" style="max-width:160px">')
+    + fieldRow('Seconds', '<input type="number" min="5" value="' + esc(num(s.seconds, 20)) +
+      '" onchange="setScreenField(' + idx + ', \'seconds\', Number(this.value))" style="max-width:120px">');
+}
+
+function fieldRow(label, control) {
+  return '<div class="field-row"><div class="field-label">' + esc(label) + '</div><div class="field-value">' + control + '</div></div>';
+}
+
+function fieldRowFullWidth(label, body) {
+  return '<div class="field-row" style="grid-template-columns:1fr">' +
+    '<div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">' + esc(label) + '</div>' +
+    body + '</div>';
+}
+
+function screenCard(idx, s) {
+  const k = classifyKind(s.kind);
+  const label = k === 'plugin' ? 'Plugin: ' + esc(s.kind) : k;
+  return ''
+    + '<div class="section" style="margin-bottom:12px">'
+    +   '<div class="section-header" style="display:flex;justify-content:space-between;align-items:center;gap:8px">'
+    +     '<span>#' + (idx + 1) + ' &middot; ' + label + '</span>'
+    +     '<span style="display:flex;gap:6px">'
+    +       '<button type="button" onclick="moveScreen(' + idx + ', -1)" style="padding:4px 10px;background:#4a5568;color:#e2e8f0;font-size:.75rem">Up</button>'
+    +       '<button type="button" onclick="moveScreen(' + idx + ', 1)" style="padding:4px 10px;background:#4a5568;color:#e2e8f0;font-size:.75rem">Down</button>'
+    +       '<button type="button" onclick="removeScreen(' + idx + ')" style="padding:4px 10px;background:#c53030;color:#fff;font-size:.75rem">Remove</button>'
+    +     '</span>'
+    +   '</div>'
+    +   screenFields(idx, s)
+    + '</div>';
+}
+
+function renderScreens() {
+  const host = document.getElementById('screens-list');
+  if (!host) return;
+  host.innerHTML = SCREENS.map((s, i) => screenCard(i, s)).join('');
+}
+
+function setScreenField(idx, key, value) {
+  if (value === undefined) delete SCREENS[idx][key];
+  else SCREENS[idx][key] = value;
+}
+
+function toggleScreenTeam(idx, team, on) {
+  SCREENS[idx].teams = SCREENS[idx].teams || [];
+  const arr = SCREENS[idx].teams;
+  const i = arr.indexOf(team);
+  if (on && i < 0) arr.push(team);
+  if (!on && i >= 0) arr.splice(i, 1);
+}
+
+function toggleScreenWeekday(idx, day, on) {
+  SCREENS[idx].weekdays = SCREENS[idx].weekdays || [];
+  const arr = SCREENS[idx].weekdays;
+  const i = arr.indexOf(day);
+  if (on && i < 0) arr.push(day);
+  if (!on && i >= 0) arr.splice(i, 1);
+}
+
+function moveScreen(idx, dir) {
+  const j = idx + dir;
+  if (j < 0 || j >= SCREENS.length) return;
+  [SCREENS[idx], SCREENS[j]] = [SCREENS[j], SCREENS[idx]];
+  renderScreens();
+}
+
+function removeScreen(idx) {
+  if (!confirm('Remove screen #' + (idx + 1) + '?')) return;
+  SCREENS.splice(idx, 1);
+  renderScreens();
+}
+
+function addScreen() {
+  const kind = document.getElementById('add-screen-kind').value;
+  let s;
+  if (kind === 'game')                s = { kind: 'game', priority: 1, teams: [] };
+  else if (kind === 'time')           s = { kind: 'time', priority: 1, start_time: '00:00' };
+  else if (kind === 'secondary_game') s = { kind: 'secondary_game', with_priority: 0, teams: [] };
+  else if (kind === 'news')           s = { kind: 'news', with_priority: 0, seconds: 20 };
+  else if (kind === 'standings')      s = { kind: 'standings', with_priority: 0, seconds: 20 };
+  else                                s = { kind: 'example', with_priority: 0, seconds: 20 };
+  SCREENS.push(s);
+  renderScreens();
+}
+
+function syncScreensJson() {
+  const el = document.getElementById('screens_json');
+  if (el) el.value = JSON.stringify(SCREENS);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const cb = document.getElementById('demo_date_enabled');
   if (cb) toggleDemoDate(cb.checked);
-});"""
+  renderScreens();
+});
+"""
 
 
 def build_page(config, alert_html="", active_tab="config"):
@@ -264,18 +465,37 @@ def build_page(config, alert_html="", active_tab="config"):
     teams_colors      = load_json_with_example(TEAMS_COLORS_FILE, TEAMS_COLORS_EXAMPLE_FILE)
 
     c = config
-    teams = c["preferred"]["teams"]
-    if isinstance(teams, str):
-        teams = [teams]
-    divs = c["preferred"]["divisions"]
-    if isinstance(divs, str):
-        divs = [divs]
+    nt    = c.get("news_ticker", {})
+    rot   = c.get("rotation", {})
+    rates = rot.get("rates", {})
+    wx    = c.get("weather", {})
+    st    = c.get("standings", {})
+
+    nt_teams = nt.get("teams") or []
+    if isinstance(nt_teams, str):
+        nt_teams = [nt_teams]
+    st_divs = st.get("divisions") or []
+    if isinstance(st_divs, str):
+        st_divs = [st_divs]
 
     def ck(val):
         return "checked" if val else ""
 
-    scrolling_raw = c["scrolling_speed"]
+    scrolling_raw = c.get("scrolling_speed", 2)
     scrolling_int = int(scrolling_raw) if str(scrolling_raw).isdigit() else 2
+
+    screens = rot.get("screens", [])
+    initial_state = json.dumps({
+        "SCREENS": screens,
+        "BUILTIN_KINDS": BUILTIN_SCREEN_KINDS,
+        "TEAMS_BY_DIV": MLB_TEAMS_BY_DIVISION,
+        "WEEKDAYS_LIST": WEEKDAYS,
+        "REQUIRED_STATUS": REQUIRED_STATUS_VALUES,
+    }).replace("</", "<\\/")
+
+    add_screen_options = "".join(
+        f'<option value="{k}">{k}</option>' for k in BUILTIN_SCREEN_KINDS
+    ) + '<option value="plugin">plugin (custom)</option>'
 
     return f"""\
 <!DOCTYPE html>
@@ -299,38 +519,25 @@ def build_page(config, alert_html="", active_tab="config"):
 
   <!-- ═══════════════════ CONFIG TAB ═══════════════════ -->
   <div class="tab-panel" id="config">
-  <form method="POST" action="/save?tab=config">
-
-    <div class="section">
-      <div class="section-header">Preferred Teams &amp; Divisions</div>
-      <div class="field-row" style="grid-template-columns:1fr">
-        <div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">
-          Teams &mdash; <span style="font-size:.75rem;color:#718096">First team is your &ldquo;favorite&rdquo;</span>
-        </div>
-        <div class="cb-grid">{build_team_checkboxes(teams)}</div>
-      </div>
-      <div class="field-row" style="grid-template-columns:1fr">
-        <div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">
-          Divisions &mdash; <span style="font-size:.75rem;color:#718096">Shown in standings rotation</span>
-        </div>
-        <div class="cb-grid" style="gap:8px 16px">{build_division_checkboxes(divs)}</div>
-      </div>
-    </div>
+  <form method="POST" action="/save?tab=config" onsubmit="syncScreensJson()">
+    <input type="hidden" id="screens_json" name="screens_json" value="">
 
     <div class="section">
       <div class="section-header">News Ticker</div>
-      <div class="field-row"><div class="field-label">Show on team off-day</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__team_offday" {ck(c["news_ticker"]["team_offday"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Always display</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__always_display" {ck(c["news_ticker"]["always_display"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Show preferred teams news</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__preferred_teams" {ck(c["news_ticker"]["preferred_teams"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Show when no games live</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__display_no_games_live" {ck(c["news_ticker"]["display_no_games_live"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Trade rumors</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__traderumors" {ck(c["news_ticker"]["traderumors"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">MLB news</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__mlb_news" {ck(c["news_ticker"]["mlb_news"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Countdowns</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__countdowns" {ck(c["news_ticker"]["countdowns"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Show date</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__date" {ck(c["news_ticker"]["date"])}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row" style="grid-template-columns:1fr">
+        <div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">
+          Teams &mdash; <span style="font-size:.75rem;color:#718096">Teams to show news headlines for</span>
+        </div>
+        <div class="cb-grid">{build_team_checkboxes(nt_teams, "news_ticker__teams")}</div>
+      </div>
+      <div class="field-row"><div class="field-label">Trade rumors</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__traderumors" {ck(nt.get("traderumors", True))}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">MLB news</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__mlb_news" {ck(nt.get("mlb_news", True))}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">Countdowns</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__countdowns" {ck(nt.get("countdowns", True))}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">Show date</div><div class="field-value"><label class="toggle"><input type="checkbox" name="news_ticker__date" {ck(nt.get("date", True))}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row">
         <div class="field-label">Date format</div>
         <div class="field-value" style="flex-direction:column;align-items:flex-start;gap:6px">
-          <input type="text" name="news_ticker__date_format" value="{c["news_ticker"]["date_format"]}" placeholder="%A, %B %-d">
+          <input type="text" name="news_ticker__date_format" value="{nt.get("date_format", "%A, %B %-d")}" placeholder="%A, %B %-d">
           <span style="font-size:.75rem;color:#718096">
             Uses Python strftime codes &mdash;
             <a href="https://strftime.org" target="_blank" rel="noopener"
@@ -341,62 +548,69 @@ def build_page(config, alert_html="", active_tab="config"):
           </span>
         </div>
       </div>
+      <p class="note" style="padding:0 16px 12px">Events list (<code>news_ticker.events</code>) preserved from JSON; edit directly to change.</p>
     </div>
 
     <div class="section">
       <div class="section-header">Standings</div>
-      <div class="field-row"><div class="field-label">Show on team off-day</div><div class="field-value"><label class="toggle"><input type="checkbox" name="standings__team_offday" {ck(c["standings"]["team_offday"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Show on MLB off-day</div><div class="field-value"><label class="toggle"><input type="checkbox" name="standings__mlb_offday" {ck(c["standings"]["mlb_offday"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Always display</div><div class="field-value"><label class="toggle"><input type="checkbox" name="standings__always_display" {ck(c["standings"]["always_display"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Show when no games live</div><div class="field-value"><label class="toggle"><input type="checkbox" name="standings__display_no_games_live" {ck(c["standings"]["display_no_games_live"])}><span class="toggle-slider"></span></label></div></div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">Rotation</div>
-      <div class="field-row"><div class="field-label">Enabled</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__enabled" {ck(c["rotation"]["enabled"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Scroll until finished</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__scroll_until_finished" {ck(c["rotation"]["scroll_until_finished"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Only preferred teams</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__only_preferred" {ck(c["rotation"]["only_preferred"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Only live games</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__only_live" {ck(c["rotation"]["only_live"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Rate: live (seconds)</div><div class="field-value"><input type="number" name="rotation__rates__live" value="{c["rotation"]["rates"]["live"]}" min="2" step="0.5"></div></div>
-      <div class="field-row"><div class="field-label">Rate: final (seconds)</div><div class="field-value"><input type="number" name="rotation__rates__final" value="{c["rotation"]["rates"]["final"]}" min="2" step="0.5"></div></div>
-      <div class="field-row"><div class="field-label">Rate: pregame (seconds)</div><div class="field-value"><input type="number" name="rotation__rates__pregame" value="{c["rotation"]["rates"]["pregame"]}" min="2" step="0.5"></div></div>
-      <div class="field-row"><div class="field-label">Preferred team live: enabled</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__while_preferred_team_live__enabled" {ck(c["rotation"]["while_preferred_team_live"]["enabled"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Preferred team live: inning breaks</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__while_preferred_team_live__during_inning_breaks" {ck(c["rotation"]["while_preferred_team_live"]["during_inning_breaks"])}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row" style="grid-template-columns:1fr">
+        <div class="field-label" style="border-right:none;border-bottom:1px solid #2d3748;padding-bottom:10px">
+          Divisions &mdash; <span style="font-size:.75rem;color:#718096">Shown in standings rotation</span>
+        </div>
+        <div class="cb-grid" style="gap:8px 16px">{build_division_checkboxes(st_divs)}</div>
+      </div>
     </div>
 
     <div class="section">
       <div class="section-header">Weather</div>
-      <div class="field-row"><div class="field-label">API Key</div><div class="field-value"><input type="text" name="weather__apikey" value="{c["weather"]["apikey"]}" placeholder="OpenWeatherMap API key"></div></div>
-      <div class="field-row"><div class="field-label">Location</div><div class="field-value"><input type="text" name="weather__location" value="{c["weather"]["location"]}" placeholder="e.g. Chicago,il,us"></div></div>
-      <div class="field-row"><div class="field-label">Metric units</div><div class="field-value"><label class="toggle"><input type="checkbox" name="weather__metric_units" {ck(c["weather"]["metric_units"])}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">API Key</div><div class="field-value"><input type="text" name="weather__apikey" value="{wx.get("apikey", "")}" placeholder="OpenWeatherMap API key"></div></div>
+      <div class="field-row"><div class="field-label">Location</div><div class="field-value"><input type="text" name="weather__location" value="{wx.get("location", "")}" placeholder="e.g. Chicago,il,us"></div></div>
+      <div class="field-row"><div class="field-label">Metric units</div><div class="field-value"><label class="toggle"><input type="checkbox" name="weather__metric_units" {ck(wx.get("metric_units", False))}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">Pregame (include in pre-game text)</div><div class="field-value"><label class="toggle"><input type="checkbox" name="weather__pregame" {ck(wx.get("pregame", True))}><span class="toggle-slider"></span></label></div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Rotation</div>
+      <div class="field-row"><div class="field-label">Scroll until finished</div><div class="field-value"><label class="toggle"><input type="checkbox" name="rotation__scroll_until_finished" {ck(rot.get("scroll_until_finished", True))}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">Rate: live (seconds)</div><div class="field-value"><input type="number" name="rotation__rates__live" value="{rates.get("live", 15)}" min="1" step="0.5" style="max-width:140px"></div></div>
+      <div class="field-row"><div class="field-label">Rate: final (seconds)</div><div class="field-value"><input type="number" name="rotation__rates__final" value="{rates.get("final", 15)}" min="1" step="0.5" style="max-width:140px"></div></div>
+      <div class="field-row"><div class="field-label">Rate: pregame (seconds)</div><div class="field-value"><input type="number" name="rotation__rates__pregame" value="{rates.get("pregame", 15)}" min="1" step="0.5" style="max-width:140px"></div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">Rotation Screens</div>
+      <div id="screens-list" style="padding:14px 14px 4px"></div>
+      <div style="display:flex;gap:8px;align-items:center;padding:6px 14px 14px;flex-wrap:wrap">
+        <select id="add-screen-kind" style="background:#2d3748;border:1px solid #4a5568;border-radius:6px;color:#e2e8f0;padding:7px 10px;font-size:.85rem">
+          {add_screen_options}
+        </select>
+        <button type="button" onclick="addScreen()" class="btn-primary" style="padding:7px 16px">Add Screen</button>
+        <span style="font-size:.75rem;color:#718096">Use Up/Down to reorder. Remove deletes a screen.</span>
+      </div>
     </div>
 
     <div class="section">
       <div class="section-header">General</div>
-      <div class="field-row"><div class="field-label">Time format</div><div class="radio-group">{build_time_format_radios(c["time_format"])}</div></div>
-      <div class="field-row"><div class="field-label">End of day (HH:MM)</div><div class="field-value"><input type="text" name="end_of_day" value="{c["end_of_day"]}" placeholder="00:00" style="max-width:120px"></div></div>
-      <div class="field-row"><div class="field-label">Full team names</div><div class="field-value"><label class="toggle"><input type="checkbox" name="full_team_names" {ck(c["full_team_names"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Short names for runs/hits</div><div class="field-value"><label class="toggle"><input type="checkbox" name="short_team_names_for_runs_hits" {ck(c["short_team_names_for_runs_hits"])}><span class="toggle-slider"></span></label></div></div>
-      <div class="field-row"><div class="field-label">Pregame weather</div><div class="field-value"><label class="toggle"><input type="checkbox" name="pregame_weather" {ck(c["pregame_weather"])}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">Time format</div><div class="radio-group">{build_time_format_radios(c.get("time_format", "12h"))}</div></div>
+      <div class="field-row"><div class="field-label">End of day (HH:MM)</div><div class="field-value"><input type="text" name="end_of_day" value="{c.get("end_of_day", "00:00")}" placeholder="00:00" style="max-width:120px"></div></div>
+      <div class="field-row"><div class="field-label">Sync delay (seconds)</div><div class="field-value"><input type="number" name="sync_delay_seconds" value="{c.get("sync_delay_seconds", 0)}" min="0" step="1" style="max-width:140px"></div></div>
+      <div class="field-row"><div class="field-label">API refresh rate (seconds)</div><div class="field-value"><input type="number" name="api_refresh_rate" value="{c.get("api_refresh_rate", 5)}" min="1" step="1" style="max-width:140px"></div></div>
       <div class="field-row"><div class="field-label">Scrolling speed (0–6)</div><div class="field-value" style="padding:10px 14px">{build_scrolling_speed_slider(scrolling_int)}</div></div>
-      <div class="field-row"><div class="field-label">Preferred game delay multiplier</div><div class="field-value"><input type="number" name="preferred_game_delay_multiplier" value="{c["preferred_game_delay_multiplier"]}" min="0" step="1" style="max-width:120px"></div></div>
-      <div class="field-row"><div class="field-label">API refresh rate (seconds)</div><div class="field-value"><input type="number" name="api_refresh_rate" value="{c["api_refresh_rate"]}" min="3" step="1" style="max-width:120px"></div></div>
-      <div class="field-row"><div class="field-label">Debug mode</div><div class="field-value"><label class="toggle"><input type="checkbox" name="debug" {ck(c["debug"])}><span class="toggle-slider"></span></label></div></div>
+      <div class="field-row"><div class="field-label">Debug mode</div><div class="field-value"><label class="toggle"><input type="checkbox" name="debug" {ck(c.get("debug", False))}><span class="toggle-slider"></span></label></div></div>
       <div class="field-row">
         <div class="field-label">Demo date</div>
         <div class="field-value" style="flex-direction:column;align-items:flex-start;gap:8px">
           <label class="toggle" title="Enable demo mode">
-            <input type="checkbox" id="demo_date_enabled" {"checked" if c["demo_date"] else ""}
+            <input type="checkbox" id="demo_date_enabled" {"checked" if c.get("demo_date") else ""}
               onchange="toggleDemoDate(this.checked)">
             <span class="toggle-slider"></span>
           </label>
-          <div id="demo_date_picker" style="display:{"block" if c["demo_date"] else "none"}">
+          <div id="demo_date_picker" style="display:{"block" if c.get("demo_date") else "none"}">
             <input type="date" name="demo_date"
-              value="{str(c["demo_date"]) if c["demo_date"] else ""}"
+              value="{str(c.get("demo_date")) if c.get("demo_date") else ""}"
               style="background:#2d3748;border:1px solid #4a5568;border-radius:6px;color:#e2e8f0;padding:7px 10px;font-size:.85rem;outline:none;color-scheme:dark">
           </div>
-          <input type="hidden" name="demo_date_off" value="false">
-          <span style="font-size:.75rem;color:#718096">{"Demo mode: " + str(c["demo_date"]) if c["demo_date"] else "Live data"}</span>
+          <span style="font-size:.75rem;color:#718096">{"Demo mode: " + str(c.get("demo_date")) if c.get("demo_date") else "Live data"}</span>
         </div>
       </div>
     </div>
@@ -405,7 +619,7 @@ def build_page(config, alert_html="", active_tab="config"):
       <button type="submit" name="action" value="save" class="btn-primary">Save</button>
       <button type="submit" name="action" value="save_restart" class="btn-restart">Save &amp; Restart Service</button>
     </div>
-    <p class="note">Saved to <code>config.json</code>. Restart applies to the <code>{SERVICE_NAME}</code> systemd service.</p>
+    <p class="note">Saved to <code>config.json</code>. Untouched fields (<code>matrix</code>, <code>plugins</code>, <code>news_ticker.events</code>, <code>$schema</code>, <code>format</code>) are preserved. Restart applies to the <code>{SERVICE_NAME}</code> systemd service.</p>
   </form>
   </div>
 
@@ -441,6 +655,10 @@ def build_page(config, alert_html="", active_tab="config"):
     </form>
 
   </div>
+<script>Object.assign(window, {initial_state});</script>
+<script>{SHELL_JS}</script>
+</body>
+</html>"""
 
 # ── Backend helpers ────────────────────────────────────────────────────────────
 
@@ -484,7 +702,19 @@ def make_alert(ok, msg, detail=""):
     return f'<div class="alert {cls}">{msg}{pre}</div>'
 
 
-def form_data_to_config(fields):
+def load_user_config():
+    """Read the user's config.json verbatim (no example merge) so the save round-trip
+    preserves keys the UI doesn't surface (matrix, plugins, $schema, news_ticker.events, etc.)."""
+    if CONFIG_FILE.is_file():
+        return json.loads(CONFIG_FILE.read_text())
+    if EXAMPLE_CONFIG_FILE.is_file():
+        return json.loads(EXAMPLE_CONFIG_FILE.read_text())
+    return {}
+
+
+def form_data_to_config(fields, existing):
+    new = json.loads(json.dumps(existing))  # deep copy
+
     def get(key, default=""):
         vals = fields.get(key, [default])
         return vals[0] if vals else default
@@ -495,62 +725,48 @@ def form_data_to_config(fields):
     def checkbox(key):
         return key in fields
 
-    demo_raw = get("demo_date", "").strip()
-    demo_val = demo_raw if demo_raw else False
+    nt = new.setdefault("news_ticker", {})
+    nt["teams"]        = get_list("news_ticker__teams")
+    nt["traderumors"]  = checkbox("news_ticker__traderumors")
+    nt["mlb_news"]     = checkbox("news_ticker__mlb_news")
+    nt["countdowns"]   = checkbox("news_ticker__countdowns")
+    nt["date"]         = checkbox("news_ticker__date")
+    nt["date_format"]  = get("news_ticker__date_format", "%A, %B %-d")
 
-    return {
-        "preferred": {
-            "teams": get_list("preferred__teams"),
-            "divisions": get_list("preferred__divisions"),
-        },
-        "news_ticker": {
-            "team_offday": checkbox("news_ticker__team_offday"),
-            "always_display": checkbox("news_ticker__always_display"),
-            "preferred_teams": checkbox("news_ticker__preferred_teams"),
-            "display_no_games_live": checkbox("news_ticker__display_no_games_live"),
-            "traderumors": checkbox("news_ticker__traderumors"),
-            "mlb_news": checkbox("news_ticker__mlb_news"),
-            "countdowns": checkbox("news_ticker__countdowns"),
-            "date": checkbox("news_ticker__date"),
-            "date_format": get("news_ticker__date_format"),
-        },
-        "standings": {
-            "team_offday": checkbox("standings__team_offday"),
-            "mlb_offday": checkbox("standings__mlb_offday"),
-            "always_display": checkbox("standings__always_display"),
-            "display_no_games_live": checkbox("standings__display_no_games_live"),
-        },
-        "rotation": {
-            "enabled": checkbox("rotation__enabled"),
-            "scroll_until_finished": checkbox("rotation__scroll_until_finished"),
-            "only_preferred": checkbox("rotation__only_preferred"),
-            "only_live": checkbox("rotation__only_live"),
-            "rates": {
-                "live":    float(get("rotation__rates__live",    "15.0")),
-                "final":   float(get("rotation__rates__final",   "15.0")),
-                "pregame": float(get("rotation__rates__pregame", "15.0")),
-            },
-            "while_preferred_team_live": {
-                "enabled": checkbox("rotation__while_preferred_team_live__enabled"),
-                "during_inning_breaks": checkbox("rotation__while_preferred_team_live__during_inning_breaks"),
-            },
-        },
-        "weather": {
-            "apikey": get("weather__apikey"),
-            "location": get("weather__location"),
-            "metric_units": checkbox("weather__metric_units"),
-        },
-        "time_format": get("time_format", "12h"),
-        "end_of_day": get("end_of_day", "00:00"),
-        "full_team_names": checkbox("full_team_names"),
-        "short_team_names_for_runs_hits": checkbox("short_team_names_for_runs_hits"),
-        "pregame_weather": checkbox("pregame_weather"),
-        "preferred_game_delay_multiplier": int(float(get("preferred_game_delay_multiplier", "0"))),
-        "api_refresh_rate": int(float(get("api_refresh_rate", "5"))),
-        "scrolling_speed": int(get("scrolling_speed", "2")),
-        "debug": checkbox("debug"),
-        "demo_date": demo_val,
-    }
+    st = new.setdefault("standings", {})
+    st["divisions"] = get_list("standings__divisions")
+
+    wx = new.setdefault("weather", {})
+    wx["apikey"]       = get("weather__apikey", "")
+    wx["location"]     = get("weather__location", "")
+    wx["metric_units"] = checkbox("weather__metric_units")
+    wx["pregame"]      = checkbox("weather__pregame")
+
+    rot = new.setdefault("rotation", {})
+    rot["scroll_until_finished"] = checkbox("rotation__scroll_until_finished")
+    rates = rot.setdefault("rates", {})
+    rates["live"]    = float(get("rotation__rates__live",    "15.0"))
+    rates["final"]   = float(get("rotation__rates__final",   "15.0"))
+    rates["pregame"] = float(get("rotation__rates__pregame", "15.0"))
+
+    screens_raw = get("screens_json", "").strip()
+    if screens_raw:
+        try:
+            rot["screens"] = json.loads(screens_raw)
+        except json.JSONDecodeError:
+            pass  # keep existing screens if JSON parse fails
+
+    new["time_format"]        = get("time_format", "12h")
+    new["end_of_day"]         = get("end_of_day", "00:00")
+    new["sync_delay_seconds"] = int(float(get("sync_delay_seconds", "0")))
+    new["api_refresh_rate"]   = int(float(get("api_refresh_rate", "5")))
+    new["scrolling_speed"]    = int(get("scrolling_speed", "2"))
+    new["debug"]              = checkbox("debug")
+
+    demo_raw = get("demo_date", "").strip()
+    new["demo_date"]          = demo_raw if demo_raw else False
+
+    return new
 
 
 def form_data_to_colors(fields, prefix):
@@ -620,7 +836,7 @@ class ConfigHandler(BaseHTTPRequestHandler):
         action = fields.get("action", ["save"])[0]
         alert = ""
         try:
-            new_config = form_data_to_config(fields)
+            new_config = form_data_to_config(fields, load_user_config())
             CONFIG_FILE.write_text(json.dumps(new_config, indent="\t"))
 
             val_ok, val_out = run_validator()
