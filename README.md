@@ -149,8 +149,6 @@ Additional flags are available for customizing your install:
 -s, --no-sudo               Do not install dependencies under sudo. Useful for emulation-only installation.
 -e, --emulator-only         Do not install RPI matrix drivers. Video display will default to software emulation.
 
--f, --force                 Try to skip most errors and force install. May be able to recover from previous installer errors.
-
 -h, --help                  Display this help message
 ```
 
