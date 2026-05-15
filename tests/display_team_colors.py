@@ -13,12 +13,14 @@ from data.config import Config
 from data.config.layout import Layout
 from data.teams import TEAM_ID_ABBR
 from data.scoreboard.team import Team
-from data.uniforms import CITY_CONNECT
 from renderers.games.teams import render_team_banner
 
 RAW_CONFIG = pathlib.Path(__file__).parent / "fixtures" / "emulator_raw_config.json"
 HEIGHT = 132
 WIDTH = 208
+
+# TODO: This test only considers City Connect jerseys, but there could be alternate types.
+CITY_CONNECT = "city_connect"
 
 
 def make_layout(x, y):

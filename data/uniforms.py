@@ -9,6 +9,10 @@ API_FIELDS = "uniforms,home,away,uniformAssets,uniformAssetText"
 UPDATE_RATE = 60 * 5  # almost never necessary to update uniforms once set
 
 
+def _make_uniform_check(needle: str):
+    return lambda name: needle.lower() in name.lower()
+
+
 # separate API call and not something we expect to change, so we don't do
 # this as part of the Game data updates
 class Uniforms:
@@ -18,8 +22,7 @@ class Uniforms:
         self.away_special = None
         self.starttime = time.time()
         self._special_uniforms = {
-            key: lambda name, val=val: val.lower() in name.lower()
-            for key, val in uniform_types.items()
+            key: _make_uniform_check(val) for key, val in uniform_types.items()
         }
         self.update(force=True)
 

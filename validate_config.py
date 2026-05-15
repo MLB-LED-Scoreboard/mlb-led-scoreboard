@@ -24,14 +24,11 @@ VALIDATIONS = {
             "warmup",
             "plugins" + make_modifier(IGNORE_SUBPATHS),
         ],
-        "renamed_keys": {"offday": "news"},
+        "renamed_keys": {},
     },
     COLORS_DIRECTORY: {
-        "ignored_keys": [
-            "special_uniforms" + make_modifier(IGNORE_SUBPATHS),
-            "plugins" + make_modifier(IGNORE_SUBPATHS),
-        ],
-        "renamed_keys": {"offday": "news"},
+        "ignored_keys": ["plugins" + make_modifier(IGNORE_SUBPATHS)],
+        "renamed_keys": {},
     },
 }
 
