@@ -31,7 +31,9 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_scheduled(game_data: dict[str, Any], delay: int, api_refresh_rate: int, uniform_types: dict) -> Optional["Game"]:
+    def from_scheduled(
+        game_data: dict[str, Any], delay: int, api_refresh_rate: int, uniform_types: dict
+    ) -> Optional["Game"]:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
@@ -50,11 +52,11 @@ class Game:
         self.date = date
         self.starttime = time.time()
         self._data_wait_queue = CircularQueue(sync_amount + 1)
-        self._current_data = {}
+        self._current_data: dict[str, Any] = {}
         self._broadcasts = broadcasts
         self._series_status = series_status
         self._api_refresh_rate = api_refresh_rate
-        self._status = {}
+        self._status: dict[str, Any] = {}
         self._uniform_data = Uniforms(game_id, uniform_types)
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:

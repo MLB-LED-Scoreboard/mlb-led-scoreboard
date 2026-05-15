@@ -432,6 +432,7 @@ def _get_playoff_start_date(year: int):
 
     return datetime(year, 10, 1).date()
 
+
 def _extract_uniform_types(teams_json: dict) -> dict:
     uniform_types = {}
 
@@ -439,7 +440,7 @@ def _extract_uniform_types(teams_json: dict) -> dict:
         if not isinstance(team_data, dict):
             continue
         for key in team_data:
-            if key in 'rgb':
+            if key in "rgb":
                 continue
             if key not in uniform_types:
                 uniform_types[key] = key.replace("_", " ")

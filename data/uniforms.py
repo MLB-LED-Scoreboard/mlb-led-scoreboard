@@ -21,9 +21,7 @@ class Uniforms:
         self.home_special = None
         self.away_special = None
         self.starttime = time.time()
-        self._special_uniforms = {
-            key: _make_uniform_check(val) for key, val in uniform_types.items()
-        }
+        self._special_uniforms = {key: _make_uniform_check(val) for key, val in uniform_types.items()}
         self.update(force=True)
 
     def home_special_uniform(self):

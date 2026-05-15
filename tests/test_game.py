@@ -93,7 +93,9 @@ class TestGame(unittest.TestCase):
             "game_id": 746423,
             "game_date": "2024-09-13",
         }
-        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"})
+        game = data.game.Game.from_scheduled(
+            game_data, delay=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"}
+        )
         self.assertIsNotNone(game)
         # DET was wearing city connects
         self.assertEqual(game.home_special_uniforms(), "city_connect")
@@ -129,7 +131,9 @@ class TestGame(unittest.TestCase):
             "game_id": 824535,
             "game_date": "2026-04-11",
         }
-        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"})
+        game = data.game.Game.from_scheduled(
+            game_data, delay=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"}
+        )
         self.assertIsNotNone(game)
         self.assertEqual(game.home_special_uniforms(), "city_connect")
         self.assertIsNone(game.away_special_uniforms())

@@ -27,10 +27,13 @@ def _response(home_assets=None, away_assets=None):
 
 class TestUniforms(unittest.TestCase):
     def test_update_finds_home_special_uniform(self):
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["Mets City Connect Alternate"],
-            away_assets=["Standard Road Grey"],
-        )) as mock_get:
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["Mets City Connect Alternate"],
+                away_assets=["Standard Road Grey"],
+            ),
+        ) as mock_get:
             u = Uniforms(game_id=1, uniform_types={"city_connect": "City Connect"})
 
         self.assertEqual(u.home_special_uniform(), "city_connect")
@@ -38,38 +41,50 @@ class TestUniforms(unittest.TestCase):
         mock_get.assert_called_once()
 
     def test_update_finds_away_special_uniform(self):
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["Standard Home"],
-            away_assets=["City Connect Cap"],
-        )):
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["Standard Home"],
+                away_assets=["City Connect Cap"],
+            ),
+        ):
             u = Uniforms(game_id=1, uniform_types={"city_connect": "City Connect"})
 
         self.assertIsNone(u.home_special_uniform())
         self.assertEqual(u.away_special_uniform(), "city_connect")
 
     def test_update_no_match(self):
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["Standard Home"],
-            away_assets=["Standard Road"],
-        )):
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["Standard Home"],
+                away_assets=["Standard Road"],
+            ),
+        ):
             u = Uniforms(game_id=1, uniform_types={"city_connect": "City Connect"})
 
         self.assertIsNone(u.home_special_uniform())
         self.assertIsNone(u.away_special_uniform())
 
     def test_update_case_insensitive(self):
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["mets CITY connect alternate"],
-        )):
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["mets CITY connect alternate"],
+            ),
+        ):
             u = Uniforms(game_id=1, uniform_types={"city_connect": "City Connect"})
 
         self.assertEqual(u.home_special_uniform(), "city_connect")
 
     def test_lambdas_capture_distinct_values_per_uniform_type(self):
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["Memorial Day Stars and Stripes Cap"],
-            away_assets=["Mets City Connect Alternate"],
-        )):
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["Memorial Day Stars and Stripes Cap"],
+                away_assets=["Mets City Connect Alternate"],
+            ),
+        ):
             u = Uniforms(
                 game_id=1,
                 uniform_types={
@@ -145,10 +160,13 @@ class TestUniforms(unittest.TestCase):
         self.assertIsNone(u.away_special_uniform())
 
     def test_update_empty_uniform_types(self):
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["City Connect"],
-            away_assets=["Memorial Day"],
-        )) as mock_get:
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["City Connect"],
+                away_assets=["Memorial Day"],
+            ),
+        ) as mock_get:
             u = Uniforms(game_id=1, uniform_types={})
 
         self.assertEqual(mock_get.call_count, 1)
@@ -159,9 +177,12 @@ class TestUniforms(unittest.TestCase):
         # An asset text that contains BOTH configured substrings should resolve
         # to whichever type is iterated first (dict insertion order).
         # Not clear if this is behavior that can actually happen, but codifying it in a test nonetheless.
-        with patch("data.uniforms.statsapi.get", return_value=_response(
-            home_assets=["City Connect Memorial Day Hybrid"],
-        )):
+        with patch(
+            "data.uniforms.statsapi.get",
+            return_value=_response(
+                home_assets=["City Connect Memorial Day Hybrid"],
+            ),
+        ):
             u = Uniforms(
                 game_id=1,
                 uniform_types={
