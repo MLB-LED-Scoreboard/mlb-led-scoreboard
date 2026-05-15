@@ -8,7 +8,6 @@ SKIP_CONFIG=false
 SKIP_OPTIMIZATIONS=false
 SKIP_SUDO=false
 SKIP_VENV=false
-FORCE=false
 
 REQUIREMENTS=requirements.rpi.txt
 
@@ -16,7 +15,7 @@ usage() {
     cat <<USAGE
     Usage: ./install.sh [-a | --skip-all] [-c | --skip-config] [-o | --skip-optimizations]
                         [-p | --skip-python] [-v | --no-venv] [-s | --no-sudo] [-e | --emulator-only]
-                        [-f | --force] [-h | --help]
+                        [-h | --help]
 
     Options:
         -a, --skip-all              Skip all dependencies and config installation (equivalent to -c -o -p).
@@ -27,8 +26,6 @@ usage() {
         -v, --no-venv               Do not create a virtual environment for the dependencies.
         -s, --no-sudo               Do not install dependencies under sudo. Useful for emulation-only installation.
         -e, --emulator-only         Do not install RPI matrix drivers. Video display will default to software emulation.
-
-        -f, --force                 Try to skip most errors and force install. May be able to recover from previous installer errors.
 
         -h, --help                  Display this help message
 USAGE
@@ -48,10 +45,6 @@ handle_error() {
     echo "  Ensure you are installing from the project directory with:"                        >&2
     echo                                                                                       >&2
     echo "      sudo ./install.sh"                                                             >&2
-    echo                                                                                       >&2
-    echo "  You may be able to bypass this error by reinstalling with the --force flag"        >&2
-    echo                                                                                       >&2
-    echo "      sudo ./install.sh --force"                                                     >&2
     echo                                                                                       >&2
     echo "  Debug information:"                                                                >&2
     echo "      | exit_code:   $exit_code"                                                     >&2
@@ -99,10 +92,6 @@ while [ $# -gt 0 ]; do
         SKIP_VENV=true
         shift
         ;;
-    -f | --force)
-        FORCE=true
-        shift
-        ;;
     -h | --help)
         usage # run usage function on help
         ;;
@@ -112,11 +101,9 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-if [ "$FORCE" = false ]; then
-    set -Eeuo pipefail
+set -Eeuo pipefail
 
-    trap handle_error ERR
-fi
+trap handle_error ERR
 
 if [ "$SKIP_PYTHON" = false ]; then
     echo
