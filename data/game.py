@@ -31,7 +31,7 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_scheduled(game_data: dict[str, Any], delay: int, api_refresh_rate: int) -> Optional["Game"]:
+    def from_scheduled(game_data: dict[str, Any], delay: int, api_refresh_rate: int, uniform_types: dict) -> Optional["Game"]:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
@@ -39,12 +39,13 @@ class Game:
             game_data.get("series_status") or "",
             delay,
             api_refresh_rate,
+            uniform_types,
         )
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts, series_status, sync_amount, api_refresh_rate):
+    def __init__(self, game_id, date, broadcasts, series_status, sync_amount, api_refresh_rate, uniform_types: dict):
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
@@ -54,7 +55,7 @@ class Game:
         self._series_status = series_status
         self._api_refresh_rate = api_refresh_rate
         self._status = {}
-        self._uniform_data = Uniforms(game_id)
+        self._uniform_data = Uniforms(game_id, uniform_types)
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():

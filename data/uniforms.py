@@ -8,20 +8,19 @@ API_FIELDS = "uniforms,home,away,uniformAssets,uniformAssetText"
 
 UPDATE_RATE = 60 * 5  # almost never necessary to update uniforms once set
 
-CITY_CONNECT = "city_connect"
-
-# maybe one day we will also want to support e.g throwback
-SPECIAL_UNIFORMS = {CITY_CONNECT: lambda uniformName: "City Connect" in uniformName}
-
 
 # separate API call and not something we expect to change, so we don't do
 # this as part of the Game data updates
 class Uniforms:
-    def __init__(self, game_id):
+    def __init__(self, game_id, uniform_types: dict):
         self.game_id = game_id
         self.home_special = None
         self.away_special = None
         self.starttime = time.time()
+        self._special_uniforms = {
+            key: lambda name, val=val: val.lower() in name.lower()
+            for key, val in uniform_types.items()
+        }
         self.update(force=True)
 
     def home_special_uniform(self):
@@ -43,7 +42,7 @@ class Uniforms:
                 {"gamePks": self.game_id, "fields": API_FIELDS},
                 request_kwargs={"headers": data.headers.API_HEADERS},
             )["uniforms"][0]
-            for uniform, special_check in SPECIAL_UNIFORMS.items():
+            for uniform, special_check in self._special_uniforms.items():
                 home_uniforms = data_u.get("home", {}).get("uniformAssets", [])
                 away_uniforms = data_u.get("away", {}).get("uniformAssets", [])
 

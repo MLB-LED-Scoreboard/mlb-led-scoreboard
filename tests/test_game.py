@@ -20,7 +20,7 @@ class TestGame(unittest.TestCase):
     }
 
     def test_game(self):
-        game = data.game.Game.from_scheduled(self.game_data, delay=0, api_refresh_rate=10)
+        game = data.game.Game.from_scheduled(self.game_data, delay=0, api_refresh_rate=10, uniform_types={})
         self.assertIsNotNone(game)
         self.assertEqual(game.home_name(), "Nationals")
         self.assertEqual(game.home_abbreviation(), "WSH")
@@ -55,7 +55,7 @@ class TestGame(unittest.TestCase):
     def test_game_in_middle(self):
         # uses some timestamps to test specific points in the game and our delay logic
 
-        game = data.game.Game.from_scheduled(self.game_data, delay=1, api_refresh_rate=10)
+        game = data.game.Game.from_scheduled(self.game_data, delay=1, api_refresh_rate=10, uniform_types={})
         self.assertIsNotNone(game)
         self.assertEqual(game.current_delay(), 0)
 
@@ -93,10 +93,10 @@ class TestGame(unittest.TestCase):
             "game_id": 746423,
             "game_date": "2024-09-13",
         }
-        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10)
+        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"})
         self.assertIsNotNone(game)
         # DET was wearing city connects
-        self.assertEqual(game.home_special_uniforms(), data.uniforms.CITY_CONNECT)
+        self.assertEqual(game.home_special_uniforms(), "city_connect")
         self.assertIsNone(game.away_special_uniforms())
 
         # fifth inning -- too early!
@@ -123,6 +123,17 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.inning_number(), 9)
         self.assertEqual(game.outs(), 2)
 
+    def test_city_connect_uniform(self):
+        # Reds vs Angels 2026-04-11: CIN wore City Connect 2.0
+        game_data = {
+            "game_id": 824535,
+            "game_date": "2026-04-11",
+        }
+        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"})
+        self.assertIsNotNone(game)
+        self.assertEqual(game.home_special_uniforms(), "city_connect")
+        self.assertIsNone(game.away_special_uniforms())
+
     # NOTE: it seems like the more detailed reasons may not be stored in the historical data
 
     def test_weather_delays(self):
@@ -131,7 +142,7 @@ class TestGame(unittest.TestCase):
             "game_id": 745808,
             "game_date": "2024-06-26",
         }
-        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10)
+        game = data.game.Game.from_scheduled(game_data, delay=0, api_refresh_rate=10, uniform_types={})
         self.assertIsNotNone(game)
         self.assertEqual(game.update(force=True, testing_params={"timecode": "20240627_004712"}), UpdateStatus.SUCCESS)
 
