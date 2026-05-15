@@ -138,7 +138,18 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.home_special_uniforms(), "city_connect")
         self.assertIsNone(game.away_special_uniforms())
 
-    # NOTE: it seems like the more detailed reasons may not be stored in the historical data
+    def test_special_uniforms(self):
+        # Reds vs Astros 2026-05-08: CIN wore CINCY
+        game_data = {
+            "game_id": 824522,
+            "game_date": "2026-05-08",
+        }
+        game = data.game.Game.from_scheduled(
+            game_data, delay=0, api_refresh_rate=10, uniform_types={"cincy": "CINCY", "city_connect": "City Connect"}
+        )
+        self.assertIsNotNone(game)
+        self.assertEqual(game.home_special_uniforms(), "cincy")
+        self.assertIsNone(game.away_special_uniforms())
 
     def test_weather_delays(self):
         # https://www.northjersey.com/story/sports/mlb/2024/06/26/mets-yankees-subway-series-game-delayed-weather-new-york-postponed/74226587007/
