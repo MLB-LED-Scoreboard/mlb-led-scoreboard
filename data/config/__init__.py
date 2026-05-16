@@ -25,18 +25,7 @@ from driver import RGBMatrixOptions
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 
-_STANDARD_COLOR_KEYS = {"home", "text", "accent"}
 
-
-def _extract_uniform_types(teams_json: dict) -> dict:
-    uniform_types = {}
-    for team_data in teams_json.values():
-        if not isinstance(team_data, dict):
-            continue
-        for key in team_data.get("special_uniforms", {}):
-            if key not in uniform_types:
-                uniform_types[key] = key.replace("_", " ").title()
-    return uniform_types
 DEFAULT_SCROLLING_SPEED = 2
 DEFAULT_ROTATE_RATE = 15.0
 MINIMUM_ROTATE_RATE = 2.0
@@ -442,3 +431,18 @@ def _get_playoff_start_date(year: int):
         LOGGER.exception("Failed to get season data, defaulting playoff start date to Oct 1")
 
     return datetime(year, 10, 1).date()
+
+
+def _extract_uniform_types(teams_json: dict) -> dict:
+    uniform_types = {}
+
+    for team_data in teams_json.values():
+        if not isinstance(team_data, dict):
+            continue
+        for key in team_data:
+            if key in "rgb":
+                continue
+            if key not in uniform_types:
+                uniform_types[key] = key.replace("_", " ")
+
+    return uniform_types
