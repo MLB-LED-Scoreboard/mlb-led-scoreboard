@@ -54,11 +54,17 @@ class PowerwallData(PluginData):
 
             self.charge_pct = float(await pw.get_charge())
 
-            mode = await pw.get_operation_mode()
-            self.operation_mode = _humanize(mode)
+            try:
+                mode = await pw.get_operation_mode()
+                self.operation_mode = _humanize(mode)
+            except Exception:
+                LOGGER.debug("[POWERWALL] get_operation_mode unavailable (gateway-only endpoint)")
 
-            grid = await pw.get_grid_status()
-            self.grid_status = _humanize(grid)
+            try:
+                grid = await pw.get_grid_status()
+                self.grid_status = _humanize(grid)
+            except Exception:
+                LOGGER.debug("[POWERWALL] get_grid_status unavailable (gateway-only endpoint)")
         finally:
             try:
                 await pw.close()
