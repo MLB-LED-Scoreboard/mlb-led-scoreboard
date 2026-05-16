@@ -15,6 +15,11 @@ from data.scoreboard.pregame import Pregame
 from bullpen.time_formats import TIME_FORMAT_24H
 import data.headers
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from config import Config
+
 API_FIELDS = (
     "gameData,game,id,datetime,dateTime,officialDate,flags,noHitter,perfectGame,status,detailedState,abstractGameState,"
     + "reason,probablePitchers,teams,home,away,abbreviation,teamName,record,wins,losses,players,id,boxscoreName,fullName,liveData,plays,"
@@ -31,33 +36,29 @@ GAME_UPDATE_RATE = 10
 
 class Game:
     @staticmethod
-    def from_scheduled(
-        game_data: dict[str, Any], delay: int, api_refresh_rate: int, uniform_types: dict
-    ) -> Optional["Game"]:
+    def from_scheduled(game_data: dict[str, Any], config: "Config") -> Optional["Game"]:
         game = Game(
             game_data["game_id"],
             game_data["game_date"],
             game_data.get("national_broadcasts") or [],
             game_data.get("series_status") or "",
-            delay,
-            api_refresh_rate,
-            uniform_types,
+            config,
         )
         if game.update(True) == UpdateStatus.SUCCESS:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts, series_status, sync_amount, api_refresh_rate, uniform_types: dict):
+    def __init__(self, game_id, date, broadcasts, series_status, config: "Config"):
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
-        self._data_wait_queue = CircularQueue(sync_amount + 1)
+        self._data_wait_queue = CircularQueue(config.sync_amount + 1)
         self._current_data: dict[str, Any] = {}
         self._broadcasts = broadcasts
         self._series_status = series_status
-        self._api_refresh_rate = api_refresh_rate
+        self._api_refresh_rate = config.api_refresh_rate
         self._status: dict[str, Any] = {}
-        self._uniform_data = Uniforms(game_id, uniform_types)
+        self._uniform_data = Uniforms(game_id, config.uniform_types)
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():
