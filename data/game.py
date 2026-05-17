@@ -451,11 +451,20 @@ class Game:
             return None
 
     def __should_update(self):
-        if self._status.get("abstractGameState") == "Final":
+        abstract = self._status.get("abstractGameState", "")
+        detailed = self._status.get("detailedState", "")
+
+        if abstract == "Final":
             return False
-        endtime = time.time()
-        time_delta = endtime - self.starttime
-        return time_delta >= self._api_refresh_rate
+
+        if abstract == "Live" or "Warmup" in detailed:
+            interval = self._api_refresh_rate           # 15s — needs to be current
+        elif "Pre-Game" in detailed:
+            interval = 600                              # 10 min — probable pitchers rarely scratch
+        else:
+            interval = 3600                             # 1 hr — scheduled games barely change
+
+        return time.time() - self.starttime >= interval
 
     @staticmethod
     def _format_id(player):

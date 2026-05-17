@@ -102,10 +102,9 @@ class Schedule:
             if unless and game_id == unless.game_id:
                 return unless
 
-            # Serve Final games from cache — no point re-fetching until end_of_day resets the day
+            # Serve from cache if available — Game.__should_update() controls refresh rate per state
             cached = self._game_cache.get(game_id)
-            if cached and cached._status.get("abstractGameState") == "Final":
-                LOGGER.debug("Serving cached Final game %s", game_id)
+            if cached is not None:
                 return cached
 
             game = Game.from_scheduled(scheduled_game, self.config)
