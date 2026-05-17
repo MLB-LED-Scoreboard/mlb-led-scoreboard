@@ -61,6 +61,7 @@ class Game:
         self._api_refresh_rate = config.api_refresh_rate
         self._status: dict[str, Any] = {}
         self._uniform_data = Uniforms(game_id, config.uniform_types)
+        self._data_version = 0
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():
@@ -93,6 +94,7 @@ class Game:
                         LOGGER.error("Failed to get game status from schedule")
 
                 self._uniform_data.update()
+                self._data_version += 1
                 self.print_game_data_debug()
                 return UpdateStatus.SUCCESS
             except:
@@ -479,8 +481,10 @@ class Game:
         LOGGER.debug("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
         LOGGER.debug("Game is %d seconds behind", self.current_delay())
         LOGGER.debug("Play description: %s", self.current_play_description())
-        LOGGER.debug("Recap blurb: %s", self.game_recap_blurb())
-        LOGGER.debug("Preview blurb: %s", self.game_preview_blurb())
+        if self._status.get("abstractGameState") == "Final":
+            LOGGER.debug("Recap blurb: %s", self.game_recap_blurb())
+        elif self._status.get("abstractGameState") == "Preview":
+            LOGGER.debug("Preview blurb: %s", self.game_preview_blurb())
         LOGGER.debug("Pre: %s", Pregame(self, TIME_FORMAT_24H))
         LOGGER.debug("Live: %s", Scoreboard(self))
         LOGGER.debug("Final: %s", Postgame(self))
