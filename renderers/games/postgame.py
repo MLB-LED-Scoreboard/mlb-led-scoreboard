@@ -13,7 +13,17 @@ def render_postgame(
     canvas, layout: Layout, colors: Color, postgame: Postgame, scoreboard: Scoreboard, text_pos, is_playoffs
 ):
     _render_final_text(canvas, layout, colors, scoreboard)
+    _render_divider(canvas, layout, colors)
     return _render_decision_rows(canvas, layout, colors, postgame, scoreboard, text_pos, is_playoffs)
+
+
+def _render_divider(canvas, layout, colors):
+    try:
+        divider_y = layout.coords("teams.background.away")["y"] - 1
+    except KeyError:
+        divider_y = 27
+    color = colors.graphics_color("atbat.pitcher")
+    graphics.DrawLine(canvas, 0, divider_y, canvas.width - 1, divider_y, color)
 
 
 def _render_final_text(canvas, layout, colors, scoreboard):

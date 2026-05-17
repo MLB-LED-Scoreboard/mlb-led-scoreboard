@@ -365,7 +365,11 @@ class Game:
             desc = ""
         if desc:
             self._last_play_description = desc
-        return getattr(self, "_last_play_description", "")
+            self._last_play_description_time = time.time()
+        if (getattr(self, "_last_play_description", "") and
+                time.time() - getattr(self, "_last_play_description_time", 0) < 15):
+            return self._last_play_description
+        return ""
 
     def abs_challenges_remaining(self, side):
         try:

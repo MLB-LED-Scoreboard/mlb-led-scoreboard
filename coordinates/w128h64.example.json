@@ -94,25 +94,25 @@
     },
     "number": {
       "font_name": "5x7",
-      "x": 64,
+      "x": 65,
       "y": 48,
       "nohit": {
-        "x": 64,
+        "x": 65,
         "y": 48
       },
       "perfect_game": {
-        "x": 64,
+        "x": 65,
         "y": 48
       }
     },
     "arrow": {
       "size": 3,
       "up": {
-        "x": 61,
+        "x": 62,
         "y": 29
       },
       "down": {
-        "x": 61,
+        "x": 62,
         "y": 49
       }
     }
@@ -304,13 +304,13 @@
   "teams": {
     "background": {
       "away": {
-        "width": 46,
+        "width": 49,
         "height": 18,
         "x": 0,
         "y": 28
       },
       "home": {
-        "width": 46,
+        "width": 49,
         "height": 18,
         "x": 0,
         "y": 46
@@ -361,24 +361,24 @@
       "spacing": 0,
       "away": {
         "font_name": "7x13B",
-        "x": 45,
+        "x": 48,
         "y": 42
       },
       "home": {
         "font_name": "7x13B",
-        "x": 45,
+        "x": 48,
         "y": 60
       }
     },
     "abs_challenges": {
       "away": {
-        "x": 47,
+        "x": 50,
         "squares": [31, 38],
         "size": 4,
         "enabled": true
       },
       "home": {
-        "x": 47,
+        "x": 50,
         "squares": [49, 56],
         "size": 4,
         "enabled": true

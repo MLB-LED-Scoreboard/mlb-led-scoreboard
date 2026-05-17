@@ -15,13 +15,15 @@ from renderers.games import nohitter
 
 _play_desc_pos = None
 _play_desc_last = None
+_last_pitch_count = None
+_pitch_overlay_time = None
 
 
 def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboard, text_pos, animation_time):
     pos = 0
     if not status.is_inning_break(scoreboard.inning.state):
         pos = _render_batter_row(canvas, layout, colors, scoreboard.atbat, text_pos)
-        _render_pitcher_row(canvas, layout, colors, scoreboard.atbat, scoreboard.pitches)
+        _render_pitcher_row(canvas, layout, colors, scoreboard.atbat, scoreboard.pitches, text_pos)
         _render_divider(canvas, layout, colors)
 
         should_display_nohitter = layout.coords("nohitter")["innings_until_display"]
@@ -140,37 +142,40 @@ def __render_batter_name(canvas, layout, colors, atbat: AtBat, text_pos, stat_po
 
 
 # --------------- pitcher row (second) ---------------
-def _render_pitcher_row(canvas, layout, colors, atbat: AtBat, pitches: Pitches):
-    __render_pitcher_name(canvas, layout, colors, atbat)
+def _render_pitcher_row(canvas, layout, colors, atbat: AtBat, pitches: Pitches, text_pos):
+    __render_pitcher_name(canvas, layout, colors, atbat, text_pos)
     __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count_right(canvas, layout, colors, pitches)
 
 
-def __render_pitcher_name(canvas, layout, colors, atbat: AtBat):
+def __render_pitcher_name(canvas, layout, colors, atbat: AtBat, text_pos):
     coords = layout.coords("atbat.pitcher")
     font = layout.font("atbat.pitcher")
     color = colors.graphics_color("atbat.pitcher")
-    x, y, total_w = coords["x"], coords["y"], coords["width"]
+    bgcolor = colors.graphics_color("default.background")
+    x, y = coords["x"], coords["y"]
     fw = font["size"]["width"]
 
+    era_x = None
     era = atbat.pitcher_era
     if era:
         try:
             lbl_font = layout.font("atbat.batter_stats")
             lbl_color = colors.graphics_color("atbat.batter_stats_label")
             ew = lbl_font["size"]["width"]
-            era_px = (len(era) + 3) * ew   # value + "ERA"
-            name_chars = max(1, (total_w - era_px - 1) // fw)
-            graphics.DrawText(canvas, font["font"], x, y, color, atbat.pitcher[:name_chars])
-            era_x = x + name_chars * fw + 1
+            # Align ERA column with the batter AVG stat
+            era_x = __compute_stat_positions(atbat, layout)["leftmost_x"]
             graphics.DrawText(canvas, lbl_font["font"], era_x, y, color, era)
             graphics.DrawText(canvas, lbl_font["font"], era_x + len(era) * ew, y, lbl_color, "ERA")
-            return
         except KeyError:
-            pass
+            era_x = None
 
-    max_chars = total_w // fw
-    graphics.DrawText(canvas, font["font"], x, y, color, atbat.pitcher[:max_chars])
+    name_w = max(fw, (era_x - x - 1) if era_x is not None else coords["width"])
+    if len(atbat.pitcher) * fw <= name_w:
+        graphics.DrawText(canvas, font["font"], x, y, color, atbat.pitcher)
+    else:
+        scrolling_text(canvas, graphics, x, y, name_w, font, color, bgcolor,
+                       atbat.pitcher, text_pos, center=False)
 
 
 def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
@@ -268,10 +273,20 @@ def __render_baserunner(canvas, base, color):
 
 # --------------- count ---------------
 def _render_count(canvas, layout, colors, pitches: Pitches):
+    global _last_pitch_count, _pitch_overlay_time
     font = layout.font("batter_count")
     coords = layout.coords("batter_count")
     color = colors.graphics_color("batter_count")
-    text = "{}-{}".format(pitches.balls, pitches.strikes)
+
+    if int(pitches.last_pitch_speed) and pitches.pitch_count != _last_pitch_count:
+        _last_pitch_count = pitches.pitch_count
+        _pitch_overlay_time = time.time()
+
+    if _pitch_overlay_time and time.time() - _pitch_overlay_time < 2.0 and int(pitches.last_pitch_speed):
+        text = f"{pitches.last_pitch_speed} {pitches.last_pitch_type}"
+    else:
+        text = "{}-{}".format(pitches.balls, pitches.strikes)
+
     x = coords["x"] - len(text) * font["size"]["width"]
     graphics.DrawText(canvas, font["font"], x, coords["y"], color, text)
 

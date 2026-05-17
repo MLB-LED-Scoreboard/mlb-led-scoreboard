@@ -19,6 +19,8 @@ def render_pregame(
     if pregame_weather and pregame.pregame_weather:
         _render_weather_scroll(canvas, layout, colors, pregame, text_pos)
 
+    _render_divider(canvas, layout, colors)
+
     # Team rows: pitcher next to each team (scrolling if needed)
     p1 = _render_team_pitcher(canvas, layout, colors, "away", pregame.away_starter, text_pos)
     p2 = _render_team_pitcher(canvas, layout, colors, "home", pregame.home_starter, text_pos)
@@ -27,6 +29,15 @@ def render_pregame(
         pass  # series status could go in top row in a future iteration
 
     return max(p1, p2)
+
+
+def _render_divider(canvas, layout, colors):
+    try:
+        divider_y = layout.coords("teams.background.away")["y"] - 1
+    except KeyError:
+        divider_y = 27
+    color = colors.graphics_color("atbat.pitcher")
+    graphics.DrawLine(canvas, 0, divider_y, canvas.width - 1, divider_y, color)
 
 
 def _render_start_time(canvas, layout, colors, pregame):
