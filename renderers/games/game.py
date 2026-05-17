@@ -172,7 +172,7 @@ def __render_pitcher_name(canvas, layout, colors, atbat: AtBat, text_pos):
         except KeyError:
             era_x = None
 
-    name_w = max(fw, (era_x - x - 1) if era_x is not None else coords["width"])
+    name_w = max(fw, (era_x - x - fw - 1) if era_x is not None else coords["width"])
     if len(atbat.pitcher) * fw <= name_w:
         graphics.DrawText(canvas, font["font"], x, y, color, atbat.pitcher)
     else:
@@ -407,7 +407,7 @@ def _render_play_description(canvas, layout, colors, description, _text_pos):
                    description, _play_desc_pos, center=False, force_scroll=True)
 
     _play_desc_pos -= 1
-    if _play_desc_pos + total_px < x:
+    if _play_desc_pos + total_px < 0:
         _play_desc_pos = x + w
         _play_desc_finished = True
 
@@ -420,11 +420,11 @@ def _render_inning_display(canvas, layout, colors, inning: Inning):
     __render_inning_arrows(canvas, layout, colors, inning)
 
 
-def __render_inning_number(canvas, layout, colors, inning: Inning):
+def __render_inning_number(canvas, layout, colors, inning: Inning, display_number=None):
     coords = layout.coords("inning.number")
     font = layout.font("inning.number")
     color = colors.graphics_color("inning.number")
-    num_str = str(inning.number)
+    num_str = str(display_number if display_number is not None else inning.number)
 
     # Dynamically center between the two arrows
     up_y = layout.coords("inning.arrow.up")["y"]
@@ -495,8 +495,9 @@ def _render_inning_break(canvas, layout, colors, inning: Inning, animation_time)
         graphics.DrawLine(canvas, down["x"] - offset, down["y"] - offset,
                           down["x"] + offset, down["y"] - offset, down_color)
 
-    # Inning number (static)
-    __render_inning_number(canvas, layout, colors, inning)
+    # Inning number: END state means next half is top of the NEXT inning
+    display_number = inning.number + 1 if flash_up else inning.number
+    __render_inning_number(canvas, layout, colors, inning, display_number)
 
     # Empty bases (inactive color, no runners)
     for base in ("1B", "2B", "3B"):
