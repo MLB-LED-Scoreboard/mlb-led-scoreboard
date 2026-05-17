@@ -15,6 +15,7 @@ from renderers.games import nohitter
 
 _play_desc_pos = None
 _play_desc_last = None
+_play_desc_finished = False
 _last_pitch_count = None
 _pitch_overlay_time = None
 
@@ -34,7 +35,9 @@ def render_live_game(canvas, layout: Layout, colors: Color, scoreboard: Scoreboa
         _render_outs(canvas, layout, colors, scoreboard.outs)
         _render_bases(canvas, layout, colors, scoreboard.bases, scoreboard.homerun(), (animation_time % 16) // 5)
         _render_inning_display(canvas, layout, colors, scoreboard.inning)
-        _render_play_description(canvas, layout, colors, scoreboard.play_description, text_pos)
+        desc = scoreboard.play_description or _situation_text(scoreboard)
+        desc_scroll = _render_play_description(canvas, layout, colors, desc, text_pos)
+        pos = max(pos, desc_scroll)
     else:
         _render_inning_break(canvas, layout, colors, scoreboard.inning, animation_time)
         pos = _render_due_up(canvas, layout, colors, scoreboard.atbat, text_pos)
@@ -131,7 +134,7 @@ def __render_batter_name(canvas, layout, colors, atbat: AtBat, text_pos, stat_po
     if order_drawn:
         name_x += font["size"]["width"] - 2
 
-    max_width = max(10, stat_pos["leftmost_x"] - name_x - 2)
+    max_width = max(10, stat_pos["leftmost_x"] - name_x - 5)
     name = atbat.batter
 
     if len(name) * font["size"]["width"] <= max_width:
@@ -144,7 +147,6 @@ def __render_batter_name(canvas, layout, colors, atbat: AtBat, text_pos, stat_po
 # --------------- pitcher row (second) ---------------
 def _render_pitcher_row(canvas, layout, colors, atbat: AtBat, pitches: Pitches, text_pos):
     __render_pitcher_name(canvas, layout, colors, atbat, text_pos)
-    __render_pitch_text(canvas, layout, colors, pitches)
     __render_pitch_count_right(canvas, layout, colors, pitches)
 
 
@@ -210,6 +212,7 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
 
 
 def __render_pitch_count_right(canvas, layout, colors, pitches: Pitches):
+    global _last_pitch_count, _pitch_overlay_time
     try:
         coords = layout.coords("atbat.pitch_count_display")
         if not coords.get("enabled", True):
@@ -217,8 +220,18 @@ def __render_pitch_count_right(canvas, layout, colors, pitches: Pitches):
     except KeyError:
         return
     font = layout.font("atbat.pitch_count_display")
-    color = colors.graphics_color("atbat.pitch_count_display")
-    text = f"P:{pitches.pitch_count}"
+
+    if int(pitches.last_pitch_speed) and pitches.pitch_count != _last_pitch_count:
+        _last_pitch_count = pitches.pitch_count
+        _pitch_overlay_time = time.time()
+
+    if _pitch_overlay_time and time.time() - _pitch_overlay_time < 2.0 and int(pitches.last_pitch_speed):
+        text = f"{pitches.last_pitch_speed} {pitches.last_pitch_type}"
+        color = colors.graphics_color("atbat.pitch")
+    else:
+        text = f"P:{pitches.pitch_count}"
+        color = colors.graphics_color("atbat.pitch_count_display")
+
     x = coords["x"] - len(text) * font["size"]["width"]
     graphics.DrawText(canvas, font["font"], x, coords["y"], color, text)
 
@@ -273,20 +286,10 @@ def __render_baserunner(canvas, base, color):
 
 # --------------- count ---------------
 def _render_count(canvas, layout, colors, pitches: Pitches):
-    global _last_pitch_count, _pitch_overlay_time
     font = layout.font("batter_count")
     coords = layout.coords("batter_count")
     color = colors.graphics_color("batter_count")
-
-    if int(pitches.last_pitch_speed) and pitches.pitch_count != _last_pitch_count:
-        _last_pitch_count = pitches.pitch_count
-        _pitch_overlay_time = time.time()
-
-    if _pitch_overlay_time and time.time() - _pitch_overlay_time < 2.0 and int(pitches.last_pitch_speed):
-        text = f"{pitches.last_pitch_speed} {pitches.last_pitch_type}"
-    else:
-        text = "{}-{}".format(pitches.balls, pitches.strikes)
-
+    text = "{}-{}".format(pitches.balls, pitches.strikes)
     x = coords["x"] - len(text) * font["size"]["width"]
     graphics.DrawText(canvas, font["font"], x, coords["y"], color, text)
 
@@ -362,17 +365,32 @@ def __draw_challenge_square(canvas, x, y, size, color):
         graphics.DrawLine(canvas, x, y + dy, x + size - 1, y + dy, color)
 
 
+# --------------- situation text (fallback when no play description) -------
+def _situation_text(scoreboard: Scoreboard) -> str:
+    state = "Top" if scoreboard.inning.state == Inning.TOP else "Bot"
+    parts = [
+        f"{state} {scoreboard.inning.number}",
+        f"{scoreboard.pitches.balls}-{scoreboard.pitches.strikes}",
+        f"{scoreboard.outs.number} out",
+    ]
+    on = [name for name, r in zip(("1B", "2B", "3B"), scoreboard.bases.runners) if r]
+    if on:
+        parts.append("+".join(on))
+    return "  ·  ".join(parts)
+
+
 # --------------- play description scroll (bottom right) ---------------
 def _render_play_description(canvas, layout, colors, description, _text_pos):
-    global _play_desc_pos, _play_desc_last
+    global _play_desc_pos, _play_desc_last, _play_desc_finished
     try:
         coords = layout.coords("atbat.play_description")
     except KeyError:
-        return
+        return 0
     if not description:
         _play_desc_pos = None
         _play_desc_last = None
-        return
+        _play_desc_finished = True
+        return 0
 
     font = layout.font("atbat.play_description")
     color = colors.graphics_color("atbat.play_result")
@@ -383,6 +401,7 @@ def _render_play_description(canvas, layout, colors, description, _text_pos):
     if description != _play_desc_last:
         _play_desc_pos = x + w
         _play_desc_last = description
+        _play_desc_finished = False
 
     scrolling_text(canvas, graphics, x, y, w, font, color, bgcolor,
                    description, _play_desc_pos, center=False, force_scroll=True)
@@ -390,6 +409,9 @@ def _render_play_description(canvas, layout, colors, description, _text_pos):
     _play_desc_pos -= 1
     if _play_desc_pos + total_px < x:
         _play_desc_pos = x + w
+        _play_desc_finished = True
+
+    return 0 if _play_desc_finished else total_px
 
 
 # --------------- inning display ---------------

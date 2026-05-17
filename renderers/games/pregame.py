@@ -78,9 +78,9 @@ def _render_second_row(canvas, layout, colors, pregame: Pregame, pregame_weather
     text_px = len(text) * font["size"]["width"]
     if text_px <= coords["width"]:
         graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
-    else:
-        scrolling_text(canvas, graphics, coords["x"], coords["y"], coords["width"],
-                       font, color, bgcolor, text, text_pos)
+        return 0
+    return scrolling_text(canvas, graphics, coords["x"], coords["y"], coords["width"],
+                          font, color, bgcolor, text, text_pos)
 
 
 def _render_team_pitcher(canvas, layout, colors, side, pitcher_text, text_pos):
