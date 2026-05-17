@@ -391,13 +391,19 @@ class Game:
 
     def game_recap_blurb(self):
         try:
-            return self._fetch_game_content()["editorial"]["recap"]["mlb"]["blurb"] or ""
+            mlb = self._fetch_game_content()["editorial"]["recap"]["mlb"]
+            headline = mlb.get("headline", "")
+            subhead = mlb.get("subhead", "")
+            return " ".join((" — ".join(filter(None, [headline, subhead]))).split())
         except (KeyError, TypeError):
             return ""
 
     def game_preview_blurb(self):
         try:
-            return self._fetch_game_content()["editorial"]["preview"]["mlb"]["blurb"] or ""
+            mlb = self._fetch_game_content()["editorial"]["preview"]["mlb"]
+            headline = mlb.get("headline", "")
+            subhead = mlb.get("subhead", "")
+            return " ".join((" — ".join(filter(None, [headline, subhead]))).split())
         except (KeyError, TypeError):
             return ""
 
@@ -445,6 +451,8 @@ class Game:
             return None
 
     def __should_update(self):
+        if self._status.get("abstractGameState") == "Final":
+            return False
         endtime = time.time()
         time_delta = endtime - self.starttime
         return time_delta >= self._api_refresh_rate
@@ -462,6 +470,8 @@ class Game:
         LOGGER.debug("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
         LOGGER.debug("Game is %d seconds behind", self.current_delay())
         LOGGER.debug("Play description: %s", self.current_play_description())
+        LOGGER.debug("Recap blurb: %s", self.game_recap_blurb())
+        LOGGER.debug("Preview blurb: %s", self.game_preview_blurb())
         LOGGER.debug("Pre: %s", Pregame(self, TIME_FORMAT_24H))
         LOGGER.debug("Live: %s", Scoreboard(self))
         LOGGER.debug("Final: %s", Postgame(self))

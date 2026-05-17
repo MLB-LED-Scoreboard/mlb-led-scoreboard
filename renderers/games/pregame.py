@@ -16,7 +16,7 @@ def render_pregame(
         _render_start_time(canvas, layout, colors, pregame)
 
     # Second row: weather + preview blurb combined, scrolling full width
-    _render_second_row(canvas, layout, colors, pregame, pregame_weather, text_pos)
+    second_row_pos = _render_second_row(canvas, layout, colors, pregame, pregame_weather, text_pos)
 
     _render_divider(canvas, layout, colors)
 
@@ -27,7 +27,7 @@ def render_pregame(
     if is_playoffs:
         pass  # series status could go in top row in a future iteration
 
-    return max(p1, p2)
+    return max(p1, p2, second_row_pos or 0)
 
 
 def _render_divider(canvas, layout, colors):

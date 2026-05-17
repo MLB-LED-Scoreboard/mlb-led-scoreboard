@@ -236,12 +236,12 @@
       }
     },
     "start_time": {
-      "font_name": "5x7",
+      "font_name": "6x9",
       "x": 64,
       "y": 10
     },
     "warmup_text": {
-      "font_name": "5x7",
+      "font_name": "6x9",
       "x": 64,
       "y": 10
     },

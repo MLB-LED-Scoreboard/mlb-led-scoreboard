@@ -13,9 +13,10 @@ def render_postgame(
     canvas, layout: Layout, colors: Color, postgame: Postgame, scoreboard: Scoreboard, text_pos, is_playoffs
 ):
     _render_final_text(canvas, layout, colors, scoreboard)
-    _render_recap_blurb(canvas, layout, colors, postgame.recap_blurb, text_pos)
+    blurb_pos = _render_recap_blurb(canvas, layout, colors, postgame.recap_blurb, text_pos)
     _render_divider(canvas, layout, colors)
-    return _render_decision_rows(canvas, layout, colors, postgame, scoreboard, text_pos, is_playoffs)
+    decision_pos = _render_decision_rows(canvas, layout, colors, postgame, scoreboard, text_pos, is_playoffs)
+    return max(blurb_pos or 0, decision_pos or 0)
 
 
 def _render_recap_blurb(canvas, layout, colors, blurb, text_pos):
@@ -96,9 +97,18 @@ def _render_row_pitcher(canvas, layout, colors, side, text, text_pos):
     font = layout.font(f"final.{side}_pitcher")
     color = colors.graphics_color("atbat.pitcher")
     bgcolor = colors.graphics_color("default.background")
+    x, y, width = coords["x"], coords["y"], coords["width"]
+    fw = font["size"]["width"]
+    total_px = len(text) * fw
 
-    if len(text) * font["size"]["width"] <= coords["width"]:
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
+    if total_px <= width:
+        graphics.DrawText(canvas, font["font"], x, y, color, text)
         return 0
-    return scrolling_text(canvas, graphics, coords["x"], coords["y"], coords["width"],
-                          font, color, bgcolor, text, text_pos)
+
+    # Loop continuously so W/L text keeps scrolling while the blurb runs.
+    # Compute position within the scroll cycle so the text wraps back to
+    # the right edge as soon as it exits the left edge of the window.
+    cycle = total_px + width
+    entered = (x + width) - text_pos   # distance traveled into the window
+    pos = (x + width) - (max(0, entered) % cycle)
+    return scrolling_text(canvas, graphics, x, y, width, font, color, bgcolor, text, pos, center=False)
