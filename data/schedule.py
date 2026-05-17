@@ -28,11 +28,15 @@ class Schedule:
         # the (filtered) schedule
         self._games: list[dict[str, Any]] = []
         self.priority = 0
+        self._game_cache: dict[int, Game] = {}
         self.update(True)
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            self.date = self.config.parse_today()
+            new_date = self.config.parse_today()
+            if new_date != self.date:
+                self._game_cache.clear()
+            self.date = new_date
             LOGGER.debug("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
@@ -93,9 +97,21 @@ class Schedule:
     def __current_game(self, unless: Optional[Game] = None) -> Optional[Game]:
         try:
             scheduled_game = self._games[self.current_idx]
-            if unless and scheduled_game["game_id"] == unless.game_id:
+            game_id = scheduled_game["game_id"]
+
+            if unless and game_id == unless.game_id:
                 return unless
-            return Game.from_scheduled(scheduled_game, self.config)
+
+            # Serve Final games from cache — no point re-fetching until end_of_day resets the day
+            cached = self._game_cache.get(game_id)
+            if cached and cached._status.get("abstractGameState") == "Final":
+                LOGGER.debug("Serving cached Final game %s", game_id)
+                return cached
+
+            game = Game.from_scheduled(scheduled_game, self.config)
+            if game is not None:
+                self._game_cache[game_id] = game
+            return game
         except IndexError:
             return None
 
