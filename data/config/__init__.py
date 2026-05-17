@@ -436,6 +436,9 @@ def _get_playoff_start_date(year: int):
 def _extract_uniform_types(teams_json: dict) -> dict:
     uniform_types = {}
 
+    if not teams_json.get("allow_special_uniforms", False):
+        return uniform_types
+
     for team_data in teams_json.values():
         if not isinstance(team_data, dict):
             continue

@@ -19,6 +19,7 @@
       "default": 9.0,
       "x-hidden": true
     },
+    "allow_special_uniforms": { "type": "boolean" },
     "az":  { "$ref": "#/$defs/team_colors" },
     "atl": { "$ref": "#/$defs/team_colors" },
     "bal": { "$ref": "#/$defs/team_colors" },
@@ -106,6 +107,7 @@
   "default": {
     "x-schema": "./../schemas/colors/teams.schema.json",
     "format": 9.0,
+    "allow_special_uniforms": true,
     "az":  {
         "home": {"r": 166, "g": 25,  "b": 46 }, "text": {"r": 217, "g": 200, "b": 157}, "accent": {"r": 0,   "g": 0,   "b": 0  },
         "city_connect": {
