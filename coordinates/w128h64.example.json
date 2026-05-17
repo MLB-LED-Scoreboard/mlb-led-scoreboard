@@ -45,6 +45,12 @@
     "nohit_text": {
       "x": 1,
       "y": 25
+    },
+    "recap_blurb": {
+      "font_name": "5x7",
+      "x": 0,
+      "y": 25,
+      "width": 128
     }
   },
   "inning": {
@@ -304,13 +310,13 @@
   "teams": {
     "background": {
       "away": {
-        "width": 49,
+        "width": 52,
         "height": 18,
         "x": 0,
         "y": 28
       },
       "home": {
-        "width": 49,
+        "width": 52,
         "height": 18,
         "x": 0,
         "y": 46
@@ -332,13 +338,13 @@
     },
     "name": {
       "away": {
-        "font_name": "7x13",
-        "x": 6,
+        "font_name": "9x18",
+        "x": 4,
         "y": 42
       },
       "home": {
-        "font_name": "7x13",
-        "x": 6,
+        "font_name": "9x18",
+        "x": 4,
         "y": 60
       }
     },
@@ -360,25 +366,25 @@
       "shorten_team_name_on_high_line_score": false,
       "spacing": 0,
       "away": {
-        "font_name": "7x13B",
-        "x": 48,
+        "font_name": "9x18B",
+        "x": 51,
         "y": 42
       },
       "home": {
-        "font_name": "7x13B",
-        "x": 48,
+        "font_name": "9x18B",
+        "x": 51,
         "y": 60
       }
     },
     "abs_challenges": {
       "away": {
-        "x": 50,
+        "x": 53,
         "squares": [31, 38],
         "size": 4,
         "enabled": true
       },
       "home": {
-        "x": 50,
+        "x": 53,
         "squares": [49, 56],
         "size": 4,
         "enabled": true

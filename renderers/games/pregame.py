@@ -15,9 +15,8 @@ def render_pregame(
     else:
         _render_start_time(canvas, layout, colors, pregame)
 
-    # Second row: weather scrolling full width
-    if pregame_weather and pregame.pregame_weather:
-        _render_weather_scroll(canvas, layout, colors, pregame, text_pos)
+    # Second row: weather + preview blurb combined, scrolling full width
+    _render_second_row(canvas, layout, colors, pregame, pregame_weather, text_pos)
 
     _render_divider(canvas, layout, colors)
 
@@ -58,7 +57,7 @@ def _render_warmup(canvas, layout, colors, pregame):
     graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
 
 
-def _render_weather_scroll(canvas, layout, colors, pregame: Pregame, text_pos):
+def _render_second_row(canvas, layout, colors, pregame: Pregame, pregame_weather, text_pos):
     try:
         coords = layout.coords("pregame.weather_scroll")
     except KeyError:
@@ -66,9 +65,16 @@ def _render_weather_scroll(canvas, layout, colors, pregame: Pregame, text_pos):
     font = layout.font("pregame.weather_scroll")
     color = colors.graphics_color("pregame.scrolling_text")
     bgcolor = colors.graphics_color("default.background")
-    text = pregame.pregame_weather or ""
+
+    parts = []
+    if pregame_weather and pregame.pregame_weather:
+        parts.append(pregame.pregame_weather)
+    if pregame.preview_blurb:
+        parts.append(pregame.preview_blurb)
+    text = "  —  ".join(parts)
     if not text:
         return
+
     text_px = len(text) * font["size"]["width"]
     if text_px <= coords["width"]:
         graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)

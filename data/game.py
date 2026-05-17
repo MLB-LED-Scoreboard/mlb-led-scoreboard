@@ -371,6 +371,36 @@ class Game:
             return self._last_play_description
         return ""
 
+    def _fetch_game_content(self):
+        """Fetch and cache game editorial content (recap/preview blurbs). Cached 5 min."""
+        now = time.time()
+        if (hasattr(self, "_game_content_cache") and
+                now - getattr(self, "_game_content_cache_time", 0) < 300):
+            return self._game_content_cache
+        try:
+            content = statsapi.get(
+                "game_content",
+                {"gamePk": self.game_id},
+                request_kwargs={"headers": data.headers.API_HEADERS},
+            )
+            self._game_content_cache = content
+            self._game_content_cache_time = now
+            return content
+        except Exception:
+            return {}
+
+    def game_recap_blurb(self):
+        try:
+            return self._fetch_game_content()["editorial"]["recap"]["mlb"]["blurb"] or ""
+        except (KeyError, TypeError):
+            return ""
+
+    def game_preview_blurb(self):
+        try:
+            return self._fetch_game_content()["editorial"]["preview"]["mlb"]["blurb"] or ""
+        except (KeyError, TypeError):
+            return ""
+
     def abs_challenges_remaining(self, side):
         try:
             return self._current_data["gameData"]["absChallenges"][side]["remaining"]

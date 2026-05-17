@@ -13,8 +13,23 @@ def render_postgame(
     canvas, layout: Layout, colors: Color, postgame: Postgame, scoreboard: Scoreboard, text_pos, is_playoffs
 ):
     _render_final_text(canvas, layout, colors, scoreboard)
+    _render_recap_blurb(canvas, layout, colors, postgame.recap_blurb, text_pos)
     _render_divider(canvas, layout, colors)
     return _render_decision_rows(canvas, layout, colors, postgame, scoreboard, text_pos, is_playoffs)
+
+
+def _render_recap_blurb(canvas, layout, colors, blurb, text_pos):
+    if not blurb:
+        return
+    try:
+        coords = layout.coords("final.recap_blurb")
+    except KeyError:
+        return
+    font = layout.font("final.recap_blurb")
+    color = colors.graphics_color("atbat.pitcher")
+    bgcolor = colors.graphics_color("default.background")
+    return scrolling_text(canvas, graphics, coords["x"], coords["y"], coords["width"],
+                          font, color, bgcolor, blurb, text_pos)
 
 
 def _render_divider(canvas, layout, colors):
