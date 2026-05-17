@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 import bullpen.api as api
-from bullpen.util import center_text_position
+from bullpen.util import center_text_position, scrolling_text
 
 from .config import Config
 from .data import PowerwallData
@@ -36,7 +36,9 @@ _FLOW_R_X   = 80   # battery→home gap start x
 _FLOW_W     = 16   # width of each gap
 _FLOW_Y     = 15   # y center of flow dots
 
-_VALUE_Y    = 44   # text baseline for values below icons
+_VALUE_Y    = 44   # text baseline for main values (7x13 font)
+_BATT_KW_Y  = 54   # text baseline for battery kW row (5x7 font)
+_SCROLL_Y   = 63   # text baseline for solar kWh scroll (4x6 font)
 
 
 class Renderer(api.PluginRenderer["PowerwallData"]):
@@ -64,7 +66,9 @@ class Renderer(api.PluginRenderer["PowerwallData"]):
         self.home_val_c     = colors.graphics_color("powerwall.home_value")
         self.batt_val_c     = colors.graphics_color("powerwall.battery_value")
 
-        self._font = layout.font("powerwall.value_font")
+        self._font       = layout.font("powerwall.value_font")   # 7x13 default
+        self._small_font = layout.font("atbat.pitcher")           # 5x7
+        self._tiny_font  = layout.font("atbat.batter_stats")      # 4x6
 
         # Optional user-supplied PNG icons (32×32 RGBA). Falls back to code-drawn.
         self._solar_png       = _load_png("solar")
@@ -123,16 +127,30 @@ class Renderer(api.PluginRenderer["PowerwallData"]):
         elif data.is_discharging:
             self._flow(canvas, _FLOW_R_X, _FLOW_W, _FLOW_Y, self.flow_batt, rightward=False)
 
-        # ── Values ─────────────────────────────────────────────────────────────
+        # ── Main values row ────────────────────────────────────────────────────
         self._value(canvas, graphics, _SOLAR_CX, f"{data.solar_kw:.1f}kW", self.solar_val_c)
         self._value(canvas, graphics, _HOME_CX,  f"{data.home_kw:.1f}kW",  self.home_val_c)
 
         if data.is_grid_active:
-            self._value(canvas, graphics, _BATT_CX, "GRID", self.flow_grid)
+            self._value(canvas, graphics, _BATT_CX, f"-{data.grid_kw:.1f}kW", self.flow_grid)
         else:
             self._value(canvas, graphics, _BATT_CX, f"{int(round(data.charge_pct))}%", self.batt_val_c)
 
+        # ── Battery kW row (always shown when active) ──────────────────────────
+        if abs(data.battery_kw) > 0.05:
+            batt_kw_text = f"{data.battery_kw:.1f}kW"
+            batt_kw_color = self.fill_high if data.is_charging else self.batt_val_c
+            self._small_value(canvas, graphics, _BATT_CX, batt_kw_text, batt_kw_color)
+
+        # ── Solar kWh today scroll ─────────────────────────────────────────────
         self._phase = (self._phase + 1) % 480
+        if data.solar_kwh_today > 0:
+            scroll_text = f"Solar today: {data.solar_kwh_today:.1f} kWh"
+            color = self.solar_val_c
+            bgcolor = self.bg
+            return scrolling_text(canvas, graphics, 0, _SCROLL_Y, canvas.width,
+                                  self._tiny_font, color, bgcolor, scroll_text,
+                                  scrolling_text_pos, center=False, force_scroll=True)
         return None
 
     # ── Icon renderers ─────────────────────────────────────────────────────────
@@ -316,3 +334,8 @@ class Renderer(api.PluginRenderer["PowerwallData"]):
         char_w = self._font["size"]["width"]
         x = center_text_position(text, center_x, char_w)
         graphics.DrawText(canvas, self._font["font"], x, _VALUE_Y, color, text)
+
+    def _small_value(self, canvas, graphics, center_x, text, color):
+        char_w = self._small_font["size"]["width"]
+        x = center_text_position(text, center_x, char_w)
+        graphics.DrawText(canvas, self._small_font["font"], x, _BATT_KW_Y, color, text)

@@ -24,6 +24,9 @@ class PowerwallData(PluginData):
         self.operation_mode = "—"
         self.grid_status = "—"
         self.available = False
+        self.solar_kwh_today = 0.0
+        self._solar_energy_base_wh: float | None = None
+        self._solar_energy_base_date: str | None = None
 
         # A single persistent event loop keeps the aiohttp session alive so we
         # only hit the rate-limited login endpoint once.
@@ -69,6 +72,19 @@ class PowerwallData(PluginData):
             self.is_charging = self.battery_kw < -0.05
             self.is_discharging = self.battery_kw > 0.05
             self.is_grid_active = self.grid_kw > 0.05
+
+            try:
+                from datetime import date as _date
+                today_str = _date.today().isoformat()
+                solar_total_wh = getattr(meters.solar, "energy_exported", None)
+                if solar_total_wh is not None:
+                    solar_total_wh = float(solar_total_wh)
+                    if self._solar_energy_base_date != today_str or self._solar_energy_base_wh is None:
+                        self._solar_energy_base_wh = solar_total_wh
+                        self._solar_energy_base_date = today_str
+                    self.solar_kwh_today = max(0.0, (solar_total_wh - self._solar_energy_base_wh) / 1000.0)
+            except (TypeError, ValueError, AttributeError):
+                pass
 
             try:
                 mode = await self._pw.get_operation_mode()
