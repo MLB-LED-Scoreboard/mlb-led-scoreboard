@@ -24,11 +24,9 @@ def render_team_banner(
     accent_coords["home"] = layout.coords("teams.accent.home")
 
     for team in ["away", "home"]:
-        # Background
         bg_color = home_colors["home"] if team == "home" else away_colors["home"]
         __draw_filled_box(canvas, bg_coords[team], bg_color)
 
-        # Accent
         accent_color = home_colors["accent"] if team == "home" else away_colors["accent"]
         __draw_filled_box(canvas, accent_coords[team], accent_color)
 
@@ -42,7 +40,6 @@ def render_team_banner(
         __render_record_text(canvas, layout, home_colors["text"], home_team, "home", home_name_end_pos)
 
     if show_score:
-        # Number of characters in each score.
         score_spacing = {
             "runs": max(len(str(away_team.runs)), len(str(home_team.runs))),
             "hits": max(len(str(away_team.hits)), len(str(home_team.hits))),
@@ -53,47 +50,30 @@ def render_team_banner(
 
 
 def can_use_full_team_names(layout, teams):
-
-    # Global setting is disabled
     if not layout.coords("teams.name").get("full", False):
         return False
 
-    # Setting for abbreviating if a line score contains more than 3 total digits (i.e. R, H, or E >= 10)
     if layout.coords("teams.line_score").get("shorten_team_name_on_high_line_score", False):
-
-        # For each team, check digits for each line score item. Disable full names if any exceed a single digit.
-        # A 10 error game would be rough, but the edge case is covered...
         for team in teams:
             if team.runs > 9 or team.hits > 9 or team.errors > 9:
                 return False
-
-        # No line score column has overflowed
         return True
 
-    # Global setting is enabled
     return True
 
 
 def can_show_record_text(layout, teams):
     record_coords = layout.coords("teams.record")
 
-    # Global setting is disabled
     if not record_coords.get("enabled", False):
         return False
 
-    # Setting for hiding if a line score contains more than 3 total digits (i.e. R, H, or E >= 10)
     if record_coords.get("hide_record_on_high_line_score", False):
-
-        # For each team, check digits for each line score item. Disable full names if any exceed a single digit.
-        # A 10 error game would be rough, but the edge case is covered...
         for team in teams:
             if team.runs > 9 or team.hits > 9 or team.errors > 9:
                 return False
-
-        # No line score column has overflowed
         return True
 
-    # Global setting is enabled
     return True
 
 
@@ -101,9 +81,19 @@ def __render_team_text(canvas, layout, text_color, team, homeaway, full_team_nam
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     coords = layout.coords("teams.name.{}".format(homeaway))
     font = layout.font("teams.name.{}".format(homeaway))
-    team_text = "{:3s}".format(team.abbrev.upper()).strip()
+    team_text = "{:>3s}".format(team.abbrev.upper())
     if full_team_names:
         team_text = "{:13s}".format(team.name).strip()
+
+    # Clamp to available space before the score column
+    font_w = font["size"]["width"]
+    try:
+        score_x = layout.coords(f"teams.line_score.{homeaway}")["x"]
+        max_chars = max(3, (score_x - coords["x"]) // font_w)
+        team_text = team_text[:max_chars]
+    except KeyError:
+        pass
+
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
     return (coords["x"] + (len(team_text) * font["size"]["width"]), coords["y"])
@@ -128,22 +118,19 @@ def __render_record_text(canvas, layout, text_color, team, homeaway, origin):
 
 
 def __render_score_component(canvas, layout, text_color, homeaway, coords, component_val, width_chars):
-    # The coords passed in are the rightmost pixel.
     font = layout.font(f"teams.line_score.{homeaway}")
     font_width = font["size"]["width"]
-    # Number of pixels between runs/hits and hits/errors.
     line_score_coords = layout.coords("teams.line_score")
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])
     component_val = str(component_val)
-    # Draw each digit from right to left.
     for i, c in enumerate(component_val[::-1]):
         if i > 0 and line_score_coords["compress_digits"]:
             coords["x"] += 1
-        char_draw_x = coords["x"] - font_width * (i + 1)  # Determine character position
+        char_draw_x = coords["x"] - font_width * (i + 1)
         graphics.DrawText(canvas, font["font"], char_draw_x, coords["y"], text_color_graphic, c)
     if line_score_coords["compress_digits"]:
-        coords["x"] += width_chars - len(component_val)  # adjust for compaction on values not rendered
-    coords["x"] -= font_width * width_chars + line_score_coords["spacing"] - 1  # adjust coordinates for next score.
+        coords["x"] += width_chars - len(component_val)
+    coords["x"] -= font_width * width_chars + line_score_coords["spacing"] - 1
 
 
 def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacing):
@@ -156,10 +143,8 @@ def __render_team_score(canvas, layout, text_color, team, homeaway, score_spacin
 
 def __draw_filled_box(canvas, coords, color):
     c = graphics.Color(color["r"], color["g"], color["b"])
-
     x = coords["x"]
     y = coords["y"]
     w = coords["width"]
-
     for h in range(coords["height"]):
         graphics.DrawLine(canvas, x, y + h, x + w, y + h, c)

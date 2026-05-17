@@ -102,6 +102,20 @@ class MainRenderer:
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
 
+        elif status.is_in_game_review(game.status()):  # Challenge or umpire review — keep live display
+            reason = scoreboard.get_text_for_reason()
+            if reason:
+                scoreboard.play_description = reason
+            if status.is_inning_break(scoreboard.inning.state):
+                loop_point = self.data.config.layout.coords("inning.break.due_up")["loop"]
+            else:
+                loop_point = self.data.config.layout.coords("atbat")["loop"]
+            self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
+            pos = gamerender.render_live_game(
+                self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time
+            )
+            self.__update_scrolling_text_pos(pos, loop_point)
+
         elif status.is_irregular(game.status()):  # Draw game status
             short_text = self.data.config.layout.coords("status.text")["short_text"]
             if scoreboard.get_text_for_reason():

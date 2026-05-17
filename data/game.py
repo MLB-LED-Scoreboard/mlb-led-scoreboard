@@ -26,7 +26,9 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind,metaData,timeStamp"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,batting,avg,homeRuns,rbi,battingOrder,"
+    + "weather,condition,temp,wind,metaData,timeStamp,"
+    + "review,absChallenges,hasChallenges,usedSuccessful,usedFailed,remaining"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -356,6 +358,58 @@ class Game:
             result += "_looking"
         return result
 
+    def current_play_description(self):
+        try:
+            desc = self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        except (KeyError, TypeError):
+            desc = ""
+        if desc:
+            self._last_play_description = desc
+        return getattr(self, "_last_play_description", "")
+
+    def abs_challenges_remaining(self, side):
+        try:
+            return self._current_data["gameData"]["absChallenges"][side]["remaining"]
+        except (KeyError, TypeError):
+            return None
+
+    def batter_stat(self, stat):
+        try:
+            batter_id = self._current_data["liveData"]["linescore"]["offense"]["batter"]["id"]
+            ID = Game._format_id(batter_id)
+            try:
+                stats = self._current_data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["seasonStats"]["batting"]
+            except (KeyError, TypeError):
+                stats = self._current_data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["seasonStats"]["batting"]
+            return stats.get(stat)
+        except (KeyError, TypeError):
+            return None
+
+    def pitcher_era(self):
+        try:
+            pitcher_id = self._current_data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            ID = Game._format_id(pitcher_id)
+            try:
+                era = self._current_data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["seasonStats"]["pitching"]["era"]
+            except (KeyError, TypeError):
+                era = self._current_data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["seasonStats"]["pitching"]["era"]
+            return str(era)
+        except (KeyError, TypeError):
+            return None
+
+    def batter_batting_order(self):
+        try:
+            batter_id = self._current_data["liveData"]["linescore"]["offense"]["batter"]["id"]
+            ID = Game._format_id(batter_id)
+            try:
+                order = self._current_data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["battingOrder"]
+            except (KeyError, TypeError):
+                order = self._current_data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["battingOrder"]
+            # battingOrder is a 3-digit string like "800" for 8th batter
+            return int(order) // 100
+        except (KeyError, TypeError, ValueError):
+            return None
+
     def __should_update(self):
         endtime = time.time()
         time_delta = endtime - self.starttime
@@ -373,6 +427,7 @@ class Game:
     def print_game_data_debug(self):
         LOGGER.debug("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
         LOGGER.debug("Game is %d seconds behind", self.current_delay())
+        LOGGER.debug("Play description: %s", self.current_play_description())
         LOGGER.debug("Pre: %s", Pregame(self, TIME_FORMAT_24H))
         LOGGER.debug("Live: %s", Scoreboard(self))
         LOGGER.debug("Final: %s", Postgame(self))

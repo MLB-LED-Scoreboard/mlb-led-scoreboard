@@ -7,59 +7,76 @@ from bullpen.util import center_text_position, scrolling_text
 
 
 def render_pregame(
-    canvas, layout: Layout, colors: Color, pregame: Pregame, probable_starter_pos, pregame_weather, is_playoffs
+    canvas, layout: Layout, colors: Color, pregame: Pregame, text_pos, pregame_weather, is_playoffs
 ):
-    text_len = _render_pregame_info(canvas, layout, colors, pregame, probable_starter_pos, pregame_weather, is_playoffs)
-
+    # Top row: start time (or Warmup) centered
     if layout.state_is_warmup():
         _render_warmup(canvas, layout, colors, pregame)
     else:
         _render_start_time(canvas, layout, colors, pregame)
 
-    return text_len
+    # Second row: weather scrolling full width
+    if pregame_weather and pregame.pregame_weather:
+        _render_weather_scroll(canvas, layout, colors, pregame, text_pos)
+
+    # Team rows: pitcher next to each team (scrolling if needed)
+    p1 = _render_team_pitcher(canvas, layout, colors, "away", pregame.away_starter, text_pos)
+    p2 = _render_team_pitcher(canvas, layout, colors, "home", pregame.home_starter, text_pos)
+
+    if is_playoffs:
+        pass  # series status could go in top row in a future iteration
+
+    return max(p1, p2)
 
 
 def _render_start_time(canvas, layout, colors, pregame):
-    time_text = pregame.start_time
+    text = pregame.start_time
     coords = layout.coords("pregame.start_time")
     font = layout.font("pregame.start_time")
     color = colors.graphics_color("pregame.start_time")
-    time_x = center_text_position(time_text, coords["x"], font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], time_x, coords["y"], color, time_text)
+    text_x = center_text_position(text, coords["x"], font["size"]["width"])
+    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
 
 
 def _render_warmup(canvas, layout, colors, pregame):
-    warmup_text = pregame.status
+    text = pregame.status
     coords = layout.coords("pregame.warmup_text")
     font = layout.font("pregame.warmup_text")
     color = colors.graphics_color("pregame.warmup_text")
-    warmup_x = center_text_position(warmup_text, coords["x"], font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], warmup_x, coords["y"], color, warmup_text)
+    text_x = center_text_position(text, coords["x"], font["size"]["width"])
+    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
 
 
-def _render_pregame_info(canvas, layout, colors, pregame: Pregame, probable_starter_pos, pregame_weather, is_playoffs):
-    coords = layout.coords("pregame.scrolling_text")
-    font = layout.font("pregame.scrolling_text")
+def _render_weather_scroll(canvas, layout, colors, pregame: Pregame, text_pos):
+    try:
+        coords = layout.coords("pregame.weather_scroll")
+    except KeyError:
+        return
+    font = layout.font("pregame.weather_scroll")
     color = colors.graphics_color("pregame.scrolling_text")
     bgcolor = colors.graphics_color("default.background")
-    pitchers_text = pregame.away_starter + " vs " + pregame.home_starter
-    if pregame.national_broadcasts:
-        pitchers_text += " TV: " + ", ".join(pregame.national_broadcasts)
-    if pregame_weather and pregame.pregame_weather:
-        pitchers_text += " Weather: " + pregame.pregame_weather
+    text = pregame.pregame_weather or ""
+    if not text:
+        return
+    text_px = len(text) * font["size"]["width"]
+    if text_px <= coords["width"]:
+        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
+    else:
+        scrolling_text(canvas, graphics, coords["x"], coords["y"], coords["width"],
+                       font, color, bgcolor, text, text_pos)
 
-    if is_playoffs:
-        pitchers_text += "   " + pregame.series_status
 
-    return scrolling_text(
-        canvas,
-        graphics,
-        coords["x"],
-        coords["y"],
-        coords["width"],
-        font,
-        color,
-        bgcolor,
-        pitchers_text,
-        probable_starter_pos,
-    )
+def _render_team_pitcher(canvas, layout, colors, side, pitcher_text, text_pos):
+    try:
+        coords = layout.coords(f"pregame.{side}_pitcher")
+    except KeyError:
+        return 0
+    font = layout.font(f"pregame.{side}_pitcher")
+    color = colors.graphics_color("atbat.pitcher")
+    bgcolor = colors.graphics_color("default.background")
+
+    if len(pitcher_text) * font["size"]["width"] <= coords["width"]:
+        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitcher_text)
+        return 0
+    return scrolling_text(canvas, graphics, coords["x"], coords["y"], coords["width"],
+                          font, color, bgcolor, pitcher_text, text_pos)
