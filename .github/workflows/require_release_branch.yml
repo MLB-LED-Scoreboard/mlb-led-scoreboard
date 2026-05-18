@@ -2,6 +2,7 @@ name: Require release branch
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
   check_branch:
