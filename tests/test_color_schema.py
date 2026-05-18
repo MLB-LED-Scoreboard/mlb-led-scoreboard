@@ -5,7 +5,7 @@ class TestColorSchema(unittest.TestCase):
 
     ERROR_LIMIT = 10
     REQUIRED_KEYS = ["home", "text", "accent"]
-    METADATA_KEYS = ["$schema", "format"]
+    METADATA_KEYS = ["$schema", "format", "allow_special_uniforms"]
     CITY_CONNECT_KEY = "city_connect"
 
     def setUp(self):

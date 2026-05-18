@@ -1,6 +1,7 @@
 {
   "$schema": "./../schemas/colors/teams.schema.json",
   "format": 9.0,
+  "allow_special_uniforms": true,
   "az": {
     "home": {
       "r": 166,
@@ -236,6 +237,23 @@
         "r": 239,
         "g": 239,
         "b": 237
+      }
+    },
+    "cincy": {
+      "home": {
+        "r": 51,
+        "g": 51,
+        "b": 51
+      },
+      "text": {
+        "r": 190,
+        "g": 27,
+        "b": 64
+      },
+      "accent": {
+        "r": 0,
+        "g": 0,
+        "b": 0
       }
     }
   },

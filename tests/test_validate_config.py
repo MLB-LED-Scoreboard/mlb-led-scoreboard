@@ -84,7 +84,7 @@ class TestValidateConfigMethods(unittest.TestCase):
 
                 ROOT_IGNORED_KEYS = ["matrix-*", "plugins-*"]
                 COORDINATES_IGNORED_KEYS = ["font_name", "no_hitter", "perfect_game", "warmup", "plugins-*"]
-                COLORS_IGNORED_KEYS = ["city_connect", "plugins-*"]
+                COLORS_IGNORED_KEYS = ["plugins-*"]
                 self.assertEqual(
                     custom_config_files(),
                     [
@@ -92,12 +92,12 @@ class TestValidateConfigMethods(unittest.TestCase):
                         (
                             COORDINATES_DIRECTORY,
                             "config.json",
-                            {"ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {"offday": "news"}},
+                            {"ignored_keys": COORDINATES_IGNORED_KEYS, "renamed_keys": {}},
                         ),
                         (
                             COLORS_DIRECTORY,
                             "config.json",
-                            {"ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {"offday": "news"}},
+                            {"ignored_keys": COLORS_IGNORED_KEYS, "renamed_keys": {}},
                         ),
                     ],
                 )
