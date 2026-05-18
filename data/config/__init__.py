@@ -352,6 +352,9 @@ If you aren't sure why you're seeing this, there might not be official support f
         if args.led_no_hardware_pulse:
             options.disable_hardware_pulsing = True
 
+        if args.led_rp1_rio != None:
+            options.rp1_rio = args.led_rp1_rio
+
         return options
 
     def __set_log_level(self, json):
