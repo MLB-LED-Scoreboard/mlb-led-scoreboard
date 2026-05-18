@@ -1,6 +1,7 @@
 {
   "$schema": "./../schemas/colors/teams.schema.json",
   "format": 9.0,
+  "allow_special_uniforms": true,
   "az": {
     "home": {
       "r": 166,

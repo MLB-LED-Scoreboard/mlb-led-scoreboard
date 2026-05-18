@@ -31,8 +31,11 @@ class Uniforms:
         return self.away_special
 
     def update(self, force=False):
+        if self._special_uniforms == {}:
+            # There are no special uniforms selected, no need to call API
+            return
         if self.away_special is not None or self.home_special is not None:
-            # these should never change if already populated for this game
+            # These should never change if already populated for this game
             return
         if not force and not self.__should_update():
             return

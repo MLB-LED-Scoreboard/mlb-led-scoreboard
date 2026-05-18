@@ -169,7 +169,7 @@ class TestUniforms(unittest.TestCase):
         ) as mock_get:
             u = Uniforms(game_id=1, uniform_types={})
 
-        self.assertEqual(mock_get.call_count, 1)
+        self.assertEqual(mock_get.call_count, 0)
         self.assertIsNone(u.home_special_uniform())
         self.assertIsNone(u.away_special_uniform())
 
