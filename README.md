@@ -450,7 +450,7 @@ You can change the location used by entering your city, state, and country code 
 
 ### Plugins
 
-As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md] for details
+As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md](/bullpen/README.md) for details
 on writing them -- the 'news' and 'standings' screens are themselves built on top of this API.
 
 As a user, installing a plugin is relatively easy. Lets take the [mta-board plugin](https://github.com/WardBrian/mta-board.git) as an example.
