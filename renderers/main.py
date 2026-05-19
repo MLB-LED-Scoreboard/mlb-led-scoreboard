@@ -30,6 +30,9 @@ class MainRenderer:
         self.plugins = plugins
 
         self.animation_time = 0
+        self._scoreboard_cache: tuple = (None, None, None)   # (game_id, version, Scoreboard)
+        self._pregame_cache: tuple = (None, None, None)      # (game_id, version, Pregame)
+        self._postgame_cache: tuple = (None, None, None)     # (game_id, version, Postgame)
 
     def render(self) -> NoReturn:
         while True:
@@ -67,17 +70,25 @@ class MainRenderer:
                 self.__draw_game(game)
                 time.sleep(self.data.config.scrolling_speed)
 
+    def __cached(self, cache_attr, game, builder):
+        """Return a cached data object, rebuilding only when game data has changed."""
+        gid, ver, obj = getattr(self, cache_attr)
+        if obj is None or gid != game.game_id or ver != game._data_version:
+            obj = builder()
+            setattr(self, cache_attr, (game.game_id, game._data_version, obj))
+        return obj
+
     # Draws the provided game on the canvas
     def __draw_game(self, game: Game):
         bgcolor = self.data.config.scoreboard_colors.color("default.background")
         self.canvas.Fill(bgcolor["r"], bgcolor["g"], bgcolor["b"])
-        scoreboard = Scoreboard(game)
+        scoreboard = self.__cached("_scoreboard_cache", game, lambda: Scoreboard(game))
         layout = self.data.config.layout
         colors = self.data.config.scoreboard_colors
 
         if status.is_pregame(game.status()):  # Draw the pregame information
             self.__max_scroll_x(layout.coords("pregame.scrolling_text"))
-            pregame = Pregame(game, self.data.config.time_format)
+            pregame = self.__cached("_pregame_cache", game, lambda: Pregame(game, self.data.config.time_format))
             pos = pregamerender.render_pregame(
                 self.canvas,
                 layout,
@@ -91,7 +102,7 @@ class MainRenderer:
 
         elif status.is_complete(game.status()):  # Draw the game summary
             self.__max_scroll_x(layout.coords("final.scrolling_text"))
-            final = Postgame(game)
+            final = self.__cached("_postgame_cache", game, lambda: Postgame(game))
             pos = postgamerender.render_postgame(
                 self.canvas,
                 layout,
@@ -102,6 +113,20 @@ class MainRenderer:
                 self.data.config.is_postseason(),
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
+
+        elif status.is_in_game_review(game.status()):  # Challenge or umpire review — keep live display
+            reason = scoreboard.get_text_for_reason()
+            if reason:
+                scoreboard.play_description = reason
+            if status.is_inning_break(scoreboard.inning.state):
+                loop_point = self.data.config.layout.coords("inning.break.due_up")["loop"]
+            else:
+                loop_point = self.data.config.layout.coords("atbat")["loop"]
+            self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
+            pos = gamerender.render_live_game(
+                self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time
+            )
+            self.__update_scrolling_text_pos(pos, loop_point)
 
         elif status.is_irregular(game.status()):  # Draw game status
             short_text = self.data.config.layout.coords("status.text")["short_text"]

@@ -26,7 +26,9 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind,metaData,timeStamp"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,batting,avg,homeRuns,rbi,battingOrder,"
+    + "weather,condition,temp,wind,metaData,timeStamp,"
+    + "review,absChallenges,hasChallenges,usedSuccessful,usedFailed,remaining"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -59,6 +61,7 @@ class Game:
         self._api_refresh_rate = config.api_refresh_rate
         self._status: dict[str, Any] = {}
         self._uniform_data = Uniforms(game_id, config.uniform_types)
+        self._data_version = 0
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():
@@ -91,6 +94,7 @@ class Game:
                         LOGGER.error("Failed to get game status from schedule")
 
                 self._uniform_data.update()
+                self._data_version += 1
                 self.print_game_data_debug()
                 return UpdateStatus.SUCCESS
             except:
@@ -356,10 +360,113 @@ class Game:
             result += "_looking"
         return result
 
+    def current_play_description(self):
+        try:
+            desc = self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("description", "")
+        except (KeyError, TypeError):
+            desc = ""
+        if desc:
+            self._last_play_description = desc
+            self._last_play_description_time = time.time()
+        if (getattr(self, "_last_play_description", "") and
+                time.time() - getattr(self, "_last_play_description_time", 0) < 15):
+            return self._last_play_description
+        return ""
+
+    def _fetch_game_content(self):
+        """Fetch and cache game editorial content (recap/preview blurbs). Cached 5 min."""
+        now = time.time()
+        if (hasattr(self, "_game_content_cache") and
+                now - getattr(self, "_game_content_cache_time", 0) < 300):
+            return self._game_content_cache
+        try:
+            content = statsapi.get(
+                "game_content",
+                {"gamePk": self.game_id},
+                request_kwargs={"headers": data.headers.API_HEADERS},
+            )
+            self._game_content_cache = content
+            self._game_content_cache_time = now
+            return content
+        except Exception:
+            return {}
+
+    def game_recap_blurb(self):
+        try:
+            mlb = self._fetch_game_content()["editorial"]["recap"]["mlb"]
+            headline = mlb.get("headline", "")
+            subhead = mlb.get("subhead", "")
+            return " ".join((" — ".join(filter(None, [headline, subhead]))).split())
+        except (KeyError, TypeError):
+            return ""
+
+    def game_preview_blurb(self):
+        try:
+            mlb = self._fetch_game_content()["editorial"]["preview"]["mlb"]
+            headline = mlb.get("headline", "")
+            subhead = mlb.get("subhead", "")
+            return " ".join((" — ".join(filter(None, [headline, subhead]))).split())
+        except (KeyError, TypeError):
+            return ""
+
+    def abs_challenges_remaining(self, side):
+        try:
+            return self._current_data["gameData"]["absChallenges"][side]["remaining"]
+        except (KeyError, TypeError):
+            return None
+
+    def batter_stat(self, stat):
+        try:
+            batter_id = self._current_data["liveData"]["linescore"]["offense"]["batter"]["id"]
+            ID = Game._format_id(batter_id)
+            try:
+                stats = self._current_data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["seasonStats"]["batting"]
+            except (KeyError, TypeError):
+                stats = self._current_data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["seasonStats"]["batting"]
+            return stats.get(stat)
+        except (KeyError, TypeError):
+            return None
+
+    def pitcher_era(self):
+        try:
+            pitcher_id = self._current_data["liveData"]["linescore"]["defense"]["pitcher"]["id"]
+            ID = Game._format_id(pitcher_id)
+            try:
+                era = self._current_data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["seasonStats"]["pitching"]["era"]
+            except (KeyError, TypeError):
+                era = self._current_data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["seasonStats"]["pitching"]["era"]
+            return str(era)
+        except (KeyError, TypeError):
+            return None
+
+    def batter_batting_order(self):
+        try:
+            batter_id = self._current_data["liveData"]["linescore"]["offense"]["batter"]["id"]
+            ID = Game._format_id(batter_id)
+            try:
+                order = self._current_data["liveData"]["boxscore"]["teams"]["away"]["players"][ID]["battingOrder"]
+            except (KeyError, TypeError):
+                order = self._current_data["liveData"]["boxscore"]["teams"]["home"]["players"][ID]["battingOrder"]
+            # battingOrder is a 3-digit string like "800" for 8th batter
+            return int(order) // 100
+        except (KeyError, TypeError, ValueError):
+            return None
+
     def __should_update(self):
-        endtime = time.time()
-        time_delta = endtime - self.starttime
-        return time_delta >= self._api_refresh_rate
+        abstract = self._status.get("abstractGameState", "")
+        detailed = self._status.get("detailedState", "")
+
+        if abstract == "Final":
+            return False
+
+        if abstract == "Live" or "Warmup" in detailed:
+            interval = self._api_refresh_rate           # 15s — needs to be current
+        elif "Pre-Game" in detailed:
+            interval = 600                              # 10 min — probable pitchers rarely scratch
+        else:
+            interval = 3600                             # 1 hr — scheduled games barely change
+
+        return time.time() - self.starttime >= interval
 
     @staticmethod
     def _format_id(player):
@@ -373,6 +480,11 @@ class Game:
     def print_game_data_debug(self):
         LOGGER.debug("Game Data Refreshed: %s", self._current_data["gameData"]["game"]["id"])
         LOGGER.debug("Game is %d seconds behind", self.current_delay())
+        LOGGER.debug("Play description: %s", self.current_play_description())
+        if self._status.get("abstractGameState") == "Final":
+            LOGGER.debug("Recap blurb: %s", self.game_recap_blurb())
+        elif self._status.get("abstractGameState") == "Preview":
+            LOGGER.debug("Preview blurb: %s", self.game_preview_blurb())
         LOGGER.debug("Pre: %s", Pregame(self, TIME_FORMAT_24H))
         LOGGER.debug("Live: %s", Scoreboard(self))
         LOGGER.debug("Final: %s", Postgame(self))

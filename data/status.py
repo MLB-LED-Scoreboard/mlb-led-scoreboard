@@ -415,6 +415,13 @@ def is_irregular(status: str) -> bool:
     return status in GAME_STATE_IRREGULAR
 
 
+def is_in_game_review(status: str) -> bool:
+    """Returns whether game is paused for a manager challenge or umpire review.
+    These are irregular but the game is still live, so we render the full scoreboard."""
+    s = status.lower()
+    return "manager challenge" in s or "umpire review" in s
+
+
 def is_fresh(status: str) -> bool:
     """Returns whether the game is in progress or is very recently complete. Game Over
     comes between In Progress and Final and allows a few minutes to see the final outcome before

@@ -45,10 +45,11 @@ class Scoreboard:
         self.atbat = AtBat(game)
 
         self.note = game.note()
-
         self.reason = game.reason()
-
         self.play_result = game.current_play_result()
+        self.away_abs_challenges = game.abs_challenges_remaining("away")
+        self.home_abs_challenges = game.abs_challenges_remaining("home")
+        self.play_description = game.current_play_description()
 
     def homerun(self):
         return self.play_result == "home_run"
