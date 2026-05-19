@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlb-led-scoreboard-powerwall"
+version = "9.0.0"
+description = "Tesla Powerwall plugin for mlb-led-scoreboard"
+dependencies = [
+    "tesla-powerwall>=0.5.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.entry-points.'bullpen.mlbled.plugin']
+"powerwall" = "mlb_led_scoreboard_powerwall:load"

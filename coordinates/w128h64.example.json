@@ -354,7 +354,11 @@
       "rescale_icon": 2
     }
   },
-  "plugins": {},
+  "plugins": {
+    "powerwall": {
+      "value_font": { "x": 0, "y": 0, "font_name": "5x7" }
+    }
+  },
   "network": {
     "font_name": "4x6",
     "background": {

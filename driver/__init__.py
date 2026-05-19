@@ -8,6 +8,8 @@ if TYPE_CHECKING:
 
 
 class DriverWrapper:
+    DriverMode = DriverMode
+
     def __init__(self):
         self.hardware_load_failed = False
         self.mode = None
