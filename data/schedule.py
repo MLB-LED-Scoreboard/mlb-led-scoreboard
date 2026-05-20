@@ -16,7 +16,7 @@ GAMES_REFRESH_RATE = 15
 
 
 class Schedule:
-    def __init__(self, config: Config, plugin_renderers: dict = None, plugin_data: dict = None) -> None:
+    def __init__(self, config: Config, plugin_renderers: Optional[dict] = None, plugin_data: Optional[dict] = None) -> None:
         self.config = config
         self.date = self.config.parse_today()
         self.starttime = time.time()

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from bullpen.api import UpdateStatus, PluginData
 from bullpen.logging import LOGGER
 from data.config import Config
@@ -7,7 +9,7 @@ from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(self, config: Config, plugin_data: dict[str, PluginData], plugin_renderers: dict = None) -> None:
+    def __init__(self, config: Config, plugin_data: dict[str, PluginData], plugin_renderers: Optional[dict] = None) -> None:
         # Save the parsed config
         self.config: Config = config
         self.network_issues: bool = False
