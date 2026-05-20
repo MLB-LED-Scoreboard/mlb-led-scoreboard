@@ -28,15 +28,11 @@ class Schedule:
         # the (filtered) schedule
         self._games: list[dict[str, Any]] = []
         self.priority = 0
-        self._game_cache: dict[int, Game] = {}
         self.update(True)
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            new_date = self.config.parse_today()
-            if new_date != self.date:
-                self._game_cache.clear()
-            self.date = new_date
+            self.date = self.config.parse_today()
             LOGGER.debug("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
@@ -97,20 +93,9 @@ class Schedule:
     def __current_game(self, unless: Optional[Game] = None) -> Optional[Game]:
         try:
             scheduled_game = self._games[self.current_idx]
-            game_id = scheduled_game["game_id"]
-
-            if unless and game_id == unless.game_id:
+            if unless and scheduled_game["game_id"] == unless.game_id:
                 return unless
-
-            # Serve from cache if available — Game.__should_update() controls refresh rate per state
-            cached = self._game_cache.get(game_id)
-            if cached is not None:
-                return cached
-
-            game = Game.from_scheduled(scheduled_game, self.config)
-            if game is not None:
-                self._game_cache[game_id] = game
-            return game
+            return Game.from_scheduled(scheduled_game, self.config)
         except IndexError:
             return None
 

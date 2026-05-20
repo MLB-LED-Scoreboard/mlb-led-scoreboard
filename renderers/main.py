@@ -20,19 +20,15 @@ from renderers.games import teams
 
 
 class MainRenderer:
-    def __init__(self, matrix, data: Data, plugins: dict[str, api.PluginRenderer], display_on=None) -> None:
+    def __init__(self, matrix, data: Data, plugins: dict[str, api.PluginRenderer]) -> None:
         self.matrix = matrix
         self.data = data
-        self.display_on = display_on
         self.canvas = matrix.CreateFrameCanvas()
         self.scrolling_text_pos = self.canvas.width
         self.scrolling_finished: bool = False
         self.plugins = plugins
 
         self.animation_time = 0
-        self._scoreboard_cache: tuple = (None, None, None)   # (game_id, version, Scoreboard)
-        self._pregame_cache: tuple = (None, None, None)      # (game_id, version, Pregame)
-        self._postgame_cache: tuple = (None, None, None)     # (game_id, version, Postgame)
 
     def render(self) -> NoReturn:
         while True:
@@ -70,25 +66,17 @@ class MainRenderer:
                 self.__draw_game(game)
                 time.sleep(self.data.config.scrolling_speed)
 
-    def __cached(self, cache_attr, game, builder):
-        """Return a cached data object, rebuilding only when game data has changed."""
-        gid, ver, obj = getattr(self, cache_attr)
-        if obj is None or gid != game.game_id or ver != game._data_version:
-            obj = builder()
-            setattr(self, cache_attr, (game.game_id, game._data_version, obj))
-        return obj
-
     # Draws the provided game on the canvas
     def __draw_game(self, game: Game):
         bgcolor = self.data.config.scoreboard_colors.color("default.background")
         self.canvas.Fill(bgcolor["r"], bgcolor["g"], bgcolor["b"])
-        scoreboard = self.__cached("_scoreboard_cache", game, lambda: Scoreboard(game))
+        scoreboard = Scoreboard(game)
         layout = self.data.config.layout
         colors = self.data.config.scoreboard_colors
 
         if status.is_pregame(game.status()):  # Draw the pregame information
             self.__max_scroll_x(layout.coords("pregame.scrolling_text"))
-            pregame = self.__cached("_pregame_cache", game, lambda: Pregame(game, self.data.config.time_format))
+            pregame = Pregame(game, self.data.config.time_format)
             pos = pregamerender.render_pregame(
                 self.canvas,
                 layout,
@@ -102,7 +90,7 @@ class MainRenderer:
 
         elif status.is_complete(game.status()):  # Draw the game summary
             self.__max_scroll_x(layout.coords("final.scrolling_text"))
-            final = self.__cached("_postgame_cache", game, lambda: Postgame(game))
+            final = Postgame(game)
             pos = postgamerender.render_postgame(
                 self.canvas,
                 layout,
@@ -113,20 +101,6 @@ class MainRenderer:
                 self.data.config.is_postseason(),
             )
             self.__update_scrolling_text_pos(pos, self.canvas.width)
-
-        elif status.is_in_game_review(game.status()):  # Challenge or umpire review — keep live display
-            reason = scoreboard.get_text_for_reason()
-            if reason:
-                scoreboard.play_description = reason
-            if status.is_inning_break(scoreboard.inning.state):
-                loop_point = self.data.config.layout.coords("inning.break.due_up")["loop"]
-            else:
-                loop_point = self.data.config.layout.coords("atbat")["loop"]
-            self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
-            pos = gamerender.render_live_game(
-                self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time
-            )
-            self.__update_scrolling_text_pos(pos, loop_point)
 
         elif status.is_irregular(game.status()):  # Draw game status
             short_text = self.data.config.layout.coords("status.text")["short_text"]
@@ -171,7 +145,7 @@ class MainRenderer:
         if self.data.network_issues:
             network.render_network_error(self.canvas, layout, colors)
 
-        self.canvas = self.__swap_canvas()
+        self.canvas = self.matrix.SwapOnVSync(self.canvas)
 
     def __draw_plugin_screen(self, plugin_name: str, cond: Callable[[], bool]) -> None:
         from driver import graphics
@@ -188,7 +162,7 @@ class MainRenderer:
             # Show network issues
             if self.data.network_issues:
                 network.render_network_error(self.canvas, self.data.config.layout, self.data.config.scoreboard_colors)
-            self.canvas = self.__swap_canvas()
+            self.canvas = self.matrix.SwapOnVSync(self.canvas)
             time.sleep(wait_time)
 
         renderer.reset()
@@ -196,14 +170,6 @@ class MainRenderer:
     def __max_scroll_x(self, scroll_coords):
         scroll_max_x = scroll_coords["x"] + scroll_coords["width"]
         self.scrolling_text_pos = min(scroll_max_x, self.scrolling_text_pos)
-
-    def __swap_canvas(self):
-        """Block until display is on, then swap the canvas."""
-        if self.display_on is not None and not self.display_on.is_set():
-            self.canvas.Clear()
-            self.matrix.SwapOnVSync(self.canvas)
-            self.display_on.wait()
-        return self.matrix.SwapOnVSync(self.canvas)
 
     def __update_scrolling_text_pos(self, new_pos, end):
         """Updates the position of scrolling text"""

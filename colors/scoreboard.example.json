@@ -78,11 +78,6 @@
         "r": 255,
         "g": 235,
         "b": 59
-      },
-      "inactive": {
-        "r": 80,
-        "g": 70,
-        "b": 20
       }
     }
   },
@@ -95,19 +90,19 @@
       }
     },
     "1": {
-      "r": 80,
-      "g": 70,
-      "b": 20
+      "r": 255,
+      "g": 235,
+      "b": 59
     },
     "2": {
-      "r": 80,
-      "g": 70,
-      "b": 20
+      "r": 255,
+      "g": 235,
+      "b": 59
     },
     "3": {
-      "r": 80,
-      "g": 70,
-      "b": 20
+      "r": 255,
+      "g": 235,
+      "b": 59
     }
   },
   "atbat": {
@@ -140,33 +135,6 @@
       "r": 255,
       "g": 0,
       "b": 0
-    },
-    "batter_stats": {
-      "r": 255,
-      "g": 235,
-      "b": 59
-    },
-    "batter_stats_label": {
-      "r": 80,
-      "g": 70,
-      "b": 20
-    },
-    "pitch_count_display": {
-      "r": 255,
-      "g": 255,
-      "b": 255
-    }
-  },
-  "abs_challenges": {
-    "available": {
-      "r": 255,
-      "g": 235,
-      "b": 59
-    },
-    "used": {
-      "r": 80,
-      "g": 70,
-      "b": 20 
     }
   },
   "batter_count": {
@@ -335,27 +303,7 @@
       "b": 255
     }
   },
-  "plugins": {
-    "powerwall": {
-      "background":         { "r": 0,   "g": 0,   "b": 0   },
-      "solar_icon":         { "r": 255, "g": 165, "b": 0   },
-      "home_icon":          { "r": 180, "g": 215, "b": 255 },
-      "battery_icon":       { "r": 80,  "g": 200, "b": 80  },
-      "battery_fill_high":  { "r": 40,  "g": 160, "b": 40  },
-      "battery_fill_mid":   { "r": 180, "g": 160, "b": 0   },
-      "battery_fill_low":   { "r": 180, "g": 40,  "b": 40  },
-      "battery_wave":       { "r": 200, "g": 255, "b": 200 },
-      "battery_arrow":      { "r": 255, "g": 255, "b": 255 },
-      "grid_icon":          { "r": 255, "g": 60,  "b": 0   },
-      "solar_flow_active":  { "r": 0,   "g": 220, "b": 60  },
-      "solar_flow_idle":    { "r": 45,  "g": 45,  "b": 45  },
-      "battery_flow":       { "r": 255, "g": 200, "b": 0   },
-      "grid_flow":          { "r": 220, "g": 40,  "b": 40  },
-      "solar_value":        { "r": 0,   "g": 220, "b": 60  },
-      "home_value":         { "r": 180, "g": 215, "b": 255 },
-      "battery_value":      { "r": 200, "g": 200, "b": 200 }
-    }
-  },
+  "plugins": {},
   "default": {
     "background": {
       "r": 7,

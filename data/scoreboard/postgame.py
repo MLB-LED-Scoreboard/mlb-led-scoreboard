@@ -52,7 +52,6 @@ class Postgame:
                 LOGGER.exception("Error getting losing pitcher stats")
 
         self.series_status = game.series_status()
-        self.recap_blurb = game.game_recap_blurb()
 
     def __str__(self):
         return "<{} {}> W: {} {}-{}; L: {} {}-{}; S: {} ({})".format(

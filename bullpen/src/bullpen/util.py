@@ -12,7 +12,7 @@ def deep_update(source, overrides):
     Modify ``source`` in place.
     """
     for key, value in list(overrides.items()):
-        if isinstance(value, Mapping):
+        if isinstance(value, Mapping) and value:
             returned = deep_update(source.get(key, {}), value)
             source[key] = returned
         else:

@@ -15,7 +15,7 @@
         "priority": 2,
         "required_status": "live",
         "teams": [
-          "Dodgers"
+          "Cubs"
         ]
       },
       {
@@ -31,17 +31,12 @@
         "kind": "news",
         "seconds": 60,
         "with_priority": 0
-      },
-      {
-        "kind": "powerwall",
-        "seconds": 30,
-        "with_priority": 0
       }
     ]
   },
   "news_ticker": {
     "teams": [
-      "Dodgers"
+      "Cubs"
     ],
     "traderumors": true,
     "mlb_news": true,
@@ -64,19 +59,11 @@
   },
   "standings": {
     "divisions": [
-      "NL West",
+      "NL Central",
       "NL Wild Card"
     ]
   },
-  "plugins": {
-    "powerwall": {
-      "host": "192.168.1.100",
-      "password": "YOUR_POWERWALL_PASSWORD",
-      "email": "",
-      "update_interval": 30,
-      "verify_ssl": false
-    }
-  },
+  "plugins": {},
   "time_format": "12h",
   "end_of_day": "00:00",
   "sync_delay_seconds": 0,
