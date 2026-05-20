@@ -7,14 +7,14 @@ from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(self, config: Config, plugin_data: dict[str, PluginData]) -> None:
+    def __init__(self, config: Config, plugin_data: dict[str, PluginData], plugin_renderers: dict = None) -> None:
         # Save the parsed config
         self.config: Config = config
         self.network_issues: bool = False
         self.plugin_data = plugin_data
 
         # get schedule
-        self.schedule: Schedule = Schedule(config)
+        self.schedule: Schedule = Schedule(config, plugin_renderers, plugin_data)
         # Games -- keeps two copies internally to let render thread move asynchronously
         self.games = DoubleBuffer(self.schedule.next_game())
 

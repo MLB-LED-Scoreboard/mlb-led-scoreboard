@@ -11,6 +11,7 @@ class DriverWrapper:
     def __init__(self):
         self.hardware_load_failed = False
         self.mode = None
+        self.DriverMode = DriverMode
 
         if "unittest" in sys.modules:
             self.set_mode(DriverMode.SOFTWARE_EMULATION)

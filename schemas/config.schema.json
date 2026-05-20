@@ -211,7 +211,7 @@
                 "additionalProperties": false
               },
               {
-                "title": "Plugin screen",
+                "title": "Plugin screen (passive)",
                 "type": "object",
                 "required": ["with_priority", "seconds"],
                 "properties": {
@@ -223,6 +223,32 @@
                   },
                   "with_priority": {
                     "$ref": "#/$defs/with_priority"
+                  },
+                  "seconds": {
+                    "description": "Seconds to spend on this screen before rotating",
+                    "type": "number",
+                    "minimum": 5,
+                    "default": 20
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "title": "Plugin screen (active priority)",
+                "description": "Plugin raises system priority to 'priority' when can_render() returns true",
+                "type": "object",
+                "required": ["priority", "seconds"],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "default": "example",
+                    "pattern": "^(?!game$|time$|secondary_game$).*$",
+                    "description": "Must be the name of a plugin, and cannot be one of the built-in screen rules"
+                  },
+                  "priority": {
+                    "description": "Priority level this plugin claims when can_render() is true",
+                    "type": "number",
+                    "minimum": 1
                   },
                   "seconds": {
                     "description": "Seconds to spend on this screen before rotating",
