@@ -54,9 +54,12 @@ class Config:
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
         self.rotation_rates = json["rotation"]["rates"]
 
-        self.rotation_game_rules, self.rotation_time_rules, self.rotation_screen_rules, self.rotation_plugin_priority_rules = _screen_rules_from_json(
-            json["rotation"]["screens"]
-        )
+        (
+            self.rotation_game_rules,
+            self.rotation_time_rules,
+            self.rotation_screen_rules,
+            self.rotation_plugin_priority_rules,
+        ) = _screen_rules_from_json(json["rotation"]["screens"])
 
         # TODO moving this inside a 'plugin' is a bit weird?
         self.pregame_weather = json["weather"]["pregame"]
@@ -381,7 +384,9 @@ If you aren't sure why you're seeing this, there might not be official support f
         return keys_match and options_match
 
 
-def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[int, Mapping[str, int]], dict[str, int]]:
+def _screen_rules_from_json(
+    json,
+) -> tuple[list[GameScreen], list[TimeRule], Mapping[int, Mapping[str, int]], dict[str, int]]:
     game_rules = []
     time_rules = []
     screen_rules: defaultdict[int, defaultdict[str, int]] = defaultdict(lambda: defaultdict(int))
@@ -402,9 +407,7 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
             if "priority" in rule_json:
                 priority = rule_json["priority"]
                 if priority == 0:
-                    raise ValueError(
-                        f"Invalid plugin rule in config, priority cannot be 0. Rule: {rule_json}"
-                    )
+                    raise ValueError(f"Invalid plugin rule in config, priority cannot be 0. Rule: {rule_json}")
                 plugin_priority_rules[kind] = priority
                 screen_rules[priority][kind] = rule_json["seconds"]
             else:
