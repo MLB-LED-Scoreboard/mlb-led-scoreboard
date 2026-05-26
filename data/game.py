@@ -74,9 +74,10 @@ class Game:
                 # it will recycle that data until the queue is full.
                 self._data_wait_queue.push(live_data)
                 self._current_data = self._data_wait_queue.peek()
-                self._status = self._current_data["gameData"]["status"]
+
+                # this is odd, but if a game is postponed then the 'game' endpoint gets the
+                # rescheduled game, so we need to check the schedule endpoint instead
                 if live_data["gameData"]["datetime"]["officialDate"] > self.date:
-                    # this is odd, but if a game is postponed then the 'game' endpoint gets the rescheduled game
                     LOGGER.debug("Getting game status from schedule for game with strange date!")
                     try:
                         scheduled = statsapi.get(
@@ -89,6 +90,8 @@ class Game:
                         )
                     except:
                         LOGGER.error("Failed to get game status from schedule")
+                else:
+                    self._status = self._current_data["gameData"]["status"]
 
                 self._uniform_data.update()
                 self.print_game_data_debug()
