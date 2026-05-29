@@ -89,11 +89,7 @@ class Config:
         self.news_json = json.get("news_ticker", {}) | json.get("weather")
         self.plugin_json = json.get("plugins", {})
 
-        # Get the layout info. This can differ from panel dimensions if chaining multiple panels together.
-        width = self.matrix_options.cols * self.matrix_options.chain_length
-        height = self.matrix_options.rows * self.matrix_options.parallel
-        json = self.__get_layout(width, height)
-        self.layout = Layout(json, width, height)
+        self.layout = None
 
         # Store color information
         json = self.__get_colors("teams")
@@ -112,6 +108,10 @@ class Config:
 
         # Set up update delay parameter
         self.sync_amount = ceil(self.sync_delay_seconds / self.api_refresh_rate)
+
+    def set_layout(self, width, height):
+        json = self.__get_layout(width, height)
+        self.layout = Layout(json, width, height)
 
     def check_delay(self):
         if self.sync_delay_seconds < 0:
