@@ -65,7 +65,7 @@ def main(matrix, config):
 
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
-    data = Data(config, plugin_data, plugin_renderers)
+    data = Data(config, plugin_data)
     render = threading.Thread(
         target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
     )

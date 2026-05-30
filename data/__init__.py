@@ -1,5 +1,3 @@
-from typing import Optional
-
 from bullpen.api import UpdateStatus, PluginData
 from bullpen.logging import LOGGER
 from data.config import Config
@@ -9,16 +7,14 @@ from data.utils.double_buffer import DoubleBuffer
 
 
 class Data:
-    def __init__(
-        self, config: Config, plugin_data: dict[str, PluginData], plugin_renderers: Optional[dict] = None
-    ) -> None:
+    def __init__(self, config: Config, plugin_data: dict[str, PluginData]) -> None:
         # Save the parsed config
         self.config: Config = config
         self.network_issues: bool = False
         self.plugin_data = plugin_data
 
         # get schedule
-        self.schedule: Schedule = Schedule(config, plugin_renderers, plugin_data)
+        self.schedule: Schedule = Schedule(config, self.__plugin_active_states)
         # Games -- keeps two copies internally to let render thread move asynchronously
         self.games = DoubleBuffer(self.schedule.next_game())
 
@@ -32,6 +28,9 @@ class Data:
 
     def refresh_schedule(self) -> None:
         self.__process_network_status(self.schedule.update())
+
+    def __plugin_active_states(self) -> dict[str, bool]:
+        return {name: data.is_active for name, data in self.plugin_data.items()}
 
     def refresh_plugin(self, name: str) -> None:
         plugin = self.plugin_data[name]
