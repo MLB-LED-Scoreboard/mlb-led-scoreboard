@@ -99,7 +99,7 @@ class Schedule:
             scheduled_game = self._games[self.current_idx]
             if unless and scheduled_game["game_id"] == unless.game_id:
                 return unless
-            return Game.from_scheduled(scheduled_game, self.config)
+            return Game.from_scheduled(scheduled_game, self.config.sync_amount, self.config.api_refresh_rate)
         except IndexError:
             return None
 
@@ -119,7 +119,7 @@ class Schedule:
         for plugin_name, priority in self.config.rotation_plugin_priority_rules.items():
             renderer = self._plugin_renderers.get(plugin_name)
             data = self._plugin_data.get(plugin_name)
-            if renderer is not None and data is not None and renderer.can_render(data):
+            if renderer is not None and data is not None and renderer.is_active(data):
                 LOGGER.debug("Plugin %s claims priority %d", plugin_name, priority)
                 highest = max(highest, priority)
 
