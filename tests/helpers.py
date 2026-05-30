@@ -6,7 +6,7 @@ from pathlib import Path
 TEST_CONFIG_PATH = Path(__file__).parent / "fixtures" / "config.example.json"
 
 
-def make_test_config(**test_overrides):
+def make_test_config(led_cols=32, led_rows=32, **test_overrides):
     """
     Creates a Config object with default values plus any overrides.
     Config path defaults to the fixture in `tests/fixtures/config.example.json`, which simulates
@@ -22,4 +22,7 @@ def make_test_config(**test_overrides):
 
     with mock.patch.object(cli, "arguments", patched_arguments):
         with mock.patch("bullpen.logging.LOGGER.warning"):
-            return Config()
+            config = Config()
+            config.set_layout(led_cols, led_rows)
+
+            return config

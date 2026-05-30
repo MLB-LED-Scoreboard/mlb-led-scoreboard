@@ -37,7 +37,10 @@ def make_config(config_path=None, use_layout=False, use_teams=False, use_scorebo
         return original_read_json(self, path)
 
     with mock.patch.object(Config, "read_json", patched_read_json):
-        return make_test_config(config=config_path, led_cols=32, led_rows=32)
+        config = make_test_config(config=config_path, led_cols=32, led_rows=32)
+        config.set_layout(32, 32)
+
+        return config
 
 
 def flatten(d, prefix=""):
