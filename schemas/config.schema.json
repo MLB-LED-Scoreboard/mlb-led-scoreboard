@@ -235,9 +235,9 @@
               },
               {
                 "title": "Plugin screen (active priority)",
-                "description": "Plugin raises system priority to 'priority' when can_render() returns true",
+                "description": "Plugin raises system priority to 'priority' when is_active is true",
                 "type": "object",
-                "required": ["priority", "seconds"],
+                "required": ["priority"],
                 "properties": {
                   "kind": {
                     "type": "string",
@@ -246,15 +246,9 @@
                     "description": "Must be the name of a plugin, and cannot be one of the built-in screen rules"
                   },
                   "priority": {
-                    "description": "Priority level this plugin claims when can_render() is true",
+                    "description": "Priority level this plugin claims when is_active is true",
                     "type": "number",
                     "minimum": 1
-                  },
-                  "seconds": {
-                    "description": "Seconds to spend on this screen before rotating",
-                    "type": "number",
-                    "minimum": 5,
-                    "default": 20
                   }
                 },
                 "additionalProperties": false

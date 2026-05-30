@@ -404,16 +404,15 @@ def _screen_rules_from_json(
         elif rule_json["kind"] == "time":
             time_rules.append(parse_time_rule(rule_json))
         else:
-            if "seconds" not in rule_json:
-                raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
             kind = rule_json["kind"]
             if "priority" in rule_json:
                 priority = rule_json["priority"]
                 if priority == 0:
                     raise ValueError(f"Invalid plugin rule in config, priority cannot be 0. Rule: {rule_json}")
                 plugin_priority_rules[kind] = priority
-                screen_rules[priority][kind] = rule_json["seconds"]
             else:
+                if "seconds" not in rule_json:
+                    raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
                 for priority in parse_with_priority(rule_json):
                     screen_rules[priority][kind] = rule_json["seconds"]
 
