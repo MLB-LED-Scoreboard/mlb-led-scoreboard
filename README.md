@@ -30,26 +30,38 @@ If you'd like to see support for another set of board dimensions, or have design
  * Raspberry Pi Zero has had numerous reports of slowness and unreliability during installation and running the software.
 
 ## Table of Contents
-* [Features](#features)
+
+<!-- toc -->
+
+- [Features](#features)
   * [Live Games](#live-games)
   * [Pregame](#pregame)
   * [Division Standings](#division-standings)
-* [Installation](#installation)
+- [Installation](#installation)
   * [Hardware Assembly](#hardware-assembly)
   * [Software Installation](#software-installation)
-* [Usage](#usage)
+- [Usage](#usage)
+  * [Running on Other Platforms](#running-on-other-platforms)
   * [Configuration](#configuration)
-  * [Flags](#flags)
-* [Personalization](#personalization)
+  * [Controlling the Display (Screen Rotation)](#controlling-the-display-screen-rotation)
+  * [Synchronizing with Broadcasts](#synchronizing-with-broadcasts)
+  * [Additional Features](#additional-features)
+  * [Command Line Flags](#command-line-flags)
+- [Personalization](#personalization)
   * [Custom Board Layout](#custom-board-layout)
   * [Custom Colors](#custom-colors)
-* [Sources](#sources)
+  * [Weather](#weather)
+  * [Plugins](#plugins)
+- [Sources](#sources)
   * [Accuracy Disclaimer](#accuracy-disclaimer)
-* [Wiki](https://github.com/MLB-LED-Scoreboard/mlb-led-scoreboard/wiki)
-* [Help and Contributing](#help-and-contributing)
-  * [Latest Features](#latest-features)
-* [Licensing](#licensing)
-* [Other cool projects](#other-cool-projects)
+- [Help and Contributing](#help-and-contributing)
+  * [Installing Dev Dependencies](#installing-dev-dependencies)
+  * [Checks](#checks)
+  * [Editing Config Schemas](#editing-config-schemas)
+- [Licensing](#licensing)
+- [Other Cool Projects](#other-cool-projects)
+
+<!-- tocstop -->
 
 ## Features
 
@@ -148,8 +160,6 @@ Additional flags are available for customizing your install:
 -v, --no-venv               Do not create a virtual environment for the dependencies.
 -s, --no-sudo               Do not install dependencies under sudo. Useful for emulation-only installation.
 -e, --emulator-only         Do not install RPI matrix drivers. Video display will default to software emulation.
-
--f, --force                 Try to skip most errors and force install. May be able to recover from previous installer errors.
 
 -h, --help                  Display this help message
 ```
@@ -284,9 +294,10 @@ See [`config.schema.json`](config.schema.json) for a schema for configuration fi
 ```
 
 
-### Controlling what shows on the board: `rotation.screens`
+### Controlling the Display (Screen Rotation)
 
-What the board shows at any given time is controlled by an internal `priority` number.
+What the board shows at any given time is controlled by an internal `priority` number within `rotation.screens`.
+
 The highest active priority at any moment wins. By default, when no other rules are active,
 the priority level is `0`.
 
@@ -359,7 +370,7 @@ Note that the actual delay may be slightly higher than your specified setting si
 * Previous Play Data - Data for the previous play can be shown on the game screen. See the [coordinates readme file](/coordinates/README.md) for details. Long and short play descriptions can be changed in data/plays.py
   * **NOTE:** Because play result data is ephemeral, not every play result will be displayed. Situations like a mound visit, injury, or other timeout immediately following a play often cause the play result to be immediately replaced on the MLB API.
 
-### Flags
+### Command Line Flags
 
 You can configure your LED matrix with the same flags used in the [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library. More information on these arguments can be found in the library documentation.
 ```
@@ -388,7 +399,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --config                  Specify a configuration file name other, omitting json xtn (Default: config)
 ```
 
-### Saving Flags in `config.json`
+#### Saving Flags in `config.json`
 
 For convenience, you can store any of the above flags in the `matrix` section of `config.json` to make it easier to start the scoreboard. The only flag that CANNOT be added to a config file is `config`, since it's used to find the config file in the first place.
 
@@ -423,6 +434,7 @@ sudo ./main.py
 
 ## Personalization
 If you're feeling adventurous (and we highly encourage it!), the sections below outline how you can truly personalize your scoreboard and make it your own!
+
 ### Custom Board Layout
 You have the ability to customize the way things are placed on the board (maybe you would prefer to see scrolling text for a pregame a bit higher or lower). See the `coordinates/` directory for more information.
 
@@ -438,7 +450,7 @@ You can change the location used by entering your city, state, and country code 
 
 ### Plugins
 
-As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md] for details
+As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md](/bullpen/README.md) for details
 on writing them -- the 'news' and 'standings' screens are themselves built on top of this API.
 
 As a user, installing a plugin is relatively easy. Lets take the [mta-board plugin](https://github.com/WardBrian/mta-board.git) as an example.

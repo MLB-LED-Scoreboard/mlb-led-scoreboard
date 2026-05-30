@@ -1,4 +1,5 @@
 import copy, json, os
+from pathlib import Path
 
 from data.paths import *
 
@@ -23,11 +24,11 @@ VALIDATIONS = {
             "warmup",
             "plugins" + make_modifier(IGNORE_SUBPATHS),
         ],
-        "renamed_keys": {"offday": "news"},
+        "renamed_keys": {},
     },
     COLORS_DIRECTORY: {
-        "ignored_keys": ["city_connect", "plugins" + make_modifier(IGNORE_SUBPATHS)],
-        "renamed_keys": {"offday": "news"},
+        "ignored_keys": ["plugins" + make_modifier(IGNORE_SUBPATHS)],
+        "renamed_keys": {},
     },
 }
 

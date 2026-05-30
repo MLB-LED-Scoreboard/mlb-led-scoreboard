@@ -1,0 +1,25 @@
+name: Update README Table of Contents
+
+on:
+  push:
+    branches:
+    - dev
+    - master
+    paths:
+    - README.md
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v6
+    - name: Update TOC
+      run: npx markdown-toc README.md -i --maxdepth 3
+    - name: Commit and push if README changed
+      run: |-
+        git diff
+        git config --global user.email "bullpen-bot@mlb-led-scoreboard.github.io"
+        git config --global user.name "BullpenBot"
+        git diff --quiet || (git add README.md && git commit -m "Updated README ToC")
+        git push

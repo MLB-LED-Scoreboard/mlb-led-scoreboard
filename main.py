@@ -23,6 +23,7 @@ import time
 from PIL import Image
 from pathlib import Path
 
+from driver.mode import DriverMode
 import driver
 
 
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     config = Config()
 
     if config.emulated:
-        driver.set_mode(driver.DriverMode.SOFTWARE_EMULATION)
+        driver.set_mode(DriverMode.SOFTWARE_EMULATION)
 
     if driver.is_emulated():
         config.matrix_options.emulator_title = f"{SCRIPT_NAME} v{SCRIPT_VERSION}"
