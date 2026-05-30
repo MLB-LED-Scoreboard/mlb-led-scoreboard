@@ -5,6 +5,8 @@ from .config import PluginConfig
 
 class PluginData(abc.ABC):
 
+    is_active: bool = True
+
     @abc.abstractmethod
     def __init__(self, config: PluginConfig): ...
 

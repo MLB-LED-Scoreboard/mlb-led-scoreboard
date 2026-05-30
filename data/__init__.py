@@ -14,7 +14,7 @@ class Data:
         self.plugin_data = plugin_data
 
         # get schedule
-        self.schedule: Schedule = Schedule(config)
+        self.schedule: Schedule = Schedule(config, self.__plugin_active_states)
         # Games -- keeps two copies internally to let render thread move asynchronously
         self.games = DoubleBuffer(self.schedule.next_game())
 
@@ -28,6 +28,9 @@ class Data:
 
     def refresh_schedule(self) -> None:
         self.__process_network_status(self.schedule.update())
+
+    def __plugin_active_states(self) -> dict[str, bool]:
+        return {name: data.is_active for name, data in self.plugin_data.items()}
 
     def refresh_plugin(self, name: str) -> None:
         plugin = self.plugin_data[name]

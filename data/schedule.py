@@ -16,11 +16,12 @@ GAMES_REFRESH_RATE = 15
 
 
 class Schedule:
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: Config, plugin_active=None) -> None:
         self.config = config
         self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
+        self._plugin_active = plugin_active or (lambda: {})
 
         delay_required = ceil(self.config.sync_delay_seconds / GAMES_REFRESH_RATE)
 
@@ -110,6 +111,12 @@ class Schedule:
         for rule in self.config.rotation_time_rules:
             priority = rule.matches(datetime.datetime.now())
             if priority:
+                highest = max(highest, priority)
+
+        plugin_active = self._plugin_active()
+        for plugin_name, priority in self.config.rotation_plugin_priority_rules.items():
+            if plugin_active.get(plugin_name, False) and priority > highest:
+                LOGGER.debug("Plugin %s raising priority to %d", plugin_name, priority)
                 highest = max(highest, priority)
 
         for game in all_games:

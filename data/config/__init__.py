@@ -56,9 +56,12 @@ class Config:
         self.rotation_scroll_until_finished = json["rotation"]["scroll_until_finished"]
         self.rotation_rates = json["rotation"]["rates"]
 
-        self.rotation_game_rules, self.rotation_time_rules, self.rotation_screen_rules = _screen_rules_from_json(
-            json["rotation"]["screens"]
-        )
+        (
+            self.rotation_game_rules,
+            self.rotation_time_rules,
+            self.rotation_screen_rules,
+            self.rotation_plugin_priority_rules,
+        ) = _screen_rules_from_json(json["rotation"]["screens"])
 
         # TODO moving this inside a 'plugin' is a bit weird?
         self.pregame_weather = json["weather"]["pregame"]
@@ -387,10 +390,13 @@ If you aren't sure why you're seeing this, there might not be official support f
         return keys_match and options_match
 
 
-def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Mapping[int, Mapping[str, int]]]:
+def _screen_rules_from_json(
+    json,
+) -> tuple[list[GameScreen], list[TimeRule], Mapping[int, Mapping[str, int]], dict[str, int]]:
     game_rules = []
     time_rules = []
     screen_rules: defaultdict[int, defaultdict[str, int]] = defaultdict(lambda: defaultdict(int))
+    plugin_priority_rules: dict[str, int] = {}
 
     for rule_json in json:
         if "kind" not in rule_json:
@@ -401,10 +407,17 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
         elif rule_json["kind"] == "time":
             time_rules.append(parse_time_rule(rule_json))
         else:
-            if "seconds" not in rule_json:
-                raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
-            for priority in parse_with_priority(rule_json):
-                screen_rules[priority][rule_json["kind"]] = rule_json["seconds"]
+            kind = rule_json["kind"]
+            if "priority" in rule_json:
+                priority = rule_json["priority"]
+                if priority == 0:
+                    raise ValueError(f"Invalid plugin rule in config, priority cannot be 0. Rule: {rule_json}")
+                plugin_priority_rules[kind] = priority
+            else:
+                if "seconds" not in rule_json:
+                    raise ValueError("Invalid screen rule in config, missing 'seconds' field. Rule: {}".format(rule_json))
+                for priority in parse_with_priority(rule_json):
+                    screen_rules[priority][kind] = rule_json["seconds"]
 
     if not len(screen_rules[0]):
         raise ValueError(
@@ -423,7 +436,7 @@ def _screen_rules_from_json(json) -> tuple[list[GameScreen], list[TimeRule], Map
                 f" Remove this rule or add at least one with with 'with_priority={t.priority}'."
             )
 
-    return game_rules, time_rules, screen_rules
+    return game_rules, time_rules, screen_rules, plugin_priority_rules
 
 
 def _get_playoff_start_date(year: int):

@@ -61,13 +61,11 @@ def main(matrix, config):
     plugins = load_plugins(config)
 
     plugin_data = {name: data for name, (data, _) in plugins.items()}
+    plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
 
     # Create a new data object to manage the MLB data
     # This will fetch initial data from MLB
     data = Data(config, plugin_data)
-
-    # create render thread
-    plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
     render = threading.Thread(
         target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
     )
@@ -82,7 +80,10 @@ def main(matrix, config):
             data.refresh_game()
         time.sleep(0.1)
         for plugin in plugin_data:
-            if data.config.screen_time_at_priority(plugin, data.schedule.priority):
+            if (
+                data.config.screen_time_at_priority(plugin, data.schedule.priority)
+                or plugin in data.config.rotation_plugin_priority_rules
+            ):
                 data.refresh_plugin(plugin)
         time.sleep(0.2)
 
