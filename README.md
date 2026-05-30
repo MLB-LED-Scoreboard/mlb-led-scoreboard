@@ -392,6 +392,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 --led-multiplexing        Multiplexing type: 0 = direct; 1 = strip; 2 = checker; 3 = spiral; 4 = Z-strip; 5 = ZnMirrorZStripe; 6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)
 --led-limit-refresh       Limit refresh rate to this frequency in Hz. Useful to keep a constant refresh rate on loaded system. 0=no limit. Default: 0
 --led-pwm-dither-bits     Time dithering of lower bits (Default: 0)
+--led-rpi1-rio            On Raspberry Pi 5-family boards, use the experimental RP1 RIO backend instead of RP1 PIO. 0=PIO, 1=RIO. (Default: 0)
 --drop-privileges         Force the matrix driver to drop root privileges after setup. (Default: true)
 
 # The following are specific to mlb-led-scoreboard
