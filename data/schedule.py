@@ -1,7 +1,7 @@
 import datetime
 import time
 from collections import defaultdict
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 from math import ceil
 
 import statsapi
@@ -16,12 +16,12 @@ GAMES_REFRESH_RATE = 15
 
 
 class Schedule:
-    def __init__(self, config: Config, plugin_active=None) -> None:
+    def __init__(self, config: Config, plugin_active: Optional[Callable[[], dict[str, bool]]] = None) -> None:
         self.config = config
         self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
-        self._plugin_active = plugin_active or (lambda: {})
+        self._plugin_active: Callable[[], dict[str, bool]] = plugin_active or (lambda: {})
 
         delay_required = ceil(self.config.sync_delay_seconds / GAMES_REFRESH_RATE)
 
