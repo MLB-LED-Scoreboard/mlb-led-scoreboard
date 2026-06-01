@@ -392,8 +392,8 @@ def _screen_rules_from_json(
 ) -> tuple[list[GameScreen], list[TimeRule], Mapping[int, Mapping[str, int]], dict[str, int]]:
     game_rules = []
     time_rules = []
-    screen_rules: defaultdict[int, defaultdict[str, int]] = defaultdict(lambda: defaultdict(int))
     plugin_priority_rules: dict[str, int] = {}
+    screen_rules: defaultdict[int, defaultdict[str, int]] = defaultdict(lambda: defaultdict(int))
 
     for rule_json in json:
         if "kind" not in rule_json:
