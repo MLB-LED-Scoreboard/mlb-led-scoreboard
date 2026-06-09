@@ -30,9 +30,15 @@ import driver
 from data import Data
 from data.config import Config
 from data.plugins import load_plugins
+from data.paths import *
 
 from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
+
+import cProfile
+
+PROFILER = cProfile.Profile()
+PROFILE_PATH = LOGS_DIRECTORY / "render.prof"
 
 
 def main(matrix, config):
@@ -69,7 +75,7 @@ def main(matrix, config):
     # create render thread
     plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
     render = threading.Thread(
-        target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
+        target=__render_main, args=[matrix, data, plugin_renderers, config.profiling_enabled], name="render_thread", daemon=True
     )
     time.sleep(1)
     render.start()
@@ -87,9 +93,11 @@ def main(matrix, config):
         time.sleep(0.2)
 
 
-def __render_main(matrix, data, plugins):
-    MainRenderer(matrix, data, plugins).render()
+def __render_main(matrix, data, plugins, profiling_enabled):
+    if profiling_enabled:
+        PROFILER.enable()
 
+    MainRenderer(matrix, data, plugins).render()
 
 if __name__ == "__main__":
     config = Config()
@@ -112,4 +120,7 @@ if __name__ == "__main__":
         LOGGER.exception("Untrapped error in main!")
         sys.exit(1)
     finally:
+        if config and config.profiling_enabled:
+            PROFILER.dump_stats(str(PROFILE_PATH))
+            LOGGER.info("Wrote render profile to %s", PROFILE_PATH)
         matrix.Clear()
