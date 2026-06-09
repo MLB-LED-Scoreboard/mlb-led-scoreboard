@@ -409,6 +409,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 # The following are specific to mlb-led-scoreboard
 --emulated                Force the scoreboard to run in software emulation mode.
 --config                  Specify a configuration file name other, omitting json xtn (Default: config)
+--profile                 Enable profiling for the rendering thread.
 ```
 
 #### Saving Flags in `config.json`
@@ -521,6 +522,20 @@ mypy .
 
 # Config schema validation
 python -m schemas --check
+```
+
+### Performance Profiling
+
+You can profile the rendering thread with the `--profile` flag.
+
+```sh
+python main.py --profile
+```
+
+To view a profile in your browser:
+
+```sh
+snakeviz logs/render.prof
 ```
 
 ### Editing Config Schemas

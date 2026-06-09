@@ -177,5 +177,12 @@ def _make_parser(defaults) -> argparse.ArgumentParser:
         const=True,
         default=defaults.get("emulated", False),
     )
+    parser.add_argument(
+        "--profile",
+        action="store_const",
+        help="Force using emulator mode over default matrix display.",
+        const=True,
+        default=defaults.get("profile", False),
+    )
 
     return parser

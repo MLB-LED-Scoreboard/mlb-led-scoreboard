@@ -308,6 +308,7 @@ If you aren't sure why you're seeing this, there might not be official support f
         args = cli.arguments(overrides=overrides)
 
         self.emulated = args.emulated
+        self.profiling_enabled = args.profile
 
         options = RGBMatrixOptions()
 
