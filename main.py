@@ -75,7 +75,10 @@ def main(matrix, config):
     # create render thread
     plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
     render = threading.Thread(
-        target=__render_main, args=[matrix, data, plugin_renderers, config.profiling_enabled], name="render_thread", daemon=True
+        target=__render_main,
+        args=[matrix, data, plugin_renderers, config.profiling_enabled],
+        name="render_thread",
+        daemon=True,
     )
     time.sleep(1)
     render.start()
@@ -98,6 +101,7 @@ def __render_main(matrix, data, plugins, profiling_enabled):
         PROFILER.enable()
 
     MainRenderer(matrix, data, plugins).render()
+
 
 if __name__ == "__main__":
     config = Config()
