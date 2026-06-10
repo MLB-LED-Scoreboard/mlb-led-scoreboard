@@ -180,7 +180,7 @@ def _make_parser(defaults) -> argparse.ArgumentParser:
     parser.add_argument(
         "--profile",
         action="store_const",
-        help="Force using emulator mode over default matrix display.",
+        help="Enable performance profiling of the data and render threads.",
         const=True,
         default=defaults.get("profile", False),
     )
