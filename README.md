@@ -58,6 +58,7 @@ If you'd like to see support for another set of board dimensions, or have design
 - [Help and Contributing](#help-and-contributing)
   * [Installing Dev Dependencies](#installing-dev-dependencies)
   * [Checks](#checks)
+  * [Performance Profiling](#performance-profiling)
   * [Editing Config Schemas](#editing-config-schemas)
 - [Licensing](#licensing)
 - [Other Cool Projects](#other-cool-projects)
