@@ -37,8 +37,12 @@ from version import SCRIPT_NAME, SCRIPT_VERSION
 
 import cProfile
 
-PROFILER = cProfile.Profile()
-PROFILE_PATH = LOGS_DIRECTORY / "render.prof"
+# cProfile hooks are per-thread, so the data and render threads each need their
+# own Profile instance enabled on their own thread.
+DATA_PROFILER = cProfile.Profile()
+RENDER_PROFILER = cProfile.Profile()
+DATA_PROFILE_PATH = LOGS_DIRECTORY / "data.prof"
+RENDER_PROFILE_PATH = LOGS_DIRECTORY / "render.prof"
 
 
 def main(matrix, config):
@@ -98,7 +102,7 @@ def main(matrix, config):
 
 def __render_main(matrix, data, plugins, profiling_enabled):
     if profiling_enabled:
-        PROFILER.enable()
+        RENDER_PROFILER.enable()
 
     MainRenderer(matrix, data, plugins).render()
 
@@ -118,13 +122,19 @@ if __name__ == "__main__":
     matrix = RGBMatrix(options=config.matrix_options)
     config.set_layout(width=matrix.width, height=matrix.height)
 
+    profiling_enabled = config and config.profiling_enabled
     try:
+        if profiling_enabled:
+            DATA_PROFILER.enable()
         main(matrix, config)
     except Exception:
         LOGGER.exception("Untrapped error in main!")
         sys.exit(1)
     finally:
-        if config and config.profiling_enabled:
-            PROFILER.dump_stats(str(PROFILE_PATH))
-            LOGGER.info("Wrote render profile to %s", PROFILE_PATH)
+        if profiling_enabled:
+            DATA_PROFILER.dump_stats(str(DATA_PROFILE_PATH))
+            LOGGER.info("Wrote data profile to %s", DATA_PROFILE_PATH)
+
+            RENDER_PROFILER.dump_stats(str(RENDER_PROFILE_PATH))
+            LOGGER.info("Wrote render profile to %s", RENDER_PROFILE_PATH)
         matrix.Clear()
