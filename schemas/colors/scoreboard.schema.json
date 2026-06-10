@@ -86,6 +86,15 @@
       },
       "additionalProperties": false
     },
+    "abs_challenges": {
+      "type": "object",
+      "x-format": "grid",
+      "properties": {
+        "available": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "used":      { "$ref": "#/$defs/color", "default": {"r": 100, "g": 90,  "b": 22} }
+      },
+      "additionalProperties": false
+    },
     "atbat": {
       "type": "object",
       "x-format": "grid",

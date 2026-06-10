@@ -142,12 +142,17 @@
         "hide_record_on_high_line_score": false
       },
       "line_score": {
-        "away": { "font_name": "9x18B", "x": 190, "y": 13 },
-        "home": { "font_name": "9x18B", "x": 190, "y": 29 },
-        "show_hits_and_errors": true,
-        "compress_digits": true,
+        "away": { "font_name": "9x18B", "x": 188, "y": 13 },
+        "home": { "font_name": "9x18B", "x": 188, "y": 29 },
+        "show_hits_and_errors":  true,
+        "show_abs_challenges":   true,
+        "compress_digits":       true,
         "shorten_team_name_on_high_line_score": true,
         "spacing": 9
+      },
+      "abs_challenges": {
+        "away": { "x": 189, "size": 3, "squares": [4, 9]   },
+        "home": { "x": 189, "size": 3, "squares": [20, 25] }
       }
     },
     "news": {

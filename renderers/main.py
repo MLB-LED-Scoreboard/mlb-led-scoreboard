@@ -144,6 +144,7 @@ class MainRenderer:
             scoreboard.home_team,
             scoreboard.away_team,
             show_score=not status.is_pregame(game.status()),
+            scoreboard_colors=colors,
         )
 
         # Show network issues

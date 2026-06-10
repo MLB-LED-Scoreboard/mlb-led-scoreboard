@@ -5,7 +5,7 @@ _IGNORED_TEAMS: set[str] = set()
 
 
 class Team:
-    def __init__(self, abbrev, runs, name, hits, errors, record, special_uniform):
+    def __init__(self, abbrev, runs, name, hits, errors, record, special_uniform, abs_challenges):
         self.abbrev = abbrev
         self.runs = runs
         self.name = name
@@ -13,6 +13,7 @@ class Team:
         self.errors = errors
         self.record = record
         self.special_uniform = special_uniform
+        self.abs_challenges = abs_challenges
 
     def lookup_color(self, team_colors):
         """

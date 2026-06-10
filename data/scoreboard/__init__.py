@@ -6,7 +6,7 @@ from data.scoreboard.inning import Inning
 from data.scoreboard.outs import Outs
 from data.scoreboard.pitches import Pitches
 from data.scoreboard.team import Team
-from data import plays
+from data import plays, status
 
 if TYPE_CHECKING:
     from data.game import Game
@@ -27,6 +27,7 @@ class Scoreboard:
             game.away_errors(),
             game.away_record(),
             game.away_special_uniforms(),
+            game.abs_challenges_remaining("away") if status.is_live(game.status()) else None,
         )
         self.home_team = Team(
             game.home_abbreviation(),
@@ -36,6 +37,7 @@ class Scoreboard:
             game.home_errors(),
             game.home_record(),
             game.home_special_uniforms(),
+            game.abs_challenges_remaining("home") if status.is_live(game.status()) else None,
         )
         self.inning = Inning(game)
         self.bases = Bases(game)

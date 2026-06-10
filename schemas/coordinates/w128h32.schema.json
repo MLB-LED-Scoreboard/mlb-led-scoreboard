@@ -139,12 +139,17 @@
         "hide_record_on_high_line_score": false
       },
       "line_score": {
-        "away": { "x": 63, "y": 8  },
-        "home": { "x": 63, "y": 18 },
+        "away": { "x": 60, "y": 8  },
+        "home": { "x": 60, "y": 18 },
         "show_hits_and_errors": false,
+        "show_abs_challenges":  true,
         "compress_digits": false,
         "shorten_team_name_on_high_line_score": true,
         "spacing": 3
+      },
+      "abs_challenges": {
+        "away": { "x": 61, "size": 2, "squares": [2, 6]   },
+        "home": { "x": 61, "size": 2, "squares": [12, 16] }
       }
     },
     "news": {

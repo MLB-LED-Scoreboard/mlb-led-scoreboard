@@ -110,6 +110,20 @@
       },
       "required": ["away", "home"]
     },
+    "abs_challenges_side": {
+      "type": "object",
+      "properties": {
+        "x":       { "type": "integer" },
+        "size":    { "type": "integer", "default": 2, "minimum": 1 },
+        "squares": {
+          "type": "array",
+          "description": "Y positions for each challenge square (two = colon-style indicator). Squares are filled from the bottom up as challenges remain.",
+          "items": { "type": "integer" },
+          "minItems": 1
+        }
+      },
+      "required": ["x", "size", "squares"]
+    },
     "format": {
       "type": "number",
       "const": 9.0,
@@ -358,10 +372,19 @@
             "away":                                 { "$ref": "#/$defs/named_point" },
             "home":                                 { "$ref": "#/$defs/named_point" },
             "show_hits_and_errors":                 { "type": "boolean" },
+            "show_abs_challenges":                  { "type": "boolean", "default": true },
             "compress_digits":                      { "type": "boolean" },
             "shorten_team_name_on_high_line_score": { "type": "boolean" },
             "spacing":                              { "type": "integer" },
             "font_name":                            { "$ref": "#/$defs/font_name" }
+          }
+        },
+        "abs_challenges": {
+          "type": "object",
+          "description": "Two-square 'colon' indicator per team showing manager-challenge state",
+          "properties": {
+            "away": { "$ref": "#/$defs/abs_challenges_side" },
+            "home": { "$ref": "#/$defs/abs_challenges_side" }
           }
         }
       }

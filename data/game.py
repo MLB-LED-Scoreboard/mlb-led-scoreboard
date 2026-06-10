@@ -27,7 +27,8 @@ API_FIELDS = (
     + "currentPlay,result,eventType,playEvents,isPitch,pitchData,startSpeed,details,type,code,description,decisions,"
     + "winner,loser,save,id,linescore,outs,balls,strikes,note,inningState,currentInning,currentInningOrdinal,offense,"
     + "batter,inHole,onDeck,first,second,third,defense,pitcher,boxscore,teams,runs,players,seasonStats,pitching,wins,"
-    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind,metaData,timeStamp"
+    + "losses,saves,era,hits,errors,stats,pitching,numberOfPitches,weather,condition,temp,wind,metaData,timeStamp,"
+    + "absChallenges,remaining"
 )
 
 SCHEDULE_API_FIELDS = "dates,date,games,status,detailedState,abstractGameState,reason"
@@ -352,6 +353,12 @@ class Game:
 
     def series_status(self):
         return self._series_status
+
+    def abs_challenges_remaining(self, side):
+        try:
+            return self._current_data["gameData"]["absChallenges"][side]["remaining"]
+        except (KeyError, TypeError):
+            return None
 
     def current_play_result(self):
         result = self._current_data["liveData"]["plays"].get("currentPlay", {}).get("result", {}).get("eventType", "")

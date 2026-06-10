@@ -31,11 +31,12 @@ def make_team(
     errors=0,
     record="0-0",
     special_uniform=None,
+    abs_challenges=2,
 ):
     if name is None:
         name = f"Test {abbrev}"
 
-    return Team(abbrev, runs, name, hits, errors, record, special_uniform)
+    return Team(abbrev, runs, name, hits, errors, record, special_uniform, abs_challenges)
 
 
 class TestCanUseFullTeamNames(unittest.TestCase):

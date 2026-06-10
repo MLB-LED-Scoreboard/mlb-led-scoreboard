@@ -304,6 +304,18 @@
       "b": 3
     }
   },
+  "abs_challenges": {
+    "available": {
+      "r": 1,
+      "g": 2,
+      "b": 3
+    },
+    "used": {
+      "r": 1,
+      "g": 2,
+      "b": 3
+    }
+  },
   "default": {
     "background": {
       "r": 1,
