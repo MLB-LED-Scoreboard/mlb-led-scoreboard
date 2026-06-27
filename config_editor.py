@@ -21,6 +21,7 @@ Usage:
 
 import argparse
 import json
+import logging
 import re
 import shutil
 import subprocess
@@ -35,6 +36,8 @@ from urllib.parse import urlparse
 # exact same rules as the CLI verifier.
 import validate_config
 from data.paths import ROOT_DIRECTORY, COORDINATES_DIRECTORY
+
+LOGGER = logging.getLogger("config_editor")
 
 ROOT = Path(ROOT_DIRECTORY)
 STATIC_DIR = ROOT / "config_editor_static"
@@ -143,6 +146,37 @@ def reconcile(values, example, options):
     return result, changes
 
 
+def validate_runtime(config):
+    """Run the board's own parsing to catch errors before writing.
+
+    Returns a list of human-readable error strings (empty == valid). Uses the
+    scoreboard's real validators so the editor rejects anything that would crash
+    Config() at startup (priority 0, unknown teams, missing with_priority=0, ...).
+    Degrades gracefully (no runtime check) if the board modules can't be imported.
+    """
+    errors = []
+    try:
+        from data.config import _screen_rules_from_json
+        from data.teams import get_team_id
+    except Exception as e:  # board package unavailable — skip runtime check
+        LOGGER.warning("Skipping runtime validation (board import failed): %s", e)
+        return errors
+
+    rotation = config.get("rotation", {}) or {}
+    try:
+        _screen_rules_from_json(rotation.get("screens", []) or [])
+    except Exception as e:
+        errors.append(str(e))
+
+    for team in (config.get("news_ticker", {}) or {}).get("teams", []) or []:
+        try:
+            get_team_id(team)
+        except Exception as e:
+            errors.append(f"News ticker: {e}")
+
+    return errors
+
+
 def save_config(values):
     """Validate, back up, and write config.json. Returns a result dict."""
     example = load_json(EXAMPLE_CONFIG_FILE)
@@ -150,6 +184,11 @@ def save_config(values):
 
     # Ensure it serialises cleanly before touching disk.
     serialized = json.dumps(result, indent=2)
+
+    # Refuse to write a config the board would reject at startup.
+    errors = validate_runtime(result)
+    if errors:
+        return {"ok": False, "error": "Configuration is invalid — nothing was saved.", "errors": errors}
 
     bak = backup_file(CONFIG_FILE)
     CONFIG_FILE.write_text(serialized + "\n")

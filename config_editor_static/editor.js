@@ -473,11 +473,18 @@ function rerenderConfig() {
   window.scrollTo(0, y);
 }
 
-function showStatus(msg, ok) {
+function showStatus(msg, ok, errors) {
   const s = document.getElementById("status");
   s.hidden = false;
   s.className = "status " + (ok ? "ok" : "err");
-  s.textContent = msg;
+  s.innerHTML = "";
+  s.append(el("div", {}, msg));
+  if (errors && errors.length) {
+    const ul = el("ul", { class: "errlist" });
+    for (const e of errors) ul.append(el("li", {}, e));
+    s.append(ul);
+  }
+  s.scrollIntoView({ block: "nearest" });
 }
 
 async function save() {
@@ -489,7 +496,7 @@ async function save() {
       body: JSON.stringify(FORM_GET()),
     })).json();
     if (!res.ok) {
-      showStatus("Save failed: " + (res.error || "unknown error"), false);
+      showStatus(res.error || "Save failed.", false, res.errors);
       return false;
     }
     // 2) display toggles -> every coordinate file
