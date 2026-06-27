@@ -106,6 +106,7 @@ venv.bak/
 
 # Ignore backups
 *.bak
+*.bak-*
 
 # Ignore our customized config.json
 /config*.json
