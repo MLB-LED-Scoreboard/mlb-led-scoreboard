@@ -414,6 +414,7 @@
       "x-format": "range"
     },
     "sport_ids": {
+      "title": "Leagues",
       "description": "Which leagues/levels to pull games from. MLB only by default. Note that 'International' (51) carries WBC games during the World Baseball Classic, but also collegiate/Appalachian League games at other times of year.",
       "type": "array",
       "items": {
@@ -537,6 +538,33 @@
         "NL West",
         "AL Wild Card",
         "NL Wild Card"
+      ]
+    },
+    "wbc_team": {
+      "title": "International / WBC team",
+      "description": "National teams that appear under sportId 51. Only usable when the International league is selected.",
+      "type": "string",
+      "enum": [
+        "Australia",
+        "Brazil",
+        "Canada",
+        "Chinese Taipei",
+        "Colombia",
+        "Cuba",
+        "Czechia",
+        "Dominican Republic",
+        "Great Britain",
+        "Israel",
+        "Italy",
+        "Japan",
+        "Mexico",
+        "Netherlands",
+        "Nicaragua",
+        "Panama",
+        "Puerto Rico",
+        "United States",
+        "Venezuela",
+        "Korea"
       ]
     },
     "team": {
