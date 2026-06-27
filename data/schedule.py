@@ -36,7 +36,8 @@ class Schedule:
             LOGGER.debug("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
-                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"))
+                sport_ids = ",".join(str(s) for s in (self.config.sport_ids or [1]))
+                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId=sport_ids)
             except Exception:
                 LOGGER.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
