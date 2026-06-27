@@ -67,7 +67,7 @@
   "time_format": "12h",
   "end_of_day": "00:00",
   "sync_delay_seconds": 0,
-  "api_refresh_rate": 5,
+  "api_refresh_rate": 15,
   "sport_ids": [
     1
   ],

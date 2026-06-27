@@ -23,7 +23,8 @@
     },
     "matrix": {
       "description": "Matrix driver options. Identical to command line arguments.",
-      "default": {}
+      "default": {},
+      "x-hidden": true
     },
     "rotation": {
       "type": "object",
@@ -404,10 +405,13 @@
       "minimum": 0
     },
     "api_refresh_rate": {
-      "description": "How often we update the status of a game in seconds",
+      "description": "How often we update the status of a game in seconds. Lower values call the MLB API more often.",
       "type": "number",
-      "default": 5,
-      "minimum": 1
+      "default": 15,
+      "minimum": 15,
+      "maximum": 60,
+      "x-step": 5,
+      "x-format": "range"
     },
     "sport_ids": {
       "description": "Which leagues/levels to pull games from. MLB only by default. Note that 'International' (51) carries WBC games during the World Baseball Classic, but also collegiate/Appalachian League games at other times of year.",
@@ -437,7 +441,9 @@
       "type": "number",
       "minimum": 0,
       "maximum": 6,
-      "default": 2
+      "default": 2,
+      "x-step": 1,
+      "x-format": "range"
     },
     "editorial_blurb": {
       "description": "Include the MLB.com editorial recap/preview blurb in game scroll text?",
