@@ -44,6 +44,7 @@ If you'd like to see support for another set of board dimensions, or have design
 - [Usage](#usage)
   * [Running on Other Platforms](#running-on-other-platforms)
   * [Configuration](#configuration)
+    + [Web Config Editor](#web-config-editor)
   * [Controlling the Display (Screen Rotation)](#controlling-the-display-screen-rotation)
   * [Synchronizing with Broadcasts](#synchronizing-with-broadcasts)
   * [Additional Features](#additional-features)
@@ -264,6 +265,34 @@ See [RGBMatrixEmulator](https://github.com/ty-porter/RGBMatrixEmulator) for emul
 A default [`config.example.json`](config.example.json) file is included for reference. Copy this file to `config.json` and modify the values as needed.
 See [`config.schema.json`](config.schema.json) for a schema for configuration files.
 
+You can edit everything below by hand, or use the [Web Config Editor](#web-config-editor) for a friendlier point-and-click experience.
+
+#### Web Config Editor
+
+Rather than hand-editing JSON, you can run a small local web app that presents every option as labeled checkboxes, dropdowns, and sliders. It's driven directly by the config schema, so the same descriptions you see below appear as inline help.
+
+Run it from the project root (in the same virtualenv the scoreboard uses):
+
+```sh
+# Reachable at http://<your-pi>.local/ on your network (port 80 needs sudo)
+sudo venv/bin/python config_editor.py
+
+# Or pick a non-privileged port and open http://<your-pi>.local:8080/
+venv/bin/python config_editor.py --port 8080
+```
+
+Then browse to the address it prints. What it does:
+
+- **Reads your current config if present, otherwise the example.** It loads `config.json` when it exists (falling back to `config.example.json`), and always writes to `config.json` — your existing settings are the starting point, never the bare defaults.
+- **Validates before writing.** Every save is run through the scoreboard's own config parser. If something would stop the board from booting (e.g. a game screen with `priority: 0`, an unknown team name, or no `with_priority: 0` fallback screen), the save is rejected and the exact problem is shown — nothing is written.
+- **Backs up every save.** A timestamped `config.json.bak-…` is written before each change so you can roll back.
+- **Leagues & teams.** The **Leagues** selector at the top maps to [`sport_ids`](#configuration). Selecting *International / WBC* additionally lets you pick national teams (Japan, USA, …) in the team pickers.
+- **Display (all layouts).** Four line-score toggles — *Show Hits And Errors*, *Show ABS Challenges*, *Compress Digits*, and *Shorten Team Name On High Line Score* — are written into every `coordinates/*.json` file at once, so the setting applies no matter which panel size you run. Your existing custom layouts are updated in place (only these keys change).
+- **Save & restart.** If the editor detects a running scoreboard service (a systemd unit or launchd label matching `mlb*scoreboard`), it offers a one-click **Save & Restart**. If it can't find one, it saves and reminds you to restart manually. You can force a specific unit name with `--service <name>`.
+
+> [!NOTE]
+> The editor serves an unauthenticated page on your local network — only run it on a network you trust.
+
 ```
 "matrix":
   <CLI flags>                     Any     See the `Flags` section.
@@ -294,6 +323,7 @@ See [`config.schema.json`](config.schema.json) for a schema for configuration fi
   "metric_units"                  Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
   "pregame"                       Bool    If enabled, will display the weather for the game's location on the pregame screen.
 
+"sport_ids"                       Array   MLB Stats API sport IDs to pull games from. Defaults to [1] (MLB only). Other levels include 11 (Triple-A), 12 (Double-A), 13 (High-A), 14 (Single-A), 16 (Rookie), 17 (Winter), 22 (College), 23 (Independent), and 51 (International). Note: 51 carries World Baseball Classic games during the WBC, but also collegiate/Appalachian League games at other times of year.
 "time_format"                     String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
