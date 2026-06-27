@@ -482,7 +482,7 @@
       "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
       "meta:enum": {
         "live": "Game is currently in progress",
-        "live_in_inning": "Game is currently in progress and has reached the inning specified in the teams array (if any)",
+        "live_in_inning": "Game is in progress and actively mid-inning (not between innings or in warmups)",
         "pregame": "Game has not started yet",
         "game_over": "Game has finished"
       }
