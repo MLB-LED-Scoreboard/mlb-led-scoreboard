@@ -9,6 +9,7 @@ let BOOLEANS_ONLY = false; // coordinates: only show boolean/enum leaves
 let SELECTED_SPORTS = new Set(); // current sport_ids selection (drives team pickers)
 let LAST_SCHEMA = null;    // last rendered schema (for reactive re-render)
 let LAST_SOURCE = null;    // last rendered source label
+let LAST_DISPLAY = null;   // {keys, values} for the display (line_score) section
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function humanize(key) {
@@ -406,35 +407,51 @@ function renderObjectArray(schema, items, value, key) {
   };
 }
 
+// ── Display (line_score) toggles — apply to every layout ─────────────────────
+const DISPLAY_LABELS = {
+  show_hits_and_errors: "Show Hits And Errors",
+  show_abs_challenges: "Show ABS Challenges",
+  compress_digits: "Compress Digits",
+  shorten_team_name_on_high_line_score: "Shorten Team Name On High Line Score",
+};
+let DISPLAY_GET = null; // () => { key: bool }
+
+function renderDisplaySection(data) {
+  const body = el("div");
+  const boxes = {};
+  for (const key of data.keys) {
+    const cb = el("input", { type: "checkbox" });
+    cb.checked = !!data.values[key];
+    boxes[key] = cb;
+    body.append(el("div", { class: "field" },
+      el("div", { class: "checkrow" }, cb, el("label", {}, DISPLAY_LABELS[key] || humanize(key)))));
+  }
+  DISPLAY_GET = () => Object.fromEntries(data.keys.map(k => [k, boxes[k].checked]));
+  return el("fieldset", {},
+    el("legend", {}, "Display (all layouts)"),
+    el("div", { class: "desc" }, "Line-score options applied to every panel size."),
+    body);
+}
+
 // ── Page wiring ──────────────────────────────────────────────────────────────
 async function loadConfig() {
   MODE = "config";
   const data = await (await fetch("/api/schema/config")).json();
   ROOT_SCHEMA = data.schema;
   BOOLEANS_ONLY = false;
-  renderForm(data);
+  const display = await (await fetch("/api/line_score")).json();
+  renderForm(data, display);
 }
 
-async function loadCoordinates(size) {
-  MODE = "coordinates";
-  CURRENT_SIZE = size;
-  const data = await (await fetch(`/api/schema/coordinates/${size}`)).json();
-  ROOT_SCHEMA = data.schema;
-  BOOLEANS_ONLY = !!data.booleansOnly;
-  renderForm(data);
-}
-
-function renderForm(data) {
+function renderForm(data, display) {
   LAST_SCHEMA = data.schema;
   LAST_SOURCE = data.source;
-  // Seed the league selection so team pickers render correctly on first paint.
-  if (MODE === "config") {
-    SELECTED_SPORTS = new Set((data.values && data.values.sport_ids) || [1]);
-  }
-  renderFormWith(data.values);
+  SELECTED_SPORTS = new Set((data.values && data.values.sport_ids) || [1]);
+  renderFormWith(data.values, display);
 }
 
-function renderFormWith(values) {
+function renderFormWith(values, display) {
+  if (display) LAST_DISPLAY = display;
   const form = document.getElementById("form");
   form.innerHTML = "";
   document.getElementById("source").textContent =
@@ -442,12 +459,15 @@ function renderFormWith(values) {
   const root = renderNode(LAST_SCHEMA, values, "");
   FORM_GET = root.get;
   if (root.el) form.append(root.el);
+  if (LAST_DISPLAY) form.append(renderDisplaySection(LAST_DISPLAY));
 }
 
 // Re-render the config form in place, preserving current edits and scroll.
 // Used when toggling leagues so team pickers update reactively.
 function rerenderConfig() {
   const values = FORM_GET ? FORM_GET() : {};
+  // Preserve in-progress display toggles across the re-render.
+  if (DISPLAY_GET && LAST_DISPLAY) LAST_DISPLAY = { keys: LAST_DISPLAY.keys, values: DISPLAY_GET() };
   const y = window.scrollY;
   renderFormWith(values);
   window.scrollTo(0, y);
@@ -462,21 +482,33 @@ function showStatus(msg, ok) {
 
 async function save() {
   if (!FORM_GET) return;
-  const values = FORM_GET();
-  const url = MODE === "config" ? "/api/save/config" : `/api/save/coordinates/${CURRENT_SIZE}`;
   try {
-    const res = await (await fetch(url, {
+    // 1) main config.json
+    const res = await (await fetch("/api/save/config", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+      body: JSON.stringify(FORM_GET()),
     })).json();
-    if (res.ok) {
-      const c = res.changes || {};
-      showStatus(`Saved ${res.written}${res.backup ? ` (backup: ${res.backup})` : ""}` +
-        ` — +${c.added || 0} / −${c.deleted || 0} keys reconciled.`, true);
-    } else {
+    if (!res.ok) {
       showStatus("Save failed: " + (res.error || "unknown error"), false);
+      return false;
     }
-    return res.ok;
+    // 2) display toggles -> every coordinate file
+    let displayMsg = "";
+    if (DISPLAY_GET) {
+      const dres = await (await fetch("/api/save/line_score", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(DISPLAY_GET()),
+      })).json();
+      if (!dres.ok) {
+        showStatus("Config saved, but display toggles failed: " + (dres.error || "?"), false);
+        return false;
+      }
+      displayMsg = ` Display applied to ${dres.count} layouts.`;
+    }
+    const c = res.changes || {};
+    showStatus(`Saved ${res.written}${res.backup ? ` (backup: ${res.backup})` : ""}` +
+      ` — +${c.added || 0} / −${c.deleted || 0} keys reconciled.` + displayMsg, true);
+    return true;
   } catch (e) {
     showStatus("Save failed: " + e.message, false);
     return false;
@@ -500,36 +532,8 @@ async function setupService() {
   }
 }
 
-async function setupCoordPicker() {
-  const { sizes } = await (await fetch("/api/coordinates")).json();
-  const sel = document.getElementById("coord-size");
-  sel.innerHTML = "";
-  sizes.forEach(s => sel.append(el("option", { value: s }, s)));
-  sel.onchange = () => loadCoordinates(sel.value);
-}
-
-function setupTabs() {
-  document.querySelectorAll(".tab").forEach(tab => {
-    tab.onclick = () => {
-      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      const isCoord = tab.dataset.tab === "coordinates";
-      document.getElementById("coord-picker").hidden = !isCoord;
-      if (isCoord) {
-        const sel = document.getElementById("coord-size");
-        if (sel.value) loadCoordinates(sel.value);
-      } else {
-        loadConfig();
-      }
-    };
-  });
-}
-
 document.getElementById("save").onclick = save;
-document.getElementById("reload").onclick = () =>
-  MODE === "config" ? loadConfig() : loadCoordinates(CURRENT_SIZE);
+document.getElementById("reload").onclick = () => loadConfig();
 
-setupTabs();
-setupCoordPicker();
 setupService();
 loadConfig();

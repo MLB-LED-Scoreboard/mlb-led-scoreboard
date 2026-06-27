@@ -196,6 +196,58 @@ def coordinate_paths(size):
     return custom, example
 
 
+# ── Line-score display toggles (apply to every layout) ──────────────────────────
+#
+# Four booleans under teams.line_score that users actually want to flip, surfaced
+# on the main page and written to *every* coordinate file so the setting applies
+# regardless of which panel resolution is in use. Existing custom layouts are
+# updated surgically (only these keys); sizes with no custom file get a minimal
+# override, which the board deep-merges over the example at runtime.
+
+LINE_SCORE_KEYS = [
+    "show_hits_and_errors",
+    "show_abs_challenges",
+    "compress_digits",
+    "shorten_team_name_on_high_line_score",
+]
+PRIMARY_SIZE = "w128h64"
+
+
+def get_line_score():
+    """Representative current values, read from the primary size (custom-or-example)."""
+    sizes = coordinate_sizes()
+    primary = PRIMARY_SIZE if PRIMARY_SIZE in sizes else (sizes[0] if sizes else None)
+    values = {k: False for k in LINE_SCORE_KEYS}
+    if primary:
+        custom, example = coordinate_paths(primary)
+        merged, _ = load_merged(custom, example)
+        ls = merged.get("teams", {}).get("line_score", {})
+        for k in LINE_SCORE_KEYS:
+            values[k] = bool(ls.get(k, False))
+    return {"values": values, "keys": LINE_SCORE_KEYS}
+
+
+def save_line_score(body):
+    """Write the requested line_score booleans into every coordinate custom file."""
+    written = []
+    for size in coordinate_sizes():
+        custom, example = coordinate_paths(size)
+        # Preserve any existing custom layout; otherwise start a minimal override
+        # that the board will deep-merge over the example.
+        if custom.is_file():
+            doc = load_json(custom)
+        else:
+            doc = {"$schema": load_json(example).get("$schema", f"./../schemas/coordinates/{size}.schema.json")}
+        ls = doc.setdefault("teams", {}).setdefault("line_score", {})
+        for k in LINE_SCORE_KEYS:
+            if k in body:
+                ls[k] = bool(body[k])
+        bak = backup_file(custom)
+        custom.write_text(json.dumps(doc, indent=2) + "\n")
+        written.append({"size": size, "backup": bak.name if bak else None})
+    return {"ok": True, "written": [w["size"] for w in written], "count": len(written)}
+
+
 # ── Service detection ───────────────────────────────────────────────────────────
 
 
@@ -310,6 +362,8 @@ class Handler(BaseHTTPRequestHandler):
                 "source": source,
                 "booleansOnly": True,
             })
+        if path == "/api/line_score":
+            return self._send_json(get_line_score())
         if path == "/api/service":
             return self._send_json(detect_service(self.service_override))
         return self._send_json({"error": "not found"}, 404)
@@ -319,6 +373,8 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/api/save/config":
                 return self._send_json(save_config(self._read_body()))
+            if path == "/api/save/line_score":
+                return self._send_json(save_line_score(self._read_body()))
             m = re.match(r"^/api/save/coordinates/(w\d+h\d+)$", path)
             if m:
                 return self._send_json(self._save_coordinates(m.group(1), self._read_body()))
