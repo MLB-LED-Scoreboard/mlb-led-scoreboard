@@ -135,3 +135,5 @@ button.btn-primary, button.btn-secondary, button.btn-restart {
 .status { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 14px; }
 .status.ok { background: rgba(28,156,91,.15); border: 1px solid var(--accent-2); }
 .status.err { background: rgba(201,72,58,.15); border: 1px solid var(--danger); }
+.status .errlist { margin: 8px 0 0; padding-left: 20px; }
+.status .errlist li { margin: 3px 0; font-family: monospace; font-size: 13px; }
