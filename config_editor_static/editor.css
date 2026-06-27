@@ -76,6 +76,14 @@ input[type="text"], input[type="number"], select {
 }
 input[type="checkbox"] { width: 16px; height: 16px; }
 
+.range-wrap { display: flex; align-items: center; gap: 12px; }
+.range-wrap input[type="range"] { flex: 1; }
+.range-val {
+  min-width: 2.5em; text-align: center; font-variant-numeric: tabular-nums;
+  background: var(--panel-2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 8px; font-size: 14px;
+}
+
 .checkrow { display: flex; align-items: center; gap: 8px; }
 .checkrow label { font-size: 14px; text-transform: capitalize; }
 

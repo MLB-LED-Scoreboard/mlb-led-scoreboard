@@ -168,11 +168,28 @@ function renderEnum(schema, value, key) {
 
 // ── Number ───────────────────────────────────────────────────────────────────
 function renderNumber(schema, value, key) {
+  const cur = value !== undefined ? value : schema.default;
+
+  // Slider when explicitly marked x-format:"range" (needs min + max).
+  if (schema["x-format"] === "range" && schema.minimum !== undefined && schema.maximum !== undefined) {
+    const inp = el("input", { type: "range" });
+    inp.min = schema.minimum;
+    inp.max = schema.maximum;
+    inp.step = schema["x-step"] || (schema.type === "integer" ? 1 : 1);
+    if (cur !== undefined) inp.value = cur;
+    const readout = el("span", { class: "range-val" }, String(cur !== undefined ? cur : schema.minimum));
+    inp.oninput = () => { readout.textContent = inp.value; };
+    const wrap = el("div", { class: "range-wrap" }, inp, readout);
+    return {
+      el: fieldWrap(humanize(key), schema, wrap),
+      get: () => inp.value === "" ? undefined : Number(inp.value),
+    };
+  }
+
   const inp = el("input", { type: "number" });
   if (schema.minimum !== undefined) inp.min = schema.minimum;
   if (schema.maximum !== undefined) inp.max = schema.maximum;
   inp.step = schema.type === "integer" ? "1" : "any";
-  const cur = value !== undefined ? value : schema.default;
   if (cur !== undefined) inp.value = cur;
   return {
     el: fieldWrap(humanize(key), schema, inp),
@@ -191,6 +208,28 @@ function renderString(schema, value, key) {
 // ── oneOf ────────────────────────────────────────────────────────────────────
 function renderOneOf(schema, value, key) {
   const branches = (schema.oneOf || []).map(deref);
+
+  // Toggle + date picker (e.g. demo_date: false | "YYYY-MM-DD").
+  const falseBranch = branches.find(b => b.const === false || b.type === "boolean");
+  const strBranch = branches.find(b => b.type === "string");
+  if (falseBranch && strBranch) {
+    // Only a non-empty string (the date) counts as enabled; false/0/"" are off.
+    const enabled = typeof value === "string" && value.length > 0;
+    const cb = el("input", { type: "checkbox" });
+    cb.checked = enabled;
+    const date = el("input", { type: "date", style: "margin-top:6px" });
+    if (enabled) date.value = value;
+    const sync = () => { date.disabled = !cb.checked; };
+    cb.onchange = sync; sync();
+    const wrap = el("div", {},
+      el("div", { class: "checkrow" }, cb, el("label", {}, "Enabled")),
+      date);
+    return {
+      el: fieldWrap(humanize(key), schema, wrap),
+      get: () => cb.checked ? (date.value || false) : false,
+    };
+  }
+
   const arrayBranch = branches.find(b => b.type === "array");
 
   // Number-or-list (e.g. with_priority: [0,1,2] | 0). Comma-separated input.
