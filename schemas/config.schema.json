@@ -531,6 +531,33 @@
         "NL Wild Card"
       ]
     },
+    "wbc_team": {
+      "title": "International / WBC team",
+      "description": "National teams that appear under sportId 51. Only usable when the International league is selected.",
+      "type": "string",
+      "enum": [
+        "Australia",
+        "Brazil",
+        "Canada",
+        "Chinese Taipei",
+        "Colombia",
+        "Cuba",
+        "Czechia",
+        "Dominican Republic",
+        "Great Britain",
+        "Israel",
+        "Italy",
+        "Japan",
+        "Mexico",
+        "Netherlands",
+        "Nicaragua",
+        "Panama",
+        "Puerto Rico",
+        "United States",
+        "Venezuela",
+        "Korea"
+      ]
+    },
     "team": {
       "title": "MLB team",
       "type": "string",

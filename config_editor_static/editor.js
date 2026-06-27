@@ -6,10 +6,18 @@ let MODE = "config";       // "config" | "coordinates"
 let CURRENT_SIZE = null;   // coordinate size when MODE === "coordinates"
 let FORM_GET = null;       // () => assembled values object
 let BOOLEANS_ONLY = false; // coordinates: only show boolean/enum leaves
+let SELECTED_SPORTS = new Set(); // current sport_ids selection (drives team pickers)
+let LAST_SCHEMA = null;    // last rendered schema (for reactive re-render)
+let LAST_SOURCE = null;    // last rendered source label
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function humanize(key) {
   return String(key).replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// Field/section caption: prefer an explicit schema title, else humanize the key.
+function caption(key, schema) {
+  return (schema && schema.title) || humanize(key);
 }
 
 function resolveRef(ref) {
@@ -109,7 +117,14 @@ function renderObject(schema, value, key) {
 
   const getters = {};
   const body = el("div");
-  for (const [propKey, propSchema] of Object.entries(schema.properties)) {
+  let entries = Object.entries(schema.properties);
+  // At the form root, surface the league selector first for a cohesive flow:
+  // pick leagues, then everything below (incl. team pickers) reflects them.
+  if (!key) {
+    entries = entries.slice().sort(([a], [b]) =>
+      (a === "sport_ids" ? -1 : 0) - (b === "sport_ids" ? -1 : 0));
+  }
+  for (const [propKey, propSchema] of entries) {
     const ds = deref(propSchema);
     if (BOOLEANS_ONLY && ds.type !== "object" && ds.type !== "array" && !isSimpleToggle(ds)) continue;
     const child = renderNode(propSchema, value[propKey], propKey);
@@ -132,7 +147,7 @@ function renderObject(schema, value, key) {
   };
 
   if (!key) return { el: body, get }; // root: no fieldset wrapper
-  const fs = el("fieldset", {}, el("legend", {}, humanize(key)), descEl(schema), body);
+  const fs = el("fieldset", {}, el("legend", {}, caption(key, schema)), descEl(schema), body);
   return { el: fs, get };
 }
 
@@ -141,7 +156,7 @@ function renderBoolean(schema, value, key) {
   const cb = el("input", { type: "checkbox" });
   cb.checked = value !== undefined ? !!value : !!schema.default;
   const row = el("div", { class: "field" },
-    el("div", { class: "checkrow" }, cb, el("label", {}, humanize(key))),
+    el("div", { class: "checkrow" }, cb, el("label", {}, caption(key, schema))),
     descEl(schema),
   );
   return { el: row, get: () => cb.checked };
@@ -161,7 +176,7 @@ function renderEnum(schema, value, key) {
   sel.value = cur !== undefined ? String(cur) : "";
   const coerce = v => (schema.type === "number" || schema.type === "integer") ? Number(v) : v;
   return {
-    el: fieldWrap(humanize(key), schema, sel),
+    el: fieldWrap(caption(key, schema), schema, sel),
     get: () => sel.value === "" ? undefined : coerce(sel.value),
   };
 }
@@ -181,7 +196,7 @@ function renderNumber(schema, value, key) {
     inp.oninput = () => { readout.textContent = inp.value; };
     const wrap = el("div", { class: "range-wrap" }, inp, readout);
     return {
-      el: fieldWrap(humanize(key), schema, wrap),
+      el: fieldWrap(caption(key, schema), schema, wrap),
       get: () => inp.value === "" ? undefined : Number(inp.value),
     };
   }
@@ -192,7 +207,7 @@ function renderNumber(schema, value, key) {
   inp.step = schema.type === "integer" ? "1" : "any";
   if (cur !== undefined) inp.value = cur;
   return {
-    el: fieldWrap(humanize(key), schema, inp),
+    el: fieldWrap(caption(key, schema), schema, inp),
     get: () => inp.value === "" ? undefined : Number(inp.value),
   };
 }
@@ -202,7 +217,7 @@ function renderString(schema, value, key) {
   const inp = el("input", { type: "text" });
   const cur = value !== undefined ? value : schema.default;
   if (cur !== undefined) inp.value = cur;
-  return { el: fieldWrap(humanize(key), schema, inp), get: () => inp.value };
+  return { el: fieldWrap(caption(key, schema), schema, inp), get: () => inp.value };
 }
 
 // ── oneOf ────────────────────────────────────────────────────────────────────
@@ -225,7 +240,7 @@ function renderOneOf(schema, value, key) {
       el("div", { class: "checkrow" }, cb, el("label", {}, "Enabled")),
       date);
     return {
-      el: fieldWrap(humanize(key), schema, wrap),
+      el: fieldWrap(caption(key, schema), schema, wrap),
       get: () => cb.checked ? (date.value || false) : false,
     };
   }
@@ -239,7 +254,7 @@ function renderOneOf(schema, value, key) {
     const inp = el("input", { type: "text", placeholder: "e.g. 0 or 0,1,2" });
     inp.value = Array.isArray(value) ? value.join(",") : (value !== undefined ? String(value) : "");
     return {
-      el: fieldWrap(humanize(key), schema, inp),
+      el: fieldWrap(caption(key, schema), schema, inp),
       get: () => {
         const parts = inp.value.split(",").map(s => s.trim()).filter(Boolean)
           .map(s => numeric ? Number(s) : s);
@@ -253,7 +268,7 @@ function renderOneOf(schema, value, key) {
   const inp = el("input", { type: "text", placeholder: "false" });
   if (value !== undefined && value !== false) inp.value = value;
   return {
-    el: fieldWrap(humanize(key), schema, inp),
+    el: fieldWrap(caption(key, schema), schema, inp),
     get: () => {
       const t = inp.value.trim();
       if (t === "" || t.toLowerCase() === "false") return false;
@@ -277,20 +292,50 @@ function renderArray(schema, value, key) {
   return renderScalarArray(schema, value, key);
 }
 
+// True when this choices array is a team picker (its options are the MLB team enum).
+function isTeamPicker(itemsEnum) {
+  const t = ROOT_SCHEMA && ROOT_SCHEMA.$defs && ROOT_SCHEMA.$defs.team && ROOT_SCHEMA.$defs.team.enum;
+  return t && itemsEnum.length === t.length && itemsEnum.every((v, i) => v === t[i]);
+}
+
 function renderChoices(schema, items, value, key) {
   const selected = new Set((value || schema.default || []).map(String));
   const labels = items["meta:enum"] || {};
   const isNum = items.type === "number" || items.type === "integer";
+
+  // Team pickers gain the International/WBC national teams when the
+  // International league (sportId 51) is selected (or a WBC team is already set).
+  let options = items.enum.slice();
+  if (isTeamPicker(items.enum)) {
+    const wbc = (ROOT_SCHEMA.$defs.wbc_team && ROOT_SCHEMA.$defs.wbc_team.enum) || [];
+    const showWbc = SELECTED_SPORTS.has(51);
+    for (const w of wbc) {
+      if ((showWbc || selected.has(String(w))) && !options.includes(w)) options.push(w);
+    }
+  }
+
   const grid = el("div", { class: "choices" });
   const boxes = [];
-  for (const opt of items.enum) {
+  for (const opt of options) {
     const cb = el("input", { type: "checkbox", value: String(opt) });
     cb.checked = selected.has(String(opt));
     boxes.push([cb, opt]);
     grid.append(el("label", {}, cb, el("span", {}, labels[String(opt)] || String(opt))));
   }
+
+  // The league selector drives the team pickers; re-render reactively on change.
+  if (key === "sport_ids") {
+    for (const [cb] of boxes) {
+      cb.onchange = () => {
+        SELECTED_SPORTS = new Set(
+          boxes.filter(([c]) => c.checked).map(([, opt]) => Number(opt)));
+        rerenderConfig();
+      };
+    }
+  }
+
   return {
-    el: fieldWrap(humanize(key), schema, grid),
+    el: fieldWrap(caption(key, schema), schema, grid),
     get: () => boxes.filter(([cb]) => cb.checked).map(([, opt]) => isNum ? Number(opt) : opt),
   };
 }
@@ -300,7 +345,7 @@ function renderScalarArray(schema, value, key) {
   inp.value = (value || schema.default || []).join(",");
   const numeric = deref(schema.items || {}).type === "number";
   return {
-    el: fieldWrap(humanize(key), schema, inp),
+    el: fieldWrap(caption(key, schema), schema, inp),
     get: () => inp.value.split(",").map(s => s.trim()).filter(Boolean).map(s => numeric ? Number(s) : s),
   };
 }
@@ -356,7 +401,7 @@ function renderObjectArray(schema, items, value, key) {
 
   container.append(list, el("div", { class: "row-head" }, addSel, addBtn));
   return {
-    el: el("fieldset", {}, el("legend", {}, humanize(key)), descEl(schema), container),
+    el: el("fieldset", {}, el("legend", {}, caption(key, schema)), descEl(schema), container),
     get: () => rowGetters.map(e => e.get()),
   };
 }
@@ -380,13 +425,32 @@ async function loadCoordinates(size) {
 }
 
 function renderForm(data) {
+  LAST_SCHEMA = data.schema;
+  LAST_SOURCE = data.source;
+  // Seed the league selection so team pickers render correctly on first paint.
+  if (MODE === "config") {
+    SELECTED_SPORTS = new Set((data.values && data.values.sport_ids) || [1]);
+  }
+  renderFormWith(data.values);
+}
+
+function renderFormWith(values) {
   const form = document.getElementById("form");
   form.innerHTML = "";
   document.getElementById("source").textContent =
-    data.source ? `editing: ${data.source}` : "(new file)";
-  const root = renderNode(data.schema, data.values, "");
+    LAST_SOURCE ? `editing: ${LAST_SOURCE}` : "(new file)";
+  const root = renderNode(LAST_SCHEMA, values, "");
   FORM_GET = root.get;
   if (root.el) form.append(root.el);
+}
+
+// Re-render the config form in place, preserving current edits and scroll.
+// Used when toggling leagues so team pickers update reactively.
+function rerenderConfig() {
+  const values = FORM_GET ? FORM_GET() : {};
+  const y = window.scrollY;
+  renderFormWith(values);
+  window.scrollTo(0, y);
 }
 
 function showStatus(msg, ok) {
