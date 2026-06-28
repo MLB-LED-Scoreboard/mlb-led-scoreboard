@@ -298,7 +298,9 @@ def detect_service(override=None):
     try:
         out = subprocess.run(
             ["systemctl", "list-units", "--type=service", "--all", "--no-legend", "--plain"],
-            capture_output=True, text=True, timeout=5,
+            capture_output=True,
+            text=True,
+            timeout=5,
         ).stdout
         for line in out.splitlines():
             unit = line.split()[0] if line.split() else ""
@@ -383,11 +385,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._send_file(STATIC_DIR / "editor.css", "text/css")
         if path == "/api/schema/config":
             values, source = load_merged(CONFIG_FILE, EXAMPLE_CONFIG_FILE)
-            return self._send_json({
-                "schema": bundle_schema(load_json(CONFIG_SCHEMA_FILE)),
-                "values": values,
-                "source": source,
-            })
+            return self._send_json(
+                {
+                    "schema": bundle_schema(load_json(CONFIG_SCHEMA_FILE)),
+                    "values": values,
+                    "source": source,
+                }
+            )
         if path == "/api/coordinates":
             return self._send_json({"sizes": coordinate_sizes()})
         m = re.match(r"^/api/schema/coordinates/(w\d+h\d+)$", path)
@@ -395,12 +399,14 @@ class Handler(BaseHTTPRequestHandler):
             size = m.group(1)
             custom, example = coordinate_paths(size)
             values, source = load_merged(custom, example)
-            return self._send_json({
-                "schema": bundle_schema(load_json(SCHEMAS_DIR / "coordinates" / f"{size}.schema.json")),
-                "values": values,
-                "source": source,
-                "booleansOnly": True,
-            })
+            return self._send_json(
+                {
+                    "schema": bundle_schema(load_json(SCHEMAS_DIR / "coordinates" / f"{size}.schema.json")),
+                    "values": values,
+                    "source": source,
+                    "booleansOnly": True,
+                }
+            )
         if path == "/api/line_score":
             return self._send_json(get_line_score())
         if path == "/api/service":
