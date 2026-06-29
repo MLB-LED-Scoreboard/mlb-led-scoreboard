@@ -18,7 +18,6 @@ GAMES_REFRESH_RATE = 15
 class Schedule:
     def __init__(self, config: Config) -> None:
         self.config = config
-        self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
 
@@ -32,12 +31,12 @@ class Schedule:
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            self.date = self.config.parse_today()
-            LOGGER.debug("Updating schedule for %s", self.date)
+            date = self.config.parse_today()
+            LOGGER.debug("Updating schedule for %s", date)
             self.starttime = time.time()
             try:
                 # add sportId=51 to additionally get WBC games
-                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId="1,51")
+                all_games = statsapi.schedule(date.strftime("%Y-%m-%d"), sportId=self.config.schedule_sport_ids, leagueId=self.config.schedule_league_ids)
             except Exception:
                 LOGGER.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
@@ -50,7 +49,6 @@ class Schedule:
                 self._data_wait_queue.push((priority, games))
 
                 priority, games = self._data_wait_queue.peek()
-
                 if len(games) > 0:
                     self.current_idx %= len(games)
                 else:
