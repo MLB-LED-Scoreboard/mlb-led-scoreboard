@@ -31,12 +31,14 @@ class Schedule:
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            date = self.config.parse_today()
+            date = self.config.parse_today().strftime("%Y-%m-%d")
             LOGGER.debug("Updating schedule for %s", date)
             self.starttime = time.time()
             try:
                 # add sportId=51 to additionally get WBC games
-                all_games = statsapi.schedule(date.strftime("%Y-%m-%d"), sportId=self.config.schedule_sport_ids, leagueId=self.config.schedule_league_ids)
+                all_games = statsapi.schedule(
+                    date, sportId=self.config.schedule_sport_ids, leagueId=self.config.schedule_league_ids
+                )
             except Exception:
                 LOGGER.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
