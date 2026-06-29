@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MLB LED Scoreboard — Config</title>
+  <link rel="stylesheet" href="/editor.css">
+</head>
+<body>
+  <header>
+    <h1>⚾ Scoreboard Config</h1>
+    <div id="source" class="source"></div>
+  </header>
+
+  <main>
+    <div id="status" class="status" hidden></div>
+    <form id="form" autocomplete="off"></form>
+  </main>
+
+  <footer>
+    <div class="actions">
+      <button type="button" id="reload" class="btn-secondary">Reload</button>
+      <button type="button" id="save" class="btn-primary">Save</button>
+      <button type="button" id="restart" class="btn-restart" hidden>Save &amp; Restart</button>
+    </div>
+    <div id="restart-note" class="restart-note" hidden></div>
+  </footer>
+
+  <script src="/editor.js"></script>
+</body>
+</html>

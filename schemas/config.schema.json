@@ -23,7 +23,8 @@
     },
     "matrix": {
       "description": "Matrix driver options. Identical to command line arguments.",
-      "default": {}
+      "default": {},
+      "x-hidden": true
     },
     "rotation": {
       "type": "object",
@@ -404,17 +405,46 @@
       "minimum": 0
     },
     "api_refresh_rate": {
-      "description": "How often we update the status of a game in seconds",
+      "description": "How often we update the status of a game in seconds. Lower values call the MLB API more often.",
       "type": "number",
-      "default": 5,
-      "minimum": 1
+      "default": 15,
+      "minimum": 15,
+      "maximum": 60,
+      "x-step": 5,
+      "x-format": "range"
+    },
+    "sport_ids": {
+      "title": "Leagues",
+      "description": "Which leagues/levels to pull games from. MLB only by default.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["1", "51", "11", "12", "13", "14", "16", "17", "22", "23"],
+        "meta:enum": {
+          "1": "MLB",
+          "51": "World Baseball Classic",
+          "11": "Triple-A",
+          "12": "Double-A",
+          "13": "High-A",
+          "14": "Single-A",
+          "16": "Rookie",
+          "17": "Winter Leagues",
+          "22": "College",
+          "23": "Independent"
+        }
+      },
+      "uniqueItems": true,
+      "default": ["1"],
+      "x-format": "choices"
     },
     "scrolling_speed": {
       "description": "How quickly should text scroll on the board",
       "type": "number",
       "minimum": 0,
       "maximum": 6,
-      "default": 2
+      "default": 2,
+      "x-step": 1,
+      "x-format": "range"
     },
     "editorial_blurb": {
       "description": "Include the MLB.com editorial recap/preview blurb in game scroll text?",
@@ -453,7 +483,7 @@
       "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
       "meta:enum": {
         "live": "Game is currently in progress",
-        "live_in_inning": "Game is currently in progress and has reached the inning specified in the teams array (if any)",
+        "live_in_inning": "Game is in progress and actively mid-inning (not between innings or in warmups)",
         "pregame": "Game has not started yet",
         "game_over": "Game has finished"
       }
@@ -508,6 +538,33 @@
         "NL West",
         "AL Wild Card",
         "NL Wild Card"
+      ]
+    },
+    "wbc_team": {
+      "title": "International / WBC team",
+      "description": "National teams that appear under sportId 51. Only usable when the International league is selected.",
+      "type": "string",
+      "enum": [
+        "Australia",
+        "Brazil",
+        "Canada",
+        "Chinese Taipei",
+        "Colombia",
+        "Cuba",
+        "Czechia",
+        "Dominican Republic",
+        "Great Britain",
+        "Israel",
+        "Italy",
+        "Japan",
+        "Mexico",
+        "Netherlands",
+        "Nicaragua",
+        "Panama",
+        "Puerto Rico",
+        "United States",
+        "Venezuela",
+        "Korea"
       ]
     },
     "team": {

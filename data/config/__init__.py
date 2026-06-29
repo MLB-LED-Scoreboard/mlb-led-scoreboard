@@ -70,6 +70,7 @@ class Config:
         self.end_of_day = json["end_of_day"]
         self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
+        self.sport_ids = json.get("sport_ids", ["1"])
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
