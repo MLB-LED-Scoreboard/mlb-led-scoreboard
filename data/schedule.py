@@ -14,6 +14,14 @@ from data.config import Config
 
 GAMES_REFRESH_RATE = 15
 
+# Some sport IDs are too broad on their own. sportId 51 ("International") carries
+# the World Baseball Classic, but also collegiate/Appalachian League games at
+# other times of year. Restrict those sports to specific leagueIds so we only
+# pull what the option actually means. leagueId is a global filter on the MLB API
+# (it ANDs across the whole query), so restricted sports are fetched separately.
+#   159 = WBC Qualifiers, 160 = World Baseball Classic
+LEAGUE_RESTRICTIONS = {"51": "159,160"}
+
 
 class Schedule:
     def __init__(self, config: Config) -> None:
@@ -36,8 +44,7 @@ class Schedule:
             LOGGER.debug("Updating schedule for %s", self.date)
             self.starttime = time.time()
             try:
-                sport_ids = ",".join(str(s) for s in (self.config.sport_ids or [1]))
-                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId=sport_ids)
+                all_games = self.__fetch_games()
             except Exception:
                 LOGGER.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL
@@ -67,6 +74,25 @@ class Schedule:
                 return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED
+
+    def __fetch_games(self) -> list:
+        """Fetch the day's games for the configured sport IDs.
+
+        Sports listed in LEAGUE_RESTRICTIONS are fetched separately with their
+        leagueId filter (leagueId is global, so it can't be combined with the
+        unrestricted sports in one call); everything else comes back in one call.
+        """
+        date = self.date.strftime("%Y-%m-%d")
+        sports = [str(s) for s in (self.config.sport_ids or ["1"])]
+
+        unrestricted = [s for s in sports if s not in LEAGUE_RESTRICTIONS]
+        all_games: list = []
+        if unrestricted:
+            all_games += statsapi.schedule(date, sportId=",".join(unrestricted))
+        for sport in sports:
+            if sport in LEAGUE_RESTRICTIONS:
+                all_games += statsapi.schedule(date, sportId=sport, leagueId=LEAGUE_RESTRICTIONS[sport])
+        return all_games
 
     def __should_update(self):
         endtime = time.time()

@@ -446,7 +446,7 @@ async function loadConfig() {
 function renderForm(data, display) {
   LAST_SCHEMA = data.schema;
   LAST_SOURCE = data.source;
-  SELECTED_SPORTS = new Set((data.values && data.values.sport_ids) || [1]);
+  SELECTED_SPORTS = new Set((((data.values && data.values.sport_ids) || [1]).map(Number)));
   renderFormWith(data.values, display);
 }
 

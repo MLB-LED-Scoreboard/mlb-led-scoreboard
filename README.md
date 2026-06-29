@@ -323,7 +323,7 @@ Then browse to the address it prints. What it does:
   "metric_units"                  Bool    Change the weather display to metric units (Celsius, m/s) instead of imperial (Fahrenheit, MPH).
   "pregame"                       Bool    If enabled, will display the weather for the game's location on the pregame screen.
 
-"sport_ids"                       Array   MLB Stats API sport IDs to pull games from. Defaults to [1] (MLB only). Other levels include 11 (Triple-A), 12 (Double-A), 13 (High-A), 14 (Single-A), 16 (Rookie), 17 (Winter), 22 (College), 23 (Independent), and 51 (International). Note: 51 carries World Baseball Classic games during the WBC, but also collegiate/Appalachian League games at other times of year.
+"sport_ids"                       Array   MLB Stats API sport IDs (as strings) to pull games from. Defaults to ["1"] (MLB only). Other levels: "11" (Triple-A), "12" (Double-A), "13" (High-A), "14" (Single-A), "16" (Rookie), "17" (Winter), "22" (College), "23" (Independent), and "51" (World Baseball Classic). "51" is automatically narrowed to the WBC leagues, so it won't pull in the collegiate/Appalachian games that otherwise share that sport ID.
 "time_format"                     String  Sets the preferred hour format for displaying time. Accepted values are "12h" or "24h" depending on which you prefer.
 "end_of_day"                      String  A 24-hour time you wish to consider the end of the previous day before starting to display the current day's games. Uses local time from your Pi.
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.

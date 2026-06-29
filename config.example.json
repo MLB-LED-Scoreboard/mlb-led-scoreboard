@@ -69,7 +69,7 @@
   "sync_delay_seconds": 0,
   "api_refresh_rate": 15,
   "sport_ids": [
-    1
+    "1"
   ],
   "scrolling_speed": 2,
   "editorial_blurb": true,

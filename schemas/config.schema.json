@@ -415,14 +415,14 @@
     },
     "sport_ids": {
       "title": "Leagues",
-      "description": "Which leagues/levels to pull games from. MLB only by default. Note that 'International' (51) carries WBC games during the World Baseball Classic, but also collegiate/Appalachian League games at other times of year.",
+      "description": "Which leagues/levels to pull games from. MLB only by default.",
       "type": "array",
       "items": {
-        "type": "number",
-        "enum": [1, 51, 11, 12, 13, 14, 16, 17, 22, 23],
+        "type": "string",
+        "enum": ["1", "51", "11", "12", "13", "14", "16", "17", "22", "23"],
         "meta:enum": {
           "1": "MLB",
-          "51": "International / WBC",
+          "51": "World Baseball Classic",
           "11": "Triple-A",
           "12": "Double-A",
           "13": "High-A",
@@ -434,7 +434,7 @@
         }
       },
       "uniqueItems": true,
-      "default": [1],
+      "default": ["1"],
       "x-format": "choices"
     },
     "scrolling_speed": {
