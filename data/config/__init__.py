@@ -5,7 +5,7 @@ import logging
 
 from datetime import datetime, timedelta
 from collections import defaultdict, namedtuple
-from typing import Mapping
+from typing import Mapping, Union
 from math import ceil
 
 from bullpen.api.config import MLBConfig
@@ -19,6 +19,7 @@ from bullpen.logging import LOGGER
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
+from data.leagues import LEAGUES
 from data.paths import *
 import cli
 from driver import RGBMatrixOptions
@@ -70,6 +71,7 @@ class Config:
         self.end_of_day = json["end_of_day"]
         self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
+        self.schedule_sport_ids, self.schedule_league_ids = _load_leagues(json["leagues"])
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -459,3 +461,24 @@ def _extract_uniform_types(teams_json: dict) -> dict:
                 uniform_types[key] = key.replace("_", " ")
 
     return uniform_types
+
+
+def _load_leagues(leagues_json: Union[str, list[str]]) -> tuple[str, str]:
+    if isinstance(leagues_json, str):
+        leagues_json = [leagues_json]
+    if not isinstance(leagues_json, list) or not all(isinstance(l, str) for l in leagues_json):
+        raise ValueError(f"Invalid 'leagues' config. Expected a string or list of strings, got {leagues_json}.")
+    if not leagues_json:
+        raise ValueError("Invalid 'leagues' config. Expected a non-empty list of league names, e.g. ['MLB'].")
+
+    sport_ids = []
+    league_ids = []
+
+    for league_name in leagues_json:
+        league = LEAGUES.get(league_name)
+        if not league:
+            raise ValueError(f"Invalid league name '{league_name}' in config. Valid options: {list(LEAGUES.keys())}")
+        sport_ids.append(str(league.sportId))
+        league_ids.extend([str(lid) for lid in league.leagueIds])
+
+    return ",".join(sport_ids), ",".join(league_ids)
