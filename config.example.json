@@ -68,6 +68,10 @@
   "end_of_day": "00:00",
   "sync_delay_seconds": 0,
   "api_refresh_rate": 5,
+  "leagues": [
+    "MLB",
+    "WBC"
+  ],
   "scrolling_speed": 2,
   "editorial_blurb": true,
   "debug": false,
