@@ -55,12 +55,12 @@ def team_matrix_options(raw=False):
 def draw_teams(canvas, config):
     canvas.Clear()
     for i, team in enumerate(sorted(TEAM_ID_ABBR.values())):
-        team_default = Team(team, 0, "", 0, 0, "", None)
-        team_cc = Team(team, 0, "", 0, 0, "", CITY_CONNECT)
+        team_default = Team(team, 0, "", 0, 0, "", None, None)
+        team_cc = Team(team, 0, "", 0, 0, "", CITY_CONNECT, None)
 
         col, row = divmod(i, 8)
         layout = make_layout(row * 26, col * 19)
-        render_team_banner(canvas, layout, config.team_colors, team_cc, team_default, False)
+        render_team_banner(canvas, layout, config.team_colors, team_cc, team_default, False, config.scoreboard_colors)
 
     return matrix.SwapOnVSync(canvas)
 
