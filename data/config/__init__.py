@@ -465,7 +465,7 @@ def _extract_uniform_types(teams_json: dict) -> dict:
     return uniform_types
 
 
-def _load_leagues(leagues_json: Union[str, list[str]]) -> tuple[str, str]:
+def _load_leagues(leagues_json: Union[str, list[str]]) -> tuple[str, str, bool]:
     if isinstance(leagues_json, str):
         leagues_json = [leagues_json]
     if not isinstance(leagues_json, list) or not all(isinstance(l, str) for l in leagues_json):
