@@ -60,7 +60,7 @@ def get(endpoint, params={}, *, request_kwargs={}):
 
 
 def schedule(
-    date=None,
+    date,
     sportId="bsb",
     leagueId=None,
 ):
@@ -69,9 +69,11 @@ def schedule(
     games = []
 
     for i, game in enumerate(r.get("games", [])):
-        if date is not None and not game["scheduled_start"].startswith(date):
+        if not game["scheduled_start"].startswith(date):
             continue
-
+        if not game['presto_data']['teams']['homeTeam']:
+            continue
+        
         game_info = {
             "game_id": game["game_id"],
             "game_datetime": game["scheduled_start"],
