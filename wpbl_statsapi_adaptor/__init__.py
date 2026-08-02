@@ -27,8 +27,8 @@ def translate_status(status):
     match status:
         case "Not Started":
             return data.status.PREGAME
-        case "In Progress":
-            return data.status.LIVE
+        case s if s.startswith("In Progress"):
+            return data.status.IN_PROGRESS
         case s if s.startswith("Final"):
             return data.status.FINAL
         case _:
@@ -107,10 +107,18 @@ def make_fake_player_id(name):
     return {"ID" + name: {"boxscoreName": name.split(" ")[-1], "fullName": name}}
 
 
+import time
+import json
+
+
 # TODO consider if this should be alternative Game.py etc?
 def game(params, *, request_kwargs={}):
     game = get("game", params, request_kwargs=request_kwargs)
     boxscore = get("boxscore", params, request_kwargs=request_kwargs)["boxscore"]
+
+    with open(f"wpbl-data-logging/wpbl-{time.time()}.json", "w") as f:
+
+        json.dump({"game": game, "boxscore": boxscore}, f, indent=2)
 
     boxscore_away_team = boxscore["teams"][0]
     boxscore_home_team = boxscore["teams"][1]
@@ -161,9 +169,9 @@ def game(params, *, request_kwargs={}):
                         else {}
                     ),
                 },
-                "players": make_fake_player_id(boxscore["status"]["pitcher_name"])
-                | make_fake_player_id(boxscore["status"]["batter_name"]),
             },
+            "players": make_fake_player_id(boxscore["status"]["pitcher_name"])
+            | make_fake_player_id(boxscore["status"]["batter_name"]),
             "flags": {
                 "noHitter": inning > 5
                 and (boxscore_home_team["totals"]["hits"] == 0 or boxscore_away_team["totals"]["hits"] == 0),
