@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 import statsapi
+import wpbl_statsapi_adaptor
 
 from bullpen.logging import LOGGER
 from data import teams
@@ -68,11 +69,18 @@ class Game:
             self.starttime = time.time()
             try:
                 LOGGER.debug("Fetching data for game %s", str(self.game_id))
-                live_data = statsapi.get(
-                    "game",
-                    {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params,
-                    request_kwargs={"headers": data.headers.API_HEADERS},
-                )
+                if wpbl_statsapi_adaptor.is_wpbl_game(self.game_id):
+                    live_data = wpbl_statsapi_adaptor.game(
+                        {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params,
+                        request_kwargs={"headers": data.headers.API_HEADERS},
+                    )
+
+                else:
+                    live_data = statsapi.get(
+                        "game",
+                        {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params,
+                        request_kwargs={"headers": data.headers.API_HEADERS},
+                    )
                 # we add a delay to avoid spoilers. During construction, this will still yield live data, but then
                 # it will recycle that data until the queue is full.
                 self._data_wait_queue.push(live_data)

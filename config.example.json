@@ -70,7 +70,8 @@
   "api_refresh_rate": 5,
   "leagues": [
     "MLB",
-    "WBC"
+    "WBC",
+    "WPBL"
   ],
   "scrolling_speed": 2,
   "editorial_blurb": true,

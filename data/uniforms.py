@@ -1,5 +1,6 @@
 import time
 import statsapi
+import wpbl_statsapi_adaptor
 
 from bullpen.logging import LOGGER
 import data.headers
@@ -38,6 +39,9 @@ class Uniforms:
             # These should never change if already populated for this game
             return
         if not force and not self.__should_update():
+            return
+
+        if wpbl_statsapi_adaptor.is_wpbl_game(self.game_id):
             return
 
         try:

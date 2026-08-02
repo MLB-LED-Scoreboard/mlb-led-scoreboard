@@ -5,6 +5,7 @@ from typing import Any, Optional
 from math import ceil
 
 import statsapi
+import wpbl_statsapi_adaptor
 
 from bullpen.logging import LOGGER
 from data.game import Game
@@ -35,10 +36,16 @@ class Schedule:
             LOGGER.debug("Updating schedule for %s", date)
             self.starttime = time.time()
             try:
-                # add sportId=51 to additionally get WBC games
-                all_games = statsapi.schedule(
-                    date, sportId=self.config.schedule_sport_ids, leagueId=self.config.schedule_league_ids
-                )
+                all_games = []
+                if self.config.statsapi_schedule_sport_ids or self.config.statsapi_schedule_league_ids:
+                    all_games = statsapi.schedule(
+                        date,
+                        sportId=self.config.statsapi_schedule_sport_ids,
+                        leagueId=self.config.statsapi_schedule_league_ids,
+                    )
+                if self.config.wants_wpbl:
+                    wpbl_games = wpbl_statsapi_adaptor.schedule(date)
+                    all_games.extend(wpbl_games)
             except Exception:
                 LOGGER.exception("Networking error while refreshing schedule")
                 return UpdateStatus.FAIL

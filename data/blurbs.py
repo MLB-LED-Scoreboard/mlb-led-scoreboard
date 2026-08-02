@@ -1,5 +1,6 @@
 import time
 import statsapi
+import wpbl_statsapi_adaptor
 
 from bullpen.logging import LOGGER
 import data.headers
@@ -24,6 +25,8 @@ class Blurbs:
 
     def update(self, force=False):
         if not force and not self.__should_update():
+            return
+        if wpbl_statsapi_adaptor.is_wpbl_game(self.game_id):
             return
         try:
             self._content = statsapi.get(

@@ -416,10 +416,11 @@
         "type": "string",
         "enum": [
           "MLB",
-          "WBC"
+          "WBC",
+          "WPBL"
         ]
       },
-      "default": ["MLB", "WBC"],
+      "default": ["MLB", "WBC", "WPBL"],
       "uniqueItems": true,
       "x-format": "choices"
     },

@@ -3,8 +3,15 @@
 #   Each abbreviation in the teams list needs to have a corresponding entry in colors/teams.json
 #   in order to render colors correctly.
 
+_WPBL_TEAMS = {
+    "9f08or2mffx81409": {"abbr": "BHU", "name": "Hunters"},
+    "v4gisr4rbgmn67b0": {"abbr": "LAQ", "name": "Queens"},
+    "fttth861nft1j2s7": {"abbr": "NYH", "name": "Heights"},
+    "vhubhz8li07tmgq8": {"abbr": "SFF", "name": "Firebells"},
+}
+
 # These are special teams in the league and not present in the api/v1/teams endpoint.
-_SPECIAL_TEAMS = {
+_SPECIAL_TEAMS = _WPBL_TEAMS | {
     159: {"abbr": "AL", "name": "American League All-Stars"},
     160: {"abbr": "NL", "name": "National League All-Stars"},
     760: {"abbr": "AUS", "name": "Australia"},
