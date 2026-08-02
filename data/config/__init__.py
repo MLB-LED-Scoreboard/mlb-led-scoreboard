@@ -71,7 +71,9 @@ class Config:
         self.end_of_day = json["end_of_day"]
         self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
-        self.statsapi_schedule_sport_ids, self.statsapi_schedule_league_ids, self.wants_wpbl = _load_leagues(json["leagues"])
+        self.statsapi_schedule_sport_ids, self.statsapi_schedule_league_ids, self.wants_wpbl = _load_leagues(
+            json["leagues"]
+        )
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
