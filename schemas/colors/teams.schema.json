@@ -72,6 +72,10 @@
     "usa": { "$ref": "#/$defs/team_colors" },
     "ven": { "$ref": "#/$defs/team_colors" },
     "kor": { "$ref": "#/$defs/team_colors" },
+    "bhu": { "$ref": "#/$defs/team_colors" },
+    "nyh": { "$ref": "#/$defs/team_colors" },
+    "sff": { "$ref": "#/$defs/team_colors" },
+    "laq": { "$ref": "#/$defs/team_colors" },
     "default": { "$ref": "#/$defs/team_colors" }
   },
   "additionalProperties": {
@@ -305,6 +309,10 @@
     "usa": { "home": {"r": 0,   "g": 34,  "b": 68 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 206, "g": 17,  "b": 38 } },
     "ven": { "home": {"r": 255, "g": 223, "b": 0  }, "text": {"r": 0,   "g": 56,  "b": 168}, "accent": {"r": 206, "g": 17,  "b": 38 } },
     "kor": { "home": {"r": 255, "g": 255, "b": 255}, "text": {"r": 0,   "g": 57,  "b": 166}, "accent": {"r": 213, "g": 43,  "b": 30 } },
+    "bhu": { "home": { "r": 0, "g": 40, "b": 30 }, "text": { "r": 255, "g": 255, "b": 255 }, "accent": { "r": 250, "g": 240, "b": 223 } },
+    "nyh": { "home": { "r": 9, "g": 28, "b": 71 }, "text": { "r": 255, "g": 255, "b": 255 }, "accent": { "r": 45, "g": 150, "b": 217 } },
+    "laq": { "home": { "r": 0, "g": 0, "b": 0 }, "text": { "r": 179, "g": 144, "b": 92 }, "accent": { "r": 255, "g": 255, "b": 255 } },
+    "sff": { "home": { "r": 44, "g": 23, "b": 71 }, "text": { "r": 255, "g": 255, "b": 255 }, "accent": { "r": 255, "g": 33, "b": 0 } },
     "default": { "home": {"r": 7,   "g": 14,  "b": 25 }, "text": {"r": 255, "g": 255, "b": 255}, "accent": {"r": 255, "g": 255, "b": 255} }
   }
 }
