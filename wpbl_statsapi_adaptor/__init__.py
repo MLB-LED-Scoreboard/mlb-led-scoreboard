@@ -106,7 +106,7 @@ def schedule(
 
 
 def make_fake_player_id(name):
-    return {"ID" + name: {"boxscoreName": name.split(" ")[-1], "fullName": name}}
+    return {"ID" + name: {"boxscoreName": name.split(" ", 1)[1], "fullName": name}}
 
 
 import time
