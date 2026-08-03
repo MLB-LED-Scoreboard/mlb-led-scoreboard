@@ -35,43 +35,47 @@ class Schedule:
             date = self.config.parse_today().strftime("%Y-%m-%d")
             LOGGER.debug("Updating schedule for %s", date)
             self.starttime = time.time()
+            all_games = []
             try:
-                all_games = []
                 if self.config.statsapi_schedule_sport_ids or self.config.statsapi_schedule_league_ids:
                     all_games = statsapi.schedule(
                         date,
                         sportId=self.config.statsapi_schedule_sport_ids,
                         leagueId=self.config.statsapi_schedule_league_ids,
                     )
+            except Exception:
+                LOGGER.exception("Networking error while refreshing MLB schedule")
+                return UpdateStatus.FAIL
+
+            try:
                 if self.config.wants_wpbl:
                     wpbl_games = wpbl_statsapi_adaptor.schedule(date)
                     all_games.extend(wpbl_games)
             except Exception:
-                LOGGER.exception("Networking error while refreshing schedule")
+                LOGGER.exception("Networking error while refreshing WPBL schedule")
                 return UpdateStatus.FAIL
+
+            priority, games = self.__filter_games(all_games)
+            if priority > self.priority:
+                # going up a priority level should never be delayed
+                self._data_wait_queue.clear()
+            self._data_wait_queue.push((priority, games))
+
+            priority, games = self._data_wait_queue.peek()
+            if len(games) > 0:
+                self.current_idx %= len(games)
             else:
+                self.current_idx = 0
 
-                priority, games = self.__filter_games(all_games)
-                if priority > self.priority:
-                    # going up a priority level should never be delayed
-                    self._data_wait_queue.clear()
-                self._data_wait_queue.push((priority, games))
-
-                priority, games = self._data_wait_queue.peek()
-                if len(games) > 0:
-                    self.current_idx %= len(games)
-                else:
-                    self.current_idx = 0
-
-                self._games = games
-                self.priority = priority
-                LOGGER.debug(
-                    "Schedule updated with %d games (priority %d) (current delay %d)",
-                    len(self._games),
-                    priority,
-                    self.current_delay(),
-                )
-                return UpdateStatus.SUCCESS
+            self._games = games
+            self.priority = priority
+            LOGGER.debug(
+                "Schedule updated with %d games (priority %d) (current delay %d)",
+                len(self._games),
+                priority,
+                self.current_delay(),
+            )
+            return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED
 
