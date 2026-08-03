@@ -45,7 +45,6 @@ class Schedule:
                     )
             except Exception:
                 LOGGER.exception("Networking error while refreshing MLB schedule")
-                return UpdateStatus.FAIL
 
             try:
                 if self.config.wants_wpbl:
@@ -53,6 +52,8 @@ class Schedule:
                     all_games.extend(wpbl_games)
             except Exception:
                 LOGGER.exception("Networking error while refreshing WPBL schedule")
+
+            if not all_games:
                 return UpdateStatus.FAIL
 
             priority, games = self.__filter_games(all_games)
