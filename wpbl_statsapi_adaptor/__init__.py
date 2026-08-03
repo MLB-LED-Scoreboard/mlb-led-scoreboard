@@ -52,7 +52,7 @@ def get(endpoint, params={}, *, request_kwargs={}):
     #         sep = "?" if url.find("?") == -1 else "&"
     #         url += sep + k + "=" + v
 
-    r = requests.get(url, **request_kwargs)
+    r = requests.get(url, timeout=(5, 15), **request_kwargs)
     if r.status_code not in [200, 201]:
         r.raise_for_status()
     else:
