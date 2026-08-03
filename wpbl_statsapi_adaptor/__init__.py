@@ -71,7 +71,7 @@ def schedule(
     for i, game in enumerate(r.get("games", [])):
         if not game["scheduled_start"].startswith(date):
             continue
-        if not game['presto_data']['teams']['homeTeam']:
+        if not game["presto_data"]["teams"]["homeTeam"]:
             continue
 
         game_info = {
@@ -123,6 +123,10 @@ def game(params, *, request_kwargs={}):
     assert boxscore_home_team["side"] == "home"
 
     plays = boxscore.get("plays", []) or []
+    current_play = {}
+    if plays and boxscore["status"]["balls"] == 0 and boxscore["status"]["strikes"] == 0:
+        # unlike statsapi, plays array is only for 'completed' plays, so don't keep the last play around forever
+        current_play = plays[-1]
 
     # TODO: does this ever show mid/end of innings?
     # TODO: due up batters, probable pitchers, winning/losing/save pitcher?
@@ -211,9 +215,9 @@ def game(params, *, request_kwargs={}):
             "plays": {
                 "currentPlay": {
                     "result": {
-                        "eventType": plays[-1]["event_type"] if len(plays) > 0 else "",
+                        "eventType": current_play.get("event_type", ""),
                         "description": (
-                            "called out on strikes" if len(plays) > 0 and "looking" in plays[-1]["narrative"] else ""
+                            "called out on strikes" if current_play and "looking" in current_play["narrative"] else ""
                         ),
                     }
                 }
