@@ -73,7 +73,7 @@ def schedule(
             continue
         if not game['presto_data']['teams']['homeTeam']:
             continue
-        
+
         game_info = {
             "game_id": game["game_id"],
             "game_datetime": game["scheduled_start"],
@@ -117,10 +117,6 @@ import json
 def game(params, *, request_kwargs={}):
     game = get("game", params, request_kwargs=request_kwargs)
     boxscore = get("boxscore", params, request_kwargs=request_kwargs)["boxscore"]
-
-    with open(f"wpbl-data-logging/wpbl-{time.time()}.json", "w") as f:
-
-        json.dump({"game": game, "boxscore": boxscore}, f, indent=2)
 
     boxscore_away_team = boxscore["teams"][0]
     boxscore_home_team = boxscore["teams"][1]
