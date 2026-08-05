@@ -106,11 +106,9 @@ def schedule(
 
 
 def make_fake_player_id(name):
+    if not name:
+        return {}
     return {"ID" + name: {"boxscoreName": name.split(" ", 1)[1], "fullName": name}}
-
-
-import time
-import json
 
 
 # TODO consider if this should be alternative Game.py etc?
@@ -123,14 +121,24 @@ def game(params, *, request_kwargs={}):
     assert boxscore_home_team["side"] == "home"
 
     plays = boxscore.get("plays", []) or []
-    current_play = {}
-    if plays and boxscore["status"]["balls"] == 0 and boxscore["status"]["strikes"] == 0:
-        # unlike statsapi, plays array is only for 'completed' plays, so don't keep the last play around forever
-        current_play = plays[-1]
-
-    # TODO: does this ever show mid/end of innings?
-    # TODO: due up batters, probable pitchers, winning/losing/save pitcher?
     inning = boxscore["status"]["inning"] or plays[-1]["inning"] if len(plays) > 0 else 1
+    inning_state = boxscore["status"]["half"].title() or plays[-1]["half"] if len(plays) > 0 else 1
+
+    current_play = {}
+
+    # unlike statsapi, plays array is only for 'completed' plays, so don't keep the last play around forever
+    if plays and boxscore["status"]["balls"] == 0 and boxscore["status"]["strikes"] == 0:
+        current_play = plays[-1]
+        # this doesn't fix the problem with the schedule never knowing the middle/end
+        if inning != current_play["inning"]:
+            current_play = {}
+            inning = inning - 1
+            inning_state = "End"
+        elif inning_state != current_play["half"]:
+            current_play = {}
+            inning_state = "Middle"
+
+    # TODO: due up batters, probable pitchers, winning/losing/save pitcher?
 
     return {
         "gameData": {
@@ -185,9 +193,7 @@ def game(params, *, request_kwargs={}):
                 "balls": boxscore["status"]["balls"],
                 "strikes": boxscore["status"]["strikes"],
                 "outs": boxscore["status"]["outs"],
-                "inningState": (
-                    boxscore["status"]["half"].title() or plays[-1]["half"].title() if len(plays) > 0 else "Top"
-                ),
+                "inningState": inning_state,
                 "currentInning": inning,
                 "currentInningOrdinal": f"{inning}{'st' if inning == 1 else 'nd' if inning == 2 else 'rd' if inning == 3 else 'th'}",
                 "offense": {
