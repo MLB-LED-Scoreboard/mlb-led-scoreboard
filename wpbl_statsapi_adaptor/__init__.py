@@ -121,8 +121,8 @@ def game(params, *, request_kwargs={}):
     assert boxscore_home_team["side"] == "home"
 
     plays = boxscore.get("plays", []) or []
-    inning = boxscore["status"]["inning"] or plays[-1]["inning"] if len(plays) > 0 else 1
-    inning_state = boxscore["status"]["half"].title() or plays[-1]["half"] if len(plays) > 0 else "Top"
+    inning = boxscore["status"]["inning"] or (plays[-1]["inning"] if len(plays) > 0 else 1)
+    inning_state = boxscore["status"]["half"].title() or (plays[-1]["half"] if len(plays) > 0 else "Top")
 
     current_play = {}
 
@@ -139,11 +139,19 @@ def game(params, *, request_kwargs={}):
             inning_state = "Middle"
 
     # TODO: due up batters, probable pitchers, winning/losing/save pitcher?
+    status = translate_status(boxscore["game_status"])
+    if (
+        status == data.status.IN_PROGRESS
+        and not plays
+        and boxscore["status"]["balls"] == 0
+        and boxscore["status"]["strikes"] == 0
+    ):
+        status = data.status.WARMUP
 
     return {
         "gameData": {
             "status": {
-                "detailedState": translate_status(boxscore["game_status"]),
+                "detailedState": status,
                 "reason": boxscore["game_status"],
                 "abstractGameState": "Final" if boxscore["status"]["complete"] else "",
             },
