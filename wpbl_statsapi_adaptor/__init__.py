@@ -122,7 +122,7 @@ def game(params, *, request_kwargs={}):
 
     plays = boxscore.get("plays", []) or []
     inning = boxscore["status"]["inning"] or plays[-1]["inning"] if len(plays) > 0 else 1
-    inning_state = boxscore["status"]["half"].title() or plays[-1]["half"] if len(plays) > 0 else 1
+    inning_state = boxscore["status"]["half"].title() or plays[-1]["half"] if len(plays) > 0 else "Top"
 
     current_play = {}
 
