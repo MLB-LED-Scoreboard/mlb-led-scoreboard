@@ -134,7 +134,7 @@ def game(params, *, request_kwargs={}):
             current_play = {}
             inning = inning - 1
             inning_state = "End"
-        elif inning_state != current_play["half"]:
+        elif inning_state.lower() != current_play["half"]:
             current_play = {}
             inning_state = "Middle"
 
