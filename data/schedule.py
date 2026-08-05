@@ -57,6 +57,8 @@ class Schedule:
                 return UpdateStatus.FAIL
 
             priority, games = self.__filter_games(all_games)
+            games.sort(key=lambda g: g["game_datetime"])
+
             if priority > self.priority:
                 # going up a priority level should never be delayed
                 self._data_wait_queue.clear()
