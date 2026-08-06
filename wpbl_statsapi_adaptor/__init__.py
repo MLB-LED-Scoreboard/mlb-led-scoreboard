@@ -115,6 +115,7 @@ def make_fake_player_ids(names):
 
 
 # TODO consider if this should be alternative Game.py etc?
+# TODO: probable pitchers, winning/losing/save pitcher?
 def game(params, *, request_kwargs={}):
     game = get("game", params, request_kwargs=request_kwargs)
     boxscore = get("boxscore", params, request_kwargs=request_kwargs)["boxscore"]
@@ -127,29 +128,27 @@ def game(params, *, request_kwargs={}):
     inning = boxscore["status"]["inning"] or (plays[-1]["inning"] if len(plays) > 0 else 1)
     inning_state = boxscore["status"]["half"].title() or (plays[-1]["half"] if len(plays) > 0 else "Top")
 
-    current_play = {}
-
-    # unlike statsapi, plays array is only for 'completed' plays, so don't keep the last play around forever
-    if plays and boxscore["status"]["balls"] == 0 and boxscore["status"]["strikes"] == 0:
-        current_play = plays[-1]
-        # this doesn't fix the problem with the schedule never knowing the middle/end
-        if inning != current_play["inning"]:
-            current_play = {}
-            inning = inning - 1
-            inning_state = "End"
-        elif inning_state.lower() != current_play["half"]:
-            current_play = {}
-            inning_state = "Middle"
-
-    # TODO: due up batters, probable pitchers, winning/losing/save pitcher?
     status = translate_status(boxscore["game_status"])
-    if (
-        status == data.status.IN_PROGRESS
-        and not plays
-        and boxscore["status"]["balls"] == 0
-        and boxscore["status"]["strikes"] == 0
-    ):
-        status = data.status.WARMUP
+
+    current_play = {}
+    if boxscore["status"]["balls"] == 0 and boxscore["status"]["strikes"] == 0:
+        # unlike statsapi, plays array is only for 'completed' plays
+        # to avoid showing the last play result forever, we only show it at 0-0
+        if plays:
+            current_play = plays[-1]
+
+            # We also want to correctly detect when we're at a mid/end of inning.
+            # this doesn't fix the problem with the schedule never knowing
+            if inning != current_play["inning"]:
+                current_play = {}
+                inning = inning - 1
+                inning_state = "End"
+            elif inning_state.lower() != current_play["half"]:
+                current_play = {}
+                inning_state = "Middle"
+        elif status == data.status.IN_PROGRESS:
+            # no balls, strikes, or plays? We haven't started yet
+            status = data.status.WARMUP
 
     batter = boxscore["status"]["batter_name"]
     pitcher = boxscore["status"]["pitcher_name"]
@@ -160,6 +159,7 @@ def game(params, *, request_kwargs={}):
     if data.status.is_inning_break(inning_state):
         next_to_bat_team = boxscore_home_team if inning_state == "Middle" else boxscore_away_team
         current_spot = int(next(filter(lambda p: p["name"] == batter, next_to_bat_team["players"]))["spot"])
+        # when someone pinch hits, they get the same spot, but seemingly always the later index, so we just take the last
         on_deck = list(filter(lambda p: p["spot"] == str(current_spot + 1), next_to_bat_team["players"]))[-1]["name"]
         in_the_hole = list(filter(lambda p: p["spot"] == str(current_spot + 2), next_to_bat_team["players"]))[-1][
             "name"
