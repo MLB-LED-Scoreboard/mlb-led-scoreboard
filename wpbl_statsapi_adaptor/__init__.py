@@ -105,10 +105,13 @@ def schedule(
     return games
 
 
-def make_fake_player_id(name):
+def make_fake_player_ids(names):
+    result = {}
+    for name in names:
     if not name:
-        return {}
-    return {"ID" + name: {"boxscoreName": name.split(" ", 1)[1], "fullName": name}}
+            continue
+        result["ID" + name] = {"boxscoreName": name.split(" ", 1)[1], "fullName": name}
+    return result
 
 
 # TODO consider if this should be alternative Game.py etc?
@@ -147,6 +150,22 @@ def game(params, *, request_kwargs={}):
         and boxscore["status"]["strikes"] == 0
     ):
         status = data.status.WARMUP
+
+    batter = boxscore["status"]["batter_name"]
+    pitcher = boxscore["status"]["pitcher_name"]
+    on_deck = ""
+    in_the_hole = ""
+
+    relevant_players = [batter, pitcher]
+    if data.status.is_inning_break(inning_state):
+        next_to_bat_team = boxscore_home_team if inning_state == "Middle" else boxscore_away_team
+        current_spot = int(next(filter(lambda p: p["name"] == batter, next_to_bat_team["players"]))["spot"])
+        on_deck = list(filter(lambda p: p["spot"] == str(current_spot + 1), next_to_bat_team["players"]))[-1]["name"]
+        in_the_hole = list(filter(lambda p: p["spot"] == str(current_spot + 2), next_to_bat_team["players"]))[-1][
+            "name"
+        ]
+
+        relevant_players += [on_deck, in_the_hole]
 
     return {
         "gameData": {
@@ -188,8 +207,7 @@ def game(params, *, request_kwargs={}):
                     ),
                 },
             },
-            "players": make_fake_player_id(boxscore["status"]["pitcher_name"])
-            | make_fake_player_id(boxscore["status"]["batter_name"]),
+            "players": make_fake_player_ids(relevant_players),
             "flags": {
                 "noHitter": inning > 5
                 and (boxscore_home_team["totals"]["hits"] == 0 or boxscore_away_team["totals"]["hits"] == 0),
@@ -208,10 +226,12 @@ def game(params, *, request_kwargs={}):
                     "first": {"id": boxscore["status"]["first_base"]},
                     "second": {"id": boxscore["status"]["second_base"]},
                     "third": {"id": boxscore["status"]["third_base"]},
-                    "batter": {"id": boxscore["status"]["batter_name"]},
+                    "batter": {"id": batter},
+                    "inHole": {"id": in_the_hole},
+                    "onDeck": {"id": on_deck},
                 },
                 "defense": {
-                    "pitcher": {"id": boxscore["status"]["pitcher_name"]},
+                    "pitcher": {"id": pitcher},
                 },
                 "teams": {
                     "home": {
