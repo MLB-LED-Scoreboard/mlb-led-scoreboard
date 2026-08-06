@@ -108,7 +108,7 @@ def schedule(
 def make_fake_player_ids(names):
     result = {}
     for name in names:
-    if not name:
+        if not name:
             continue
         result["ID" + name] = {"boxscoreName": name.split(" ", 1)[1], "fullName": name}
     return result
