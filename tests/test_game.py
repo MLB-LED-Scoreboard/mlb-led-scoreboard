@@ -10,11 +10,14 @@ import data.game
 from bullpen.api import UpdateStatus
 from collections import namedtuple
 
+from data.leagues import LEAGUES
+
 MockConfig = namedtuple("MockConfig", ["sync_amount", "api_refresh_rate", "uniform_types"])
 
 
 class TestGame(unittest.TestCase):
     game_data = {
+        "league": LEAGUES["MLB"],
         "game_id": 565956,
         "game_date": "2019-08-17",
         "national_broadcasts": ["FS1"],
@@ -97,6 +100,7 @@ class TestGame(unittest.TestCase):
         config = MockConfig(sync_amount=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"})
 
         game_data = {
+            "league": LEAGUES["MLB"],
             "game_id": 746423,
             "game_date": "2024-09-13",
         }
@@ -137,6 +141,7 @@ class TestGame(unittest.TestCase):
         config = MockConfig(sync_amount=0, api_refresh_rate=10, uniform_types={"city_connect": "City Connect"})
 
         game_data = {
+            "league": LEAGUES["MLB"],
             "game_id": 824535,
             "game_date": "2026-04-11",
         }
@@ -152,6 +157,7 @@ class TestGame(unittest.TestCase):
         )
 
         game_data = {
+            "league": LEAGUES["MLB"],
             "game_id": 824522,
             "game_date": "2026-05-08",
         }
@@ -165,6 +171,7 @@ class TestGame(unittest.TestCase):
         config = MockConfig(sync_amount=0, api_refresh_rate=10, uniform_types={})
 
         game_data = {
+            "league": LEAGUES["MLB"],
             "game_id": 745808,
             "game_date": "2024-06-26",
         }
