@@ -36,24 +36,17 @@ class Schedule:
             LOGGER.debug("Updating schedule for %s", date)
             self.starttime = time.time()
             all_games = []
-            try:
-                if self.config.statsapi_schedule_sport_ids or self.config.statsapi_schedule_league_ids:
-                    all_games = statsapi.schedule(
-                        date,
-                        sportId=self.config.statsapi_schedule_sport_ids,
-                        leagueId=self.config.statsapi_schedule_league_ids,
-                    )
-            except Exception:
-                LOGGER.exception("Networking error while refreshing MLB schedule")
+            exceptions = 0
+            for league in self.config.leagues:
+                try:
+                    league_games = league.statsapi.schedule(date, **league.schedule_params)
+                    all_games.extend([g | {"league": league} for g in league_games])
 
-            try:
-                if self.config.wants_wpbl:
-                    wpbl_games = wpbl_statsapi_adaptor.schedule(date)
-                    all_games.extend(wpbl_games)
-            except Exception:
-                LOGGER.exception("Networking error while refreshing WPBL schedule")
+                except Exception:
+                    LOGGER.exception(f"Networking error while refreshing {league.name} schedule")
+                    exceptions += 1
 
-            if not all_games:
+            if exceptions == len(self.config.leagues):
                 return UpdateStatus.FAIL
 
             priority, games = self.__filter_games(all_games)

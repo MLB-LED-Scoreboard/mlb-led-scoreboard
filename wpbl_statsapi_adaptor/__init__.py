@@ -18,24 +18,7 @@ ENDPOINTS = {
 }
 
 
-def is_wpbl_game(game_id):
-    return not (isinstance(game_id, int) or game_id.isnumeric())
-
-
-def translate_status(status):
-    # TODO more statuses
-    match status:
-        case "Not Started":
-            return data.status.PREGAME
-        case s if s.startswith("In Progress"):
-            return data.status.IN_PROGRESS
-        case s if s.startswith("Final"):
-            return data.status.FINAL
-        case _:
-            return data.status.UNKNOWN
-
-
-def get(endpoint, params={}, *, request_kwargs={}):
+def get_raw(endpoint, params={}, *, request_kwargs={}):
     endpoint = ENDPOINTS[endpoint]
 
     path_params = {}
@@ -59,52 +42,6 @@ def get(endpoint, params={}, *, request_kwargs={}):
         return r.json()
 
 
-def schedule(
-    date,
-    sportId="bsb",
-    leagueId=None,
-):
-
-    r = get("schedule")
-    games = []
-
-    for i, game in enumerate(r.get("games", [])):
-        if not game["scheduled_start"].startswith(date):
-            continue
-        if not game["presto_data"]["teams"]["homeTeam"]:
-            continue
-
-        game_info = {
-            "game_id": game["game_id"],
-            "game_datetime": game["scheduled_start"],
-            "game_date": game["scheduled_start"].split("T")[0],
-            "game_type": game["game_type"][0].upper(),
-            "status": translate_status(game["state"]["status"]),
-            "away_name": game["away_team_name"],
-            "home_name": game["home_team_name"],
-            "away_id": game["away_team_id"],
-            "home_id": game["home_team_id"],
-            "doubleheader": False,  # TODO
-            "game_num": i,
-            "home_probable_pitcher": "",
-            "away_probable_pitcher": "",
-            "home_pitcher_note": "",
-            "away_score": game["presto_data"]["score"]["away"],
-            "home_score": game["presto_data"]["score"]["home"],
-            "current_inning": game["state"]["inning"],
-            "inning_state": game["state"]["half"].title() or "Top",
-            "venue_id": None,  # TODO
-            "venue_name": game["presto_data"]["venue"],
-            "national_broadcasts": ["ESPN+"],  # TODO
-            "series_status": None,  # TODO
-            "summary": "",
-        }
-
-        games.append(game_info)
-
-    return games
-
-
 def make_fake_player_ids(names):
     result = {}
     for name in names:
@@ -114,11 +51,22 @@ def make_fake_player_ids(names):
     return result
 
 
+def translate_status(status):
+    if status == "Not Started":
+        return data.status.PREGAME
+    elif status.startswith("In Progress"):
+        return data.status.IN_PROGRESS
+    elif status.startswith("Final"):
+        return data.status.FINAL
+    else:
+        return data.status.UNKNOWN
+
+
 # TODO consider if this should be alternative Game.py etc?
 # TODO: probable pitchers, winning/losing/save pitcher?
 def game(params, *, request_kwargs={}):
-    game = get("game", params, request_kwargs=request_kwargs)
-    boxscore = get("boxscore", params, request_kwargs=request_kwargs)["boxscore"]
+    game = get_raw("game", params, request_kwargs=request_kwargs)
+    boxscore = get_raw("boxscore", params, request_kwargs=request_kwargs)["boxscore"]
 
     boxscore_away_team = boxscore["teams"][0]
     boxscore_home_team = boxscore["teams"][1]
@@ -258,3 +206,57 @@ def game(params, *, request_kwargs={}):
             },
         },
     }
+
+
+def get(endpoint, params={}, force=False, *, request_kwargs={}):
+    match endpoint:
+        case "game":
+            return game(params, request_kwargs=request_kwargs)
+        case "game_uniforms":
+            return {"uniforms": [{}]}
+        case _:
+            return {}
+
+
+def schedule(
+    date,
+    sportId="bsb",
+):
+    r = get_raw("schedule")
+    games = []
+
+    for i, game in enumerate(r.get("games", [])):
+        if not game["scheduled_start"].startswith(date):
+            continue
+        if not game["presto_data"]["teams"]["homeTeam"]:
+            continue
+
+        game_info = {
+            "game_id": game["game_id"],
+            "game_datetime": game["scheduled_start"],
+            "game_date": game["scheduled_start"].split("T")[0],
+            "game_type": game["game_type"][0].upper(),
+            "status": translate_status(game["state"]["status"]),
+            "away_name": game["away_team_name"],
+            "home_name": game["home_team_name"],
+            "away_id": game["away_team_id"],
+            "home_id": game["home_team_id"],
+            "doubleheader": False,  # TODO
+            "game_num": i,
+            "home_probable_pitcher": "",
+            "away_probable_pitcher": "",
+            "home_pitcher_note": "",
+            "away_score": game["presto_data"]["score"]["away"],
+            "home_score": game["presto_data"]["score"]["home"],
+            "current_inning": game["state"]["inning"],
+            "inning_state": game["state"]["half"].title() or "Top",
+            "venue_id": None,  # TODO
+            "venue_name": game["presto_data"]["venue"],
+            "national_broadcasts": ["ESPN+"],  # TODO
+            "series_status": None,  # TODO
+            "summary": "",
+        }
+
+        games.append(game_info)
+
+    return games
