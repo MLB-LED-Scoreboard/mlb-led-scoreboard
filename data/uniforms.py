@@ -1,9 +1,8 @@
 import time
-import statsapi
-import wpbl_statsapi_adaptor
 
 from bullpen.logging import LOGGER
 import data.headers
+from data.leagues import StatAPI
 
 API_FIELDS = "uniforms,home,away,uniformAssets,uniformAssetText"
 
@@ -17,7 +16,8 @@ def _make_uniform_check(needle: str):
 # separate API call and not something we expect to change, so we don't do
 # this as part of the Game data updates
 class Uniforms:
-    def __init__(self, game_id, uniform_types: dict):
+    def __init__(self, statsapi: StatAPI, game_id: str, uniform_types: dict) -> None:
+        self.statsapi = statsapi
         self.game_id = game_id
         self.home_special = None
         self.away_special = None
@@ -41,11 +41,8 @@ class Uniforms:
         if not force and not self.__should_update():
             return
 
-        if wpbl_statsapi_adaptor.is_wpbl_game(self.game_id):
-            return
-
         try:
-            data_u = statsapi.get(
+            data_u = self.statsapi.get(
                 "game_uniforms",
                 {"gamePks": self.game_id, "fields": API_FIELDS},
                 request_kwargs={"headers": data.headers.API_HEADERS},

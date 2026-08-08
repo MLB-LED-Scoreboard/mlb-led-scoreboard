@@ -19,7 +19,7 @@ from bullpen.logging import LOGGER
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
-from data.leagues import LEAGUES
+from data.leagues import LEAGUES, League
 from data.paths import *
 import cli
 from driver import RGBMatrixOptions
@@ -71,9 +71,7 @@ class Config:
         self.end_of_day = json["end_of_day"]
         self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
-        self.statsapi_schedule_sport_ids, self.statsapi_schedule_league_ids, self.wants_wpbl = _load_leagues(
-            json["leagues"]
-        )
+        self.leagues = _load_leagues(json["leagues"])
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -373,8 +371,6 @@ If you aren't sure why you're seeing this, there might not be official support f
         if debug:
             LOGGER.setLevel(logging.DEBUG)
             if debug == "with-statsapi":
-                import statsapi
-
                 # Assign the scoreboard logger to statsapi
                 statsapi.logger = LOGGER
         else:
@@ -465,7 +461,7 @@ def _extract_uniform_types(teams_json: dict) -> dict:
     return uniform_types
 
 
-def _load_leagues(leagues_json: Union[str, list[str]]) -> tuple[str, str, bool]:
+def _load_leagues(leagues_json: Union[str, list[str]]) -> list[League]:
     if isinstance(leagues_json, str):
         leagues_json = [leagues_json]
     if not isinstance(leagues_json, list) or not all(isinstance(l, str) for l in leagues_json):
@@ -473,18 +469,12 @@ def _load_leagues(leagues_json: Union[str, list[str]]) -> tuple[str, str, bool]:
     if not leagues_json:
         raise ValueError("Invalid 'leagues' config. Expected a non-empty list of league names, e.g. ['MLB'].")
 
-    sport_ids = []
-    league_ids = []
-    wants_wpbl = False
+    leagues = []
 
     for league_name in leagues_json:
         league = LEAGUES.get(league_name)
         if not league:
             raise ValueError(f"Invalid league name '{league_name}' in config. Valid options: {list(LEAGUES.keys())}")
-        if league_name == "WPBL":
-            wants_wpbl = True
-            continue  # WPBL is handled separately, don't add its sportId or leagueIds to the lists
-        sport_ids.append(str(league.sportId))
-        league_ids.extend([str(lid) for lid in league.leagueIds])
+        leagues.append(league)
 
-    return ",".join(sport_ids), ",".join(league_ids), wants_wpbl
+    return leagues
