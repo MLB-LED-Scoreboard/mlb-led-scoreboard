@@ -105,13 +105,18 @@ def game(params, *, request_kwargs={}):
 
     relevant_players = [batter, pitcher]
     if data.status.is_inning_break(inning_state):
-        next_to_bat_team = boxscore_home_team if inning_state == "Middle" else boxscore_away_team
-        current_spot = int(next(filter(lambda p: p["name"] == batter, next_to_bat_team["players"]))["spot"])
-        # when someone pinch hits, they get the same spot, but seemingly always the later index, so we just take the last
-        on_deck = list(filter(lambda p: p["spot"] == str(current_spot + 1), next_to_bat_team["players"]))[-1]["name"]
-        in_the_hole = list(filter(lambda p: p["spot"] == str(current_spot + 2), next_to_bat_team["players"]))[-1][
-            "name"
-        ]
+        try:
+            next_to_bat_team = boxscore_home_team if inning_state == "Middle" else boxscore_away_team
+            current_spot = int(next(filter(lambda p: p["name"] == batter, next_to_bat_team["players"]))["spot"])
+            # when someone pinch hits, they get the same spot, but seemingly always the later index, so we just take the last
+            on_deck = list(filter(lambda p: p["spot"] == str(current_spot + 1), next_to_bat_team["players"]))[-1][
+                "name"
+            ]
+            in_the_hole = list(filter(lambda p: p["spot"] == str(current_spot + 2), next_to_bat_team["players"]))[-1][
+                "name"
+            ]
+        except Exception:
+            pass
 
         relevant_players += [on_deck, in_the_hole]
 
@@ -226,9 +231,11 @@ def schedule(
     games = []
 
     for i, game in enumerate(r.get("games", [])):
-        if not game["scheduled_start"].startswith(date):
-            continue
-        if not game["presto_data"]["teams"]["homeTeam"]:
+        if (
+            not game["scheduled_start"].startswith(date) # only requested days
+            or game["updated_at"].startswith("2026-07-2") # guard against bad API responses
+            or not game["presto_data"]["teams"]["homeTeam"]
+        ):
             continue
 
         game_info = {
