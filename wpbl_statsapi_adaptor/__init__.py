@@ -232,8 +232,8 @@ def schedule(
 
     for i, game in enumerate(r.get("games", [])):
         if (
-            not game["scheduled_start"].startswith(date) # only requested days
-            or game["updated_at"].startswith("2026-07-2") # guard against bad API responses
+            not game["scheduled_start"].startswith(date)  # only requested days
+            or game["updated_at"].startswith("2026-07-2")  # guard against bad API responses
             or not game["presto_data"]["teams"]["homeTeam"]
         ):
             continue
