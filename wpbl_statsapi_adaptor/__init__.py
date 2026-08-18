@@ -1,0 +1,269 @@
+import requests
+import data.status
+
+BASE_URL = "https://stats.womensprobaseballleague.com/"
+
+ENDPOINTS = {
+    "schedule": {
+        "url": BASE_URL + "/v1/games",
+    },
+    "game": {
+        "url": BASE_URL + "/v1/games/{gamePk}",
+        "path_params": ["gamePk"],
+    },
+    "boxscore": {
+        "url": BASE_URL + "/v1/games/{gamePk}/boxscore",
+        "path_params": ["gamePk"],
+    },
+}
+
+
+def get_raw(endpoint, params={}, *, request_kwargs={}):
+    endpoint = ENDPOINTS[endpoint]
+
+    path_params = {}
+    query_params = {}
+    for key, value in params.items():
+        if key in endpoint.get("path_params", []):
+            path_params[key] = value
+        else:
+            query_params[key] = value
+
+    url = endpoint["url"].format(**path_params)
+    # if len(query_params) > 0:
+    #     for k, v in query_params.items():
+    #         sep = "?" if url.find("?") == -1 else "&"
+    #         url += sep + k + "=" + v
+
+    r = requests.get(url, timeout=(5, 15), **request_kwargs)
+    if r.status_code not in [200, 201]:
+        r.raise_for_status()
+    else:
+        return r.json()
+
+
+def make_fake_player_ids(names):
+    result = {}
+    for name in names:
+        if not name:
+            continue
+        result["ID" + name] = {"boxscoreName": name.split(" ", 1)[1], "fullName": name}
+    return result
+
+
+def translate_status(status):
+    if status == "Not Started":
+        return data.status.PREGAME
+    elif status.startswith("In Progress"):
+        return data.status.IN_PROGRESS
+    elif status.startswith("Final"):
+        return data.status.FINAL
+    else:
+        return data.status.UNKNOWN
+
+
+# TODO consider if this should be alternative Game.py etc?
+# TODO: probable pitchers, winning/losing/save pitcher?
+def game(params, *, request_kwargs={}):
+    game = get_raw("game", params, request_kwargs=request_kwargs)
+    boxscore = get_raw("boxscore", params, request_kwargs=request_kwargs)["boxscore"]
+
+    boxscore_away_team = boxscore["teams"][0]
+    boxscore_home_team = boxscore["teams"][1]
+    assert boxscore_home_team["side"] == "home"
+
+    plays = boxscore.get("plays", []) or []
+    inning = boxscore["status"]["inning"] or (plays[-1]["inning"] if len(plays) > 0 else 1)
+    inning_state = boxscore["status"]["half"].title() or (plays[-1]["half"] if len(plays) > 0 else "Top")
+
+    status = translate_status(boxscore["game_status"])
+
+    current_play = {}
+    if boxscore["status"]["balls"] == 0 and boxscore["status"]["strikes"] == 0:
+        # unlike statsapi, plays array is only for 'completed' plays
+        # to avoid showing the last play result forever, we only show it at 0-0
+        if plays:
+            current_play = plays[-1]
+
+            # We also want to correctly detect when we're at a mid/end of inning.
+            # this doesn't fix the problem with the schedule never knowing
+            if inning != current_play["inning"]:
+                current_play = {}
+                inning = inning - 1
+                inning_state = "End"
+            elif inning_state.lower() != current_play["half"]:
+                current_play = {}
+                inning_state = "Middle"
+        elif status == data.status.IN_PROGRESS:
+            # no balls, strikes, or plays? We haven't started yet
+            status = data.status.WARMUP
+
+    batter = boxscore["status"]["batter_name"]
+    pitcher = boxscore["status"]["pitcher_name"]
+    on_deck = ""
+    in_the_hole = ""
+
+    relevant_players = [batter, pitcher]
+    if data.status.is_inning_break(inning_state):
+        try:
+            next_to_bat_team = boxscore_home_team if inning_state == "Middle" else boxscore_away_team
+            current_spot = int(next(filter(lambda p: p["name"] == batter, next_to_bat_team["players"]))["spot"])
+            # when someone pinch hits, they get the same spot, but seemingly always the later index, so we just take the last
+            on_deck = list(filter(lambda p: p["spot"] == str(current_spot + 1), next_to_bat_team["players"]))[-1][
+                "name"
+            ]
+            in_the_hole = list(filter(lambda p: p["spot"] == str(current_spot + 2), next_to_bat_team["players"]))[-1][
+                "name"
+            ]
+        except Exception:
+            pass
+
+        relevant_players += [on_deck, in_the_hole]
+
+    return {
+        "gameData": {
+            "status": {
+                "detailedState": status,
+                "reason": boxscore["game_status"],
+                "abstractGameState": "Final" if boxscore["status"]["complete"] else "",
+            },
+            "game": {"id": boxscore["game_id"]},
+            "datetime": {
+                "officialDate": game["scheduled_start"].split("T")[0],
+                "dateTime": game["scheduled_start"],
+            },
+            "teams": {
+                "home": {
+                    "id": game["home_team_id"],
+                    "teamName": game["home_team_name"],
+                    "abbreviation": "???",
+                    "record": (
+                        {
+                            "wins": boxscore_away_team["record"].split("-")[0],
+                            "losses": boxscore_away_team["record"].split("-")[1],
+                        }
+                        if boxscore_away_team.get("record")
+                        else {}
+                    ),
+                },
+                "away": {
+                    "id": game["away_team_id"],
+                    "teamName": game["away_team_name"],
+                    "abbreviation": "???",
+                    "record": (
+                        {
+                            "wins": boxscore_away_team["record"].split("-")[0],
+                            "losses": boxscore_away_team["record"].split("-")[1],
+                        }
+                        if boxscore_away_team.get("record")
+                        else {}
+                    ),
+                },
+            },
+            "players": make_fake_player_ids(relevant_players),
+            "flags": {
+                "noHitter": inning > 5
+                and (boxscore_home_team["totals"]["hits"] == 0 or boxscore_away_team["totals"]["hits"] == 0),
+                "perfectGame": False,  # TODO
+            },
+        },
+        "liveData": {
+            "linescore": {
+                "balls": boxscore["status"]["balls"],
+                "strikes": boxscore["status"]["strikes"],
+                "outs": boxscore["status"]["outs"],
+                "inningState": inning_state,
+                "currentInning": inning,
+                "currentInningOrdinal": f"{inning}{'st' if inning == 1 else 'nd' if inning == 2 else 'rd' if inning == 3 else 'th'}",
+                "offense": {
+                    "first": {"id": boxscore["status"]["first_base"]},
+                    "second": {"id": boxscore["status"]["second_base"]},
+                    "third": {"id": boxscore["status"]["third_base"]},
+                    "batter": {"id": batter},
+                    "inHole": {"id": in_the_hole},
+                    "onDeck": {"id": on_deck},
+                },
+                "defense": {
+                    "pitcher": {"id": pitcher},
+                },
+                "teams": {
+                    "home": {
+                        "runs": boxscore_home_team["totals"]["runs"],
+                        "hits": boxscore_home_team["totals"]["hits"],
+                        "errors": boxscore_home_team["totals"]["errors"],
+                    },
+                    "away": {
+                        "runs": boxscore_away_team["totals"]["runs"],
+                        "hits": boxscore_away_team["totals"]["hits"],
+                        "errors": boxscore_away_team["totals"]["errors"],
+                    },
+                },
+            },
+            "plays": {
+                "currentPlay": {
+                    "result": {
+                        "eventType": current_play.get("event_type", ""),
+                        "description": (
+                            "called out on strikes" if current_play and "looking" in current_play["narrative"] else ""
+                        ),
+                    }
+                }
+            },
+        },
+    }
+
+
+def get(endpoint, params={}, force=False, *, request_kwargs={}):
+    match endpoint:
+        case "game":
+            return game(params, request_kwargs=request_kwargs)
+        case "game_uniforms":
+            return {"uniforms": [{}]}
+        case _:
+            return {}
+
+
+def schedule(
+    date,
+    sportId="bsb",
+):
+    r = get_raw("schedule")
+    games = []
+
+    for i, game in enumerate(r.get("games", [])):
+        if (
+            not game["scheduled_start"].startswith(date)  # only requested days
+            or game["updated_at"].startswith("2026-07-2")  # guard against bad API responses
+            or not game["presto_data"]["teams"]["homeTeam"]
+        ):
+            continue
+
+        game_info = {
+            "game_id": game["game_id"],
+            "game_datetime": game["scheduled_start"],
+            "game_date": game["scheduled_start"].split("T")[0],
+            "game_type": game["game_type"][0].upper(),
+            "status": translate_status(game["state"]["status"]),
+            "away_name": game["away_team_name"],
+            "home_name": game["home_team_name"],
+            "away_id": game["away_team_id"],
+            "home_id": game["home_team_id"],
+            "doubleheader": False,  # TODO
+            "game_num": i,
+            "home_probable_pitcher": "",
+            "away_probable_pitcher": "",
+            "home_pitcher_note": "",
+            "away_score": game["presto_data"]["score"]["away"],
+            "home_score": game["presto_data"]["score"]["home"],
+            "current_inning": game["state"]["inning"],
+            "inning_state": game["state"]["half"].title() or "Top",
+            "venue_id": None,  # TODO
+            "venue_name": game["presto_data"]["venue"],
+            "national_broadcasts": ["ESPN+"],  # TODO
+            "series_status": None,  # TODO
+            "summary": "",
+        }
+
+        games.append(game_info)
+
+    return games

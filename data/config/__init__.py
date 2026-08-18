@@ -5,7 +5,7 @@ import logging
 
 from datetime import datetime, timedelta
 from collections import defaultdict, namedtuple
-from typing import Mapping
+from typing import Mapping, Union
 from math import ceil
 
 from bullpen.api.config import MLBConfig
@@ -19,6 +19,7 @@ from bullpen.logging import LOGGER
 from data import status
 from data.config.color import Color
 from data.config.layout import Layout
+from data.leagues import LEAGUES, League
 from data.paths import *
 import cli
 from driver import RGBMatrixOptions
@@ -70,6 +71,7 @@ class Config:
         self.end_of_day = json["end_of_day"]
         self.sync_delay_seconds = json["sync_delay_seconds"]
         self.api_refresh_rate = json["api_refresh_rate"]
+        self.leagues = _load_leagues(json["leagues"])
 
         self.debug = json["debug"]
         self.demo_date = json["demo_date"]
@@ -308,6 +310,7 @@ If you aren't sure why you're seeing this, there might not be official support f
         args = cli.arguments(overrides=overrides)
 
         self.emulated = args.emulated
+        self.profiling_enabled = args.profile
 
         options = RGBMatrixOptions()
 
@@ -368,8 +371,6 @@ If you aren't sure why you're seeing this, there might not be official support f
         if debug:
             LOGGER.setLevel(logging.DEBUG)
             if debug == "with-statsapi":
-                import statsapi
-
                 # Assign the scoreboard logger to statsapi
                 statsapi.logger = LOGGER
         else:
@@ -458,3 +459,22 @@ def _extract_uniform_types(teams_json: dict) -> dict:
                 uniform_types[key] = key.replace("_", " ")
 
     return uniform_types
+
+
+def _load_leagues(leagues_json: Union[str, list[str]]) -> list[League]:
+    if isinstance(leagues_json, str):
+        leagues_json = [leagues_json]
+    if not isinstance(leagues_json, list) or not all(isinstance(l, str) for l in leagues_json):
+        raise ValueError(f"Invalid 'leagues' config. Expected a string or list of strings, got {leagues_json}.")
+    if not leagues_json:
+        raise ValueError("Invalid 'leagues' config. Expected a non-empty list of league names, e.g. ['MLB'].")
+
+    leagues = []
+
+    for league_name in leagues_json:
+        league = LEAGUES.get(league_name)
+        if not league:
+            raise ValueError(f"Invalid league name '{league_name}' in config. Valid options: {list(LEAGUES.keys())}")
+        leagues.append(league)
+
+    return leagues

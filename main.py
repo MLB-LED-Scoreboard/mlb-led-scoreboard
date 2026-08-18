@@ -30,9 +30,19 @@ import driver
 from data import Data
 from data.config import Config
 from data.plugins import load_plugins
+from data.paths import *
 
 from renderers.main import MainRenderer
 from version import SCRIPT_NAME, SCRIPT_VERSION
+
+import cProfile
+
+# cProfile hooks are per-thread, so the data and render threads each need their
+# own Profile instance enabled on their own thread.
+DATA_PROFILER = cProfile.Profile()
+RENDER_PROFILER = cProfile.Profile()
+DATA_PROFILE_PATH = LOGS_DIRECTORY / "data.prof"
+RENDER_PROFILE_PATH = LOGS_DIRECTORY / "render.prof"
 
 
 def main(matrix, config):
@@ -69,7 +79,10 @@ def main(matrix, config):
     # create render thread
     plugin_renderers = {name: renderer for name, (_, renderer) in plugins.items()}
     render = threading.Thread(
-        target=__render_main, args=[matrix, data, plugin_renderers], name="render_thread", daemon=True
+        target=__render_main,
+        args=[matrix, data, plugin_renderers, config.profiling_enabled],
+        name="render_thread",
+        daemon=True,
     )
     time.sleep(1)
     render.start()
@@ -87,7 +100,10 @@ def main(matrix, config):
         time.sleep(0.2)
 
 
-def __render_main(matrix, data, plugins):
+def __render_main(matrix, data, plugins, profiling_enabled):
+    if profiling_enabled:
+        RENDER_PROFILER.enable()
+
     MainRenderer(matrix, data, plugins).render()
 
 
@@ -106,10 +122,19 @@ if __name__ == "__main__":
     matrix = RGBMatrix(options=config.matrix_options)
     config.set_layout(width=matrix.width, height=matrix.height)
 
+    profiling_enabled = config and config.profiling_enabled
     try:
+        if profiling_enabled:
+            DATA_PROFILER.enable()
         main(matrix, config)
     except Exception:
         LOGGER.exception("Untrapped error in main!")
         sys.exit(1)
     finally:
+        if profiling_enabled:
+            DATA_PROFILER.dump_stats(str(DATA_PROFILE_PATH))
+            LOGGER.info("Wrote data profile to %s", DATA_PROFILE_PATH)
+
+            RENDER_PROFILER.dump_stats(str(RENDER_PROFILE_PATH))
+            LOGGER.info("Wrote render profile to %s", RENDER_PROFILE_PATH)
         matrix.Clear()

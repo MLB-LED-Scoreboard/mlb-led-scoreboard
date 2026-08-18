@@ -47,6 +47,7 @@ DELAYED_AIR_QUALITY = "Delayed: Air Quality"  # Live
 DELAYED_POWER = "Delayed: Power"  # Live
 DELAYED_RAIN = "Delayed: Rain"  # Live
 DELAYED_SNOW = "Delayed: Snow"  # Live
+DELAYED_TIEBREAKER = "Delayed: Tiebreaker"  # Live
 DELAYED_START = "Delayed Start"  # Preview
 DELAYED_START_CEREMONY = "Delayed Start: Ceremony"  # Preview
 DELAYED_START_COLD = "Delayed Start: Cold"  # Preview
@@ -282,6 +283,7 @@ GAME_STATE_IRREGULAR = [
     DELAYED_POWER,
     DELAYED_RAIN,
     DELAYED_SNOW,
+    DELAYED_TIEBREAKER,
     DELAYED_START,
     DELAYED_START_CEREMONY,
     DELAYED_START_COLD,

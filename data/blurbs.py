@@ -1,8 +1,8 @@
 import time
-import statsapi
 
 from bullpen.logging import LOGGER
 import data.headers
+from data.leagues import StatAPI
 
 UPDATE_RATE = 60 * 5
 
@@ -10,7 +10,8 @@ UPDATE_RATE = 60 * 5
 # separate API call from the game_content endpoint, so we don't fold this into
 # the Game data updates
 class Blurbs:
-    def __init__(self, game_id):
+    def __init__(self, statsapi: StatAPI, game_id: str) -> None:
+        self.statsapi: StatAPI = statsapi
         self.game_id = game_id
         self._content: dict = {}
         self.starttime = time.time()
@@ -25,8 +26,9 @@ class Blurbs:
     def update(self, force=False):
         if not force and not self.__should_update():
             return
+
         try:
-            self._content = statsapi.get(
+            self._content = self.statsapi.get(
                 "game_content",
                 {"gamePk": self.game_id},
                 request_kwargs={"headers": data.headers.API_HEADERS},

@@ -58,6 +58,7 @@ If you'd like to see support for another set of board dimensions, or have design
 - [Help and Contributing](#help-and-contributing)
   * [Installing Dev Dependencies](#installing-dev-dependencies)
   * [Checks](#checks)
+  * [Performance Profiling](#performance-profiling)
   * [Editing Config Schemas](#editing-config-schemas)
 - [Licensing](#licensing)
 - [Other Cool Projects](#other-cool-projects)
@@ -299,6 +300,7 @@ See [`config.schema.json`](config.schema.json) for a schema for configuration fi
 "scrolling_speed"                 Integer Sets how fast the scrolling text scrolls. Supports an integer between 0 and 6.
 "sync_delay_seconds"              Integer Delays game updates to sychronize with broadcasts. May introduce delay before rendering live games. Must be at least 0, defaults to 0 (no delay).
 "api_refresh_rate"                Integer Refresh the game data from the MLB API every X seconds. Must be at least 3, default is 10.
+"leagues"                         Array   Which leagues to pull games from. Currently the options are "MLB" and "WBC".
 "editorial_blurb"                 Bool    Append the MLB.com editorial blurb (headline + subhead) to the scrolling text on pregame and postgame screens. Recaps are routinely published; previews are rare. See the Editorial Blurbs feature section.
 "debug"                           Bool    Game and other debug data is written to your console.
 "demo_date"                       String  A date in the format YYYY-MM-DD from which to pull data to demonstrate the scoreboard. A value of `false` will disable demo mode.
@@ -409,6 +411,7 @@ You can configure your LED matrix with the same flags used in the [rpi-rgb-led-m
 # The following are specific to mlb-led-scoreboard
 --emulated                Force the scoreboard to run in software emulation mode.
 --config                  Specify a configuration file name other, omitting json xtn (Default: config)
+--profile                 Enable performance profiling of the data and render threads.
 ```
 
 #### Saving Flags in `config.json`
@@ -521,6 +524,22 @@ mypy .
 
 # Config schema validation
 python -m schemas --check
+```
+
+### Performance Profiling
+
+You can profile the data and render threads with the `--profile` flag.
+
+```sh
+python main.py --profile
+```
+
+Each thread writes its own profile on shutdown: `logs/data.prof` and `logs/render.prof`.
+
+To view a profile in your browser:
+
+```sh
+snakeviz logs/render.prof
 ```
 
 ### Editing Config Schemas

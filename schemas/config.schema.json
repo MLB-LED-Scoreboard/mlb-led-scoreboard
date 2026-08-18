@@ -409,6 +409,21 @@
       "default": 5,
       "minimum": 1
     },
+    "leagues": {
+      "description": "Which leagues should games be pulled from?",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "MLB",
+          "WBC",
+          "WPBL"
+        ]
+      },
+      "default": ["MLB", "WBC", "WPBL"],
+      "uniqueItems": true,
+      "x-format": "choices"
+    },
     "scrolling_speed": {
       "description": "How quickly should text scroll on the board",
       "type": "number",
@@ -453,7 +468,7 @@
       "description": "Required status of the game for it to be included in a rule. By default, any game that day will be a candidate if the teams match",
       "meta:enum": {
         "live": "Game is currently in progress",
-        "live_in_inning": "Game is currently in progress and has reached the inning specified in the teams array (if any)",
+        "live_in_inning": "Game is currently in progress and is not in between innings",
         "pregame": "Game has not started yet",
         "game_over": "Game has finished"
       }

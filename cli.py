@@ -177,5 +177,12 @@ def _make_parser(defaults) -> argparse.ArgumentParser:
         const=True,
         default=defaults.get("emulated", False),
     )
+    parser.add_argument(
+        "--profile",
+        action="store_const",
+        help="Enable performance profiling of the data and render threads.",
+        const=True,
+        default=defaults.get("profile", False),
+    )
 
     return parser

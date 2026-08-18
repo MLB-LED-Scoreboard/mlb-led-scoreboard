@@ -2,7 +2,6 @@ import time
 from datetime import datetime
 from typing import Any, Optional
 
-import statsapi
 
 from bullpen.logging import LOGGER
 from data import teams
@@ -10,6 +9,7 @@ from bullpen.api import UpdateStatus
 from data.utils.circular_queue import CircularQueue
 from data.uniforms import Uniforms
 from data.blurbs import Blurbs
+from data.leagues import League, StatAPI
 from data.scoreboard import Scoreboard
 from data.scoreboard.postgame import Postgame
 from data.scoreboard.pregame import Pregame
@@ -40,6 +40,7 @@ class Game:
     @staticmethod
     def from_scheduled(game_data: dict[str, Any], config: "Config") -> Optional["Game"]:
         game = Game(
+            game_data["league"],
             game_data["game_id"],
             game_data["game_date"],
             game_data.get("national_broadcasts") or [],
@@ -50,7 +51,8 @@ class Game:
             return game
         return None
 
-    def __init__(self, game_id, date, broadcasts, series_status, config: "Config"):
+    def __init__(self, league: League, game_id, date, broadcasts, series_status, config: "Config"):
+        self.league: League = league
         self.game_id = game_id
         self.date = date
         self.starttime = time.time()
@@ -60,15 +62,15 @@ class Game:
         self._series_status = series_status
         self._api_refresh_rate = config.api_refresh_rate
         self._status: dict[str, Any] = {}
-        self._uniform_data = Uniforms(game_id, config.uniform_types)
-        self._blurb_data = Blurbs(game_id)
+        self._uniform_data = Uniforms(league.statsapi, game_id, config.uniform_types)
+        self._blurb_data = Blurbs(league.statsapi, game_id)
 
     def update(self, force=False, testing_params={}) -> UpdateStatus:
         if force or self.__should_update():
             self.starttime = time.time()
             try:
                 LOGGER.debug("Fetching data for game %s", str(self.game_id))
-                live_data = statsapi.get(
+                live_data = self.league.statsapi.get(
                     "game",
                     {"gamePk": self.game_id, "fields": API_FIELDS} | testing_params,
                     request_kwargs={"headers": data.headers.API_HEADERS},
@@ -83,9 +85,9 @@ class Game:
                 if live_data["gameData"]["datetime"]["officialDate"] > self.date:
                     LOGGER.debug("Getting game status from schedule for game with strange date!")
                     try:
-                        scheduled = statsapi.get(
+                        scheduled = self.league.statsapi.get(
                             "schedule",
-                            {"gamePk": self.game_id, "sportId": 1, "fields": SCHEDULE_API_FIELDS},
+                            {"gamePk": self.game_id, "fields": SCHEDULE_API_FIELDS} | self.league.schedule_params,
                             request_kwargs={"headers": data.headers.API_HEADERS},
                         )
                         self._status = next(

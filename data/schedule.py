@@ -5,6 +5,7 @@ from typing import Any, Optional
 from math import ceil
 
 import statsapi
+import wpbl_statsapi_adaptor
 
 from bullpen.logging import LOGGER
 from data.game import Game
@@ -18,7 +19,6 @@ GAMES_REFRESH_RATE = 15
 class Schedule:
     def __init__(self, config: Config) -> None:
         self.config = config
-        self.date = self.config.parse_today()
         self.starttime = time.time()
         self.current_idx = 0
 
@@ -32,39 +32,46 @@ class Schedule:
 
     def update(self, force=False) -> UpdateStatus:
         if force or self.__should_update():
-            self.date = self.config.parse_today()
-            LOGGER.debug("Updating schedule for %s", self.date)
+            date = self.config.parse_today().strftime("%Y-%m-%d")
+            LOGGER.debug("Updating schedule for %s", date)
             self.starttime = time.time()
-            try:
-                # add sportId=51 to additionally get WBC games
-                all_games = statsapi.schedule(self.date.strftime("%Y-%m-%d"), sportId="1,51")
-            except Exception:
-                LOGGER.exception("Networking error while refreshing schedule")
+            all_games = []
+            exceptions = 0
+            for league in self.config.leagues:
+                try:
+                    league_games = league.statsapi.schedule(date, **league.schedule_params)
+                    all_games.extend([g | {"league": league} for g in league_games])
+
+                except Exception:
+                    LOGGER.exception(f"Networking error while refreshing {league.name} schedule")
+                    exceptions += 1
+
+            if exceptions == len(self.config.leagues):
                 return UpdateStatus.FAIL
+
+            priority, games = self.__filter_games(all_games)
+            games.sort(key=lambda g: g["game_datetime"])
+
+            if priority > self.priority:
+                # going up a priority level should never be delayed
+                self._data_wait_queue.clear()
+            self._data_wait_queue.push((priority, games))
+
+            priority, games = self._data_wait_queue.peek()
+            if len(games) > 0:
+                self.current_idx %= len(games)
             else:
+                self.current_idx = 0
 
-                priority, games = self.__filter_games(all_games)
-                if priority > self.priority:
-                    # going up a priority level should never be delayed
-                    self._data_wait_queue.clear()
-                self._data_wait_queue.push((priority, games))
-
-                priority, games = self._data_wait_queue.peek()
-
-                if len(games) > 0:
-                    self.current_idx %= len(games)
-                else:
-                    self.current_idx = 0
-
-                self._games = games
-                self.priority = priority
-                LOGGER.debug(
-                    "Schedule updated with %d games (priority %d) (current delay %d)",
-                    len(self._games),
-                    priority,
-                    self.current_delay(),
-                )
-                return UpdateStatus.SUCCESS
+            self._games = games
+            self.priority = priority
+            LOGGER.debug(
+                "Schedule updated with %d games (priority %d) (current delay %d)",
+                len(self._games),
+                priority,
+                self.current_delay(),
+            )
+            return UpdateStatus.SUCCESS
 
         return UpdateStatus.DEFERRED
 
