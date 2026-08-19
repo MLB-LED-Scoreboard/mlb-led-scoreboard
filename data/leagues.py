@@ -34,7 +34,7 @@ LEAGUES = {
     "WBC": League(
         name="WBC",
         statsapi=statsapi,
-        schedule_params=dict(sportId="51", leagueIds="159,160"),
+        schedule_params=dict(sportId="51", leagueId="159,160"),
     ),
     "WPBL": League(
         name="WPBL",
