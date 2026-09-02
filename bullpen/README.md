@@ -12,7 +12,7 @@ on top of our code, showing such information as [Disney Park wait times](https:/
 
 `bullpen` is our framework to allow easier creation of these kinds of non-baseball-game displays.
 
-If you build a plugin, please let us know about it!
+If you build a plugin, please let us know about it and consider submitting it as a PR to [https://github.com/MLB-LED-Scoreboard/plugins](https://github.com/MLB-LED-Scoreboard/plugins)!
 
 ## For users
 
@@ -28,7 +28,7 @@ exposed as
 which returns those three. The `bullpen.api` module is fully type-hinted to assist in
 writing these correctly.
 
-For examples, see [`example-plugin`](./example-plugin/) here, and [`news`](../news/) and [`standings`](../standings/) in the top-level directory.
+For examples, see [`example-plugin`](https://github.com/MLB-LED-Scoreboard/plugins/tree/main/example-plugin) in our `plugins` repo, and [`news`](../news/) and [`standings`](../standings/) in the top-level directory.
 
 
 ### The Config class
