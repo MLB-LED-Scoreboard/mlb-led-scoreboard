@@ -468,11 +468,14 @@ You can change the location used by entering your city, state, and country code 
 As of version 9, we officially support adding new types of screens to the board as "plugins". See [bullpen/README.md](/bullpen/README.md) for details
 on writing them -- the 'news' and 'standings' screens are themselves built on top of this API.
 
-As a user, installing a plugin is relatively easy. Lets take the [mta-board plugin](https://github.com/WardBrian/mta-board.git) as an example.
+A plugin is any Python package that meets the requirements described in the bullpen README. Many of them live at [https://github.com/MLB-LED-Scoreboard/plugins](https://github.com/MLB-LED-Scoreboard/plugins),
+but they do not need to.
+
+As a user, installing a plugin is relatively easy. Lets take the [mta-board plugin](https://github.com/MLB-LED-Scoreboard/plugins/tree/main/plugins/mta-board) as an example.
 To install the code, you just need to use `pip`:
 
 ```bash
-sudo ./venv/bin/pip install git+https://github.com/WardBrian/mta-board
+sudo ./venv/bin/pip sudo install "git+https://github.com/MLB-LED-Scoreboard/plugins.git#subdirectory=plugins/mta-board"
 ```
 
 To actually see the plugin, you will at a minimum need to add an entry to your
