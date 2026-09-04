@@ -19,7 +19,11 @@ def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRe
         name = entry_point.name
 
         if name not in requested_plugins:
-            LOGGER.warning("Plugin %s from package %s is not used in any rotation screen rules, will not be loaded", name, entry_point.module)
+            LOGGER.warning(
+                "Plugin %s from package %s is not used in any rotation screen rules, will not be loaded",
+                name,
+                entry_point.module,
+            )
             continue
 
         if name in loaded_plugins:
