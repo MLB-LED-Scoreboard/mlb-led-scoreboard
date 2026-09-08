@@ -22,7 +22,8 @@ from data.config.layout import Layout
 from data.leagues import LEAGUES, League
 from data.paths import *
 import cli
-from driver import RGBMatrixOptions
+import driver
+from driver.mode import DriverMode
 
 SCROLLING_SPEEDS = [0.3, 0.2, 0.1, 0.075, 0.05, 0.025, 0.01]
 
@@ -312,7 +313,9 @@ If you aren't sure why you're seeing this, there might not be official support f
         self.emulated = args.emulated
         self.profiling_enabled = args.profile
 
-        options = RGBMatrixOptions()
+        if self.emulated:
+            driver.set_mode(DriverMode.SOFTWARE_EMULATION)
+        options = driver.RGBMatrixOptions()
 
         if args.led_gpio_mapping is not None:
             options.hardware_mapping = args.led_gpio_mapping
