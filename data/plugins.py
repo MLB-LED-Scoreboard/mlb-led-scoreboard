@@ -9,11 +9,24 @@ from bullpen.logging import LOGGER
 
 def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRenderer]]:
 
-    plugins = {}
+    requested_plugins = set()
+    for level in config.rotation_screen_rules.values():
+        requested_plugins.update(level.keys())
+
+    loaded_plugins = {}
     discovered_plugins = entry_points(group=PLUGIN_GROUP)
     for entry_point in discovered_plugins:
         name = entry_point.name
-        if name in plugins:
+
+        if name not in requested_plugins:
+            LOGGER.warning(
+                "Plugin %s from package %s is not used in any rotation screen rules, will not be loaded",
+                name,
+                entry_point.module,
+            )
+            continue
+
+        if name in loaded_plugins:
             raise ValueError(f"Duplicate plugin name detected: {name} from {entry_point.module}")
         try:
             plugin: Callable[[], api.PLUGIN_DEFINITION] = entry_point.load()
@@ -24,9 +37,9 @@ def load_plugins(config: Config) -> dict[str, tuple[api.PluginData, api.PluginRe
         except Exception as e:
             raise ValueError(f"Error loading plugin {name} from {entry_point.module}") from e
 
-        plugins[name] = (data, renderer)
+        loaded_plugins[name] = (data, renderer)
 
-    plugin_names = list(plugins.keys()) + ["news"]
+    plugin_names = list(loaded_plugins.keys()) + ["news"]
     LOGGER.info("Loaded plugins: %s", ", ".join(plugin_names))
     config.check_screens(plugin_names)
-    return plugins
+    return loaded_plugins
