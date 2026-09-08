@@ -131,6 +131,15 @@ def _make_parser(defaults) -> argparse.ArgumentParser:
         "6 = coreman; 7 = Kaler2Scan; 8 = ZStripeUneven. (Default: 0)",
         default=defaults.get("led_multiplexing", 0),
         type=int,
+        choices=range(9),
+    )
+    parser.add_argument(
+        "--led-panel-type",
+        action="store",
+        help="Needed to initialize special panels. Supported: 'FM6126A', 'FM6127'",
+        default=defaults.get("led_panel_type", ""),
+        type=str,
+        choices=["FM6126A", "FM6127"],
     )
     parser.add_argument(
         "--led-limit-refresh",
