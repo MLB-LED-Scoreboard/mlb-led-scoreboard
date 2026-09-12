@@ -532,8 +532,8 @@
       ]
     },
     "wbc_team": {
-      "title": "International / WBC team",
-      "description": "National teams that appear under sportId 51. Only usable when the International league is selected.",
+      "title": "WBC national team",
+      "description": "National teams that appear in World Baseball Classic games. Only usable when the WBC league is selected.",
       "type": "string",
       "enum": [
         "Australia",

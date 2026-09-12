@@ -6,7 +6,7 @@ let MODE = "config";       // "config" | "coordinates"
 let CURRENT_SIZE = null;   // coordinate size when MODE === "coordinates"
 let FORM_GET = null;       // () => assembled values object
 let BOOLEANS_ONLY = false; // coordinates: only show boolean/enum leaves
-let SELECTED_SPORTS = new Set(); // current sport_ids selection (drives team pickers)
+let SELECTED_LEAGUES = new Set(); // current `leagues` selection (drives team pickers)
 let LAST_SCHEMA = null;    // last rendered schema (for reactive re-render)
 let LAST_SOURCE = null;    // last rendered source label
 let LAST_DISPLAY = null;   // {keys, values} for the display (line_score) section
@@ -123,7 +123,7 @@ function renderObject(schema, value, key) {
   // pick leagues, then everything below (incl. team pickers) reflects them.
   if (!key) {
     entries = entries.slice().sort(([a], [b]) =>
-      (a === "sport_ids" ? -1 : 0) - (b === "sport_ids" ? -1 : 0));
+      (a === "leagues" ? -1 : 0) - (b === "leagues" ? -1 : 0));
   }
   for (const [propKey, propSchema] of entries) {
     const ds = deref(propSchema);
@@ -283,7 +283,7 @@ function renderOneOf(schema, value, key) {
 function renderArray(schema, value, key) {
   const items = deref(schema.items || {});
 
-  // choices: array of enum values (teams, divisions, sport_ids, weekdays)
+  // choices: array of enum values (teams, divisions, leagues, weekdays)
   if (Array.isArray(items.enum)) return renderChoices(schema, items, value, key);
 
   // array of objects: the rotation "screens" editor
@@ -304,12 +304,12 @@ function renderChoices(schema, items, value, key) {
   const labels = items["meta:enum"] || {};
   const isNum = items.type === "number" || items.type === "integer";
 
-  // Team pickers gain the International/WBC national teams when the
-  // International league (sportId 51) is selected (or a WBC team is already set).
+  // Team pickers gain the WBC national teams when the WBC league is
+  // selected (or a WBC team is already set).
   let options = items.enum.slice();
   if (isTeamPicker(items.enum)) {
     const wbc = (ROOT_SCHEMA.$defs.wbc_team && ROOT_SCHEMA.$defs.wbc_team.enum) || [];
-    const showWbc = SELECTED_SPORTS.has(51);
+    const showWbc = SELECTED_LEAGUES.has("WBC");
     for (const w of wbc) {
       if ((showWbc || selected.has(String(w))) && !options.includes(w)) options.push(w);
     }
@@ -325,11 +325,11 @@ function renderChoices(schema, items, value, key) {
   }
 
   // The league selector drives the team pickers; re-render reactively on change.
-  if (key === "sport_ids") {
+  if (key === "leagues") {
     for (const [cb] of boxes) {
       cb.onchange = () => {
-        SELECTED_SPORTS = new Set(
-          boxes.filter(([c]) => c.checked).map(([, opt]) => Number(opt)));
+        SELECTED_LEAGUES = new Set(
+          boxes.filter(([c]) => c.checked).map(([, opt]) => String(opt)));
         rerenderConfig();
       };
     }
@@ -446,7 +446,9 @@ async function loadConfig() {
 function renderForm(data, display) {
   LAST_SCHEMA = data.schema;
   LAST_SOURCE = data.source;
-  SELECTED_SPORTS = new Set((data.values && data.values.sport_ids) || [1]);
+  const leaguesSchema = (data.schema.properties || {}).leagues || {};
+  SELECTED_LEAGUES = new Set(
+    ((data.values && data.values.leagues) || leaguesSchema.default || []).map(String));
   renderFormWith(data.values, display);
 }
 
