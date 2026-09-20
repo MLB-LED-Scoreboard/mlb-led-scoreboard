@@ -6,17 +6,18 @@ A similar set of tests with stored responses may be separately added in the futu
 """
 
 import unittest
-import data.dates
-import data.standings
-from mlb_led_scoreboard_standings import standings
-from tests.helpers import make_test_config
+from mlb_led_scoreboard_standings import standings, config
+from bullpen.testing import make_test_config
 
 
 class TestStandings(unittest.TestCase):
-    demo_config = make_test_config(config="tests/data/demo-date-midseason", led_cols=32, led_rows=32)
+    demo_config = config.Config(
+        make_test_config(
+            demo_date="2019-08-17", plugin_config={"divisions": ["NL East", "NL Wild Card"]}
+        )
+    )
 
-    dates = data.dates.Dates(2019)
-    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
+    standings = standings.Standings(demo_config)
 
     def test_standings_midseason(self):
         self.assertFalse(self.demo_config.is_postseason())
@@ -52,9 +53,9 @@ class TestStandings(unittest.TestCase):
 
 
 class TestSchedulePlayoff(unittest.TestCase):
-    demo_config = make_test_config(config="tests/data/demo-date-playoffs", led_cols=32, led_rows=32)
-    dates = data.dates.Dates(2024)
-    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
+    demo_config = config.Config(make_test_config(demo_date="2024-10-05", is_postseason=True))
+
+    standings = standings.Standings(demo_config)
     americanBracket = """\
  KC ---|
        |---  KC ---|
@@ -75,9 +76,14 @@ HOU ---|           | --- CLE ---|
 
 
 class TestStandingsEndOfSeason(unittest.TestCase):
-    demo_config = make_test_config(config="tests/data/demo-date-end", led_cols=32, led_rows=32)
-    dates = data.dates.Dates(2024)  # Note: intentionally wrong year so that the playoff start is in the future
-    standings = data.standings.Standings(demo_config, dates.playoffs_start_date)
+    demo_config = config.Config(
+        make_test_config(
+            demo_date="2019-09-29",
+            plugin_config={"standings": {"divisions": ["NL East", "NL Wild Card"]}},
+            is_postseason=False,
+        )
+    )
+    standings = standings.Standings(demo_config)
 
     def test_standings_end(self):
         self.assertFalse(self.demo_config.is_postseason())
@@ -85,10 +91,10 @@ class TestStandingsEndOfSeason(unittest.TestCase):
 
         # east
         for team in self.standings.current_standings().teams:
-            # self.assertTrue(team.clinched or team.elim) # TODO reinstate after API updates
+            self.assertTrue(team.clinched or team.elim)
             self.assertFalse(team.clinched and team.elim)
 
         # wc
         for team in self.standings.advance_to_next_standings().teams:
-            # self.assertTrue(team.clinched or team.elim) # TODO reinstate after API updates
+            self.assertTrue(team.clinched or team.elim) 
             self.assertFalse(team.clinched and team.elim)
