@@ -43,15 +43,23 @@
     "final": {
       "inning":         { "x": 67,  "y": 61 },
       "scrolling_text": { "x": 0,   "y": 44, "width": 128 },
-      "nohit_text":     { "x": 1,   "y": 61 }
+      "nohit_text":     { "x": 1,   "y": 61 },
+      "record": {
+        "font_name": "4x6",
+        "enabled":   false,
+        "away": { "x": 30, "y": 13 },
+        "home": { "x": 30, "y": 29 }
+      }
     },
     "inning": {
       "break": {
-        "number": { "x": 3, "y": 58 },
-        "text":   { "x": 3, "y": 44 },
+        "number":     { "x": 3, "y": 58 },
+        "text":       { "x": 3, "y": 44 },
+        "show_field": false,
         "due_up": {
           "due":     { "font_name": "5x7", "x": 38, "y": 44 },
           "up":      { "x": 38, "y": 56 },
+          "scroll":  { "font_name": "5x7", "x": 0, "y": 52, "width": 128, "enabled": false },
           "divider": { "draw": false, "x": 36, "y_start": 32, "y_end": 64 },
           "loop":    128,
           "leadoff": { "font_name": "7x13", "x": 64, "y": 42, "width": 64 },
@@ -66,8 +74,9 @@
       },
       "arrow": {
         "size": 6,
-        "up":   { "x_offset": -11, "y_offset": -8 },
-        "down": { "x_offset": -11, "y_offset": -4 }
+        "stacked": false,
+        "up":   { "x_offset": -11, "y_offset": -8, "x": 78, "y": 36 },
+        "down": { "x_offset": -11, "y_offset": -4, "x": 78, "y": 48 }
       }
     },
     "outs": {
@@ -80,6 +89,9 @@
       "pitcher":     { "font_name": "5x7", "x": 1,  "y": 40, "width": 41 },
       "pitch":       { "font_name": "4x6", "x": 1,  "y": 50, "enabled": true,  "mph": true,  "desc_length": "long" },
       "pitch_count": { "font_name": "4x6", "x": 1,  "y": 50, "enabled": false, "append_pitcher_name": false },
+      "batter_order":     { "font_name": "4x6", "x": 1, "y": 60, "enabled": false },
+      "batter_stats":     { "font_name": "4x6", "y": 60, "enabled": false, "show_era": false },
+      "play_description": { "font_name": "4x6", "x": 44, "y": 50, "width": 49, "enabled": false },
       "loop": 68,
       "strikeout":   { "x": 16, "y": 60, "desc_length": "long", "enabled": true },
       "play_result": { "x": 16, "y": 60, "desc_length": "long", "enabled": true }
@@ -151,8 +163,8 @@
         "spacing": 5
       },
       "abs_challenges": {
-        "away": { "x": 125, "size": 3, "squares": [4, 9]   },
-        "home": { "x": 125, "size": 3, "squares": [20, 25] }
+        "away": { "x": 125, "size": 3, "height": 3, "squares": [4, 9]   },
+        "home": { "x": 125, "size": 3, "height": 3, "squares": [20, 25] }
       }
     },
     "news": {

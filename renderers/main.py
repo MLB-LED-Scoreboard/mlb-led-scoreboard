@@ -120,10 +120,7 @@ class MainRenderer:
                 self.scrolling_finished = True
 
         else:  # draw a live game
-            if scoreboard.homerun() or scoreboard.strikeout() or scoreboard.hit() or scoreboard.walk():
-                self.animation_time += 1
-            else:
-                self.animation_time = 0
+            self.animation_time += 1
 
             if status.is_inning_break(scoreboard.inning.state):
                 loop_point = self.data.config.layout.coords("inning.break.due_up")["loop"]
@@ -132,7 +129,12 @@ class MainRenderer:
 
             self.scrolling_text_pos = min(self.scrolling_text_pos, loop_point)
             pos = gamerender.render_live_game(
-                self.canvas, layout, colors, scoreboard, self.scrolling_text_pos, self.animation_time
+                self.canvas,
+                layout,
+                colors,
+                scoreboard,
+                self.scrolling_text_pos,
+                self.animation_time,
             )
             self.__update_scrolling_text_pos(pos, loop_point)
 

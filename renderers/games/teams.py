@@ -191,13 +191,17 @@ def __render_abs_challenges(canvas, layout, colors, home_remaining, away_remaini
             continue
         squares = cfg["squares"]
         x = cfg["x"]
-        size = cfg["size"]
+        width = cfg["size"]
+        # `height` is optional and defaults to `size`, which keeps the original
+        # square. Giving it a value lets the marks run the depth of a team's colour
+        # band instead, as bars rather than dots.
+        height = cfg.get("height", width)
         # Fill from the bottom up so the top dims first when a challenge is spent.
         for i, y in enumerate(squares):
             color = available_color if i >= (len(squares) - remaining) else used_color
-            __draw_challenge_square(canvas, x, y, size, color)
+            __draw_challenge_mark(canvas, x, y, width, height, color)
 
 
-def __draw_challenge_square(canvas, x, y, size, color):
-    for dy in range(size):
-        graphics.DrawLine(canvas, x, y + dy, x + size - 1, y + dy, color)
+def __draw_challenge_mark(canvas, x, y, width, height, color):
+    for dy in range(height):
+        graphics.DrawLine(canvas, x, y + dy, x + width - 1, y + dy, color)

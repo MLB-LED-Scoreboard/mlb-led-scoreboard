@@ -85,9 +85,12 @@
     },
     "offset": {
       "type": "object",
+      "description": "Where one half's inning arrow goes. x_offset/y_offset place it relative to the inning number, x/y place the tip of the arrow absolutely; which pair is used depends on inning.arrow.stacked.",
       "properties": {
         "x_offset": { "type": "integer" },
-        "y_offset": { "type": "integer" }
+        "y_offset": { "type": "integer" },
+        "x":        { "type": "integer" },
+        "y":        { "type": "integer" }
       },
       "required": ["x_offset", "y_offset"]
     },
@@ -115,9 +118,14 @@
       "properties": {
         "x":       { "type": "integer" },
         "size":    { "type": "integer", "default": 2, "minimum": 1 },
+        "height":  {
+          "type": "integer",
+          "description": "Height of each mark. Omit for a square of `size`; set it to run the marks down the depth of the team's colour band as bars.",
+          "minimum": 1
+        },
         "squares": {
           "type": "array",
-          "description": "Y positions for each challenge square (two = colon-style indicator). Squares are filled from the bottom up as challenges remain.",
+          "description": "Y position of the TOP of each challenge mark (two = colon-style indicator). Filled from the bottom up as challenges remain.",
           "items": { "type": "integer" },
           "minItems": 1
         }
@@ -149,7 +157,17 @@
       "properties": {
         "inning":         { "$ref": "#/$defs/point" },
         "scrolling_text": { "$ref": "#/$defs/point_width" },
-        "nohit_text":     { "$ref": "#/$defs/point" }
+        "nohit_text":     { "$ref": "#/$defs/point" },
+        "record": {
+          "type": "object",
+          "description": "Season records beside the final score. Independent of teams.record, which the team banner draws on every screen -- on a layout whose live screen fills the space right of the team block, records only fit once the game is over.",
+          "properties": {
+            "font_name": { "$ref": "#/$defs/font_name" },
+            "enabled":   { "type": "boolean" },
+            "away":      { "$ref": "#/$defs/point" },
+            "home":      { "$ref": "#/$defs/point" }
+          }
+        }
       }
     },
     "inning": {
@@ -160,11 +178,26 @@
           "properties": {
             "number": { "$ref": "#/$defs/point" },
             "text":   { "$ref": "#/$defs/point" },
+            "show_field": {
+              "type": "boolean",
+              "description": "Replace the 'Mid 5th' text with the live screen's furniture: the diamond and out markers in the inning.break.inactive colour, plus the inning indicator. Only usable on a layout whose due-up display leaves the diamond's space free."
+            },
             "due_up": {
               "type": "object",
               "properties": {
                 "due":     { "$ref": "#/$defs/named_point" },
                 "up":      { "$ref": "#/$defs/point" },
+                "scroll":  {
+                  "type": "object",
+                  "description": "Single scrolling 'Due Up: 8. Callahan, 9. Peck, ...' line. When enabled it replaces the stacked leadoff/on_deck/in_hole rows and the Due/Up labels.",
+                  "properties": {
+                    "font_name": { "$ref": "#/$defs/font_name" },
+                    "x":         { "type": "integer" },
+                    "y":         { "type": "integer" },
+                    "width":     { "type": "integer" },
+                    "enabled":   { "type": "boolean" }
+                  }
+                },
                 "divider": {
                   "type": "object",
                   "properties": {
@@ -194,8 +227,13 @@
         },
         "arrow": {
           "type": "object",
+          "description": "The arrow showing which half of the inning is being played.",
           "properties": {
             "size": { "type": "integer" },
+            "stacked": {
+              "type": "boolean",
+              "description": "Draw both arrows at their absolute x/y instead of one arrow at x_offset/y_offset from the inning number. The inactive half is dimmed rather than hidden, so the indicator holds the same shape all game, and the upcoming half blinks through an inning break. Needs the inning.arrow.active and inning.arrow.inactive colours."
+            },
             "up":   { "$ref": "#/$defs/offset" },
             "down": { "$ref": "#/$defs/offset" }
           }
@@ -255,6 +293,34 @@
             "append_pitcher_name": { "type": "boolean" }
           }
         },
+        "batter_order": {
+          "type": "object",
+          "properties": {
+            "font_name": { "$ref": "#/$defs/font_name" },
+            "x":         { "type": "integer" },
+            "y":         { "type": "integer" },
+            "enabled":   { "type": "boolean" }
+          }
+        },
+        "batter_stats": {
+          "type": "object",
+          "properties": {
+            "font_name": { "$ref": "#/$defs/font_name" },
+            "y":         { "type": "integer" },
+            "enabled":   { "type": "boolean" },
+            "show_era":  { "type": "boolean" }
+          }
+        },
+        "play_description": {
+          "type": "object",
+          "properties": {
+            "font_name":          { "$ref": "#/$defs/font_name" },
+            "x":                  { "type": "integer" },
+            "y":                  { "type": "integer" },
+            "width":              { "type": "integer" },
+            "enabled":            { "type": "boolean" }
+          }
+        },
         "loop":        { "type": "integer" },
         "strikeout":   { "$ref": "#/$defs/play_display" },
         "play_result": { "$ref": "#/$defs/play_display" }
@@ -275,7 +341,8 @@
       "properties": {
         "x":                     { "type": "integer" },
         "y":                     { "type": "integer" },
-        "innings_until_display": { "type": "integer" }
+        "innings_until_display": { "type": "integer" },
+        "font_name":             { "$ref": "#/$defs/font_name" }
       }
     },
     "pregame": {

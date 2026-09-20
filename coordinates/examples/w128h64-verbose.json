@@ -6,45 +6,46 @@
   },
   "bases": {
     "1B": {
-      "x": 112,
-      "y": 42,
-      "size": 10
+      "x": 88,
+      "y": 37,
+      "size": 12
     },
     "2B": {
-      "x": 103,
-      "y": 33,
-      "size": 10
+      "x": 79,
+      "y": 29,
+      "size": 12
     },
     "3B": {
-      "x": 94,
-      "y": 42,
-      "size": 10
+      "x": 70,
+      "y": 37,
+      "size": 12
     }
   },
   "final": {
     "inning": {
-      "x": 67,
-      "y": 61
+      "x": 64,
+      "y": 13
     },
     "scrolling_text": {
+      "font_name": "5x7",
       "x": 0,
-      "y": 44,
+      "y": 25,
       "width": 128
     },
     "nohit_text": {
-      "x": 1,
-      "y": 61
+      "x": 98,
+      "y": 12
     },
     "record": {
       "font_name": "4x6",
-      "enabled": false,
+      "enabled": true,
       "away": {
-        "x": 30,
-        "y": 13
+        "x": 56,
+        "y": 39
       },
       "home": {
-        "x": 30,
-        "y": 29
+        "x": 56,
+        "y": 57
       }
     }
   },
@@ -58,190 +59,193 @@
         "x": 3,
         "y": 44
       },
-      "show_field": false,
+      "show_field": true,
       "due_up": {
         "due": {
           "font_name": "5x7",
-          "x": 38,
-          "y": 44
+          "x": 70,
+          "y": 12
         },
         "up": {
-          "x": 38,
-          "y": 56
+          "x": 70,
+          "y": 24
         },
         "scroll": {
           "font_name": "5x7",
           "x": 0,
-          "y": 52,
+          "y": 17,
           "width": 128,
-          "enabled": false
+          "enabled": true
         },
         "divider": {
           "draw": false,
-          "x": 36,
-          "y_start": 32,
-          "y_end": 64
+          "x": 52,
+          "y_start": 28,
+          "y_end": 63
         },
         "loop": 128,
         "leadoff": {
           "font_name": "7x13",
-          "x": 64,
+          "x": 70,
           "y": 42,
-          "width": 64
+          "width": 58
         },
         "on_deck": {
-          "x": 64,
+          "x": 70,
           "y": 52,
-          "width": 64
+          "width": 58
         },
         "in_hole": {
-          "x": 64,
+          "x": 70,
           "y": 62,
-          "width": 64
+          "width": 58
         }
       }
     },
     "number": {
-      "x": 87,
-      "y": 42,
+      "x": 65,
+      "y": 43,
       "nohit": {
-        "x": 93,
-        "y": 42
+        "x": 65,
+        "y": 43
       },
       "perfect_game": {
-        "x": 93,
-        "y": 42
-      }
+        "x": 65,
+        "y": 43
+      },
+      "font_name": "5x7"
     },
     "arrow": {
-      "size": 6,
-      "stacked": false,
+      "size": 3,
+      "stacked": true,
       "up": {
+        "x": 62,
+        "y": 29,
         "x_offset": -11,
-        "y_offset": -8,
-        "x": 78,
-        "y": 36
+        "y_offset": -8
       },
       "down": {
+        "x": 62,
+        "y": 51,
         "x_offset": -11,
-        "y_offset": -4,
-        "x": 78,
-        "y": 48
+        "y_offset": -4
       }
     }
   },
   "outs": {
     "1": {
-      "x": 95,
-      "y": 56,
-      "size": 5
+      "x": 105,
+      "y": 46,
+      "size": 4
     },
     "2": {
-      "x": 106,
-      "y": 56,
-      "size": 5
+      "x": 114,
+      "y": 46,
+      "size": 4
     },
     "3": {
-      "x": 118,
-      "y": 56,
-      "size": 5
+      "x": 123,
+      "y": 46,
+      "size": 4
     }
   },
   "atbat": {
     "batter": {
       "font_name": "5x7",
       "x": 1,
-      "y": 60,
-      "width": 41
+      "y": 10,
+      "width": 60
     },
     "pitcher": {
       "font_name": "5x7",
       "x": 1,
-      "y": 40,
-      "width": 41
+      "y": 25,
+      "width": 55
     },
     "pitch": {
       "font_name": "4x6",
       "x": 1,
       "y": 50,
-      "enabled": true,
-      "mph": true,
-      "desc_length": "long"
+      "enabled": false,
+      "mph": false,
+      "desc_length": "short"
     },
     "pitch_count": {
       "font_name": "4x6",
-      "x": 1,
-      "y": 50,
-      "enabled": false,
+      "x": 110,
+      "y": 25,
+      "enabled": true,
       "append_pitcher_name": false
     },
     "batter_order": {
       "font_name": "4x6",
       "x": 1,
-      "y": 60,
-      "enabled": false
+      "y": 10,
+      "enabled": true
     },
     "batter_stats": {
       "font_name": "4x6",
-      "y": 60,
-      "enabled": false,
-      "show_era": false
+      "y": 10,
+      "enabled": true,
+      "show_era": true
     },
     "play_description": {
       "font_name": "4x6",
-      "x": 44,
-      "y": 50,
-      "width": 49,
-      "enabled": false
+      "x": 55,
+      "y": 61,
+      "width": 73,
+      "enabled": true
     },
     "loop": 68,
     "strikeout": {
       "x": 16,
       "y": 60,
       "desc_length": "long",
-      "enabled": true
+      "enabled": false
     },
     "play_result": {
       "x": 16,
       "y": 60,
       "desc_length": "long",
-      "enabled": true
+      "enabled": false
     }
   },
   "batter_count": {
-    "x": 66,
-    "y": 62,
+    "x": 105,
+    "y": 40,
     "nohit": {
-      "x": 66,
-      "y": 64
+      "x": 105,
+      "y": 40
     },
     "perfect_game": {
-      "x": 66,
-      "y": 64
-    }
+      "x": 105,
+      "y": 40
+    },
+    "font_name": "5x7"
   },
   "nohitter": {
-    "x": 66,
-    "y": 53,
-    "innings_until_display": 5
+    "x": 95,
+    "y": 25,
+    "innings_until_display": 5,
+    "font_name": "4x6"
   },
   "pregame": {
     "scrolling_text": {
       "x": 0,
-      "y": 46,
+      "y": 20,
       "width": 128,
       "warmup": {
         "x": 0,
-        "y": 46,
+        "y": 20,
         "width": 128
       }
     },
     "start_time": {
-      "x": 66,
+      "x": 90,
       "y": 60
     },
     "warmup_text": {
-      "x": 66,
+      "x": 90,
       "y": 60
     }
   },
@@ -278,57 +282,57 @@
   },
   "status": {
     "text": {
-      "x": 64,
-      "y": 46,
+      "x": 90,
+      "y": 42,
       "short_text": false
     },
     "scrolling_text": {
       "x": 0,
-      "y": 58,
+      "y": 20,
       "width": 128
     }
   },
   "teams": {
     "background": {
       "away": {
-        "width": 128,
-        "height": 16,
+        "width": 52,
+        "height": 18,
         "x": 0,
-        "y": 0
+        "y": 28
       },
       "home": {
-        "width": 128,
-        "height": 16,
+        "width": 52,
+        "height": 18,
         "x": 0,
-        "y": 16
+        "y": 46
       }
     },
     "accent": {
       "away": {
         "width": 2,
-        "height": 16,
+        "height": 18,
         "x": 0,
-        "y": 0
+        "y": 28
       },
       "home": {
         "width": 2,
-        "height": 16,
+        "height": 18,
         "x": 0,
-        "y": 16
+        "y": 46
       }
     },
     "name": {
       "away": {
-        "font_name": "9x18B",
+        "font_name": "9x18",
         "x": 4,
-        "y": 13
+        "y": 42
       },
       "home": {
-        "font_name": "9x18B",
+        "font_name": "9x18",
         "x": 4,
-        "y": 29
+        "y": 60
       },
-      "full": true
+      "full": false
     },
     "record": {
       "enabled": false,
@@ -346,37 +350,37 @@
     "line_score": {
       "away": {
         "font_name": "9x18B",
-        "x": 124,
-        "y": 13
+        "x": 51,
+        "y": 42
       },
       "home": {
         "font_name": "9x18B",
-        "x": 124,
-        "y": 29
+        "x": 51,
+        "y": 60
       },
-      "show_hits_and_errors": true,
+      "show_hits_and_errors": false,
       "show_abs_challenges": true,
-      "compress_digits": true,
+      "compress_digits": false,
       "shorten_team_name_on_high_line_score": true,
       "spacing": 5
     },
     "abs_challenges": {
       "away": {
-        "x": 125,
-        "size": 3,
-        "height": 3,
+        "x": 53,
+        "size": 2,
+        "height": 8,
         "squares": [
-          4,
-          9
+          29,
+          38
         ]
       },
       "home": {
-        "x": 125,
-        "size": 3,
-        "height": 3,
+        "x": 53,
+        "size": 2,
+        "height": 8,
         "squares": [
-          20,
-          25
+          47,
+          56
         ]
       }
     }
