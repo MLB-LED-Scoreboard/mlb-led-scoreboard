@@ -12,9 +12,7 @@ from bullpen.testing import make_test_config
 
 class TestStandings(unittest.TestCase):
     demo_config = config.Config(
-        make_test_config(
-            demo_date="2019-08-17", plugin_config={"divisions": ["NL East", "NL Wild Card"]}
-        )
+        make_test_config(demo_date="2019-08-17", plugin_config={"divisions": ["NL East", "NL Wild Card"]})
     )
 
     standings = standings.Standings(demo_config)
@@ -96,5 +94,5 @@ class TestStandingsEndOfSeason(unittest.TestCase):
 
         # wc
         for team in self.standings.advance_to_next_standings().teams:
-            self.assertTrue(team.clinched or team.elim) 
+            self.assertTrue(team.clinched or team.elim)
             self.assertFalse(team.clinched and team.elim)

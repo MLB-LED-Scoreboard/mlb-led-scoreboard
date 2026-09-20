@@ -1,5 +1,5 @@
 import bullpen
-from datetime import datetime
+from datetime import datetime, date
 
 
 def make_test_config(
@@ -22,7 +22,7 @@ def make_test_config(
         def is_postseason(self) -> bool:
             return is_postseason
 
-        def parse_today(self) -> datetime.date:
+        def parse_today(self) -> date:
             if demo_date:
                 today = datetime.strptime(demo_date, "%Y-%m-%d")
             else:
