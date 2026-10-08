@@ -14,8 +14,6 @@ class TestLayout(unittest.TestCase):
         # Will be an absolute path, OS-dependent
         font_path = str(os.path.abspath("assets/fonts/patched/4x6.bdf"))
         self.assertIn(font_path, font_dict["path"])
-        # BDF metadata that is nice to have, but not critical what it contains
-        self.assertIn("bdf_headers", font_dict)
         # Handled differently in HW/Sw
         self.assertIn("font", font_dict)
 

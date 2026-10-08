@@ -1,9 +1,8 @@
 from data import status
 from driver import graphics
+from bullpen.logging import LOGGER
 
 import os.path
-
-import bdfparser
 
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
@@ -38,7 +37,6 @@ class Layout:
         {
             "font": any,
             "path": str,
-            "bdf_headers": dict[str, any],
             "properties": {
                 "width": int,
                 "height": int
@@ -116,9 +114,27 @@ class Layout:
                 return self.font_cache[font_name]
 
     def __get_font_bdf_properties(self, path):
-        bdf = bdfparser.Font(path)
+        size = { "width": 0, "height": 0 }
+        found = False
 
-        return {"bdf_headers": bdf.headers, "size": {"width": bdf.headers["fbbx"], "height": bdf.headers["fbby"]}}
+        with open(path, 'r') as f:
+            for _, line in enumerate(f):
+                if not line.startswith("FONTBOUNDINGBOX"):
+                    continue
+
+                # https://xorg.freedesktop.org/docs/BDF/bdf.pdf
+                # FONTBOUNDINGBOX W H Xoffset Yoffset
+                _bbx, w, h, _xoffset, _yoffset = line.split(" ")
+
+                size = { "width": int(w), "height": int(h) }
+                found = True
+
+                break
+
+        if not found:
+            LOGGER.warning(f"Unable to parse font bounding box for {path}")
+        
+        return { "size": size }
 
     def __eq__(self, other):
 

@@ -122,6 +122,7 @@ if __name__ == "__main__":
     try:
         if profiling_enabled:
             DATA_PROFILER.enable()
+            RENDER_PROFILER.enable()
         main(matrix, config)
     except Exception:
         LOGGER.exception("Untrapped error in main!")
