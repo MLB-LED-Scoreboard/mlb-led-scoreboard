@@ -66,7 +66,7 @@ class Renderer(api.PluginRenderer["NewsData"]):
         time_text = time.strftime(self.time_fmt_str)
 
         text_x = center_text_position(time_text, self.time_coords["x"], self.time_font.width)
-        graphics.DrawText(canvas, self.time_font["font"], text_x, self.time_coords["y"], self.time_color, time_text)
+        graphics.DrawText(canvas, self.time_font, text_x, self.time_coords["y"], self.time_color, time_text)
 
     def _render_weather(self, canvas, graphics, layout, colors, weather: Weather):
         if weather.available():
@@ -120,4 +120,4 @@ def _render_weather_text(canvas, graphics, layout, colors, text, keyname):
     font = layout.font("news.{}".format(keyname))
     color = colors.graphics_color("news.{}".format(keyname))
     text_x = center_text_position(text, coords["x"], font.width)
-    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
+    graphics.DrawText(canvas, font, text_x, coords["y"], color, text)

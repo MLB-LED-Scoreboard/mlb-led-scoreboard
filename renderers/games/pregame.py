@@ -34,7 +34,7 @@ def _render_start_time(canvas, layout, colors, pregame):
     font = layout.font("pregame.start_time")
     color = colors.graphics_color("pregame.start_time")
     time_x = center_text_position(time_text, coords["x"], font.width)
-    graphics.DrawText(canvas, font["font"], time_x, coords["y"], color, time_text)
+    graphics.DrawText(canvas, font, time_x, coords["y"], color, time_text)
 
 
 def _render_warmup(canvas, layout, colors, pregame):
@@ -43,7 +43,7 @@ def _render_warmup(canvas, layout, colors, pregame):
     font = layout.font("pregame.warmup_text")
     color = colors.graphics_color("pregame.warmup_text")
     warmup_x = center_text_position(warmup_text, coords["x"], font.width)
-    graphics.DrawText(canvas, font["font"], warmup_x, coords["y"], color, warmup_text)
+    graphics.DrawText(canvas, font, warmup_x, coords["y"], color, warmup_text)
 
 
 def _render_pregame_info(

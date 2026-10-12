@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
 from data import status
 from driver import graphics
 from bullpen.logging import LOGGER
 
 import os.path
+
+if TYPE_CHECKING:
+    from RGBMatrixEmulator.graphics.font import Font
 
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
@@ -30,7 +34,7 @@ class Layout:
         # Cache the default font to start
         self.__get_font_object(self.default_font_name)
 
-    def font(self, keypath):
+    def font(self, keypath) -> "Font":
         try:
             return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
         except Exception:
@@ -82,7 +86,7 @@ class Layout:
             rv = rv[key]
         return rv
 
-    def __get_font_object(self, font_name):
+    def __get_font_object(self, font_name) -> "Font":
         if font_name in self.font_cache:
             return self.font_cache[font_name]
 

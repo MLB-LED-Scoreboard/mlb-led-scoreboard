@@ -90,7 +90,7 @@ def __render_rotating_standings(canvas, graphics, layout, colors, division, stat
 
     graphics.DrawLine(canvas, 0, 0, coords["width"], 0, divider_color)
 
-    graphics.DrawText(canvas, font["font"], coords["stat_title"]["x"], offset, stat_color, stat.upper())
+    graphics.DrawText(canvas, font, coords["stat_title"]["x"], offset, stat_color, stat.upper())
     graphics.DrawLine(canvas, coords["divider"]["x"], 0, coords["divider"]["x"], coords["height"], divider_color)
 
     for team in division.teams:
@@ -99,9 +99,9 @@ def __render_rotating_standings(canvas, graphics, layout, colors, division, stat
         team_text = "{:3s}".format(team.team_abbrev)
         stat_text = str(getattr(team, stat))
         color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_name_color)
-        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
+        graphics.DrawText(canvas, font, coords["team"]["name"]["x"], offset, color, team_text)
         color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_stat_color)
-        graphics.DrawText(canvas, font["font"], coords["team"]["record"]["x"], offset, color, stat_text)
+        graphics.DrawText(canvas, font, coords["team"]["record"]["x"], offset, color, stat_text)
 
         offset += coords["offset"]
 
@@ -177,7 +177,7 @@ def __render_static_wide_standings(canvas, graphics, layout, colors, division, l
 
         color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_name_color)
         team_text = team.team_abbrev
-        graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
+        graphics.DrawText(canvas, font, coords["team"]["name"]["x"], offset, color, team_text)
 
         record_text = "{:>3}-{:<3}".format(team.w, team.l)
         record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font.width)
@@ -189,8 +189,8 @@ def __render_static_wide_standings(canvas, graphics, layout, colors, division, l
         gb_text_x = coords["team"]["games_back"]["x"] - (len(gb_text) * font.width)
 
         color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_stat_color)
-        graphics.DrawText(canvas, font["font"], record_text_x, offset, color, record_text)
-        graphics.DrawText(canvas, font["font"], gb_text_x, offset, color, gb_text)
+        graphics.DrawText(canvas, font, record_text_x, offset, color, record_text)
+        graphics.DrawText(canvas, font, gb_text_x, offset, color, gb_text)
 
         offset += coords["offset"]
 
@@ -296,23 +296,23 @@ def render_bracket(canvas, graphics, layout, colors, league: League):
 
     # draw bracket text
     # wc teams
-    graphics.DrawText(canvas, font["font"], wc_x, wc36_y, team_name_color, league.wc6)
-    graphics.DrawText(canvas, font["font"], wc_x, wc36_y + matchup_gap, team_name_color, league.wc3)
+    graphics.DrawText(canvas, font, wc_x, wc36_y, team_name_color, league.wc6)
+    graphics.DrawText(canvas, font, wc_x, wc36_y + matchup_gap, team_name_color, league.wc3)
 
-    graphics.DrawText(canvas, font["font"], wc_x, wc45_y, team_name_color, league.wc5)
-    graphics.DrawText(canvas, font["font"], wc_x, wc45_y + matchup_gap, team_name_color, league.wc4)
+    graphics.DrawText(canvas, font, wc_x, wc45_y, team_name_color, league.wc5)
+    graphics.DrawText(canvas, font, wc_x, wc45_y + matchup_gap, team_name_color, league.wc4)
 
     # DS B teams
-    graphics.DrawText(canvas, font["font"], ds_x, ds_b_y, team_name_color, league.wc36_winner)
-    graphics.DrawText(canvas, font["font"], ds_x, ds_b_y + matchup_gap, team_name_color, league.ds_B_bye)
+    graphics.DrawText(canvas, font, ds_x, ds_b_y, team_name_color, league.wc36_winner)
+    graphics.DrawText(canvas, font, ds_x, ds_b_y + matchup_gap, team_name_color, league.ds_B_bye)
 
     # DS A
-    graphics.DrawText(canvas, font["font"], ds_x, ds_a_y, team_name_color, league.wc45_winner)
-    graphics.DrawText(canvas, font["font"], ds_x, ds_a_y + matchup_gap, team_name_color, league.ds_A_bye)
+    graphics.DrawText(canvas, font, ds_x, ds_a_y, team_name_color, league.wc45_winner)
+    graphics.DrawText(canvas, font, ds_x, ds_a_y + matchup_gap, team_name_color, league.ds_A_bye)
 
     # LCS
-    graphics.DrawText(canvas, font["font"], lcs_x, ds_b_y + winner_offset, team_name_color, league.l_one)
-    graphics.DrawText(canvas, font["font"], lcs_x, ds_a_y + winner_offset, team_name_color, league.l_two)
+    graphics.DrawText(canvas, font, lcs_x, ds_b_y + winner_offset, team_name_color, league.l_one)
+    graphics.DrawText(canvas, font, lcs_x, ds_a_y + winner_offset, team_name_color, league.l_two)
 
     # league champ
-    graphics.DrawText(canvas, font["font"], champ_x + 1, champ_y, team_name_color, league.champ)
+    graphics.DrawText(canvas, font, champ_x + 1, champ_y, team_name_color, league.champ)

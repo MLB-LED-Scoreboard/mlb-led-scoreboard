@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Protocol, Union
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.graphics import Color as GraphicsColor
+    from RGBmatrixEmulator.graphics.font import Font
 
 
 class MLBConfig(Protocol):
@@ -39,7 +40,7 @@ class Layout(abc.ABC):
     height: int
 
     @abc.abstractmethod
-    def font(self, keypath: str) -> dict[str, Any]: ...
+    def font(self, keypath: str) -> "Font": ...
 
     @abc.abstractmethod
     def coords(self, keypath: str) -> Union[Any, dict[str, Any]]: ...

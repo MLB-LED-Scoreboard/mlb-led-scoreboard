@@ -110,7 +110,7 @@ def __render_team_text(canvas, layout, text_color, team, homeaway, full_team_nam
     team_text = "{:3s}".format(team.abbrev.upper()).strip()
     if full_team_names:
         team_text = "{:13s}".format(team.name).strip()
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], text_color_graphic, team_text)
 
     return (coords["x"] + (len(team_text) * font.width), coords["y"])
 
@@ -130,7 +130,7 @@ def __render_record_text(canvas, layout, text_color, team, homeaway, origin):
     x = coords["x"] + origin[0]
     y = coords["y"] + origin[1]
 
-    graphics.DrawText(canvas, font["font"], x, y, text_color_graphic, record_text)
+    graphics.DrawText(canvas, font, x, y, text_color_graphic, record_text)
 
 
 def __render_score_component(canvas, layout, text_color, homeaway, coords, component_val, width_chars):
@@ -146,7 +146,7 @@ def __render_score_component(canvas, layout, text_color, homeaway, coords, compo
         if i > 0 and line_score_coords["compress_digits"]:
             coords["x"] += 1
         char_draw_x = coords["x"] - font_width * (i + 1)  # Determine character position
-        graphics.DrawText(canvas, font["font"], char_draw_x, coords["y"], text_color_graphic, c)
+        graphics.DrawText(canvas, font, char_draw_x, coords["y"], text_color_graphic, c)
     if line_score_coords["compress_digits"]:
         coords["x"] += width_chars - len(component_val)  # adjust for compaction on values not rendered
     coords["x"] -= font_width * width_chars + line_score_coords["spacing"] - 1  # adjust coordinates for next score.
