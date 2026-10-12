@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Protocol, Union
 
 if TYPE_CHECKING:
     from RGBMatrixEmulator.graphics import Color as GraphicsColor
-    from RGBmatrixEmulator.graphics.font import Font
+    from RGBMatrixEmulator.graphics.font import Font
 
 
 class MLBConfig(Protocol):

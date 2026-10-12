@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from data import status
 from driver import graphics
-from bullpen.logging import LOGGER
 
 import os.path
 
@@ -21,24 +20,33 @@ AVAILABLE_OPTIONAL_KEYS = [FONTNAME_KEY, LAYOUT_STATE_WARMUP, LAYOUT_STATE_NOHIT
 
 
 class Layout:
+    default_font: "Font"
+    font_cache: dict[str, "Font"]
+
     def __init__(self, layout_json, width, height):
         self.json = layout_json
         self.width = width
         self.height = height
         self.state = None
-        self.default_font_name = FONTNAME_DEFAULT
         self.default_font_name = self.coords("defaults.font_name")
 
         self.font_cache = {}
 
         # Cache the default font to start
-        self.__get_font_object(self.default_font_name)
+        self.default_font = self.__get_font_object(self.default_font_name)
+
+        if self.default_font is None:
+            raise FileNotFoundError(f"Default font '{self.default_font_name}' not found")
 
     def font(self, keypath) -> "Font":
+        font = None
+
         try:
-            return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
+            font = self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
         except Exception:
-            return self.__get_font_object(self.default_font_name)
+            pass
+
+        return font or self.default_font
 
     def coords(self, keypath):
         try:
@@ -86,7 +94,7 @@ class Layout:
             rv = rv[key]
         return rv
 
-    def __get_font_object(self, font_name) -> "Font":
+    def __get_font_object(self, font_name) -> Optional["Font"]:
         if font_name in self.font_cache:
             return self.font_cache[font_name]
 
@@ -101,6 +109,8 @@ class Layout:
                 self.font_cache[font_name] = font
 
                 return self.font_cache[font_name]
+
+        return None
 
     def __eq__(self, other):
 
