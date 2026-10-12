@@ -31,18 +31,6 @@ class Layout:
         self.__get_font_object(self.default_font_name)
 
     def font(self, keypath):
-        """
-        Returns a dictionary with font properties. The font object resides under the "font" key.
-
-        {
-            "font": any,
-            "path": str,
-            "properties": {
-                "width": int,
-                "height": int
-            }
-        }
-        """
         try:
             return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
         except Exception:
@@ -106,35 +94,9 @@ class Layout:
                 font = graphics.Font()
                 font.LoadFont(abs_path)
 
-                self.font_cache[font_name] = {
-                    "font": font,
-                    "path": abs_path,
-                } | self.__get_font_bdf_properties(abs_path)
+                self.font_cache[font_name] = font
 
                 return self.font_cache[font_name]
-
-    def __get_font_bdf_properties(self, path):
-        size = { "width": 0, "height": 0 }
-        found = False
-
-        with open(path, 'r') as f:
-            for _, line in enumerate(f):
-                if not line.startswith("FONTBOUNDINGBOX"):
-                    continue
-
-                # https://xorg.freedesktop.org/docs/BDF/bdf.pdf
-                # FONTBOUNDINGBOX W H Xoffset Yoffset
-                _bbx, w, h, _xoffset, _yoffset = line.split(" ")
-
-                size = { "width": int(w), "height": int(h) }
-                found = True
-
-                break
-
-        if not found:
-            LOGGER.warning(f"Unable to parse font bounding box for {path}")
-        
-        return { "size": size }
 
     def __eq__(self, other):
 

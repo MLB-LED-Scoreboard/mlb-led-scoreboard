@@ -112,7 +112,7 @@ def __render_team_text(canvas, layout, text_color, team, homeaway, full_team_nam
         team_text = "{:13s}".format(team.name).strip()
     graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color_graphic, team_text)
 
-    return (coords["x"] + (len(team_text) * font["size"]["width"]), coords["y"])
+    return (coords["x"] + (len(team_text) * font.width), coords["y"])
 
 
 def __render_record_text(canvas, layout, text_color, team, homeaway, origin):
@@ -136,7 +136,7 @@ def __render_record_text(canvas, layout, text_color, team, homeaway, origin):
 def __render_score_component(canvas, layout, text_color, homeaway, coords, component_val, width_chars):
     # The coords passed in are the rightmost pixel.
     font = layout.font(f"teams.line_score.{homeaway}")
-    font_width = font["size"]["width"]
+    font_width = font.width
     # Number of pixels between runs/hits and hits/errors.
     line_score_coords = layout.coords("teams.line_score")
     text_color_graphic = graphics.Color(text_color["r"], text_color["g"], text_color["b"])

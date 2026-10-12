@@ -40,7 +40,7 @@ def scrolling_text(
 ) -> int:
     if force_scroll or __text_should_scroll(text, font, width):
 
-        w: int = font["size"]["width"]
+        w: int = font.width
         total_width = w * len(text)
 
         # if the text is long enough to scroll, we can trim it to only the visible
@@ -72,7 +72,7 @@ def scrolling_text(
 
         # draw one-letter boxes to left and right to hide previous and next letters
         top = y + 1
-        bottom = top - font["size"]["height"]
+        bottom = top - font.height
         for xi in range(0, w):
             left = x - xi - 1
             graphics.DrawLine(canvas, left, top, left, bottom, bg_color)
@@ -88,8 +88,8 @@ def scrolling_text(
 
 # Maybe the text is too short and we should just center it instead?
 def __text_should_scroll(text, font, width):
-    return len(text) * font["size"]["width"] > width
+    return len(text) * font.width > width
 
 
 def __center_position(text, font, width, x):
-    return center_text_position(text, abs(width // 2) + x, font["size"]["width"])
+    return center_text_position(text, abs(width // 2) + x, font.width)

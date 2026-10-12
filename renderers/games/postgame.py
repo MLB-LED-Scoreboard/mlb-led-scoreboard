@@ -57,7 +57,7 @@ def _render_final_inning(canvas, layout, colors, scoreboard):
     font = layout.font("final.inning")
     if scoreboard.inning.number != NORMAL_GAME_LENGTH:
         text += " " + str(scoreboard.inning.number)
-    text_x = center_text_position(text, coords["x"], font["size"]["width"])
+    text_x = center_text_position(text, coords["x"], font.width)
     graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
 
     if layout.state_is_nohitter():

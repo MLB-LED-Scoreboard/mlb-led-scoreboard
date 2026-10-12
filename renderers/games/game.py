@@ -95,7 +95,7 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
     pos = scrolling_text(
         canvas,
         graphics,
-        coords["x"] + font["size"]["width"] * 3,
+        coords["x"] + font.width * 3,
         coords["y"],
         coords["width"],
         font,
@@ -122,7 +122,7 @@ def __render_pitcher_text(canvas, layout, colors, pitcher, pitches: Pitches, tex
     pos = scrolling_text(
         canvas,
         graphics,
-        coords["x"] + font["size"]["width"] * 2,
+        coords["x"] + font.width * 2,
         coords["y"],
         coords["width"],
         font,
@@ -357,7 +357,7 @@ def __render_number(canvas, layout, colors, inning):
     number_color = colors.graphics_color("inning.number")
     coords = layout.coords("inning.number")
     font = layout.font("inning.number")
-    pos_x = coords["x"] - (len(str(inning.number)) * font["size"]["width"])
+    pos_x = coords["x"] - (len(str(inning.number)) * font.width)
     graphics.DrawText(canvas, font["font"], pos_x, coords["y"], number_color, str(inning.number))
 
 
@@ -365,7 +365,7 @@ def __render_inning_half(canvas, layout, colors, inning):
     font = layout.font("inning.number")
     num_coords = layout.coords("inning.number")
     arrow_coords = layout.coords("inning.arrow")
-    inning_size = len(str(inning.number)) * font["size"]["width"]
+    inning_size = len(str(inning.number)) * font.width
     size = arrow_coords["size"]
     top = inning.state == Inning.TOP
     if top:

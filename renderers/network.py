@@ -17,5 +17,5 @@ def render_network_error(canvas, layout, colors):
         for y in range(bg_coords["height"]):
             canvas.SetPixel(x + bg_coords["x"], y + bg_coords["y"], bg_color["r"], bg_color["g"], bg_color["b"])
     text = NETWORK_ERROR_TEXT
-    x = center_text_position(text, coords["text"]["x"], font["size"]["width"])
+    x = center_text_position(text, coords["text"]["x"], font.width)
     graphics.DrawText(canvas, font["font"], x, coords["text"]["y"], text_color, text)

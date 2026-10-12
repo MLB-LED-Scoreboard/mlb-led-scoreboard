@@ -180,13 +180,13 @@ def __render_static_wide_standings(canvas, graphics, layout, colors, division, l
         graphics.DrawText(canvas, font["font"], coords["team"]["name"]["x"], offset, color, team_text)
 
         record_text = "{:>3}-{:<3}".format(team.w, team.l)
-        record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font["size"]["width"])
+        record_text_x = center_text_position(record_text, coords["team"]["record"]["x"], font.width)
 
         if "-" in str(team.gb):
             gb_text = " -  "
         else:
             gb_text = "{:>4s}".format(str(team.gb))
-        gb_text_x = coords["team"]["games_back"]["x"] - (len(gb_text) * font["size"]["width"])
+        gb_text_x = coords["team"]["games_back"]["x"] - (len(gb_text) * font.width)
 
         color = team_elim_color if team.elim else (team_clinched_color if team.clinched else team_stat_color)
         graphics.DrawText(canvas, font["font"], record_text_x, offset, color, record_text)
@@ -220,7 +220,7 @@ def render_bracket(canvas, graphics, layout, colors, league: League):
     matchup_gap = coords["matchup_y_gap"]
     winner_offset = matchup_gap // 2
     series_gap = coords["series_x_gap"]
-    char_width = font["size"]["width"] + 2
+    char_width = font.width + 2
 
     wc_x = coords["wc_x_start"]
     wc36_y = coords["wc_y_start"]
