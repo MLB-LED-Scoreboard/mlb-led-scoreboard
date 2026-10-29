@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from collections.abc import Mapping
 
 if TYPE_CHECKING:
     from .api.renderer import graphics
     from RGBMatrixEmulator.emulation.canvas import Canvas
     from RGBMatrixEmulator import Color
+    from RGBMatrixEmulator.graphics.font import Font
 
 
 def deep_update(source, overrides):
@@ -30,7 +31,7 @@ def scrolling_text(
     x: int,
     y: int,
     width: int,
-    font: dict[str, Any],
+    font: "Font",
     text_color: "Color",
     bg_color: "Color",
     text: str,
@@ -40,7 +41,7 @@ def scrolling_text(
 ) -> int:
     if force_scroll or __text_should_scroll(text, font, width):
 
-        w: int = font["size"]["width"]
+        w: int = font.width
         total_width = w * len(text)
 
         # if the text is long enough to scroll, we can trim it to only the visible
@@ -68,11 +69,11 @@ def scrolling_text(
         # if we trimmed to the left, we need to adjust the scroll position accordingly
         if left:
             scroll_pos += w * left
-        graphics.DrawText(canvas, font["font"], scroll_pos, y, text_color, text)
+        graphics.DrawText(canvas, font, scroll_pos, y, text_color, text)
 
         # draw one-letter boxes to left and right to hide previous and next letters
         top = y + 1
-        bottom = top - font["size"]["height"]
+        bottom = top - font.height
         for xi in range(0, w):
             left = x - xi - 1
             graphics.DrawLine(canvas, left, top, left, bottom, bg_color)
@@ -82,14 +83,14 @@ def scrolling_text(
         return total_width
     else:
         draw_x = __center_position(text, font, width, x) if center else x
-        graphics.DrawText(canvas, font["font"], draw_x, y, text_color, text)
+        graphics.DrawText(canvas, font, draw_x, y, text_color, text)
         return 0
 
 
 # Maybe the text is too short and we should just center it instead?
 def __text_should_scroll(text, font, width):
-    return len(text) * font["size"]["width"] > width
+    return len(text) * font.width > width
 
 
 def __center_position(text, font, width, x):
-    return center_text_position(text, abs(width // 2) + x, font["size"]["width"])
+    return center_text_position(text, abs(width // 2) + x, font.width)

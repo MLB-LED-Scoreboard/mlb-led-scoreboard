@@ -12,7 +12,7 @@ def render_nohit_text(canvas, layout, colors):
     coords = layout.coords("nohitter")
     text_color = colors.graphics_color("nohit_text")
     text = _get_nohitter_text(layout)
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], text_color, text)
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], text_color, text)
 
 
 def _get_nohitter_text(layout):

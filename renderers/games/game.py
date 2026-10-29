@@ -83,7 +83,7 @@ def __render_play_result(canvas, layout, colors, play_result):
         text = PLAY_RESULTS[play_result][coords["desc_length"].lower()]
     except KeyError:
         return
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], color, text)
 
 
 def __render_batter_text(canvas, layout, colors, batter, text_pos):
@@ -95,7 +95,7 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
     pos = scrolling_text(
         canvas,
         graphics,
-        coords["x"] + font["size"]["width"] * 3,
+        coords["x"] + font.width * 3,
         coords["y"],
         coords["width"],
         font,
@@ -105,7 +105,7 @@ def __render_batter_text(canvas, layout, colors, batter, text_pos):
         text_pos + offset,
         center=False,
     )
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "AB:")
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], color, "AB:")
     return pos
 
 
@@ -122,7 +122,7 @@ def __render_pitcher_text(canvas, layout, colors, pitcher, pitches: Pitches, tex
     pos = scrolling_text(
         canvas,
         graphics,
-        coords["x"] + font["size"]["width"] * 2,
+        coords["x"] + font.width * 2,
         coords["y"],
         coords["width"],
         font,
@@ -132,7 +132,7 @@ def __render_pitcher_text(canvas, layout, colors, pitcher, pitches: Pitches, tex
         text_pos,
         center=False,
     )
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "P:")
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], color, "P:")
     return pos
 
 
@@ -150,7 +150,7 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
         else:
             pitch_text = ""
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_text)
+        graphics.DrawText(canvas, font, coords["x"], coords["y"], color, pitch_text)
 
 
 def __render_pitch_count(canvas, layout, colors, pitches: Pitches):
@@ -159,7 +159,7 @@ def __render_pitch_count(canvas, layout, colors, pitches: Pitches):
     font = layout.font("atbat.pitch_count")
     if coords["enabled"] and not coords["append_pitcher_name"]:
         pitch_count = f"{pitches.pitch_count}P"
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_count)
+        graphics.DrawText(canvas, font, coords["x"], coords["y"], color, pitch_count)
 
 
 # --------------- bases ---------------
@@ -208,7 +208,7 @@ def _render_count(canvas, layout, colors, pitches: Pitches):
     coords = layout.coords("batter_count")
     pitches_color = colors.graphics_color("batter_count")
     batter_count_text = "{}-{}".format(pitches.balls, pitches.strikes)
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], pitches_color, batter_count_text)
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], pitches_color, batter_count_text)
 
 
 # --------------- outs ---------------
@@ -273,8 +273,8 @@ def _render_inning_break(canvas, layout, colors, inning: Inning):
     if text == "Middle":
         text = "Mid"
     num = inning.ordinal
-    graphics.DrawText(canvas, text_font["font"], text_coords["x"], text_coords["y"], color, text)
-    graphics.DrawText(canvas, num_font["font"], num_coords["x"], num_coords["y"], color, num)
+    graphics.DrawText(canvas, text_font, text_coords["x"], text_coords["y"], color, text)
+    graphics.DrawText(canvas, num_font, num_coords["x"], num_coords["y"], color, num)
 
 
 def _render_due_up(canvas, layout, colors, atbat: AtBat, text_pos):
@@ -331,8 +331,8 @@ def _render_due_up(canvas, layout, colors, atbat: AtBat, text_pos):
 
     due = layout.coords("inning.break.due_up.due")
     up = layout.coords("inning.break.due_up.up")
-    graphics.DrawText(canvas, due_font["font"], due["x"], due["y"], due_color, "Due")
-    graphics.DrawText(canvas, due_font["font"], up["x"], up["y"], due_color, "Up:")
+    graphics.DrawText(canvas, due_font, due["x"], due["y"], due_color, "Due")
+    graphics.DrawText(canvas, due_font, up["x"], up["y"], due_color, "Up:")
 
     divider = layout.coords("inning.break.due_up.divider")
     if divider["draw"]:
@@ -357,15 +357,15 @@ def __render_number(canvas, layout, colors, inning):
     number_color = colors.graphics_color("inning.number")
     coords = layout.coords("inning.number")
     font = layout.font("inning.number")
-    pos_x = coords["x"] - (len(str(inning.number)) * font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], pos_x, coords["y"], number_color, str(inning.number))
+    pos_x = coords["x"] - (len(str(inning.number)) * font.width)
+    graphics.DrawText(canvas, font, pos_x, coords["y"], number_color, str(inning.number))
 
 
 def __render_inning_half(canvas, layout, colors, inning):
     font = layout.font("inning.number")
     num_coords = layout.coords("inning.number")
     arrow_coords = layout.coords("inning.arrow")
-    inning_size = len(str(inning.number)) * font["size"]["width"]
+    inning_size = len(str(inning.number)) * font.width
     size = arrow_coords["size"]
     top = inning.state == Inning.TOP
     if top:
