@@ -31,8 +31,8 @@ def __render_game_status(canvas, layout, colors, scoreboard, short_text):
     text = __get_text_for_status(scoreboard, short_text)
     coords = layout.coords("status.text")
     font = layout.font("status.text")
-    text_x = center_text_position(text, coords["x"], font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
+    text_x = center_text_position(text, coords["x"], font.width)
+    graphics.DrawText(canvas, font, text_x, coords["y"], color, text)
 
 
 def __render_scroll_text(canvas, layout, colors, scoreboard, text_pos):
