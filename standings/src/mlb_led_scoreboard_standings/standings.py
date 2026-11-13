@@ -29,6 +29,7 @@ class Standings(PluginData):
 
         self.standings: list[Division] = []
         self.leagues: dict[str, League] = {}
+        self.world_series_over = False
 
         self.update(True)
 
@@ -71,6 +72,7 @@ class Standings(PluginData):
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")
                     self.leagues["NL"] = League(postseason_data, "NL")
+                    self.world_series_over = world_series_is_over(postseason_data)
 
             except Exception:
                 LOGGER.exception("Failed to refresh standings.")
@@ -87,9 +89,10 @@ class Standings(PluginData):
         return time_delta >= STANDINGS_UPDATE_RATE
 
     def populated(self):
-        return (bool(self.preferred_divisions) and bool(self.standings)) or (
-            bool(self.leagues) and self.config.is_postseason()
-        )
+        if self.config.is_postseason():
+            # Once the World Series has been decided the bracket has nothing left to tell.
+            return bool(self.leagues) and not self.world_series_over
+        return bool(self.preferred_divisions) and bool(self.standings)
 
     def __standings_for(self, division_name):
         return next(division for division in self.standings if division.name == division_name)
@@ -194,6 +197,24 @@ class League:
 {self.wc3} ---|           | --- {self.l_one} ---|
             {self.ds_A_bye} ---|
         """
+
+
+WORLD_SERIES_WINS = 4
+
+
+def world_series_is_over(data) -> bool:
+    """True once one team has won four World Series games. Fails open (False) if the series isn't listed."""
+    series = next((s for s in data["series"] if str(s["series"].get("id", "")).startswith("W")), None)
+    if series is None:
+        return False
+    wins: dict = {}
+    for game in series.get("games", []):
+        for side in ("home", "away"):
+            team = game["teams"][side]
+            if team.get("isWinner"):
+                team_id = team["team"]["id"]
+                wins[team_id] = wins.get(team_id, 0) + 1
+    return any(w >= WORLD_SERIES_WINS for w in wins.values())
 
 
 def get_abbr(id, default="TBD"):
