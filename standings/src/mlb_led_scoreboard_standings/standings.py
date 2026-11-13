@@ -72,12 +72,12 @@ class Standings(PluginData):
                         {
                             "season": self.date.strftime("%Y"),
                             "hydrate": "league,team",
-                            "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
+                            "fields": "series,id,gameType,games,officialDate,description,teams,home,away,team,isWinner,name",
                         },
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")
                     self.leagues["NL"] = League(postseason_data, "NL")
-                    self.world_series_over = world_series_is_over(postseason_data)
+                    self.world_series_over = world_series_is_over(postseason_data, self.date)
 
             except Exception:
                 LOGGER.exception("Failed to refresh standings.")
@@ -204,13 +204,19 @@ class League:
         """
 
 
-def world_series_is_over(data) -> bool:
-    """True once one team has won four World Series games. Fails open (False) if the series isn't listed."""
+def world_series_is_over(data, as_of=None) -> bool:
+    """True once one team has won four World Series games. Fails open (False) if the series isn't listed.
+
+    Only games on or before `as_of` count, so a demo date partway through a past postseason still shows the bracket.
+    """
     series = next((s for s in data["series"] if s["series"].get("gameType") == WORLD_SERIES_GAME_TYPE), None)
     if series is None:
         return False
     wins: dict = {}
+    cutoff = as_of.strftime("%Y-%m-%d") if as_of else None
     for game in series.get("games", []):
+        if cutoff and game.get("officialDate", "") > cutoff:
+            continue
         for side in ("home", "away"):
             team = game["teams"][side]
             if team.get("isWinner"):
