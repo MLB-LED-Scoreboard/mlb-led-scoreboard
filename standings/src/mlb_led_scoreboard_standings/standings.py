@@ -11,6 +11,11 @@ from .config import Config
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
+# statsapi gameType codes: F wild card, D division series, L league championship, W World Series.
+# https://statsapi.mlb.com/api/v1/gameTypes
+WORLD_SERIES_GAME_TYPE = "W"
+WORLD_SERIES_WINS = 4
+
 
 API_FIELDS = (
     "records,standingsType,teamRecords,team,id,abbreviation,division,league,nameShort,gamesBack,wildCardGamesBack,"
@@ -199,12 +204,9 @@ class League:
         """
 
 
-WORLD_SERIES_WINS = 4
-
-
 def world_series_is_over(data) -> bool:
     """True once one team has won four World Series games. Fails open (False) if the series isn't listed."""
-    series = next((s for s in data["series"] if str(s["series"].get("id", "")).startswith("W")), None)
+    series = next((s for s in data["series"] if s["series"].get("gameType") == WORLD_SERIES_GAME_TYPE), None)
     if series is None:
         return False
     wins: dict = {}
