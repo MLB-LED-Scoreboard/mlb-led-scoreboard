@@ -92,7 +92,7 @@ def __render_play_result(canvas, layout, colors, play_result):
         text = PLAY_RESULTS[play_result][coords["desc_length"].lower()]
     except KeyError:
         return
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, text)
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], color, text)
 
 
 def __optional(layout, key):
@@ -124,7 +124,7 @@ def __looped_pos(layout, text_pos, x, width, text, font):
     the play line, whose slot ends at the far edge of the board, started 13px into
     its own window with the first character already showing.
     """
-    cycle = len(text) * font["size"]["width"] + width
+    cycle = len(text) * font.width + width
     elapsed = (layout.coords("atbat")["loop"] - text_pos) % cycle
     return x + width - elapsed
 
@@ -156,7 +156,7 @@ def __render_dimmed_field(canvas, layout, colors, scoreboard: Scoreboard):
 def __batter_stat_positions(layout, atbat: AtBat):
     """Lay AVG / HR / RBI out right-to-left so they always fit the panel."""
     font = layout.font("atbat.batter_stats")
-    fw = font["size"]["width"]
+    fw = font.width
     right = layout.width - 1
 
     rbi = str(atbat.rbi) if atbat.rbi is not None else None
@@ -198,8 +198,8 @@ def __render_batter_stats(canvas, layout, colors, atbat: AtBat):
 
     for key, label in (("avg", "AVG"), ("hr", "HR"), ("rbi", "RBI")):
         if pos[key] and pos[f"{key}_val_x"] >= 0:
-            graphics.DrawText(canvas, font["font"], pos[f"{key}_val_x"], y, val_color, pos[key])
-            graphics.DrawText(canvas, font["font"], pos[f"{key}_lbl_x"], y, lbl_color, label)
+            graphics.DrawText(canvas, font, pos[f"{key}_val_x"], y, val_color, pos[key])
+            graphics.DrawText(canvas, font, pos[f"{key}_lbl_x"], y, lbl_color, label)
 
 
 def __render_batter_order(canvas, layout, colors, atbat: AtBat):
@@ -209,7 +209,7 @@ def __render_batter_order(canvas, layout, colors, atbat: AtBat):
         return
     font = layout.font("atbat.batter_order")
     color = colors.graphics_color("atbat.batter_stats")
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, f"{atbat.batter_order}.")
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], color, f"{atbat.batter_order}.")
 
 
 def __batter_order_name_x(layout, atbat: AtBat):
@@ -223,7 +223,7 @@ def __batter_order_name_x(layout, atbat: AtBat):
     if coords is None or atbat.batter_order is None:
         return None
     font = layout.font("atbat.batter_order")
-    return coords["x"] + len(f"{atbat.batter_order}.") * font["size"]["width"] + 1
+    return coords["x"] + len(f"{atbat.batter_order}.") * font.width + 1
 
 
 def __render_play_description(canvas, layout, colors, description, text_pos):
@@ -262,7 +262,7 @@ def __render_batter_text(canvas, layout, colors, atbat: AtBat, text_pos):
     font = layout.font("atbat.batter")
     bgcolor = colors.graphics_color("default.background")
     offset = coords.get("offset", 0)
-    fw = font["size"]["width"]
+    fw = font.width
 
     # With a batting-order number the "AB:" label is redundant, so it is replaced by
     # the number and the name starts after it.
@@ -297,7 +297,7 @@ def __render_batter_text(canvas, layout, colors, atbat: AtBat, text_pos):
     __render_batter_order(canvas, layout, colors, atbat)
     __render_batter_stats(canvas, layout, colors, atbat)
     if order_name_x is None:
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "AB:")
+        graphics.DrawText(canvas, font, coords["x"], coords["y"], color, "AB:")
     return pos
 
 
@@ -306,7 +306,7 @@ def __render_pitcher_text(canvas, layout, colors, atbat: AtBat, pitches: Pitches
     color = colors.graphics_color("atbat.pitcher")
     font = layout.font("atbat.pitcher")
     bgcolor = colors.graphics_color("default.background")
-    fw = font["size"]["width"]
+    fw = font.width
     pitcher = atbat.pitcher
 
     pitch_count = layout.coords("atbat.pitch_count")
@@ -319,12 +319,12 @@ def __render_pitcher_text(canvas, layout, colors, atbat: AtBat, pitches: Pitches
     if stats is not None and stats.get("show_era", False) and atbat.pitcher_era:
         pos_info = __batter_stat_positions(layout, atbat)
         lbl_font = pos_info["font"]
-        ew = lbl_font["size"]["width"]
+        ew = lbl_font.width
         era_x = pos_info["leftmost_x"]
-        graphics.DrawText(canvas, lbl_font["font"], era_x, coords["y"], color, atbat.pitcher_era)
+        graphics.DrawText(canvas, lbl_font, era_x, coords["y"], color, atbat.pitcher_era)
         graphics.DrawText(
             canvas,
-            lbl_font["font"],
+            lbl_font,
             era_x + len(atbat.pitcher_era) * ew,
             coords["y"],
             colors.graphics_color("atbat.batter_stats_label"),
@@ -348,7 +348,7 @@ def __render_pitcher_text(canvas, layout, colors, atbat: AtBat, pitches: Pitches
         center=False,
     )
     if era_x is None:
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, "P:")
+        graphics.DrawText(canvas, font, coords["x"], coords["y"], color, "P:")
     return pos
 
 
@@ -366,7 +366,7 @@ def __render_pitch_text(canvas, layout, colors, pitches: Pitches):
             pitch_text = str(pitches.last_pitch_speed) + mph + pitches.last_pitch_type
         else:
             pitch_text = ""
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_text)
+        graphics.DrawText(canvas, font, coords["x"], coords["y"], color, pitch_text)
 
 
 def __render_pitch_count(canvas, layout, colors, pitches: Pitches):
@@ -375,7 +375,7 @@ def __render_pitch_count(canvas, layout, colors, pitches: Pitches):
     font = layout.font("atbat.pitch_count")
     if coords["enabled"] and not coords["append_pitcher_name"]:
         pitch_count = f"{pitches.pitch_count}P"
-        graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], color, pitch_count)
+        graphics.DrawText(canvas, font, coords["x"], coords["y"], color, pitch_count)
 
 
 # --------------- bases ---------------
@@ -429,7 +429,7 @@ def _render_count(canvas, layout, colors, pitches: Pitches):
     coords = layout.coords("batter_count")
     pitches_color = colors.graphics_color("batter_count")
     batter_count_text = "{}-{}".format(pitches.balls, pitches.strikes)
-    graphics.DrawText(canvas, font["font"], coords["x"], coords["y"], pitches_color, batter_count_text)
+    graphics.DrawText(canvas, font, coords["x"], coords["y"], pitches_color, batter_count_text)
 
 
 # --------------- outs ---------------
@@ -577,8 +577,8 @@ def _render_due_up(canvas, layout, colors, atbat: AtBat, text_pos):
 
     due = layout.coords("inning.break.due_up.due")
     up = layout.coords("inning.break.due_up.up")
-    graphics.DrawText(canvas, due_font["font"], due["x"], due["y"], due_color, "Due")
-    graphics.DrawText(canvas, due_font["font"], up["x"], up["y"], due_color, "Up:")
+    graphics.DrawText(canvas, due_font, due["x"], due["y"], due_color, "Due")
+    graphics.DrawText(canvas, due_font, up["x"], up["y"], due_color, "Up:")
 
     divider = layout.coords("inning.break.due_up.divider")
     if divider["draw"]:
@@ -605,8 +605,8 @@ def _render_inning_break(canvas, layout, colors, inning: Inning):
     if text == "Middle":
         text = "Mid"
     num = inning.ordinal
-    graphics.DrawText(canvas, text_font["font"], text_coords["x"], text_coords["y"], color, text)
-    graphics.DrawText(canvas, num_font["font"], num_coords["x"], num_coords["y"], color, num)
+    graphics.DrawText(canvas, text_font, text_coords["x"], text_coords["y"], color, text)
+    graphics.DrawText(canvas, num_font, num_coords["x"], num_coords["y"], color, num)
 
 
 def _render_inning_display(canvas, layout, colors, inning: Inning, blink_on=False):
@@ -638,7 +638,7 @@ def __render_offset_arrow(canvas, layout, colors, inning: Inning):
     font = layout.font("inning.number")
     num_coords = layout.coords("inning.number")
     arrow_coords = layout.coords("inning.arrow")
-    inning_size = len(str(inning.number)) * font["size"]["width"]
+    inning_size = len(str(inning.number)) * font.width
     size = arrow_coords["size"]
     top = inning.state == Inning.TOP
     if top:
@@ -692,5 +692,5 @@ def __render_inning_number(canvas, layout, colors, inning: Inning):
     font = layout.font("inning.number")
     color = colors.graphics_color("inning.number")
     num_str = str(inning.number)
-    pos_x = coords["x"] - len(num_str) * font["size"]["width"]
-    graphics.DrawText(canvas, font["font"], pos_x, coords["y"], color, num_str)
+    pos_x = coords["x"] - len(num_str) * font.width
+    graphics.DrawText(canvas, font, pos_x, coords["y"], color, num_str)

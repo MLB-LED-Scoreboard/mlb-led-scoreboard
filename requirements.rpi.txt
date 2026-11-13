@@ -1,1 +1,1 @@
-git+https://github.com/hzeller/rpi-rgb-led-matrix@41809e4
+git+https://github.com/hzeller/rpi-rgb-led-matrix@14464b3

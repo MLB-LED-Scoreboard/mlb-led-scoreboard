@@ -43,7 +43,7 @@ def _render_records(canvas, layout, colors, scoreboard):
             continue
         side = layout.coords(f"final.record.{homeaway}")
         text = "({}-{})".format(team.record["wins"], team.record["losses"])
-        graphics.DrawText(canvas, font["font"], side["x"], side["y"], color, text)
+        graphics.DrawText(canvas, font, side["x"], side["y"], color, text)
 
 
 def _render_decision_scroll(canvas, layout, colors, postgame, text_pos, editorial_blurb, is_playoffs):
@@ -80,12 +80,12 @@ def _render_final_inning(canvas, layout, colors, scoreboard):
     font = layout.font("final.inning")
     if scoreboard.inning.number != NORMAL_GAME_LENGTH:
         text += " " + str(scoreboard.inning.number)
-    text_x = center_text_position(text, coords["x"], font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
+    text_x = center_text_position(text, coords["x"], font.width)
+    graphics.DrawText(canvas, font, text_x, coords["y"], color, text)
 
     if layout.state_is_nohitter():
         nohit_text = nohitter._get_nohitter_text(layout)
         nohit_coords = layout.coords("final.nohit_text")
         nohit_color = colors.graphics_color("final.nohit_text")
         nohit_font = layout.font("final.nohit_text")
-        graphics.DrawText(canvas, nohit_font["font"], nohit_coords["x"], nohit_coords["y"], nohit_color, nohit_text)
+        graphics.DrawText(canvas, nohit_font, nohit_coords["x"], nohit_coords["y"], nohit_color, nohit_text)
