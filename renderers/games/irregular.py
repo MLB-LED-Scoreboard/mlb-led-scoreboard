@@ -31,8 +31,8 @@ def __render_game_status(canvas, layout, colors, scoreboard, short_text):
     text = __get_text_for_status(scoreboard, short_text)
     coords = layout.coords("status.text")
     font = layout.font("status.text")
-    text_x = center_text_position(text, coords["x"], font["size"]["width"])
-    graphics.DrawText(canvas, font["font"], text_x, coords["y"], color, text)
+    text_x = center_text_position(text, coords["x"], font.width)
+    graphics.DrawText(canvas, font, text_x, coords["y"], color, text)
 
 
 def __render_scroll_text(canvas, layout, colors, scoreboard, text_pos):
@@ -52,9 +52,13 @@ def __get_text_for_status(scoreboard, short_text):
         text = text.split(":")[0]
     if short_text:
         return __get_short_text(text)
-    if "challenge" in text:
+    # Match case-insensitively, as __get_short_text does. MLB is inconsistent
+    # about capitalising these: "Manager challenge" but "Umpire Challenge".
+    # Matching on the exact case let "Umpire Challenge: Pitch Result" through at
+    # its full 16 characters, which is 112px of a 128px panel.
+    if "challenge" in text.lower():
         return CHALLENGE_SHORTHAND
-    if "review" in text:
+    if "review" in text.lower():
         return UMPIRE_REVIEW_SHORTHAND
 
     if text == status.DELAYED_START:

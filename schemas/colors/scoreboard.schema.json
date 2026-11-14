@@ -35,6 +35,7 @@
       "properties": {
         "inning":         { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
         "scrolling_text": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "record":         { "$ref": "#/$defs/color", "default": {"r": 160, "g": 148, "b": 40} },
         "nohit_text":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 50,  "b": 50}  }
       },
       "additionalProperties": false
@@ -51,7 +52,8 @@
             "text":             { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
             "due_up":           { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
             "due_up_divider":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
-            "due_up_names":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+            "due_up_names":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "inactive":         { "$ref": "#/$defs/color", "default": {"r": 100, "g": 90, "b": 22} }
           },
           "additionalProperties": false
         },
@@ -59,9 +61,12 @@
         "arrow": {
           "type": "object",
           "x-format": "grid",
+          "description": "up/down colour a single arrow placed with x_offset/y_offset. active/inactive colour the pair of arrows a layout gets by placing them with absolute x/y.",
           "properties": {
-            "up":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
-            "down": { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} }
+            "up":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "down":     { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "active":   { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+            "inactive": { "$ref": "#/$defs/color", "default": {"r": 100, "g": 90,  "b": 22} }
           },
           "additionalProperties": false
         }
@@ -104,7 +109,9 @@
         "pitch":        { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} },
         "pitch_count":  { "$ref": "#/$defs/color", "default": {"r": 255, "g": 255, "b": 255} },
         "play_result":  { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59}  },
-        "strikeout":    { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   }
+        "strikeout":    { "$ref": "#/$defs/color", "default": {"r": 255, "g": 0,   "b": 0}   },
+        "batter_stats":       { "$ref": "#/$defs/color", "default": {"r": 255, "g": 235, "b": 59} },
+        "batter_stats_label": { "$ref": "#/$defs/color", "default": {"r": 80,  "g": 70,  "b": 20} }
       },
       "additionalProperties": false
     },
