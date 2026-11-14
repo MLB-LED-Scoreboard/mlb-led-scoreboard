@@ -52,9 +52,13 @@ def __get_text_for_status(scoreboard, short_text):
         text = text.split(":")[0]
     if short_text:
         return __get_short_text(text)
-    if "challenge" in text:
+    # Match case-insensitively, as __get_short_text does. MLB is inconsistent
+    # about capitalising these: "Manager challenge" but "Umpire Challenge".
+    # Matching on the exact case let "Umpire Challenge: Pitch Result" through at
+    # its full 16 characters, which is 112px of a 128px panel.
+    if "challenge" in text.lower():
         return CHALLENGE_SHORTHAND
-    if "review" in text:
+    if "review" in text.lower():
         return UMPIRE_REVIEW_SHORTHAND
 
     if text == status.DELAYED_START:
