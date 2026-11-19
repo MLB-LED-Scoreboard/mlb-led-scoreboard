@@ -302,7 +302,7 @@ If you aren't sure why you're seeing this, there might not be official support f
         # Load and merge any layout customizations
         custom_layout = self.read_json(filename)
         if custom_layout:
-            LOGGER.info("Custom '%dx%d.json' found. Merging with default reference layout.", width, height)
+            LOGGER.info("Custom '%s' found. Merging with default reference layout.", filename.name)
             new_layout = deep_update(reference_layout, custom_layout)
             return new_layout
         return reference_layout

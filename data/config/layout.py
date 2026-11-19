@@ -1,9 +1,11 @@
+from typing import TYPE_CHECKING, Optional
 from data import status
 from driver import graphics
 
 import os.path
 
-import bdfparser
+if TYPE_CHECKING:
+    from RGBMatrixEmulator.graphics.font import Font
 
 FONTNAME_DEFAULT = "4x6"
 FONTNAME_KEY = "font_name"
@@ -18,37 +20,33 @@ AVAILABLE_OPTIONAL_KEYS = [FONTNAME_KEY, LAYOUT_STATE_WARMUP, LAYOUT_STATE_NOHIT
 
 
 class Layout:
+    default_font: "Font"
+    font_cache: dict[str, "Font"]
+
     def __init__(self, layout_json, width, height):
         self.json = layout_json
         self.width = width
         self.height = height
         self.state = None
-        self.default_font_name = FONTNAME_DEFAULT
         self.default_font_name = self.coords("defaults.font_name")
 
         self.font_cache = {}
 
         # Cache the default font to start
-        self.__get_font_object(self.default_font_name)
+        self.default_font = self.__get_font_object(self.default_font_name)
 
-    def font(self, keypath):
-        """
-        Returns a dictionary with font properties. The font object resides under the "font" key.
+        if self.default_font is None:
+            raise FileNotFoundError(f"Default font '{self.default_font_name}' not found")
 
-        {
-            "font": any,
-            "path": str,
-            "bdf_headers": dict[str, any],
-            "properties": {
-                "width": int,
-                "height": int
-            }
-        }
-        """
+    def font(self, keypath) -> "Font":
+        font = None
+
         try:
-            return self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
+            font = self.__get_font_object(self.coords(keypath)[FONTNAME_KEY])
         except Exception:
-            return self.__get_font_object(self.default_font_name)
+            pass
+
+        return font or self.default_font
 
     def coords(self, keypath):
         try:
@@ -96,7 +94,7 @@ class Layout:
             rv = rv[key]
         return rv
 
-    def __get_font_object(self, font_name):
+    def __get_font_object(self, font_name) -> Optional["Font"]:
         if font_name in self.font_cache:
             return self.font_cache[font_name]
 
@@ -108,17 +106,11 @@ class Layout:
                 font = graphics.Font()
                 font.LoadFont(abs_path)
 
-                self.font_cache[font_name] = {
-                    "font": font,
-                    "path": abs_path,
-                } | self.__get_font_bdf_properties(abs_path)
+                self.font_cache[font_name] = font
 
                 return self.font_cache[font_name]
 
-    def __get_font_bdf_properties(self, path):
-        bdf = bdfparser.Font(path)
-
-        return {"bdf_headers": bdf.headers, "size": {"width": bdf.headers["fbbx"], "height": bdf.headers["fbby"]}}
+        return None
 
     def __eq__(self, other):
 

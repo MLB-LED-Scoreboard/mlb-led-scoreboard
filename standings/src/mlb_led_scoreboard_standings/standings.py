@@ -11,6 +11,11 @@ from .config import Config
 
 STANDINGS_UPDATE_RATE = 15 * 60  # 15 minutes between standings updates
 
+# statsapi gameType codes: F wild card, D division series, L league championship, W World Series.
+# https://statsapi.mlb.com/api/v1/gameTypes
+WORLD_SERIES_GAME_TYPE = "W"
+WORLD_SERIES_WINS = 4
+
 
 API_FIELDS = (
     "records,standingsType,teamRecords,team,id,abbreviation,division,league,nameShort,gamesBack,wildCardGamesBack,"
@@ -29,6 +34,7 @@ class Standings(PluginData):
 
         self.standings: list[Division] = []
         self.leagues: dict[str, League] = {}
+        self.world_series_over = False
 
         self.update(True)
 
@@ -66,11 +72,12 @@ class Standings(PluginData):
                         {
                             "season": self.date.strftime("%Y"),
                             "hydrate": "league,team",
-                            "fields": "series,id,gameType,games,description,teams,home,away,team,isWinner,name",
+                            "fields": "series,id,gameType,games,officialDate,description,teams,home,away,team,isWinner,name",
                         },
                     )
                     self.leagues["AL"] = League(postseason_data, "AL")
                     self.leagues["NL"] = League(postseason_data, "NL")
+                    self.world_series_over = world_series_is_over(postseason_data, self.date)
 
             except Exception:
                 LOGGER.exception("Failed to refresh standings.")
@@ -87,9 +94,10 @@ class Standings(PluginData):
         return time_delta >= STANDINGS_UPDATE_RATE
 
     def populated(self):
-        return (bool(self.preferred_divisions) and bool(self.standings)) or (
-            bool(self.leagues) and self.config.is_postseason()
-        )
+        if self.config.is_postseason():
+            # Once the World Series has been decided the bracket has nothing left to tell.
+            return bool(self.leagues) and not self.world_series_over
+        return bool(self.preferred_divisions) and bool(self.standings)
 
     def __standings_for(self, division_name):
         return next(division for division in self.standings if division.name == division_name)
@@ -194,6 +202,27 @@ class League:
 {self.wc3} ---|           | --- {self.l_one} ---|
             {self.ds_A_bye} ---|
         """
+
+
+def world_series_is_over(data, as_of=None) -> bool:
+    """True once one team has won four World Series games. Fails open (False) if the series isn't listed.
+
+    Only games on or before `as_of` count, so a demo date partway through a past postseason still shows the bracket.
+    """
+    series = next((s for s in data["series"] if s["series"].get("gameType") == WORLD_SERIES_GAME_TYPE), None)
+    if series is None:
+        return False
+    wins: dict = {}
+    cutoff = as_of.strftime("%Y-%m-%d") if as_of else None
+    for game in series.get("games", []):
+        if cutoff and game.get("officialDate", "") > cutoff:
+            continue
+        for side in ("home", "away"):
+            team = game["teams"][side]
+            if team.get("isWinner"):
+                team_id = team["team"]["id"]
+                wins[team_id] = wins.get(team_id, 0) + 1
+    return any(w >= WORLD_SERIES_WINS for w in wins.values())
 
 
 def get_abbr(id, default="TBD"):

@@ -51,6 +51,7 @@ class Scoreboard:
         self.reason = game.reason()
 
         self.play_result = game.current_play_result()
+        self.play_description = game.current_play_description()
 
     def homerun(self):
         return self.play_result == "home_run"
@@ -101,4 +102,6 @@ class Scoreboard:
             s += " Reason: '{}';".format(self.reason)
         if self.note:
             s += " Notes: '{}';".format(self.note)
+        if self.play_description:
+            s += " Play: '{}';".format(self.play_description)
         return s
